@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "description": "Default standalone player, seed-generation, launch, and reserved Archipelago settings.",
+  "sections": {
+    "defaults": {
+      "player_name": "Commander",
+      "game": "C&C Reloaded",
+      "dark_mode": false,
+      "hide_reward_details": false,
+      "hide_locked_grid_missions": false,
+      "seed": "",
+      "campaign_filter": "All Campaigns",
+      "shop_faction_pool": "All Factions",
+      "mission_goal": 15,
+      "progression_mode": "Mission List",
+      "grid_two_start_positions": false,
+      "unlock_all_rewards_after_final_grid_mission": false,
+      "rewards_per_objective": 1,
+      "rewards_on_victory_only": false,
+      "difficulty": "Normal",
+      "game_speed": "3 - Medium",
+      "player_color": "Default",
+      "rainbowizer": false,
+      "eva_voice": "Mission default",
+      "archipelago": {
+        "enabled": false,
+        "server": "archipelago.gg",
+        "slot_name": "Commander",
+        "password": "",
+        "future_world_name": "C&C Reloaded"
+      },
+      "generation": {
+        "reward_mode": "Standard",
+        "arsenal": {
+          "factions": ["Allies", "Soviets", "Yuri", "GDI", "Nod"],
+          "roster_sizes": {
+            "tier_1": {"infantry": 3, "vehicles": 2, "aircraft": 0, "naval": 0},
+            "tier_2": {"infantry": 3, "vehicles": 3, "aircraft": 1, "naval": 1},
+            "tier_3": {"infantry": 2, "vehicles": 2, "aircraft": 1, "naval": 1}
+          },
+          "power_counts": {"offensive": 1, "secondary": 0, "aid": 1}
+        },
+        "starting_unlocked_missions": 3,
+        "include_no_build_missions": true,
+        "include_no_build_production_missions": true,
+        "include_operation_missions": true,
+        "prioritize_no_build_missions": false,
+        "excluded_mission_codes": [],
+        "excluded_unit_access_ids": [],
+        "excluded_superweapon_ids": [],
+        "excluded_unit_buff_types": {},
+        "excluded_power_buff_types": {},
+        "enabled_reward_types": ["access", "buff"],
+        "randomize_unit_access": true,
+        "start_with_tier_one_units": false,
+        "start_with_tier_one_defenses": false,
+        "starting_reward_count": 0,
+        "starting_reward_types": [
+            "access",
+            "superweapon",
+            "secondary_superweapon",
+            "aid_power"
+        ],
+        "starting_unlock_rewards": [],
+        "include_defensive_buildings": true,
+        "include_special_buildings": true,
+        "include_special_rewards": true,
+        "unlimited_hero_units": false,
+        "share_chaos_role_buffs": false,
+        "include_buff_rewards": true,
+        "include_superweapon_rewards": true,
+        "include_secondary_superweapon_rewards": true,
+        "include_aid_power_rewards": true,
+        "include_power_buff_rewards": true,
+        "unit_buff_catalogue_version": 3,
+        "power_buff_catalogue_version": 1,
+        "enabled_buff_types": [
+          "production",
+          "cost",
+          "speed",
+          "armor",
+          "health",
+          "sight",
+          "damage",
+          "reload",
+          "range",
+          "ammo",
+          "passenger_capacity",
+          "cloak",
+          "sensors",
+          "veteran"
+        ],
+        "enabled_power_buff_types": [
+          "recharge",
+          "cost",
+          "area",
+          "damage",
+          "health",
+          "duration",
+          "effect",
+          "targeting",
+          "vision",
+          "payload"
+        ],
+        "reward_weights": {
+          "main": {
+            "unit_unlocks": 100,
+            "power_unlocks": 100,
+            "special_unlocks": 100,
+            "production": 100,
+            "unit_buffs": 100,
+            "power_buffs": 100
+          },
+          "unit_buffs": {
+            "speed": 100,
+            "health": 100,
+            "damage": 100,
+            "range": 100,
+            "reload": 100,
+            "armor": 100,
+            "cost": 100,
+            "production": 100,
+            "self_healing": 100,
+            "sight": 100,
+            "ammo": 100,
+            "storage": 100,
+            "passenger_capacity": 100,
+            "open_topped": 100,
+            "cloak": 100,
+            "sensors": 100,
+            "veteran": 100,
+            "build_limit": 100,
+            "building_limit": 100,
+            "income": 100,
+            "other": 100
+          },
+          "power_buffs": {
+            "recharge": 100,
+            "cost": 100,
+            "area": 100,
+            "damage": 100,
+            "duration": 100,
+            "vision": 100,
+            "payload": 100,
+            "other": 100
+          }
+        },
+        "safe_player_country_buffs": true,
+        "buff_allied_helpers": false,
+        "enemy_scaling": {
+          "stack_model_version": 6,
+          "maximum_total_buffs": 40,
+          "allowed_buff_ids": ["*"],
+          "caps": {}
+        },
+        "failure_assistance": false,
+        "experimental_house_buffs": false
+      }
+    }
+  }
+}

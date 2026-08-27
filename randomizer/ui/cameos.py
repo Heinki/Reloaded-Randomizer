@@ -1,0 +1,391 @@
+"""Extract and decode C&C Reloaded unit cameo PCX files for the Tk UI."""
+
+import re
+import struct
+import threading
+import zlib
+from pathlib import Path
+
+from randomizer.core.diagnostics import event as log_event
+from randomizer.core.mix import extract_mix_members
+from randomizer.core.paths import (
+    CAMEO_CACHE_DIR,
+    GAME_ROOT,
+)
+from randomizer.config.game_profile import ART_INI_NAME, RULES_INI_NAME
+
+
+ART_CACHE_PATH = CAMEO_CACHE_DIR / ART_INI_NAME
+RULES_CACHE_PATH = CAMEO_CACHE_DIR / RULES_INI_NAME
+SAFE_ASSET_NAME = re.compile(r'^[A-Za-z0-9_.-]+$')
+_ART_CAMEO_NAMES = None
+_RULES_ART_NAMES = None
+_RULES_SIDEBAR_NAMES = None
+_RULES_SECTION_VALUES = None
+_EXTRACTION_LOCK = threading.Lock()
+_PENDING_LOCK = threading.Lock()
+_ATTEMPTED_CAMEOS = set()
+_PENDING_EXTRACTIONS = set()
+def cameo_extraction_pending():
+    """Return whether a background MIX extraction is still running."""
+    with _PENDING_LOCK:
+        return bool(_PENDING_EXTRACTIONS)
+
+
+def extract_mix_files(requests):
+    """Extract requested MIX members with the internal read-only parser."""
+    normalized = tuple(sorted(
+        (str(Path(source).name).upper(), str(Path(output)))
+        for source, output in requests
+    ))
+    if threading.current_thread() is threading.main_thread():
+        # MIX scans can take several seconds on large installations. Never run
+        # one in Tk's event thread; the next ordinary refresh will consume the
+        # completed cache files.
+        with _PENDING_LOCK:
+            if normalized in _PENDING_EXTRACTIONS:
+                return False
+            _PENDING_EXTRACTIONS.add(normalized)
+
+        def worker():
+            try:
+                with _EXTRACTION_LOCK:
+                    _extract_mix_files(requests)
+            finally:
+                with _PENDING_LOCK:
+                    _PENDING_EXTRACTIONS.discard(normalized)
+
+        threading.Thread(
+            target=worker, name='ReloadedCameoExtractor', daemon=True
+        ).start()
+        return False
+    # Requests use one shared handoff file. Cache construction and UI cameo
+    # loading can run on background threads, so serialize the complete handoff
+    # and PowerShell read rather than only protecting the JSON write.
+    with _EXTRACTION_LOCK:
+        return _extract_mix_files(requests)
+
+
+def extract_mix_files_sync(requests):
+    """Extract MIX members before launch, regardless of caller thread."""
+    with _EXTRACTION_LOCK:
+        return _extract_mix_files(requests)
+
+
+def _extract_mix_files(requests):
+    pending = []
+    for source_name, output_path in requests:
+        source_name = Path(source_name).name
+        if not SAFE_ASSET_NAME.fullmatch(source_name):
+            continue
+        output_path = Path(output_path)
+        if output_path.exists() and output_path.stat().st_size > 0:
+            continue
+        pending.append({'name': source_name.upper(), 'output': str(output_path)})
+    if not pending:
+        return True
+
+    CAMEO_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    mix_paths = sorted(
+        GAME_ROOT.glob('*.mix'),
+        key=lambda path: path.name.lower(),
+        reverse=True,
+    )
+    extracted, missing, skipped = extract_mix_members(
+        mix_paths,
+        ((item['name'], item['output']) for item in pending),
+    )
+    log_event(
+        'cameo_extraction_finished',
+        requested=[item['name'] for item in pending],
+        extracted=extracted,
+        missing=missing,
+        skipped_archives=skipped,
+    )
+    return not missing
+
+
+def _iter_ini_records(path, strict_sections=False):
+    """Yield section and value records from an installed INI-like file."""
+    for raw_line in path.read_text(encoding='utf-8', errors='ignore').splitlines():
+        line = raw_line.strip()
+        section_pattern = r'^\[([^]]+)\]$' if strict_sections else r'^\[([^]]+)\]'
+        section_match = re.match(section_pattern, line)
+        if section_match:
+            yield 'section', section_match.group(1).strip(), None
+            continue
+        if not line or line.startswith(';') or '=' not in line:
+            continue
+        key, value = line.split('=', 1)
+        yield 'value', key.strip(), value.split(';', 1)[0].strip()
+
+
+def _read_ini_sections(path):
+    """Read complete installed INI sections, including commented headers."""
+    sections = {}
+    current_values = None
+    for record_type, key, value in _iter_ini_records(path):
+        if record_type == 'section':
+            current_values = {}
+            sections[key] = current_values
+        elif current_values is not None:
+            current_values[key] = value
+    return sections
+
+
+def _extract_ini_key_mapping(cache_path, source_name, key_name):
+    """Return safe values for one INI key, indexed by upper-case section."""
+    if not cache_path.exists():
+        extract_mix_files([(source_name, cache_path)])
+    if not cache_path.exists():
+        return {}
+
+    mapping = {}
+    section = ''
+    for record_type, key, value in _iter_ini_records(cache_path):
+        if record_type == 'section':
+            section = key.upper()
+            continue
+        if not section or key.lower() != key_name.lower():
+            continue
+        if SAFE_ASSET_NAME.fullmatch(value):
+            mapping[section] = value
+    return mapping
+
+
+def installed_rules_registry():
+    """Return installed rules sections and ordered SuperWeaponType IDs.
+
+    Power clones need the complete installed section, not a map-overridden
+    version. Keeping this on the existing rules cache also works in packaged
+    mode without placing a loose global rules INI in the game directory.
+    """
+    global _RULES_SECTION_VALUES
+    if _RULES_SECTION_VALUES is None:
+        if not RULES_CACHE_PATH.exists():
+            extract_mix_files([(RULES_INI_NAME, RULES_CACHE_PATH)])
+        if not RULES_CACHE_PATH.exists():
+            return (), {}
+
+        _RULES_SECTION_VALUES = _read_ini_sections(RULES_CACHE_PATH)
+
+    sections = {
+        section: dict(values)
+        for section, values in _RULES_SECTION_VALUES.items()
+    }
+    superweapon_types = tuple(sections.get('SuperWeaponTypes', {}).values())
+    return superweapon_types, sections
+
+
+def art_cameo_names():
+    global _ART_CAMEO_NAMES
+    if _ART_CAMEO_NAMES is not None:
+        return _ART_CAMEO_NAMES
+    mapping = _extract_ini_key_mapping(
+        ART_CACHE_PATH, ART_INI_NAME, 'CameoPCX'
+    )
+    if mapping or ART_CACHE_PATH.exists():
+        _ART_CAMEO_NAMES = mapping
+    return mapping
+
+
+def _load_rules_asset_names():
+    """Populate Image and SidebarPCX maps in one rules-file pass."""
+    global _RULES_ART_NAMES, _RULES_SIDEBAR_NAMES
+    if _RULES_ART_NAMES is not None and _RULES_SIDEBAR_NAMES is not None:
+        return
+    if not RULES_CACHE_PATH.exists():
+        extract_mix_files([(RULES_INI_NAME, RULES_CACHE_PATH)])
+    if not RULES_CACHE_PATH.exists():
+        return
+    art_names = {}
+    sidebar_names = {}
+    section = ''
+    for record_type, key, value in _iter_ini_records(RULES_CACHE_PATH):
+        if record_type == 'section':
+            section = key.upper()
+        elif section and SAFE_ASSET_NAME.fullmatch(value):
+            lowered_key = key.lower()
+            if lowered_key == 'image':
+                art_names[section] = value.upper()
+            elif lowered_key == 'sidebarpcx':
+                sidebar_names[section] = value
+    _RULES_ART_NAMES = art_names
+    _RULES_SIDEBAR_NAMES = sidebar_names
+
+
+def rules_art_names():
+    _load_rules_asset_names()
+    return _RULES_ART_NAMES or {}
+
+
+def rules_sidebar_names():
+    """Return installed SidebarPCX filenames keyed by rules section."""
+    _load_rules_asset_names()
+    return _RULES_SIDEBAR_NAMES or {}
+
+
+def png_chunk(kind, payload):
+    return (
+        struct.pack('>I', len(payload))
+        + kind
+        + payload
+        + struct.pack('>I', zlib.crc32(kind + payload) & 0xFFFFFFFF)
+    )
+
+
+def _reject_pcx(pcx_path, reason):
+    log_event('cameo_decode_rejected', path=str(pcx_path), reason=reason)
+    return False
+
+
+def decode_pcx_to_png(pcx_path, png_path):
+    data = Path(pcx_path).read_bytes()
+    if len(data) < 897 or data[0] != 0x0A or data[2] != 1 or data[3] != 8:
+        return _reject_pcx(pcx_path, 'unsupported_header_or_encoding')
+
+    x_min = int.from_bytes(data[4:6], 'little')
+    y_min = int.from_bytes(data[6:8], 'little')
+    x_max = int.from_bytes(data[8:10], 'little')
+    y_max = int.from_bytes(data[10:12], 'little')
+    width = x_max - x_min + 1
+    height = y_max - y_min + 1
+    planes = data[65]
+    bytes_per_line = int.from_bytes(data[66:68], 'little')
+    if width <= 0 or height <= 0 or planes != 1 or bytes_per_line < width:
+        return _reject_pcx(pcx_path, 'invalid_dimensions_or_plane_layout')
+    if data[-769] != 0x0C:
+        return _reject_pcx(pcx_path, 'missing_256_color_palette')
+
+    expected = bytes_per_line * height
+    decoded = bytearray()
+    cursor = 128
+    data_end = len(data) - 769
+    while cursor < data_end and len(decoded) < expected:
+        value = data[cursor]
+        cursor += 1
+        if value & 0xC0 == 0xC0:
+            run = value & 0x3F
+            if cursor >= data_end:
+                return _reject_pcx(pcx_path, 'truncated_rle_run')
+            value = data[cursor]
+            cursor += 1
+            decoded.extend([value] * run)
+        else:
+            decoded.append(value)
+    if len(decoded) < expected:
+        return _reject_pcx(pcx_path, 'truncated_pixel_data')
+
+    palette = data[-768:]
+    rgb = bytearray(width * height * 3)
+    output = 0
+    for y in range(height):
+        row_start = y * bytes_per_line
+        for color_index in decoded[row_start:row_start + width]:
+            palette_index = color_index * 3
+            rgb[output:output + 3] = palette[palette_index:palette_index + 3]
+            output += 3
+
+    scanlines = b''.join(
+        b'\x00' + bytes(rgb[y * width * 3:(y + 1) * width * 3])
+        for y in range(height)
+    )
+    png = (
+        b'\x89PNG\r\n\x1a\n'
+        + png_chunk(b'IHDR', struct.pack('>IIBBBBB', width, height, 8, 2, 0, 0, 0))
+        + png_chunk(b'IDAT', zlib.compress(scanlines, level=9))
+        + png_chunk(b'IEND', b'')
+    )
+    png_path = Path(png_path)
+    png_path.parent.mkdir(parents=True, exist_ok=True)
+    png_path.write_bytes(png)
+    return True
+
+
+def ensure_requested_cameos(requested):
+    """Extract and decode a mapping of stable UI keys to PCX filenames."""
+    missing_pcxs = []
+    for cameo_name in set(requested.values()):
+        pcx_path = CAMEO_CACHE_DIR / cameo_name.lower()
+        png_path = pcx_path.with_suffix('.png')
+        if (
+            cameo_name.upper() not in _ATTEMPTED_CAMEOS
+            and (not pcx_path.exists() or pcx_path.stat().st_size == 0)
+            and not png_path.exists()
+        ):
+            missing_pcxs.append((cameo_name, pcx_path))
+    if missing_pcxs:
+        _ATTEMPTED_CAMEOS.update(name.upper() for name, _path in missing_pcxs)
+        extract_mix_files(missing_pcxs)
+
+    result = {}
+    for asset_id, cameo_name in requested.items():
+        pcx_path = CAMEO_CACHE_DIR / cameo_name.lower()
+        png_path = pcx_path.with_suffix('.png')
+        if not png_path.exists() and pcx_path.exists():
+            try:
+                decode_pcx_to_png(pcx_path, png_path)
+            except OSError:
+                pass
+        if png_path.exists():
+            result[asset_id] = png_path
+    return result
+
+
+def ensure_unit_cameos(unit_ids):
+    from randomizer.maps.assets import custom_sidebar_preview
+    from randomizer.rewards.catalogue import UNIT_SIDEBAR_IMAGES
+
+    cameo_names = art_cameo_names()
+    art_names = rules_art_names()
+    try:
+        from randomizer.rewards.reloaded_roster import randomizer_unit_roster
+        _paths, _clone_ids, templates = randomizer_unit_roster()
+    except (FileNotFoundError, ValueError):
+        templates = {}
+    requested = {}
+    result = {}
+    for unit_id in unit_ids:
+        unit_id = str(unit_id).upper()
+        sidebar_config = UNIT_SIDEBAR_IMAGES.get(unit_id, {})
+        custom_image = sidebar_config.get('image')
+        if custom_image:
+            result[unit_id] = custom_sidebar_preview(custom_image)
+            continue
+        source_pcx = sidebar_config.get('source_pcx')
+        if source_pcx:
+            requested[unit_id] = source_pcx
+            continue
+        art_id = art_names.get(unit_id)
+        if not art_id:
+            template = templates.get(unit_id, {})
+            art_id = next(
+                (
+                    value
+                    for key, value in template.items()
+                    if str(key).lower() == 'image' and value
+                ),
+                unit_id,
+            )
+        cameo_name = cameo_names.get(str(art_id).upper())
+        if cameo_name:
+            requested[unit_id] = cameo_name
+    result.update(ensure_requested_cameos(requested))
+    return result
+
+
+def ensure_superweapon_cameos(superweapon_ids, sidebar_overrides=None):
+    """Resolve the installed sidebar icon for each requested superweapon."""
+    sidebar_names = rules_sidebar_names()
+    sidebar_names.update({
+        str(superweapon_id).upper(): str(cameo_name)
+        for superweapon_id, cameo_name in (sidebar_overrides or {}).items()
+        if cameo_name
+    })
+    requested = {}
+    for superweapon_id in superweapon_ids:
+        superweapon_id = str(superweapon_id).upper()
+        cameo_name = sidebar_names.get(superweapon_id)
+        if cameo_name:
+            requested[superweapon_id] = cameo_name
+    return ensure_requested_cameos(requested)

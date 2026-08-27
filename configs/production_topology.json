@@ -1,0 +1,2461 @@
+{
+  "schema_version": 1,
+  "description": "Installed C&C Reloaded five-faction production topology and clone-safety policy.",
+  "sections": {
+    "catalogue_version": 1,
+    "game_version": "2.7.0",
+    "rules_source": "expandmd02.mix::rulesmd.ini",
+    "rules_fingerprint_sha256": "e29fb42836fb1ab9e768c343042df4ab27914fdad381b80b2cba41416ba842ab",
+    "active_families": [
+      "allies",
+      "soviets",
+      "yuri",
+      "gdi",
+      "nod"
+    ],
+    "deferred_factions": [
+      "CABAL"
+    ],
+    "families": {
+      "allies": {
+        "display_name": "Allies",
+        "canonical_country": "AlliesCountry",
+        "mcv_conyard_pair": {
+          "mcv": {
+            "id": "AMCV",
+            "registered_as": "UnitType",
+            "name": "Allied MCV",
+            "factory": "",
+            "construction_yard": false,
+            "tech_level": 10,
+            "prerequisite": [
+              "ALLWEAP",
+              "GADEPT"
+            ],
+            "built_at": [],
+            "deploys_into": "GACNST",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "Normal",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0
+          },
+          "construction_yard": {
+            "id": "GACNST",
+            "registered_as": "BuildingType",
+            "name": "Allied Construction Yard",
+            "factory": "BuildingType",
+            "construction_yard": true,
+            "tech_level": -1,
+            "prerequisite": [],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "AMCV",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0
+          },
+          "reciprocal": true
+        },
+        "production": {
+          "base": [
+            {
+              "id": "GACNST",
+              "registered_as": "BuildingType",
+              "name": "Allied Construction Yard",
+              "factory": "BuildingType",
+              "construction_yard": true,
+              "tech_level": -1,
+              "prerequisite": [],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "AMCV",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ],
+          "infantry": [
+            {
+              "id": "GAPILE",
+              "registered_as": "BuildingType",
+              "name": "Allied Barracks",
+              "factory": "InfantryType",
+              "construction_yard": false,
+              "tech_level": 2,
+              "prerequisite": [
+                "POWER",
+                "GACNST"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ],
+          "vehicles": [
+            {
+              "id": "GAWEAP",
+              "registered_as": "BuildingType",
+              "name": "Allied War Factory",
+              "factory": "UnitType",
+              "construction_yard": false,
+              "tech_level": 2,
+              "prerequisite": [
+                "PROC",
+                "GAPILE",
+                "GACNST"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ],
+          "air": [
+            {
+              "id": "GAAIRC",
+              "registered_as": "BuildingType",
+              "name": "Allied Airforce Command Headquarters",
+              "factory": "AircraftType",
+              "construction_yard": false,
+              "tech_level": 3,
+              "prerequisite": [
+                "GAREFN",
+                "GACNST"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            },
+            {
+              "id": "AMRADR",
+              "registered_as": "BuildingType",
+              "name": "Allied American Airforce Command Headquarters",
+              "factory": "AircraftType",
+              "construction_yard": false,
+              "tech_level": 3,
+              "prerequisite": [
+                "GAREFN",
+                "GACNST"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ],
+          "naval": [
+            {
+              "id": "GAYARD",
+              "registered_as": "BuildingType",
+              "name": "Allied Shipyard",
+              "factory": "UnitType",
+              "construction_yard": false,
+              "tech_level": 4,
+              "prerequisite": [
+                "PROC",
+                "POWER",
+                "GACNST"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": true,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ]
+        },
+        "alternate_production_candidates": [
+          {
+            "id": "GAAIRC2",
+            "registered_as": "BuildingType",
+            "name": "Allied Airforce Command Headquarters (clone 1)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "GAREFN",
+              "GACNST",
+              "ALLWEAP",
+              "ALLRADAR"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "GAAIRC3",
+            "registered_as": "BuildingType",
+            "name": "Allied Airforce Command Headquarters (clone 2)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "ALLTECH",
+              "GACNST",
+              "ALLWEAP",
+              "ALLRADAR"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "GAAIRC4",
+            "registered_as": "BuildingType",
+            "name": "Allied Airforce Command Headquarters (clone 3)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "ALLTECH",
+              "GACNST"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "GAWEAP2",
+            "registered_as": "BuildingType",
+            "name": "Allied War Factory",
+            "factory": "UnitType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "ALLTECH",
+              "PROC",
+              "GAPILE",
+              "GACNST"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "vehicles"
+          },
+          {
+            "id": "GAWEAP3",
+            "registered_as": "BuildingType",
+            "name": "Allied War Factory",
+            "factory": "UnitType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "ALLTECH",
+              "GACNST"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "vehicles"
+          },
+          {
+            "id": "GAYARD2",
+            "registered_as": "BuildingType",
+            "name": "Allied Shipyard",
+            "factory": "UnitType",
+            "construction_yard": false,
+            "tech_level": -1,
+            "prerequisite": [
+              "PROC",
+              "POWER",
+              "GACNST"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": true,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "naval"
+          }
+        ],
+        "engineer": {
+          "id": "ENGINEER",
+          "registered_as": "InfantryType",
+          "name": "Allied Engineer",
+          "factory": "",
+          "construction_yard": false,
+          "tech_level": 1,
+          "prerequisite": [
+            "BARRACKS"
+          ],
+          "built_at": [],
+          "deploys_into": "",
+          "undeploys_into": "",
+          "engineer": true,
+          "resource_gatherer": false,
+          "naval": false,
+          "movement_zone": "Infantry",
+          "passengers": 0,
+          "powers_up_building": "",
+          "upgrades": 0
+        },
+        "resource_gatherer": {
+          "unit": {
+            "id": "CMIN",
+            "registered_as": "UnitType",
+            "name": "Chrono Miner",
+            "factory": "",
+            "construction_yard": false,
+            "tech_level": 1,
+            "prerequisite": [
+              "ALLWEAP",
+              "PROC"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": true,
+            "naval": false,
+            "movement_zone": "Crusher",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0
+          },
+          "factory_id": "GAWEAP",
+          "refinery_id": "GAREFN"
+        },
+        "amphibious_transport": {
+          "unit": {
+            "id": "LCRF",
+            "registered_as": "UnitType",
+            "name": "Landing Craft",
+            "factory": "",
+            "construction_yard": false,
+            "tech_level": 4,
+            "prerequisite": [
+              "ALLYARD"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": true,
+            "movement_zone": "Amphibious",
+            "passengers": 12,
+            "powers_up_building": "",
+            "upgrades": 0
+          },
+          "shipyard_id": "GAYARD"
+        },
+        "component_tower_chains": [],
+        "review": {
+          "status": "pending_review",
+          "notes": ""
+        }
+      },
+      "soviets": {
+        "display_name": "Soviets",
+        "canonical_country": "SovietCountry",
+        "mcv_conyard_pair": {
+          "mcv": {
+            "id": "SMCV",
+            "registered_as": "UnitType",
+            "name": "Soviet MCV",
+            "factory": "",
+            "construction_yard": false,
+            "tech_level": 10,
+            "prerequisite": [
+              "SOVWEAP",
+              "NADEPT"
+            ],
+            "built_at": [],
+            "deploys_into": "NACNST",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "Normal",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0
+          },
+          "construction_yard": {
+            "id": "NACNST",
+            "registered_as": "BuildingType",
+            "name": "Soviet Construction Yard",
+            "factory": "BuildingType",
+            "construction_yard": true,
+            "tech_level": -1,
+            "prerequisite": [],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "SMCV",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0
+          },
+          "reciprocal": true
+        },
+        "production": {
+          "base": [
+            {
+              "id": "NACNST",
+              "registered_as": "BuildingType",
+              "name": "Soviet Construction Yard",
+              "factory": "BuildingType",
+              "construction_yard": true,
+              "tech_level": -1,
+              "prerequisite": [],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "SMCV",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ],
+          "infantry": [
+            {
+              "id": "NAHAND",
+              "registered_as": "BuildingType",
+              "name": "Soviet Barracks",
+              "factory": "InfantryType",
+              "construction_yard": false,
+              "tech_level": 2,
+              "prerequisite": [
+                "POWER",
+                "NACNST"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ],
+          "vehicles": [
+            {
+              "id": "NAWEAP",
+              "registered_as": "BuildingType",
+              "name": "Soviet War Factory",
+              "factory": "UnitType",
+              "construction_yard": false,
+              "tech_level": 2,
+              "prerequisite": [
+                "PROC",
+                "SOVHAND",
+                "NACNST"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ],
+          "air": [
+            {
+              "id": "NAHELIPAD",
+              "registered_as": "BuildingType",
+              "name": "Soviet Air Pad",
+              "factory": "AircraftType",
+              "construction_yard": false,
+              "tech_level": 7,
+              "prerequisite": [
+                "NACNST",
+                "NARADR",
+                "NATECHLAB"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ],
+          "naval": [
+            {
+              "id": "NAYARD",
+              "registered_as": "BuildingType",
+              "name": "Soviet Shipyard",
+              "factory": "UnitType",
+              "construction_yard": false,
+              "tech_level": 2,
+              "prerequisite": [
+                "PROC",
+                "POWER",
+                "NACNST"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": true,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ]
+        },
+        "alternate_production_candidates": [
+          {
+            "id": "NAHAND2",
+            "registered_as": "BuildingType",
+            "name": "Soviet Barracks",
+            "factory": "InfantryType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "POWER",
+              "NACNST",
+              "NATECHLAB"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "infantry"
+          },
+          {
+            "id": "NAWEAP2",
+            "registered_as": "BuildingType",
+            "name": "Soviet War Factory",
+            "factory": "UnitType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "PROC",
+              "SOVHAND",
+              "NACNST",
+              "SOVTECH"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "vehicles"
+          },
+          {
+            "id": "NAWEAP3",
+            "registered_as": "BuildingType",
+            "name": "Soviet War Factory",
+            "factory": "UnitType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "PROC",
+              "SOVHAND",
+              "NACNST",
+              "SOVTECH"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "vehicles"
+          },
+          {
+            "id": "NAHELIPAD2",
+            "registered_as": "BuildingType",
+            "name": "Soviet Air Pad (clone 1)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "NACNST",
+              "NARADR",
+              "NATECHLAB",
+              "NAHELIPAD",
+              "SOVWEAP"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "NAHELIPAD3",
+            "registered_as": "BuildingType",
+            "name": "Soviet Air Pad (clone 2)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "NACNST",
+              "NARADR",
+              "NATECHLAB",
+              "NAHELIPAD",
+              "SOVWEAP"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "NAYARD2",
+            "registered_as": "BuildingType",
+            "name": "Soviet Shipyard",
+            "factory": "UnitType",
+            "construction_yard": false,
+            "tech_level": -1,
+            "prerequisite": [
+              "PROC",
+              "POWER",
+              "NACNST"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": true,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "naval"
+          },
+          {
+            "id": "NAFIST",
+            "registered_as": "BuildingType",
+            "name": "Soviet Iron Fist",
+            "factory": "UnitType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "NACNST",
+              "NATECHLAB"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "WRMN",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "vehicles"
+          }
+        ],
+        "engineer": {
+          "id": "SENGINEER",
+          "registered_as": "InfantryType",
+          "name": "Soviet Engineer",
+          "factory": "",
+          "construction_yard": false,
+          "tech_level": 1,
+          "prerequisite": [
+            "BARRACKS"
+          ],
+          "built_at": [],
+          "deploys_into": "",
+          "undeploys_into": "",
+          "engineer": true,
+          "resource_gatherer": false,
+          "naval": false,
+          "movement_zone": "Infantry",
+          "passengers": 0,
+          "powers_up_building": "",
+          "upgrades": 0
+        },
+        "resource_gatherer": {
+          "unit": {
+            "id": "HARV",
+            "registered_as": "UnitType",
+            "name": "War Miner",
+            "factory": "",
+            "construction_yard": false,
+            "tech_level": 1,
+            "prerequisite": [
+              "SOVWEAP",
+              "PROC"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": true,
+            "naval": false,
+            "movement_zone": "Crusher",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0
+          },
+          "factory_id": "NAWEAP",
+          "refinery_id": "NAREFN"
+        },
+        "amphibious_transport": {
+          "unit": {
+            "id": "SAPC",
+            "registered_as": "UnitType",
+            "name": "Armored Transport",
+            "factory": "",
+            "construction_yard": false,
+            "tech_level": 2,
+            "prerequisite": [
+              "SOVYARD"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": true,
+            "movement_zone": "Amphibious",
+            "passengers": 12,
+            "powers_up_building": "",
+            "upgrades": 0
+          },
+          "shipyard_id": "NAYARD"
+        },
+        "component_tower_chains": [],
+        "review": {
+          "status": "pending_review",
+          "notes": ""
+        }
+      },
+      "yuri": {
+        "display_name": "Yuri",
+        "canonical_country": "YuriCountry",
+        "mcv_conyard_pair": {
+          "mcv": {
+            "id": "PCV",
+            "registered_as": "UnitType",
+            "name": "Yuri MCV",
+            "factory": "",
+            "construction_yard": false,
+            "tech_level": 10,
+            "prerequisite": [
+              "YURWEAP",
+              "YAGRND"
+            ],
+            "built_at": [],
+            "deploys_into": "YACNST",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "Normal",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0
+          },
+          "construction_yard": {
+            "id": "YACNST",
+            "registered_as": "BuildingType",
+            "name": "Yuri Construction Yard",
+            "factory": "BuildingType",
+            "construction_yard": true,
+            "tech_level": -1,
+            "prerequisite": [],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "PCV",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0
+          },
+          "reciprocal": true
+        },
+        "production": {
+          "base": [
+            {
+              "id": "YACNST",
+              "registered_as": "BuildingType",
+              "name": "Yuri Construction Yard",
+              "factory": "BuildingType",
+              "construction_yard": true,
+              "tech_level": -1,
+              "prerequisite": [],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "PCV",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ],
+          "infantry": [
+            {
+              "id": "YABRCK",
+              "registered_as": "BuildingType",
+              "name": "Yuri Barracks",
+              "factory": "InfantryType",
+              "construction_yard": false,
+              "tech_level": 2,
+              "prerequisite": [
+                "POWER",
+                "YACNST"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ],
+          "vehicles": [
+            {
+              "id": "YAWEAP",
+              "registered_as": "BuildingType",
+              "name": "Yuri War Factory",
+              "factory": "UnitType",
+              "construction_yard": false,
+              "tech_level": 2,
+              "prerequisite": [
+                "PROC",
+                "YABRCK",
+                "YACNST"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ],
+          "air": [],
+          "naval": [
+            {
+              "id": "YAYARD",
+              "registered_as": "BuildingType",
+              "name": "Yuri Submarine Pen",
+              "factory": "UnitType",
+              "construction_yard": false,
+              "tech_level": 4,
+              "prerequisite": [
+                "YACNST",
+                "POWER",
+                "PROC"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": true,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ]
+        },
+        "alternate_production_candidates": [
+          {
+            "id": "YAWEAP2",
+            "registered_as": "BuildingType",
+            "name": "Yuri War Factory",
+            "factory": "UnitType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "PROC",
+              "YABRCK",
+              "YACNST",
+              "YURTECH"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "vehicles"
+          },
+          {
+            "id": "YAWEAP3",
+            "registered_as": "BuildingType",
+            "name": "Yuri War Factory",
+            "factory": "UnitType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "PROC",
+              "YABRCK",
+              "YACNST",
+              "YURTECH"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "vehicles"
+          },
+          {
+            "id": "YAYARD2",
+            "registered_as": "BuildingType",
+            "name": "Yuri Submarine Pen",
+            "factory": "UnitType",
+            "construction_yard": false,
+            "tech_level": -1,
+            "prerequisite": [
+              "YACNST",
+              "POWER",
+              "PROC"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": true,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "naval"
+          }
+        ],
+        "engineer": {
+          "id": "YENGINEER",
+          "registered_as": "InfantryType",
+          "name": "Yuri Engineer",
+          "factory": "",
+          "construction_yard": false,
+          "tech_level": 1,
+          "prerequisite": [
+            "BARRACKS"
+          ],
+          "built_at": [],
+          "deploys_into": "",
+          "undeploys_into": "",
+          "engineer": true,
+          "resource_gatherer": false,
+          "naval": false,
+          "movement_zone": "Infantry",
+          "passengers": 0,
+          "powers_up_building": "",
+          "upgrades": 0
+        },
+        "resource_gatherer": {
+          "unit": {
+            "id": "SMIN",
+            "registered_as": "UnitType",
+            "name": "Slave Miner",
+            "factory": "",
+            "construction_yard": false,
+            "tech_level": 1,
+            "prerequisite": [
+              "YAWEAP"
+            ],
+            "built_at": [],
+            "deploys_into": "YAREFN",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": true,
+            "naval": false,
+            "movement_zone": "Crusher",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0
+          },
+          "factory_id": "YAWEAP",
+          "refinery_id": "YAREFN"
+        },
+        "amphibious_transport": {
+          "unit": {
+            "id": "YHVR",
+            "registered_as": "UnitType",
+            "name": "Yuri Hover Transport",
+            "factory": "",
+            "construction_yard": false,
+            "tech_level": 2,
+            "prerequisite": [
+              "YURYARD"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": true,
+            "movement_zone": "Amphibious",
+            "passengers": 12,
+            "powers_up_building": "",
+            "upgrades": 0
+          },
+          "shipyard_id": "YAYARD"
+        },
+        "component_tower_chains": [],
+        "review": {
+          "status": "pending_review",
+          "notes": ""
+        }
+      },
+      "gdi": {
+        "display_name": "GDI",
+        "canonical_country": "GDICountry",
+        "mcv_conyard_pair": {
+          "mcv": {
+            "id": "GDIMCV",
+            "registered_as": "UnitType",
+            "name": "GDI MCV",
+            "factory": "",
+            "construction_yard": false,
+            "tech_level": 10,
+            "prerequisite": [
+              "GDIWEAP",
+              "GAGDEPT"
+            ],
+            "built_at": [],
+            "deploys_into": "TSGACNST",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "Normal",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0
+          },
+          "construction_yard": {
+            "id": "TSGACNST",
+            "registered_as": "BuildingType",
+            "name": "GDI Construction Yard",
+            "factory": "BuildingType",
+            "construction_yard": true,
+            "tech_level": -1,
+            "prerequisite": [],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "GDIMCV",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0
+          },
+          "reciprocal": true
+        },
+        "production": {
+          "base": [
+            {
+              "id": "TSGACNST",
+              "registered_as": "BuildingType",
+              "name": "GDI Construction Yard",
+              "factory": "BuildingType",
+              "construction_yard": true,
+              "tech_level": -1,
+              "prerequisite": [],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "GDIMCV",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ],
+          "infantry": [
+            {
+              "id": "TSGAPILE",
+              "registered_as": "BuildingType",
+              "name": "Barracks",
+              "factory": "InfantryType",
+              "construction_yard": false,
+              "tech_level": 1,
+              "prerequisite": [
+                "POWER",
+                "TSGACNST"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ],
+          "vehicles": [
+            {
+              "id": "TSGAWEAP",
+              "registered_as": "BuildingType",
+              "name": "GDI War Factory",
+              "factory": "UnitType",
+              "construction_yard": false,
+              "tech_level": 2,
+              "prerequisite": [
+                "TSREFINERY",
+                "TSGAPILE",
+                "TSGACNST"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ],
+          "air": [
+            {
+              "id": "TSGAHPAD",
+              "registered_as": "BuildingType",
+              "name": "Helipad",
+              "factory": "AircraftType",
+              "construction_yard": false,
+              "tech_level": 5,
+              "prerequisite": [
+                "TSGACNST",
+                "GDIRADAR"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ],
+          "naval": [
+            {
+              "id": "TSGAYARD",
+              "registered_as": "BuildingType",
+              "name": "GDI Shipyard",
+              "factory": "UnitType",
+              "construction_yard": false,
+              "tech_level": 2,
+              "prerequisite": [
+                "TSGACNST",
+                "POWER",
+                "PROC"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": true,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ]
+        },
+        "alternate_production_candidates": [
+          {
+            "id": "TSGAWEAP2",
+            "registered_as": "BuildingType",
+            "name": "GDI War Factory",
+            "factory": "UnitType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSREFINERY",
+              "TSGAPILE",
+              "TSGACNST",
+              "GDITECH"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "vehicles"
+          },
+          {
+            "id": "TSGAWEAP3",
+            "registered_as": "BuildingType",
+            "name": "GDI War Factory",
+            "factory": "UnitType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSREFINERY",
+              "TSGAPILE",
+              "TSGACNST",
+              "GDITECH"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "vehicles"
+          },
+          {
+            "id": "TSGAHPAD2",
+            "registered_as": "BuildingType",
+            "name": "Helipad (AI clone 1)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSGACNST",
+              "GDIRADAR"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "TSGAHPAD3",
+            "registered_as": "BuildingType",
+            "name": "Helipad (AI clone 2)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSGACNST",
+              "GDIRADAR",
+              "TSGAHPAD",
+              "GDIWEAP"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "TSGAHPAD4",
+            "registered_as": "BuildingType",
+            "name": "Helipad (AI clone 3)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSGACNST",
+              "GDIRADAR",
+              "TSGAHPAD",
+              "GDIWEAP"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "TSGAHPAD5",
+            "registered_as": "BuildingType",
+            "name": "Helipad (AI clone 4)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "GDIRADAR",
+              "GDIWEAP",
+              "GDITECH"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "TSGAHPAD6",
+            "registered_as": "BuildingType",
+            "name": "Helipad (AI clone 5)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "GDIRADAR",
+              "GDIWEAP",
+              "GDITECH"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "TSGAHPAD7",
+            "registered_as": "BuildingType",
+            "name": "Helipad (AI clone 6)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSGACNST",
+              "GDIRADAR"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "TSGAHPAD8",
+            "registered_as": "BuildingType",
+            "name": "Helipad (AI clone 7)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSGACNST",
+              "TSGARADR"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "TSGAHPAD9",
+            "registered_as": "BuildingType",
+            "name": "Helipad (AI clone 8)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSGACNST",
+              "GDIRADAR"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "TSGAHPAD10",
+            "registered_as": "BuildingType",
+            "name": "Helipad (AI clone 9)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSGACNST",
+              "GDIRADAR"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "TSGAHPAD11",
+            "registered_as": "BuildingType",
+            "name": "Helipad (AI clone 10)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSGACNST",
+              "GDIRADAR"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "TSGAHPAD12",
+            "registered_as": "BuildingType",
+            "name": "Helipad (AI clone 11)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSGACNST",
+              "GDIRADAR"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "TSGAYARD2",
+            "registered_as": "BuildingType",
+            "name": "Gdi Shipyard",
+            "factory": "UnitType",
+            "construction_yard": false,
+            "tech_level": -1,
+            "prerequisite": [
+              "TSGACNST",
+              "POWER",
+              "PROC"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": true,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "naval"
+          },
+          {
+            "id": "DGWEAP",
+            "registered_as": "BuildingType",
+            "name": "Deployed Mobile Weapons Factory",
+            "factory": "UnitType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "MOBWARG",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "vehicles"
+          }
+        ],
+        "engineer": {
+          "id": "GENGINEER",
+          "registered_as": "InfantryType",
+          "name": "GDI Engineer",
+          "factory": "",
+          "construction_yard": false,
+          "tech_level": 1,
+          "prerequisite": [
+            "BARRACKS"
+          ],
+          "built_at": [],
+          "deploys_into": "",
+          "undeploys_into": "",
+          "engineer": true,
+          "resource_gatherer": false,
+          "naval": false,
+          "movement_zone": "Infantry",
+          "passengers": 0,
+          "powers_up_building": "",
+          "upgrades": 0
+        },
+        "resource_gatherer": {
+          "unit": {
+            "id": "TSHARV",
+            "registered_as": "UnitType",
+            "name": "GDI Harvester",
+            "factory": "",
+            "construction_yard": false,
+            "tech_level": 1,
+            "prerequisite": [
+              "GDIWEAP",
+              "PROC"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": true,
+            "naval": false,
+            "movement_zone": "Crusher",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0
+          },
+          "factory_id": "TSGAWEAP",
+          "refinery_id": "TSREFINERY"
+        },
+        "amphibious_transport": {
+          "unit": {
+            "id": "GDIHVR",
+            "registered_as": "UnitType",
+            "name": "GDI Hover Transport",
+            "factory": "",
+            "construction_yard": false,
+            "tech_level": 2,
+            "prerequisite": [
+              "GDIYARD"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": true,
+            "movement_zone": "Amphibious",
+            "passengers": 12,
+            "powers_up_building": "",
+            "upgrades": 0
+          },
+          "shipyard_id": "TSGAYARD"
+        },
+        "component_tower_chains": [
+          {
+            "base": {
+              "id": "GACTWR_TS",
+              "registered_as": "BuildingType",
+              "name": "Component Tower",
+              "factory": "",
+              "construction_yard": false,
+              "tech_level": 11,
+              "prerequisite": [
+                "TSGAPILE"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 1
+            },
+            "upgrades": [
+              {
+                "id": "GAVULC_TS",
+                "registered_as": "BuildingType",
+                "name": "Vulcan Cannon Upgrade",
+                "factory": "",
+                "construction_yard": false,
+                "tech_level": 11,
+                "prerequisite": [
+                  "GACTWR_TS"
+                ],
+                "built_at": [],
+                "deploys_into": "",
+                "undeploys_into": "",
+                "engineer": false,
+                "resource_gatherer": false,
+                "naval": false,
+                "movement_zone": "",
+                "passengers": 0,
+                "powers_up_building": "GACTWR_TS",
+                "upgrades": 0
+              },
+              {
+                "id": "GAROCK_TS",
+                "registered_as": "BuildingType",
+                "name": "RPG Upgrade",
+                "factory": "",
+                "construction_yard": false,
+                "tech_level": 11,
+                "prerequisite": [
+                  "GACTWR_TS"
+                ],
+                "built_at": [],
+                "deploys_into": "",
+                "undeploys_into": "",
+                "engineer": false,
+                "resource_gatherer": false,
+                "naval": false,
+                "movement_zone": "",
+                "passengers": 0,
+                "powers_up_building": "GACTWR_TS",
+                "upgrades": 0
+              },
+              {
+                "id": "GACSAM_TS",
+                "registered_as": "BuildingType",
+                "name": "SAM Upgrade",
+                "factory": "",
+                "construction_yard": false,
+                "tech_level": 11,
+                "prerequisite": [
+                  "GACTWR_TS"
+                ],
+                "built_at": [],
+                "deploys_into": "",
+                "undeploys_into": "",
+                "engineer": false,
+                "resource_gatherer": false,
+                "naval": false,
+                "movement_zone": "",
+                "passengers": 0,
+                "powers_up_building": "GACTWR_TS",
+                "upgrades": 0
+              }
+            ]
+          }
+        ],
+        "review": {
+          "status": "pending_review",
+          "notes": ""
+        }
+      },
+      "nod": {
+        "display_name": "Nod",
+        "canonical_country": "NodCountry",
+        "mcv_conyard_pair": {
+          "mcv": {
+            "id": "NODMCV",
+            "registered_as": "UnitType",
+            "name": "Nod MCV",
+            "factory": "",
+            "construction_yard": false,
+            "tech_level": 10,
+            "prerequisite": [
+              "NODWEAP",
+              "NODTECH"
+            ],
+            "built_at": [],
+            "deploys_into": "TSNACNST",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "Normal",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0
+          },
+          "construction_yard": {
+            "id": "TSNACNST",
+            "registered_as": "BuildingType",
+            "name": "Nod Construction Yard",
+            "factory": "BuildingType",
+            "construction_yard": true,
+            "tech_level": -1,
+            "prerequisite": [],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "NODMCV",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0
+          },
+          "reciprocal": true
+        },
+        "production": {
+          "base": [
+            {
+              "id": "TSNACNST",
+              "registered_as": "BuildingType",
+              "name": "Nod Construction Yard",
+              "factory": "BuildingType",
+              "construction_yard": true,
+              "tech_level": -1,
+              "prerequisite": [],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "NODMCV",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ],
+          "infantry": [
+            {
+              "id": "TSNAHAND",
+              "registered_as": "BuildingType",
+              "name": "Hand Of Nod",
+              "factory": "InfantryType",
+              "construction_yard": false,
+              "tech_level": 1,
+              "prerequisite": [
+                "POWER",
+                "TSNACNST"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ],
+          "vehicles": [
+            {
+              "id": "TSNAWEAP",
+              "registered_as": "BuildingType",
+              "name": "Nod War Factory",
+              "factory": "UnitType",
+              "construction_yard": false,
+              "tech_level": 2,
+              "prerequisite": [
+                "TSREFINERY",
+                "TSNAHAND",
+                "TSNACNST"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            },
+            {
+              "id": "TSNAMECHFACT",
+              "registered_as": "BuildingType",
+              "name": "Nod Mech Factory",
+              "factory": "UnitType",
+              "construction_yard": false,
+              "tech_level": 2,
+              "prerequisite": [
+                "TSNATECHLAB",
+                "TSNACNST"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ],
+          "air": [
+            {
+              "id": "TSNAHPAD",
+              "registered_as": "BuildingType",
+              "name": "Helipad",
+              "factory": "AircraftType",
+              "construction_yard": false,
+              "tech_level": 5,
+              "prerequisite": [
+                "TSNACNST",
+                "TSNARADR"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": false,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ],
+          "naval": [
+            {
+              "id": "TSNAYARD",
+              "registered_as": "BuildingType",
+              "name": "Nod Submarine Pen",
+              "factory": "UnitType",
+              "construction_yard": false,
+              "tech_level": 4,
+              "prerequisite": [
+                "TSNACNST",
+                "POWER",
+                "PROC"
+              ],
+              "built_at": [],
+              "deploys_into": "",
+              "undeploys_into": "",
+              "engineer": false,
+              "resource_gatherer": false,
+              "naval": true,
+              "movement_zone": "",
+              "passengers": 0,
+              "powers_up_building": "",
+              "upgrades": 0
+            }
+          ]
+        },
+        "alternate_production_candidates": [
+          {
+            "id": "TSNAMECHFACT",
+            "registered_as": "BuildingType",
+            "name": "Nod Mech Factory",
+            "factory": "UnitType",
+            "construction_yard": false,
+            "tech_level": 2,
+            "prerequisite": [
+              "TSNATECHLAB",
+              "TSNACNST"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "vehicles"
+          },
+          {
+            "id": "TSNAWEAP2",
+            "registered_as": "BuildingType",
+            "name": "Nod War Factory",
+            "factory": "UnitType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSREFINERY",
+              "TSNAHAND",
+              "TSNACNST",
+              "TSNATECH"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "vehicles"
+          },
+          {
+            "id": "TSNAWEAP3",
+            "registered_as": "BuildingType",
+            "name": "Nod War Factory",
+            "factory": "UnitType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSREFINERY",
+              "TSNAHAND",
+              "TSNACNST",
+              "TSNATMPL"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "vehicles"
+          },
+          {
+            "id": "TSNAHPAD2",
+            "registered_as": "BuildingType",
+            "name": "Helipad (AI Clone 1)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSNACNST",
+              "TSNARADR"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "TSNAHPAD3",
+            "registered_as": "BuildingType",
+            "name": "Helipad (AI Clone 2)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSNACNST",
+              "TSNARADR",
+              "NODTECH"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "TSNAHPAD4",
+            "registered_as": "BuildingType",
+            "name": "Helipad (AI Clone 3)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSNACNST",
+              "TSNARADR",
+              "TSNATMPL"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "TSNAHPAD5",
+            "registered_as": "BuildingType",
+            "name": "Helipad (AI Clone 4)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSNACNST",
+              "TSNARADR",
+              "TSNATMPL"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "TSNAHPAD6",
+            "registered_as": "BuildingType",
+            "name": "Helipad (AI Clone 5)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSNACNST",
+              "TSNARADR",
+              "TSNATECH"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "TSNAHPAD7",
+            "registered_as": "BuildingType",
+            "name": "Helipad (AI Clone 6)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSNACNST",
+              "TSNARADR",
+              "TSNATMPL"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "TSNAHPAD8",
+            "registered_as": "BuildingType",
+            "name": "Helipad (AI Clone 7)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSNACNST",
+              "TSNARADR",
+              "TSNATMPL"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "TSNAHPAD9",
+            "registered_as": "BuildingType",
+            "name": "Helipad (AI Clone 7)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSNACNST",
+              "TSNARADR",
+              "TSNATMPL"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "TSNAHPAD10",
+            "registered_as": "BuildingType",
+            "name": "Helipad (AI Clone 7)",
+            "factory": "AircraftType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [
+              "TSNACNST",
+              "TSNARADR",
+              "TSNATMPL"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "air"
+          },
+          {
+            "id": "TSNAYARD2",
+            "registered_as": "BuildingType",
+            "name": "Nod Submarine Pen",
+            "factory": "UnitType",
+            "construction_yard": false,
+            "tech_level": -1,
+            "prerequisite": [
+              "TSNACNST",
+              "POWER",
+              "PROC"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": true,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "naval"
+          },
+          {
+            "id": "DNWEAP",
+            "registered_as": "BuildingType",
+            "name": "Deployed Fist of Nod (Mobile Weapons Factory)",
+            "factory": "UnitType",
+            "construction_yard": false,
+            "tech_level": 11,
+            "prerequisite": [],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "MOBWARN",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": false,
+            "movement_zone": "",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0,
+            "category": "vehicles"
+          }
+        ],
+        "engineer": {
+          "id": "NENGINEER",
+          "registered_as": "InfantryType",
+          "name": "Nod Engineer",
+          "factory": "",
+          "construction_yard": false,
+          "tech_level": 1,
+          "prerequisite": [
+            "BARRACKS"
+          ],
+          "built_at": [],
+          "deploys_into": "",
+          "undeploys_into": "",
+          "engineer": true,
+          "resource_gatherer": false,
+          "naval": false,
+          "movement_zone": "Infantry",
+          "passengers": 0,
+          "powers_up_building": "",
+          "upgrades": 0
+        },
+        "resource_gatherer": {
+          "unit": {
+            "id": "TSNHARV",
+            "registered_as": "UnitType",
+            "name": "Nod Harvester",
+            "factory": "",
+            "construction_yard": false,
+            "tech_level": 1,
+            "prerequisite": [
+              "NODWEAP",
+              "PROC"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": true,
+            "naval": false,
+            "movement_zone": "Crusher",
+            "passengers": 0,
+            "powers_up_building": "",
+            "upgrades": 0
+          },
+          "factory_id": "TSNAWEAP",
+          "refinery_id": "TSREFINERY"
+        },
+        "amphibious_transport": {
+          "unit": {
+            "id": "NODHVR",
+            "registered_as": "UnitType",
+            "name": "Nod Hover Transport",
+            "factory": "",
+            "construction_yard": false,
+            "tech_level": 2,
+            "prerequisite": [
+              "NODYARD"
+            ],
+            "built_at": [],
+            "deploys_into": "",
+            "undeploys_into": "",
+            "engineer": false,
+            "resource_gatherer": false,
+            "naval": true,
+            "movement_zone": "Amphibious",
+            "passengers": 12,
+            "powers_up_building": "",
+            "upgrades": 0
+          },
+          "shipyard_id": "TSNAYARD"
+        },
+        "component_tower_chains": [],
+        "review": {
+          "status": "pending_review",
+          "notes": ""
+        }
+      }
+    },
+    "safe_clone_policy": {
+      "generated_type_prefix": "RLRP",
+      "factory_production_uses_clones": true,
+      "authored_placements_remain_native": true,
+      "authored_taskforces_remain_native": true,
+      "native_starting_direct_buff_checks": [
+        "opponent_does_not_start_same_type",
+        "type_not_globally_shared_with_opponent",
+        "weapons_not_shared_with_opponent"
+      ],
+      "lock_access_before_stat_buffs": true
+    },
+    "source_validation": {
+      "valid": true,
+      "failures": []
+    },
+    "review_complete": false
+  }
+}

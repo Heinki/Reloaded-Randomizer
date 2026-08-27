@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "description": "Launcher choices, labels, faction colors, and light/dark palettes.",
+  "sections": {
+    "difficulties": [
+      [
+        "Casual",
+        0
+      ],
+      [
+        "Normal",
+        1
+      ],
+      [
+        "Hard",
+        2
+      ]
+    ],
+    "game_speeds": [
+      [
+        "0 - Slowest",
+        0
+      ],
+      [
+        "1 - Slower",
+        1
+      ],
+      [
+        "2 - Slow",
+        2
+      ],
+      [
+        "3 - Medium",
+        3
+      ],
+      [
+        "4 - Fast",
+        4
+      ],
+      [
+        "5 - Faster",
+        5
+      ],
+      [
+        "6 - Fastest",
+        6
+      ]
+    ],
+    "campaign_filters": [
+      "All Campaigns",
+      "Allies - Red Alert 2",
+      "Soviets - Red Alert 2",
+      "Allies - Yuri's Revenge",
+      "Soviets - Yuri's Revenge",
+      "GDI - Tiberian Sun",
+      "Nod - Tiberian Sun",
+      "GDI - Firestorm",
+      "Nod - Firestorm",
+      "Yuri - Resurgence"
+    ],
+    "reward_modes": [
+      "Standard",
+      "Chaos",
+      "Randomizer Arsenal"
+    ],
+    "progression_modes": [
+      "Classic",
+      "Mission List",
+      "Grid Mode",
+      "Shop Mode"
+    ],
+    "default_progression_mode": "Mission List",
+    "player_colors": [
+      "Default", "Gold", "Red", "DarkBlue", "Green", "Orange", "Sky",
+      "Purple", "Pink", "Teal", "Aqua", "Lime", "Magenta", "Crimson",
+      "Brown2", "DarkGreen", "DarkRed", "LightBlue", "NeonGreen", "Olive",
+      "Purple2", "Purple3", "Russet", "Yellow"
+    ],
+    "rainbowizer_colors": [
+      "Gold", "Red", "DarkBlue", "Green", "Orange", "Sky", "Purple", "Pink",
+      "Teal", "Aqua", "Lime", "Magenta", "Crimson", "Brown2", "DarkGreen",
+      "DarkRed", "LightBlue", "NeonGreen", "Olive", "Purple2", "Purple3",
+      "Russet", "Yellow"
+    ],
+    "eva_voice_tags": {
+      "Allies": "Allied",
+      "Soviets": "Russian",
+      "Yuri": "Yuri",
+      "GDI": "EvaGDI",
+      "Nod": "EvaNod"
+    },
+    "rewards_per_check_messages": {
+      "maximum": "Ok that is now enough...",
+      "thresholds": [
+        [20, "So you don't feel powerful enough?"],
+        [10, "Wanting to feel good eh?"]
+      ]
+    },
+    "faction_tile_colors": {
+      "Allies": "#285f9e",
+      "Soviets": "#a53636",
+      "Yuri": "#70429a",
+      "GDI": "#c79a24",
+      "Nod": "#8f2424"
+    },
+    "light_palette": {
+      "background": "#f0f0f0",
+      "panel": "#ffffff",
+      "canvas": "#e9ecef",
+      "foreground": "#202124",
+      "muted": "#555555",
+      "field": "#ffffff",
+      "border": "#b8bec5",
+      "select": "#3478bd",
+      "select_foreground": "#ffffff",
+      "busy": "#edf3f8",
+      "busy_card": "#f9fcff",
+      "busy_title": "#172a3a",
+      "busy_detail": "#4c6172"
+    },
+    "dark_palette": {
+      "background": "#171a1f",
+      "panel": "#20242b",
+      "canvas": "#12151a",
+      "foreground": "#e8eaed",
+      "muted": "#aeb6c2",
+      "field": "#111419",
+      "border": "#49515c",
+      "select": "#315f91",
+      "select_foreground": "#ffffff",
+      "busy": "#111419",
+      "busy_card": "#202a34",
+      "busy_title": "#f2f7fb",
+      "busy_detail": "#b9c7d4"
+    }
+  }
+}

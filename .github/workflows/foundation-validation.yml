@@ -1,0 +1,43 @@
+name: Foundation validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: windows-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.14.6'
+      - name: Compile source
+        run: python -m compileall -q .
+      - name: Validate static configuration schemas
+        run: >-
+          python -c "from randomizer.config.static import REQUIRED_STATIC_CONFIGS,
+          validate_static_configs; validate_static_configs(REQUIRED_STATIC_CONFIGS)"
+
+  codeql:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      packages: read
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: python
+      - name: Analyze
+        uses: github/codeql-action/analyze@v4

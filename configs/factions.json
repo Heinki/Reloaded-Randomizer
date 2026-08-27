@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "description": "C&C Reloaded five-faction production, engineers, transports, harvesters, and technology ordering. CABAL is deferred.",
+  "sections": {
+    "active_families": ["allies", "soviets", "yuri", "gdi", "nod"],
+    "deferred_families": ["cabal"],
+    "default_unlock_build_houses": "AlliesCountry,SovietCountry,YuriCountry,GDICountry,NodCountry",
+    "engineer_by_family": {
+      "allies": "ENGINEER",
+      "soviets": "SENGINEER",
+      "yuri": "YENGINEER",
+      "gdi": "GENGINEER",
+      "nod": "NENGINEER"
+    },
+    "engineer_installed_forbidden_houses": {
+      "ENGINEER": "SovietCountry,SovietCountry2,Russians,Confederation,Africans,Arabs,YuriCountry,YuriCountry2,Alliance,French,GDICountry,GDICountry2,NodCountry,NodCountry2,RobotCountry,RobotCountry2",
+      "SENGINEER": "AlliesCountry,AlliesCountry2,British,French,Germans,Americans,Alliance,YuriCountry,YuriCountry2,Confederation,Arabs,GDICountry,GDICountry2,NodCountry,NodCountry2,RobotCountry,RobotCountry2",
+      "YENGINEER": "AlliesCountry,AlliesCountry2,British,French,Germans,Americans,Alliance,SovietCountry,SovietCountry2,Russians,Confederation,Africans,Arabs,GDICountry,GDICountry2,NodCountry,NodCountry2,RobotCountry,RobotCountry2",
+      "GENGINEER": "SovietCountry,SovietCountry2,Russians,Confederation,Africans,Arabs,YuriCountry,YuriCountry2,AlliesCountry,AlliesCountry2,British,Germans,Americans,NodCountry,NodCountry2,RobotCountry,RobotCountry2",
+      "NENGINEER": "SovietCountry,SovietCountry2,Russians,Confederation,Africans,Arabs,YuriCountry,YuriCountry2,AlliesCountry,AlliesCountry2,British,French,Germans,Americans,Alliance,GDICountry,GDICountry2,RobotCountry,RobotCountry2"
+    },
+    "conyard_by_mcv": {
+      "AMCV": "GACNST",
+      "SMCV": "NACNST",
+      "PCV": "YACNST",
+      "GDIMCV": "TSGACNST",
+      "NODMCV": "TSNACNST"
+    },
+    "amphibious_transports": {
+      "allies": ["LCRF", "GAYARD"],
+      "soviets": ["SAPC", "NAYARD"],
+      "yuri": ["YHVR", "YAYARD"],
+      "gdi": ["GDIHVR", "TSGAYARD"],
+      "nod": ["NODHVR", "TSNAYARD"]
+    },
+    "miners": {
+      "allies": ["CMIN", "GAWEAP", "GAREFN"],
+      "soviets": ["HARV", "NAWEAP", "NAREFN"],
+      "yuri": ["SMIN", "YAWEAP", "YAREFN"],
+      "gdi": ["TSHARV", "TSGAWEAP", "TSREFINERY"],
+      "nod": ["TSNHARV", "TSNAWEAP", "TSREFINERY"]
+    },
+    "production_buildings": {
+      "allies": {"base": ["GACNST"], "infantry": ["GAPILE"], "vehicles": ["GAWEAP", "ALLWEAP"], "air": ["GAAIRC", "AMRADR", "ALLRADAR"], "naval": ["GAYARD", "ALLYARD"]},
+      "soviets": {"base": ["NACNST"], "infantry": ["NAHAND", "SOVHAND"], "vehicles": ["NAWEAP", "SOVWEAP"], "air": ["NAHELIPAD", "SOVHPAD"], "naval": ["NAYARD", "SOVYARD"]},
+      "yuri": {"base": ["YACNST"], "infantry": ["YABRCK"], "vehicles": ["YAWEAP", "YURWEAP"], "air": ["GENHPAD"], "naval": ["YAYARD", "YURYARD"]},
+      "gdi": {"base": ["TSGACNST"], "infantry": ["TSGAPILE"], "vehicles": ["TSGAWEAP", "GDIWEAP"], "air": ["TSGAHPAD", "GDIHPAD"], "naval": ["TSGAYARD", "GDIYARD"]},
+      "nod": {"base": ["TSNACNST"], "infantry": ["TSNAHAND"], "vehicles": ["TSNAWEAP", "TSNAMECHFACT", "NODWEAP"], "air": ["TSNAHPAD", "NODHPAD"], "naval": ["TSNAYARD", "NODYARD"]}
+    },
+    "chaos_primary_production": {
+      "allies": {"base": "GACNST", "infantry": "GAPILE", "vehicles": "GAWEAP", "air": "GAAIRC", "naval": "GAYARD"},
+      "soviets": {"base": "NACNST", "infantry": "NAHAND", "vehicles": "NAWEAP", "air": "NAHELIPAD", "naval": "NAYARD"},
+      "yuri": {"base": "YACNST", "infantry": "YABRCK", "vehicles": "YAWEAP", "naval": "YAYARD"},
+      "gdi": {"base": "TSGACNST", "infantry": "TSGAPILE", "vehicles": "TSGAWEAP", "air": "TSGAHPAD", "naval": "TSGAYARD"},
+      "nod": {"base": "TSNACNST", "infantry": "TSNAHAND", "vehicles": "TSNAWEAP", "air": "TSNAHPAD", "naval": "TSNAYARD"}
+    },
+    "tech_order": [
+      "ENGINEER", "SENGINEER", "YENGINEER", "GENGINEER", "NENGINEER",
+      "AMCV", "SMCV", "PCV", "GDIMCV", "NODMCV",
+      "CMIN", "HARV", "SMIN", "TSHARV", "TSNHARV",
+      "LCRF", "SAPC", "YHVR", "GDIHVR", "NODHVR"
+    ]
+  }
+}

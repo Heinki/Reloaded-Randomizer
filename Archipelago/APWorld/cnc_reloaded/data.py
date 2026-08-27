@@ -1,0 +1,125 @@
+"""Generated catalogue loader for the C&C Reloaded APWorld."""
+
+from collections import defaultdict
+from importlib.resources import files
+import json
+
+from BaseClasses import ItemClassification
+
+
+GAME_NAME = "C&C Reloaded"
+VICTORY_EVENT = "C&C Reloaded Victory"
+MAXIMUM_SHOP_PURCHASE_LOCATIONS = 25
+MAXIMUM_SHOP_RUN_LENGTH = 20
+SHOP_PURCHASE_LOCATION_ID_BASE = 0x52FE000
+SHOP_STAGE_LOCATION_ID_BASE = 0x52FE100
+SHOP_STAGE_LOGIC_ID_BASE = 0x52FE200
+
+_CLASSIFICATIONS = {
+    "progression": ItemClassification.progression,
+    "useful": ItemClassification.useful,
+    "filler": ItemClassification.filler,
+    "trap": ItemClassification.trap,
+}
+
+_SNAPSHOT = json.loads(
+    files(__package__).joinpath("catalogue.json").read_text(encoding="utf-8")
+)
+CATALOGUE_CHECKSUM = _SNAPSHOT["catalogue_checksum"]
+RANDOMIZER_VERSION = _SNAPSHOT["randomizer_version"]
+MAXIMUM_REWARDS_PER_CHECK = int(_SNAPSHOT["maximum_rewards_per_check"])
+
+ITEM_DATA = {
+    entry["name"]: {
+        "id": int(entry["id"]),
+        "classification": _CLASSIFICATIONS[entry["classification"]],
+        "classification_name": entry["classification"],
+        "category": entry["category"],
+        "repeatable": bool(entry["repeatable"]),
+    }
+    for entry in _SNAPSHOT["items"]
+}
+ITEM_TABLE = {
+    name: (data["id"], data["classification"])
+    for name, data in ITEM_DATA.items()
+}
+
+MISSION_DATA = {
+    entry["code"]: entry for entry in _SNAPSHOT["missions"]
+}
+LOCATION_TABLE = {
+    entry["name"]: int(entry["id"])
+    for entry in _SNAPSHOT["locations"]
+}
+LOCAL_VICTORY_DATA = {
+    entry["mission"]: {
+        "item_name": entry["item_name"],
+        "item_id": int(entry["item_id"]),
+        "location_name": entry["location_name"],
+        "location_id": int(entry["location_id"]),
+    }
+    for entry in _SNAPSHOT["local_victories"]
+}
+LOCAL_VICTORY_ITEM_TABLE = {
+    data["item_name"]: data["item_id"]
+    for data in LOCAL_VICTORY_DATA.values()
+}
+LOCAL_VICTORY_LOCATION_TABLE = {
+    data["location_name"]: data["location_id"]
+    for data in LOCAL_VICTORY_DATA.values()
+}
+LOCATION_TABLE.update(LOCAL_VICTORY_LOCATION_TABLE)
+SHOP_PURCHASE_LOCATION_TABLE = {
+    f"Roguelike Shop Purchase {index}": (
+        SHOP_PURCHASE_LOCATION_ID_BASE + index - 1
+    )
+    for index in range(1, MAXIMUM_SHOP_PURCHASE_LOCATIONS + 1)
+}
+SHOP_STAGE_LOCATION_TABLE = {
+    f"Shop Run Mission {index} Victory": (
+        SHOP_STAGE_LOCATION_ID_BASE + index - 1
+    )
+    for index in range(1, MAXIMUM_SHOP_RUN_LENGTH + 1)
+}
+SHOP_STAGE_LOGIC_DATA = {
+    index: {
+        "item_name": f"C&C Reloaded Shop Stage Victory: {index}",
+        "item_id": SHOP_STAGE_LOGIC_ID_BASE + index - 1,
+        "location_name": f"Shop Run Stage {index} - Local Victory",
+        "location_id": SHOP_STAGE_LOGIC_ID_BASE + index - 1,
+    }
+    for index in range(1, MAXIMUM_SHOP_RUN_LENGTH + 1)
+}
+SHOP_STAGE_LOGIC_ITEM_TABLE = {
+    data["item_name"]: data["item_id"]
+    for data in SHOP_STAGE_LOGIC_DATA.values()
+}
+LOCATION_TABLE.update(SHOP_PURCHASE_LOCATION_TABLE)
+LOCATION_TABLE.update(SHOP_STAGE_LOCATION_TABLE)
+LOCATION_TABLE.update({
+    data["location_name"]: data["location_id"]
+    for data in SHOP_STAGE_LOGIC_DATA.values()
+})
+LOCATION_SLOTS = defaultdict(lambda: defaultdict(list))
+for _entry in _SNAPSHOT["locations"]:
+    LOCATION_SLOTS[_entry["mission"]][_entry["check"]].append(
+        (_entry["name"], int(_entry["id"]))
+    )
+LOCATION_SLOTS = {
+    code: {check_id: tuple(values) for check_id, values in checks.items()}
+    for code, checks in LOCATION_SLOTS.items()
+}
+
+ITEM_NAME_GROUPS = defaultdict(set)
+for _name, _data in ITEM_DATA.items():
+    ITEM_NAME_GROUPS[_data["category"]].add(_name)
+ITEM_NAME_GROUPS = dict(ITEM_NAME_GROUPS)
+
+# Tables above retain the shared strings/integers they need. Drop the decoded
+# 35,876-entry source list so generation does not keep every location object
+# twice.
+del _SNAPSHOT, _entry, _name, _data
+
+
+def location_entries(code, check_id, count):
+    return LOCATION_SLOTS[code][check_id][:count]

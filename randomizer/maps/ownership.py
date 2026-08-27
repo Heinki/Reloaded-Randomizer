@@ -1,0 +1,508 @@
+"""Map object/team ownership analysis used by buff isolation."""
+
+from functools import lru_cache
+
+from randomizer.core.collections import comma_items, unique_in_order
+from randomizer.maps.ini import (
+    all_section_value_maps,
+    parse_action_groups,
+    section_lines,
+)
+
+
+@lru_cache(maxsize=1)
+def _installed_country_types():
+    """Return installed CountryType registry used by trigger house indices."""
+    from randomizer.content.inventory import read_rules_sections
+
+    sections, _source = read_rules_sections()
+    return tuple(sections.get('Countries', {}).items())
+
+
+def action_house_from_country_index(
+    lines,
+    index,
+    records=None,
+    sections=None,
+):
+    """Resolve Action house parameter through installed `[Countries]` order."""
+    sections = sections if sections is not None else all_section_value_maps(lines)
+    records = (
+        records
+        if records is not None
+        else map_house_records(lines, sections=sections)
+    )
+    # Map `[Countries]` lists active scenario countries in legacy order; it
+    # does not replace trigger Action CountryType indices. Reloaded prepends
+    # parent CountryTypes, so Action parameters must use installed rules order.
+    countries = dict(_installed_country_types())
+    country = str(countries.get(str(index).strip()) or '').strip()
+    if not country:
+        return ''
+    return canonical_house_name(records, country)
+from randomizer.maps.houses import (
+    canonical_house_name,
+    country_inherits_from,
+    is_buffable_helper_house,
+    map_house_records,
+    player_controlled_houses,
+)
+
+
+def techno_type_possible_houses(
+    lines,
+    values,
+    records=None,
+    sections=None,
+    sections_by_lower=None,
+):
+    """Return active Houses that may legally create one native TechnoType.
+
+    Placed units and TaskForces are incomplete production evidence: campaign AI
+    can request any native type allowed by Owner/RequiredHouses. Treat missing
+    ownership as globally reachable. This keeps a native global buff unsafe
+    unless both authored references and production ownership are friendly.
+    """
+    sections = sections if sections is not None else all_section_value_maps(lines)
+    records = (
+        records
+        if records is not None
+        else map_house_records(lines, sections=sections)
+    )
+    lowered = {
+        str(key).lower(): value for key, value in (values or {}).items()
+    }
+    owners = comma_items(lowered.get('owner', ''))
+    required = comma_items(lowered.get('requiredhouses', ''))
+    forbidden = comma_items(lowered.get('forbiddenhouses', ''))
+    sections_by_lower = sections_by_lower or {
+        str(name).lower(): section_values
+        for name, section_values in sections.items()
+    }
+
+    def inherits(country, ancestor):
+        wanted = str(ancestor or '').strip().lower()
+        current = str(country or '').strip()
+        visited = set()
+        while current and current.lower() not in visited:
+            current_lower = current.lower()
+            if current_lower == wanted:
+                return True
+            visited.add(current_lower)
+            parent = str(
+                sections_by_lower.get(current_lower, {}).get(
+                    'parentcountry', ''
+                )
+            ).strip()
+            if not parent or parent.lower() == current_lower:
+                break
+            current = parent
+        return False
+
+    def matches(house_name, country, identities):
+        wanted = {
+            str(item).strip().lower()
+            for item in identities
+            if str(item).strip().lower() not in {'', 'none', '<none>'}
+        }
+        if not wanted:
+            return False
+        house_aliases = {
+            house_name.lower(),
+            house_name.removesuffix(' House').lower(),
+            str(country).lower(),
+        }
+        if house_aliases.intersection(wanted):
+            return True
+        return any(inherits(country, identity) for identity in wanted)
+
+    possible = []
+    ownership_known = bool(owners or required)
+    for house_name, record in records.items():
+        country = record.get('country') or house_name.replace(' House', '')
+        owner_allowed = not owners or matches(house_name, country, owners)
+        required_allowed = (
+            not required or matches(house_name, country, required)
+        )
+        denied = matches(house_name, country, forbidden)
+        if (
+            (not ownership_known or (owner_allowed and required_allowed))
+            and not denied
+        ):
+            possible.append(house_name)
+    return possible
+
+
+def ai_trigger_team_usage_houses(lines):
+    """Return runtime owner overrides for TeamTypes used by AI triggers."""
+    team_houses = {}
+    for line in section_lines(lines, 'AITriggerTypes'):
+        if '=' not in line:
+            continue
+        _, value = line.split('=', 1)
+        tokens = [token.strip() for token in value.split(',')]
+        if len(tokens) < 3:
+            continue
+        team_id = tokens[1]
+        house = tokens[2]
+        if not team_id or team_id.lower() in {'<none>', 'none'}:
+            continue
+        if not house or house.lower() in {'<none>', 'none'}:
+            continue
+        team_houses.setdefault(team_id.lower(), set()).add(house)
+    return team_houses
+
+
+def directly_created_team_ids(lines):
+    """Return TeamTypes created directly by map actions."""
+    team_ids = set()
+    for line in section_lines(lines, 'Actions'):
+        if '=' not in line:
+            continue
+        _, value = line.split('=', 1)
+        _, groups = parse_action_groups(value)
+        for group in groups:
+            # Action 4 is Create Team; parameter 3 contains TeamType ID.
+            if group[0] == '4' and group[2]:
+                team_ids.add(group[2].lower())
+    return team_ids
+
+
+def script_referenced_team_ids(lines):
+    """Return every TeamType named by a map action.
+
+    Campaigns create reinforcements through several action variants, not only
+    action 4. Matching action parameters against the map's registered
+    TeamTypes avoids maintaining an incomplete action-code allowlist.
+    """
+    sections = all_section_value_maps(lines)
+    known_team_ids = {
+        str(team_id).lower()
+        for team_id in sections.get('TeamTypes', {}).values()
+        if team_id
+    }
+    referenced = set()
+    for line in section_lines(lines, 'Actions'):
+        if '=' not in line:
+            continue
+        _, value = line.split('=', 1)
+        _, groups = parse_action_groups(value)
+        for group in groups:
+            for parameter in group[1:]:
+                candidate = str(parameter or '').strip().lower()
+                if candidate in known_team_ids:
+                    referenced.add(candidate)
+    return referenced
+
+
+def script_referenced_taskforce_unit_ids(lines, sections=None):
+    """Return TechnoTypes used by action-referenced story teams."""
+    sections = sections or all_section_value_maps(lines)
+    sections_by_lower = {
+        str(section).lower(): values for section, values in sections.items()
+    }
+    unit_ids = set()
+    for team_id in script_referenced_team_ids(lines):
+        taskforce_id = str(
+            sections_by_lower.get(team_id, {}).get('taskforce', '')
+        ).strip().lower()
+        if not taskforce_id:
+            continue
+        for value in sections_by_lower.get(taskforce_id, {}).values():
+            tokens = [token.strip() for token in str(value).split(',')]
+            if (
+                len(tokens) >= 2
+                and tokens[0].isdigit()
+                and tokens[1]
+                and tokens[1].lower() not in {'none', '<none>'}
+            ):
+                unit_ids.add(tokens[1].upper())
+    return unit_ids
+
+
+def taskforce_usage_houses(lines, sections=None):
+    """Resolve each TaskForce to houses that can own it at runtime."""
+    sections = sections or all_section_value_maps(lines)
+    ai_team_houses = ai_trigger_team_usage_houses(lines)
+    directly_created = directly_created_team_ids(lines)
+    taskforce_to_houses = {}
+    placeholder_houses = {'neutral', 'neutral house', '<none>', 'none'}
+    for section_name, values in sections.items():
+        taskforce = values.get('taskforce')
+        house = values.get('house')
+        if not taskforce or not house:
+            continue
+
+        section_key = section_name.lower()
+        runtime_houses = ai_team_houses.get(section_key, set())
+        houses = taskforce_to_houses.setdefault(taskforce.lower(), set())
+        houses.update(runtime_houses)
+
+        # Neutral can be an AITrigger template, not a live Neutral consumer.
+        if (
+            house.lower() not in placeholder_houses
+            or not runtime_houses
+            or section_key in directly_created
+        ):
+            houses.add(house)
+    return taskforce_to_houses
+
+
+def taskforce_unit_usage_houses(lines, unit_id):
+    """Return runtime houses using one type through TaskForces."""
+    unit_upper = (unit_id or '').upper()
+    sections = all_section_value_maps(lines)
+    sections_by_lower = {name.lower(): values for name, values in sections.items()}
+    taskforce_to_houses = taskforce_usage_houses(lines, sections=sections)
+
+    usage_houses = set()
+    for taskforce_id, houses in taskforce_to_houses.items():
+        for value in sections_by_lower.get(taskforce_id, {}).values():
+            tokens = [token.strip() for token in value.split(',')]
+            if len(tokens) >= 2 and tokens[1].upper() == unit_upper:
+                usage_houses.update(houses)
+    return usage_houses
+
+
+def placed_unit_usage_houses(lines, unit_id):
+    """Return houses owning placed instances of one type."""
+    unit_upper = (unit_id or '').upper()
+    usage_houses = set()
+    for section in ('Infantry', 'Units', 'Aircraft', 'Structures'):
+        for line in section_lines(lines, section):
+            if '=' not in line:
+                continue
+            _, value = line.split('=', 1)
+            tokens = [token.strip() for token in value.split(',')]
+            if len(tokens) >= 2 and tokens[1].upper() == unit_upper:
+                usage_houses.add(tokens[0])
+    return usage_houses
+
+
+def build_unit_usage_index(lines):
+    """Index placed and scripted type ownership with one map parse."""
+    usage = {}
+    sections = all_section_value_maps(lines)
+    sections_by_lower = {name.lower(): values for name, values in sections.items()}
+    for section in ('Infantry', 'Units', 'Aircraft', 'Structures'):
+        for value in sections_by_lower.get(section.lower(), {}).values():
+            tokens = [token.strip() for token in value.split(',')]
+            if len(tokens) >= 2:
+                usage.setdefault(tokens[1].upper(), set()).add(tokens[0])
+
+    for taskforce_id, houses in taskforce_usage_houses(
+        lines,
+        sections=sections,
+    ).items():
+        for value in sections_by_lower.get(taskforce_id, {}).values():
+            tokens = [token.strip() for token in value.split(',')]
+            if len(tokens) >= 2:
+                usage.setdefault(tokens[1].upper(), set()).update(houses)
+    return usage
+
+
+def unit_usage_houses(lines, unit_id, usage_index=None):
+    """Return placed/scripted houses using one TechnoType."""
+    if usage_index is not None:
+        return set(usage_index.get(str(unit_id or '').upper(), set()))
+    return (
+        placed_unit_usage_houses(lines, unit_id)
+        | taskforce_unit_usage_houses(lines, unit_id)
+    )
+
+
+def scripted_enemy_house_pairs(lines, records=None):
+    """Return house pairs that Action 38 can make hostile."""
+    sections = all_section_value_maps(lines)
+    records = (
+        records
+        if records is not None
+        else map_house_records(lines, sections=sections)
+    )
+
+    enemy_targets_by_action = {}
+    for line in section_lines(lines, 'Actions'):
+        if '=' not in line:
+            continue
+        action_id, value = line.split('=', 1)
+        _, groups = parse_action_groups(value)
+        targets = {
+            action_house_from_country_index(
+                lines,
+                group[2],
+                records=records,
+                sections=sections,
+            )
+            for group in groups
+            if len(group) >= 3 and group[0] == '38'
+        } - {''}
+        if targets:
+            enemy_targets_by_action[action_id.strip().lower()] = targets
+
+    pairs = set()
+    for line in section_lines(lines, 'Triggers'):
+        if '=' not in line:
+            continue
+        trigger_id, value = line.split('=', 1)
+        targets = enemy_targets_by_action.get(trigger_id.strip().lower())
+        if not targets:
+            continue
+        tokens = [token.strip() for token in value.split(',')]
+        if len(tokens) >= 3 and 'debug' in tokens[2].lower():
+            continue
+        owner = canonical_house_name(records, tokens[0] if tokens else '')
+        if not owner:
+            continue
+        for target in targets:
+            if owner.lower() != target.lower():
+                pairs.add(frozenset((owner.lower(), target.lower())))
+    return pairs
+
+
+def player_transfer_houses(lines, records=None, scripted_enemies=None):
+    """Return houses whose complete forces safely join player coalition."""
+    sections = all_section_value_maps(lines)
+    records = (
+        records
+        if records is not None
+        else map_house_records(lines, sections=sections)
+    )
+    player_houses = player_controlled_houses(lines, records=records)
+    if not player_houses:
+        return []
+
+    wanted_players = {house.lower() for house in player_houses}
+
+    transfer_actions = set()
+    for line in section_lines(lines, 'Actions'):
+        if '=' not in line:
+            continue
+        action_id, value = line.split('=', 1)
+        _, groups = parse_action_groups(value)
+        if any(
+            group[0] == '36'
+            and action_house_from_country_index(
+                lines,
+                group[2],
+                records=records,
+                sections=sections,
+            ).lower() in wanted_players
+            for group in groups
+        ):
+            transfer_actions.add(action_id.strip().lower())
+
+    houses = []
+    for line in section_lines(lines, 'Triggers'):
+        if '=' not in line:
+            continue
+        trigger_id, value = line.split('=', 1)
+        if trigger_id.strip().lower() not in transfer_actions:
+            continue
+        parts = [part.strip() for part in value.split(',')]
+        if len(parts) < 3 or 'debug' in parts[2].lower():
+            continue
+        owner = parts[0]
+        if owner and owner.lower() not in {'<none>', 'neutral'}:
+            houses.append(owner)
+    canonical_houses = unique_in_order(
+        canonical_house_name(records, house) or house
+        for house in unique_in_order(houses)
+    )
+
+    coalition_names = list(player_houses)
+    for player in player_houses:
+        coalition_names.extend(records.get(player, {}).get('allies', []))
+    coalition = {
+        canonical.lower()
+        for house in coalition_names
+        if (canonical := canonical_house_name(records, house))
+    }
+    scripted_enemies = (
+        scripted_enemy_house_pairs(lines, records=records)
+        if scripted_enemies is None
+        else scripted_enemies
+    )
+    return [
+        house
+        for house in canonical_houses
+        if not any(
+            frozenset((house.lower(), coalition_house)) in scripted_enemies
+            for coalition_house in coalition
+            if coalition_house != house.lower()
+        )
+    ]
+
+
+def unsafe_country_houses(
+    lines,
+    country,
+    allowed_house_names,
+    records=None,
+    sections=None,
+    usage_index=None,
+    scripted_enemies=None,
+):
+    """Return active denied houses inheriting one buff-target country."""
+    allowed = {name.lower() for name in allowed_house_names}
+    sections = sections if sections is not None else all_section_value_maps(lines)
+    records = (
+        records
+        if records is not None
+        else map_house_records(lines, sections=sections)
+    )
+    usage_index = (
+        build_unit_usage_index(lines)
+        if usage_index is None
+        else usage_index
+    )
+    scripted_enemies = (
+        scripted_enemy_house_pairs(lines, records=records)
+        if scripted_enemies is None
+        else scripted_enemies
+    )
+    used_houses = set()
+    for owners in usage_index.values():
+        for owner in owners:
+            canonical = canonical_house_name(records, owner)
+            used_houses.add((canonical or owner).lower())
+
+    unsafe = []
+    for name, record in records.items():
+        if not country_inherits_from(
+            lines,
+            record.get('country'),
+            country,
+            sections=sections,
+        ):
+            continue
+        name_lower = name.lower()
+        if name_lower in allowed:
+            continue
+
+        record_allies = {
+            canonical.lower()
+            for ally in record.get('allies', [])
+            if (canonical := canonical_house_name(records, ally))
+        }
+        allied_to_allowed = bool(record_allies.intersection(allowed)) or any(
+            name_lower in {
+                canonical.lower()
+                for ally in records.get(allowed_house, {}).get('allies', [])
+                if (canonical := canonical_house_name(records, ally))
+            }
+            for allowed_house in allowed_house_names
+        )
+        hostile_to_allowed = any(
+            frozenset((name_lower, allowed_house)) in scripted_enemies
+            for allowed_house in allowed
+            if allowed_house != name_lower
+        )
+        harmless_placeholder = (
+            not is_buffable_helper_house(record)
+            and name_lower not in used_houses
+            and allied_to_allowed
+            and not hostile_to_allowed
+        )
+        if not harmless_placeholder:
+            unsafe.append(name)
+    return unsafe

@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "description": "Reviewed C&C Reloaded special-building rewards. Empty until faction production review.",
+  "sections": {
+    "buildings": []
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "description": "Clone-isolated power buffs reviewed against C&C Reloaded 2.7.0. CABAL and internal powers are excluded.",
+  "sections": {
+    "buff_types": [
+      {"id": "recharge", "name": "Accelerated Recharge", "setting_label": "Faster recharge", "description": "Recharge time is 10% shorter per stack.", "maximum_stacks": 5},
+      {"id": "cost", "name": "Logistics", "setting_label": "Lower activation cost", "description": "Activation cost is 15% cheaper per stack.", "maximum_stacks": 5},
+      {"id": "area", "name": "Expanded Area", "setting_label": "Larger effect area", "description": "Effect radius grows by 0.5 cells per stack.", "maximum_stacks": 20},
+      {"id": "damage", "name": "Amplified Payload", "setting_label": "Higher damage", "description": "Direct power damage is 15% higher per stack.", "maximum_stacks": 5},
+      {"id": "health", "name": "Reinforced Power Structure", "setting_label": "More payload health", "description": "A delivered power structure gains 15% health per stack.", "maximum_stacks": 5},
+      {"id": "duration", "name": "Extended Effect", "setting_label": "Longer effect duration", "description": "Timed effect duration is 15% longer per stack.", "maximum_stacks": 5},
+      {"id": "effect", "name": "Amplified Status Effect", "setting_label": "Stronger status effect", "description": "A power status modifier is 25% stronger per stack.", "maximum_stacks": 5},
+      {"id": "targeting", "name": "Universal Vehicle Targeting", "setting_label": "Affect all vehicles", "description": "Power affects reviewed vehicle armor types.", "maximum_stacks": 1},
+      {"id": "vision", "name": "Expanded Recon", "setting_label": "Longer scouting vision", "description": "Scouting aircraft gains +1 sight per stack.", "maximum_stacks": 20},
+      {"id": "payload", "name": "Reinforced Payload", "setting_label": "One extra delivered unit", "description": "Delivery count increases by one per stack.", "maximum_stacks": 20}
+    ],
+    "recharge": {"factor_per_stack": 0.9, "applies_to_all_powers": true},
+    "cost": {"factor_per_stack": 0.85, "minimum_absolute": 0, "power_ids": ["SpawnCarryallFromAirSW"]},
+    "area": {
+      "amount_per_stack": 0.5,
+      "rectangle_amount_per_stack": 1,
+      "direct_fields": {
+        "NukeSpecial": {"field": "Range", "baseline": "7"},
+        "LightningStormSpecial": {"field": "Range", "baseline": "7"},
+        "PsychicDominatorSpecial": {"field": "Range", "baseline": "1.4"},
+        "TSIonCannonSpecial": {"field": "SW.Range", "baseline": "3"},
+        "IronCurtainSpecial": {"field": "Range", "baseline": "1.4"},
+        "ChronoSphereSpecial": {"field": "Range", "baseline": "1.75"},
+        "ForceShieldSpecial": {"field": "Range", "baseline": "3.4"},
+        "GeneticConverterSpecial": {"field": "SW.Range", "baseline": "3"},
+        "SonarPulseSpecial": {"field": "SW.Range", "baseline": "12"},
+        "TiberiumShowerSpecial": {"field": "SW.Range", "baseline": "7"}
+      },
+      "warhead_fields": {}
+    },
+    "damage": {
+      "factor_per_stack": 1.15,
+      "direct_fields": {
+        "TSIonCannonSpecial": {"field": "SW.Damage", "baseline": 1000},
+        "TSMultiSpecial": {"field": "SW.Damage", "baseline": 10000},
+        "GeneticConverterSpecial": {"field": "SW.Damage", "baseline": 10000}
+      },
+      "techno_fields": {}
+    },
+    "health": {
+      "factor_per_stack": 1.15,
+      "techno_fields": {
+        "TiberiumShowerSpecial": {"source": "TIBBOMB", "clone_key": "TIBBOMB", "field": "Strength"},
+        "HuntSeekSpecial": {"source": "GHUNTER", "clone_key": "GHUNTER", "field": "Strength"}
+      }
+    },
+    "duration": {
+      "factor_per_stack": 1.15,
+      "direct_fields": {
+        "IronCurtainSpecial": {"field": "Protect.Duration", "baseline": 600},
+        "ForceShieldSpecial": {"field": "Protect.Duration", "baseline": 450}
+      },
+      "warhead_fields": {},
+      "draining_techno_fields": {}
+    },
+    "effect": {
+      "factor_per_stack": 1.25,
+      "multiplier_fields": {},
+      "scalar_fields": {
+        "EMPulseSpecial": {
+          "source": "EMPuls",
+          "field": "EMP.Duration",
+          "baseline": 1200,
+          "reference_key": "SW.Warhead",
+          "effect_label": "EMP duration"
+        }
+      }
+    },
+    "targeting": {
+      "vehicle_armor_fields": {
+        "EMPulseSpecial": {
+          "source": "EMPuls",
+          "clone_key": "EMPuls",
+          "verses": "100%",
+          "reference_key": "SW.Warhead"
+        }
+      }
+    },
+    "vision": {
+      "amount_per_stack": 1,
+      "power_fields": {
+        "SpyPlaneSpecial": {"source": "SPYP", "clone": "RLRPSPYSCOUT", "list": "AircraftTypes", "field": "Sight"}
+      }
+    },
+    "payload": {
+      "buff_unit_ids_by_power": {
+        "ParaDropSpecial": ["E1"],
+        "DropPodSpecial": ["TSE1", "TSE2"]
+      },
+      "equivalent_hero_buff_sources": {},
+      "paradrop_all_type_increases": [],
+      "unit_delivery_power_ids": ["SpawnCarryallFromAirSW"],
+      "internal_unit_delivery_fields": {},
+      "paradrop_power_ids": ["ParaDropSpecial", "TiberiumShowerSpecial"],
+      "spy_plane_power_ids": ["SpyPlaneSpecial"],
+      "drop_pod_power_ids": ["DropPodSpecial"],
+      "drop_pod_type_weight_additions": {
+        "DropPodSpecial": ["TSE1", "TSE2"]
+      }
+    }
+  }
+}

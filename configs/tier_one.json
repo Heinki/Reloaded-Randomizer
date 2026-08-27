@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "description": "Reviewed C&C Reloaded Tier 1 starters for the five active factions. CABAL is deferred.",
+  "sections": {
+    "role_units": {
+      "ground_infantry": {"allies": ["E1", "infantry"], "soviets": ["E2", "infantry"], "yuri": ["INIT", "infantry"], "gdi": ["TSE1", "infantry"], "nod": ["TSNE1", "infantry"]},
+      "anti_air_infantry": {"allies": ["GGI", "infantry"], "soviets": ["FLAKT", "infantry"], "yuri": ["INIT", "infantry"], "gdi": ["TSJUMPJET", "infantry"], "nod": ["TSE3", "infantry"]},
+      "ground_vehicle": {"allies": ["MTNK", "vehicles"], "soviets": ["HTNK", "vehicles"], "yuri": ["LTNK", "vehicles"], "gdi": ["MMCH", "vehicles"], "nod": ["TICKT", "vehicles"]},
+      "anti_air_vehicle": {"allies": ["FV", "vehicles"], "soviets": ["HTK", "vehicles"], "yuri": ["YTNK", "vehicles"], "gdi": ["SMECH", "vehicles"], "nod": ["TSBIKE", "vehicles"]},
+      "basic_aircraft": {"allies": ["ORCA", "air"], "soviets": ["SMIG", "air"], "gdi": ["TSORCA", "air"], "nod": ["APACHE", "air"]}
+    },
+    "role_markers": {
+      "ground_infantry": "T1_GROUND_INFANTRY",
+      "anti_air_infantry": "T1_ANTI_AIR_INFANTRY",
+      "ground_vehicle": "T1_GROUND_VEHICLE",
+      "anti_air_vehicle": "T1_ANTI_AIR_VEHICLE",
+      "basic_aircraft": "T1_BASIC_AIRCRAFT"
+    },
+    "defense_marker": "T1_BASIC_DEFENSES",
+    "defense_role_units": {
+      "ground_defense": {"allies": "GAPILL", "soviets": "NALASR", "yuri": "YAGGUN", "gdi": "GAVULC", "nod": "TSLASR"},
+      "anti_air_defense": {"allies": "NASAM", "soviets": "NAFLAK", "yuri": "YAGGUN", "gdi": "GAROCK", "nod": "NODSAM"}
+    },
+    "defense_roles": ["ground_defense", "anti_air_defense"],
+    "defense_units": {
+      "allies": ["GAPILL", "NASAM"],
+      "soviets": ["NALASR", "NAFLAK"],
+      "yuri": ["YAGGUN"],
+      "gdi": ["GAVULC", "GAROCK"],
+      "nod": ["TSLASR", "NODSAM"]
+    },
+    "subfaction_units": {},
+    "ground_roles": ["ground_infantry", "anti_air_infantry", "ground_vehicle", "anti_air_vehicle"],
+    "standard_families": ["allies", "soviets", "yuri", "gdi", "nod"],
+    "airfields": {"allies": "GAAIRC", "soviets": "NAHELIPAD", "gdi": "TSGAHPAD", "nod": "TSNAHPAD"},
+    "production_aliases": {
+      "allies": {"infantry": ["ALLRAX"]},
+      "soviets": {"infantry": ["SOVRAX"]},
+      "yuri": {"infantry": ["YURRAX"]},
+      "gdi": {"infantry": []},
+      "nod": {"infantry": []}
+    }
+  }
+}
