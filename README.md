@@ -82,17 +82,6 @@ Map-authored units, TaskForces, triggers, events, and actions keep their native
 identities. Player production uses isolated Randomizer clones where necessary
 to avoid changing enemy or scripted units that share the original type.
 
-## Early development stage
-
-Version `0.5.0` is a five-faction test release. Core standalone and
-Archipelago systems are implemented, but broad live campaign testing remains
-in progress. Features may still behave incorrectly or expose mission-specific
-edge cases. CABAL will remain excluded until its campaign and faction content
-are complete and reviewed.
-
-Report reproducible problems through the repository's
-[issue tracker](https://github.com/Heinki/Reloaded-Randomizer/issues).
-
 ## AI-assisted development
 
 This project was developed with assistance from OpenAI's ChatGPT and Codex.
@@ -105,12 +94,12 @@ maintainer's responsibility.
 
 Each maintained document has one purpose:
 
-| Document | Audience | Content |
-|---|---|---|
-| [Archipelago/README.md](Archipelago/README.md) | Players and room hosts | APWorld installation, Player YAML export, room connection, play, and troubleshooting |
-| [configs/README.md](configs/README.md) | Maintainers | Static mission, faction, reward, unit, Shop, and UI configuration |
-| [configs/player/README.md](configs/player/README.md) | Developers | Source-mode player configuration location and privacy rules |
-| [Archipelago APWorld setup](Archipelago/APWorld/cnc_reloaded/docs/setup_en.md) | Archipelago clients | Short package metadata and compatibility guide embedded in the APWorld |
+| Document                                                                       | Audience               | Content                                                                              |
+| ------------------------------------------------------------------------------ | ---------------------- | ------------------------------------------------------------------------------------ |
+| [Archipelago/README.md](Archipelago/README.md)                                 | Players and room hosts | APWorld installation, Player YAML export, room connection, play, and troubleshooting |
+| [configs/README.md](configs/README.md)                                         | Maintainers            | Static mission, faction, reward, unit, Shop, and UI configuration                    |
+| [configs/player/README.md](configs/player/README.md)                           | Developers             | Source-mode player configuration location and privacy rules                          |
+| [Archipelago APWorld setup](Archipelago/APWorld/cnc_reloaded/docs/setup_en.md) | Archipelago clients    | Short package metadata and compatibility guide embedded in the APWorld               |
 
 ## Developer workflow
 
@@ -144,21 +133,21 @@ runtime extraction directory is not part of the project.
 
 ## Source layout
 
-| Path | Responsibility |
-|---|---|
-| `launcher_gui.py` | Source and packaged entry point |
+| Path                      | Responsibility                                                            |
+| ------------------------- | ------------------------------------------------------------------------- |
+| `launcher_gui.py`         | Source and packaged entry point                                           |
 | `randomizer/application/` | Application state, seed, progression, launch, and Archipelago controllers |
-| `randomizer/config/` | Static and player configuration loading and validation |
-| `randomizer/core/` | Paths, storage, diagnostics, and version primitives |
-| `randomizer/maps/` | Generated-map pipeline, ownership, clones, buffs, hooks, and settings |
-| `randomizer/missions/` | Mission catalogue, policy, safety, and review evidence |
-| `randomizer/progression/` | Mission List and Grid progression |
-| `randomizer/rewards/` | Reward definitions, planning, and display |
-| `randomizer/shop/` | Standalone and Archipelago Shop Mode |
-| `randomizer/ui/` | Tk user interface |
-| `Archipelago/` | APWorld, embedded client, manifest, and YAML integration |
-| `configs/` | Reloaded-owned static JSON policy and ignored local player data |
-| `tools/` | Maintainer audits and data-generation tools |
+| `randomizer/config/`      | Static and player configuration loading and validation                    |
+| `randomizer/core/`        | Paths, storage, diagnostics, and version primitives                       |
+| `randomizer/maps/`        | Generated-map pipeline, ownership, clones, buffs, hooks, and settings     |
+| `randomizer/missions/`    | Mission catalogue, policy, safety, and review evidence                    |
+| `randomizer/progression/` | Mission List and Grid progression                                         |
+| `randomizer/rewards/`     | Reward definitions, planning, and display                                 |
+| `randomizer/shop/`        | Standalone and Archipelago Shop Mode                                      |
+| `randomizer/ui/`          | Tk user interface                                                         |
+| `Archipelago/`            | APWorld, embedded client, manifest, and YAML integration                  |
+| `configs/`                | Reloaded-owned static JSON policy and ignored local player data           |
+| `tools/`                  | Maintainer audits and data-generation tools                               |
 
 ## Troubleshooting
 
