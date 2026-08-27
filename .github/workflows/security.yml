@@ -1,16 +1,16 @@
-name: Foundation validation
+name: Security checks
 
 on:
   push:
     branches: [main]
   pull_request:
-  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  validate:
+  validation:
+    name: Windows validation
     runs-on: windows-latest
     steps:
       - name: Check out source
@@ -27,8 +27,12 @@ jobs:
           validate_static_configs; validate_static_configs(REQUIRED_STATIC_CONFIGS)"
 
   codeql:
+    name: CodeQL (Python)
+    # Private repositories require GitHub Code Security before CodeQL can upload results.
+    if: ${{ github.event.repository.private == false || vars.CODE_SECURITY_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     permissions:
+      actions: read
       contents: read
       security-events: write
       packages: read

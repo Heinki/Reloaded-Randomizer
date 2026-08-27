@@ -15,7 +15,7 @@
 
 # C&C Reloaded Randomizer Launcher
 
-[![Foundation validation](https://github.com/Heinki/Reloaded-Randomizer/actions/workflows/foundation-validation.yml/badge.svg)](https://github.com/Heinki/Reloaded-Randomizer/actions/workflows/foundation-validation.yml)
+[![Security checks](https://github.com/Heinki/Reloaded-Randomizer/actions/workflows/security.yml/badge.svg)](https://github.com/Heinki/Reloaded-Randomizer/actions/workflows/security.yml)
 
 A Windows campaign randomizer for C&C Reloaded 2.7.0 with standalone and
 Archipelago 0.6.7 play. It creates deterministic mission and reward plans,
