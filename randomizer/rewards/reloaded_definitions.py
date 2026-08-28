@@ -565,7 +565,11 @@ BUFF_TYPES = (
 )
 SPECIAL_BUILDING_DEFINITIONS = ()
 SPECIAL_REWARD_UNIT_IDS = frozenset()
-UNIT_SIDEBAR_IMAGES = {}
+UNIT_SIDEBAR_IMAGES = {
+    # Reloaded's TS Jumpjet Infantry art points at projectile art, so its
+    # actual sidebar asset cannot be inferred from Image/Cameo keys.
+    'TSJUMPJET': {'source_pcx': 'JJETICON.PCX'},
+}
 STANDALONE_WEAPON_TEMPLATES = {}
 STANDALONE_UNIT_RULE_TEMPLATES = {}
 LINKED_ACCESS_VARIANTS = {}

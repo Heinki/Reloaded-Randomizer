@@ -3,19 +3,29 @@
 from dataclasses import replace
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from types import SimpleNamespace
 import time
 
 from randomizer.config.schema import StaticConfigError, validate_sections
 from randomizer.config.static import load_static_config
 from randomizer.core.storage import atomic_write_json, atomic_write_text
+from randomizer.maps.shop_modifiers import apply_shop_clone_modifiers
+from randomizer.missions.tier_one import tier_one_defense_ids, tier_one_unit_ids
 from randomizer.rewards.rules import tech_ids_for_rewards
 from randomizer.ui.cameos import (
     cameo_extraction_pending,
     ensure_superweapon_cameos,
+    ensure_unit_cameos,
 )
 
 from .catalogue import canonical_reward_for_id, shop_catalogue
-from .active import active_shop_power_ids, active_shop_rewards
+from .active import (
+    active_shop_power_ids,
+    active_shop_rewards,
+    active_shop_starter_defense_ids,
+    active_shop_starter_unit_ids,
+    active_shop_tech_ids,
+)
 from .archipelago import (
     ap_unit_entitlement_ids,
     archipelago_shop_identity,
@@ -36,19 +46,31 @@ from .economy import (
 from .meta import (
     purchase_permanent_buff,
     purchase_permanent_unit,
+    purchase_permanent_upgrade,
     validate_starting_loadout,
 )
-from .inventory import rotating_power_inventory, rotating_unit_inventory
+from .inventory import (
+    guarantee_premium_offer,
+    preserve_locked_offer,
+    rotating_power_inventory,
+    rotating_unit_inventory,
+)
 from .missions import (
     classify_mission,
     generate_mission_offers,
     mission_classes_for_stage,
 )
 from .mission_modifiers import (
+    MISSION_MODIFIERS,
     mission_modifier_for_offer,
     mission_modifier_for_run_offer,
 )
-from .modifiers import hidden_offer_codes
+from .modifiers import (
+    hidden_offer_codes,
+    modifier_difficulty,
+    modifier_effects,
+    modifier_mission_offer_count,
+)
 from .model import (
     BuffPurchase,
     MissionEconomyClass,
@@ -57,6 +79,7 @@ from .model import (
     PurchaseResult,
     RunStatus,
     ShopProfile,
+    ShopCatalogueEntry,
     ShopRewardType,
     ShopRun,
 )
@@ -87,6 +110,132 @@ def _reward(reward_id):
     if reward.get('name') != reward_id:
         raise AssertionError(f'Missing self-check reward {reward_id!r}')
     return reward
+
+
+def _current_shop_feature_checks():
+    required_upgrades = {
+        'coupon_book', 'stock_lock', 'veteran_academy',
+        'gem_dividend', 'premium_supplier',
+    }
+    required_modifiers = {
+        'glass_cannon', 'overclocked_factories', 'black_market',
+        'elite_force', 'no_safety_net', 'support_doctrine',
+        'war_economy', 'narrow_intelligence', 'liquid_assets',
+        'treasure_hunter',
+    }
+    all_modifier_ids = tuple(SHOP_CONFIG.modifiers)
+    effects = modifier_effects(all_modifier_ids)
+    tier_one = ShopCatalogueEntry(
+        'Test Tier One Access', ShopRewardType.UNIT_ACCESS,
+        'TESTONE', 'tier_1', None, ('Allies',),
+    )
+    tier_two = ShopCatalogueEntry(
+        'Test Tier Two Access', ShopRewardType.UNIT_ACCESS,
+        'TESTTWO', 'tier_2', None, ('Allies',),
+    )
+    other = ShopCatalogueEntry(
+        'Test Other Access', ShopRewardType.UNIT_ACCESS,
+        'TESTOTHER', 'tier_1', None, ('Allies',),
+    )
+    locked = preserve_locked_offer((tier_one, other), tier_two)
+    premium = guarantee_premium_offer(
+        (tier_one, other),
+        (tier_one, tier_two, other),
+        run_seed='SELF-CHECK',
+        stage=3,
+        minimum_stage=3,
+    )
+    profile = ShopProfile(permanent_upgrades={'gem_dividend': 3})
+    final_offer = MissionOffer('FINALE', MissionEconomyClass.FINALE)
+    final_run = ShopRun(
+        run_id='dividend', seed='DIVIDEND', status=RunStatus.ACTIVE,
+        stage=SHOP_CONFIG.run_length, run_length=SHOP_CONFIG.run_length,
+        run_coins=20, mission_offers=(final_offer,),
+        selected_mission_code='FINALE', mission_committed=True,
+    )
+    dividend = apply_mission_victory(profile, final_run, 'FINALE')
+    liquid_offer = MissionOffer('NEXT', MissionEconomyClass.STANDARD)
+    liquid_run = replace(
+        final_run, run_id='liquid', stage=1, run_coins=99,
+        modifiers=('liquid_assets',),
+        mission_offers=(MissionOffer('NOW', MissionEconomyClass.STANDARD),),
+        selected_mission_code='NOW',
+    )
+    liquid = apply_mission_victory(
+        ShopProfile(), liquid_run, 'NOW', next_offers=(liquid_offer,)
+    )
+    liquid_reward = mission_reward(
+        MissionEconomyClass.STANDARD, modifiers=('liquid_assets',)
+    )
+    rules = {
+        'CLONE': {'Strength': '111', 'Cost': '100', 'BuildTimeMultiplier': '1'},
+        'WEAPON': {'Damage': '115'},
+    }
+    report = apply_shop_clone_modifiers(
+        rules,
+        {'E1': {'clone_id': 'CLONE', 'weapon_clone_ids': {'M60': 'WEAPON'}}},
+        {
+            'shop_player_damage_percent': 1.25,
+            'shop_player_armor_percent': 0.8,
+            'shop_production_time_percent': 0.75,
+            'shop_combat_production_time_percent': 1.2,
+            'shop_player_cost_percent': 1.2,
+            'shop_modifier_armor_seed_stacks': {'E1': 0},
+            'shop_modifier_damage_seed_stacks': {'E1': 0},
+        },
+    )
+    challenge = SimpleNamespace(
+        challenge=True, bonus_run_coins=0, bonus_meta_coins=0
+    )
+    challenge_reward = mission_reward(
+        MissionEconomyClass.STANDARD,
+        modifiers=('treasure_hunter',),
+        mission_modifier=challenge,
+    )
+    normal_reward = mission_reward(
+        MissionEconomyClass.STANDARD, modifiers=('treasure_hunter',)
+    )
+    base_reward = SHOP_CONFIG.mission_rewards[MissionEconomyClass.STANDARD]
+    return {
+        'requested_permanent_upgrades_valid': required_upgrades.issubset(
+            SHOP_CONFIG.permanent_upgrades
+        ),
+        'requested_modifiers_valid': required_modifiers.issubset(
+            SHOP_CONFIG.modifiers
+        ),
+        'modifier_composition_valid': bool(
+            modifier_difficulty(all_modifier_ids) == len(all_modifier_ids)
+            and float(
+                effects['production_time_percent']
+                * effects['combat_production_time_percent']
+            ) == 0.9
+            and effects['disable_rerolls']
+            and effects['disable_assists']
+            and effects['disable_revivals']
+            and modifier_mission_offer_count(('narrow_intelligence',)) == 2
+        ),
+        'stock_upgrade_effects_valid': bool(
+            tier_two in locked and tier_two in premium
+            and len(locked) == 2 and len(premium) == 2
+        ),
+        'command_coin_dividend_valid': bool(
+            dividend.reward.gem_dividend_meta_coins == 3
+            and dividend.profile.meta_coins == dividend.reward.meta_coins
+        ),
+        'liquid_assets_valid': liquid.run.run_coins == liquid_reward.run_coins,
+        'treasure_hunter_valid': bool(
+            challenge_reward.meta_coins == base_reward.meta_coins * 2
+            and normal_reward.base_run_coins
+            == int(base_reward.run_coins * 0.75)
+        ),
+        'shop_clone_modifiers_valid': bool(
+            rules['CLONE']['Strength'] == '80'
+            and rules['CLONE']['Cost'] == '120'
+            and rules['CLONE']['BuildTimeMultiplier'] == '0.9'
+            and rules['WEAPON']['Damage'] == '125'
+            and all(report.values())
+        ),
+    }
 
 
 def _permanent_feature_checks(mission_pool):
@@ -146,6 +295,11 @@ def _permanent_feature_checks(mission_pool):
         'starting_buff_draft': 1,
         'discount_specialization': 5,
         'permanent_challenge_slots': 1,
+        'coupon_book': 1,
+        'stock_lock': 1,
+        'veteran_academy': 1,
+        'gem_dividend': 1,
+        'premium_supplier': 1,
     }
     profile = ShopProfile(
         meta_coins=1000,
@@ -179,12 +333,44 @@ def _permanent_feature_checks(mission_pool):
     specialized_price = run_reward_price(
         unit_entries[0], specialization='Units', specialization_level=5
     )
+    globally_discounted = all(
+        run_reward_price(entry, specialization_level=5)
+        < run_reward_price(entry)
+        and run_reward_price(
+            entry, specialization='Units', specialization_level=5
+        ) == run_reward_price(
+            entry, specialization='Powers', specialization_level=5
+        )
+        for entry in (unit_entries[0], buff_entry, power_entries[0])
+    )
     stock = rotating_unit_inventory(
         unit_entries,
         run_seed=run.seed,
         stage=run.stage,
         offer_count=SHOP_CONFIG.unit_inventory_size + 2,
     )
+    marker_run = replace(
+        run,
+        starting_unit_ids=tier_one_unit_ids(
+            ('allies', 'soviets', 'yuri', 'gdi', 'nod')
+        ),
+        starting_defense_ids=tier_one_defense_ids(
+            ('allies', 'soviets', 'yuri', 'gdi', 'nod')
+        ),
+        reward_settings={'shop_faction_filter': 'All Campaigns'},
+    )
+    concrete_starters = active_shop_starter_unit_ids(marker_run)
+    concrete_defenses = active_shop_starter_defense_ids(marker_run)
+    starter_cameos = ensure_unit_cameos(
+        (*concrete_starters, *concrete_defenses)
+    )
+    deadline = time.monotonic() + 15
+    while cameo_extraction_pending() and time.monotonic() < deadline:
+        time.sleep(0.05)
+    if cameo_extraction_pending() is False:
+        starter_cameos = ensure_unit_cameos(
+            (*concrete_starters, *concrete_defenses)
+        )
     committed = commit_selected_mission(run, offers[0].mission_code)
     revived = apply_mission_failure(
         committed,
@@ -226,6 +412,9 @@ def _permanent_feature_checks(mission_pool):
         seed='SALVAGE-START',
         mission_offers=offers,
     )
+    retired_draft_purchase = purchase_permanent_upgrade(
+        ShopProfile(meta_coins=1000), 'starting_buff_draft'
+    )
     required = set(upgrade_levels)
     return {
         'permanent_features_config_valid': required.issubset(
@@ -238,6 +427,22 @@ def _permanent_feature_checks(mission_pool):
         'extra_shop_stock_valid': len(stock) == SHOP_CONFIG.unit_inventory_size + 2,
         'shop_power_cameos_valid': bool(
             power_ids and set(power_cameos) == power_ids
+        ),
+        'starter_loadout_display_valid': bool(
+            len(concrete_starters) == 5
+            and len(set(concrete_starters)) == 5
+            and len(concrete_defenses) == 2
+            and concrete_starters == active_shop_starter_unit_ids(marker_run)
+            and concrete_defenses == active_shop_starter_defense_ids(marker_run)
+            and set(concrete_starters).union(concrete_defenses).issubset(
+                active_shop_tech_ids(marker_run)
+            )
+            and set(starter_cameos)
+            == set(concrete_starters).union(concrete_defenses)
+            and not any(
+                item.startswith('T1_')
+                for item in (*concrete_starters, *concrete_defenses)
+            )
         ),
         'expanded_loadout_valid': expanded.allowed and expanded.extra_slots_used == 6,
         'emergency_revival_valid': bool(
@@ -268,8 +473,11 @@ def _permanent_feature_checks(mission_pool):
             run.starting_draft_buffs
             and canonical_reward_for_id(buff_entry.reward_id)
             in active_shop_rewards(run)
+            and not retired_draft_purchase.validation.allowed
         ),
-        'discount_specialization_valid': specialized_price < normal_price,
+        'discount_specialization_valid': bool(
+            specialized_price < normal_price and globally_discounted
+        ),
         'permanent_challenge_slots_valid': bool(
             early_forced
             and not early_forced.challenge
@@ -908,10 +1116,10 @@ def _phase_seven_checks():
             len(hidden) == 1
             and hidden == hidden_offer_codes(run)
             and hidden[0] in {offer.mission_code for offer in offers}
-            and adjusted.run_coins == 13
+            and adjusted.run_coins == 14
             and adjusted.meta_coins == 5
             and any('Permanent Victory Bonus: +2' in line for line in breakdown)
-            and any('Total: +15 Ore' in line for line in breakdown)
+            and any('Total: +16 Ore' in line for line in breakdown)
             and restored == run
         ),
         'power_shop_purchase_valid': bool(
@@ -942,6 +1150,26 @@ def validate_shop_domain():
     flat_meta_config['mission_rewards']['finale']['meta_coins'] = 1
     try:
         validate_sections('shop_mode.json', flat_meta_config, 'shop-self-check')
+        config_validation_valid = False
+    except StaticConfigError:
+        pass
+    invalid_price_config = load_static_config('shop_mode.json')
+    invalid_price_config['unit_target_prices']['E1']['run_access'] = 0
+    try:
+        validate_sections(
+            'shop_mode.json', invalid_price_config, 'shop-self-check'
+        )
+        config_validation_valid = False
+    except StaticConfigError:
+        pass
+    invalid_effect_config = load_static_config('shop_mode.json')
+    invalid_effect_config['mission_effects']['supply_cache'][
+        'bonus_run_coins'
+    ] = -1
+    try:
+        validate_sections(
+            'shop_mode.json', invalid_effect_config, 'shop-self-check'
+        )
         config_validation_valid = False
     except StaticConfigError:
         pass
@@ -984,16 +1212,16 @@ def validate_shop_domain():
         and finale_with_bonus.meta_coins == 4
         and finale_with_bonus.victory_bonus_run_coins == 3
         and capped_bonus.victory_bonus_run_coins == 5
-        and run_buff_price('tier_1') == 2
+        and run_buff_price('E1') == 2
         and (failed.run_coins, failed.meta_coins) == (0, 0)
         and meta_rewards_by_difficulty == [1, 4]
         and discounted_shop_price(0, shop_discount_level=999) == 1
-        and permanent_unit_price('tier_1')
-        < permanent_unit_price('tier_2')
-        < permanent_unit_price('tier_3')
-        and permanent_buff_price('tier_1')
-        < permanent_buff_price('tier_2')
-        < permanent_buff_price('tier_3')
+        and permanent_unit_price('E1')
+        < permanent_unit_price('JUMPJET')
+        < permanent_unit_price('GHOST')
+        and permanent_buff_price('E1')
+        < permanent_buff_price('JUMPJET')
+        < permanent_buff_price('GHOST')
         and starting_run_coins(starting_capital_level=999) == 50
         and starting_credit_upgrade.max_level == 20
         and starting_credit_upgrade.effects['credits_per_level'] == 1000
@@ -1017,6 +1245,34 @@ def validate_shop_domain():
         entry for entry in catalogue
         if entry.reward_type is ShopRewardType.POWER_ACCESS
     ]
+    shop_reward_ids = {entry.reward_id for entry in catalogue}
+    mission_effect_reward_ids = {
+        reward_id
+        for modifier in MISSION_MODIFIERS
+        for reward_id in (
+            *modifier.player_reward_ids,
+            *modifier.exclusive_reward_ids,
+            modifier.enemy_reward_id,
+        )
+        if reward_id
+    }
+    known_non_shop_effect_ids = {
+        'Starting Credits +1,000',
+        *(modifier.enemy_reward_id for modifier in MISSION_MODIFIERS
+          if modifier.enemy_reward_id),
+    }
+    catalogue_valid = bool(
+        len(catalogue) == 2113
+        and len(access_entries) == 166
+        and len(buff_entries) == 1885
+        and len(power_entries) == 18
+        and len(SHOP_CONFIG.unit_target_prices) == 186
+        and len(SHOP_CONFIG.power_target_prices) == 18
+        and len(MISSION_MODIFIERS) == 19
+        and mission_effect_reward_ids.issubset(
+            shop_reward_ids | known_non_shop_effect_ids
+        )
+    )
     gi_access = _reward('GI Access')
     gi_buff_entry = next(entry for entry in buff_entries if entry.target_id == 'E1')
     gi_buff = _reward(gi_buff_entry.reward_id)
@@ -1343,7 +1599,7 @@ def validate_shop_domain():
     details = {
         'config_validation_valid': config_validation_valid,
         'economy_valid': economy_valid,
-        'catalogue_valid': len(catalogue) > 100,
+        'catalogue_valid': catalogue_valid,
         'purchase_rules_valid': purchase_rules_valid,
         'permanent_purchase_valid': permanent_purchase_valid,
         'loadout_valid': loadout_valid,
@@ -1362,6 +1618,7 @@ def validate_shop_domain():
     details.update(_phase_six_checks())
     details.update(_phase_seven_checks())
     details.update(_permanent_feature_checks(mission_pool))
+    details.update(_current_shop_feature_checks())
     details['valid'] = all(
         value for key, value in details.items()
         if key.endswith('_valid')

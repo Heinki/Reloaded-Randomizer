@@ -18,7 +18,8 @@ deferred and must not be added through inferred ownership.
 - `production_topology.json`: factories, MCVs, engineers, harvesters, and
   clone/production safety evidence
 - `tier_one.json`: reviewed unit and defense starters for five factions
-- `shop_mode.json`: Reloaded Shop economy, run settings, and Command Coins
+- `shop_mode.json`: Reloaded Shop economy, run settings, Command Coins,
+  mission effects, exclusions, and exact unit/power prices
 - `archipelago.json`: Reloaded APWorld/client compatibility
 - `map_rules.json`: generated namespaces and engine/parser limits
 
@@ -36,6 +37,39 @@ events, and actions must retain native identities.
 `reloaded_content_catalogue.json` and `reloaded_balance_catalogue.json` retain
 the broader installed-rule evidence. Runtime reward construction uses only the
 approved five-faction subset in `randomizer/rewards/reloaded_definitions.py`.
+
+## Shop Mode content
+
+`shop_mode.json` owns Shop-only balance. `settings.excluded_reward_ids` accepts
+canonical reward names and removes those rewards before inventory construction.
+Keep it empty unless a reviewed Reloaded reward is unsafe or unusable in Shop
+Mode.
+
+`unit_target_prices` must exactly cover every Reloaded unit target exposed by
+the Shop catalogue. Each uppercase TechnoType ID has `run_access`, `run_buff`,
+`permanent_access`, and `permanent_buff`. Use `null` only when that target has no
+matching access or buff reward. `power_target_prices` follows the same rule for
+SuperWeaponType IDs, with `run_access` and `run_buff`. Missing, unknown, or
+availability-mismatched targets stop startup instead of silently receiving a
+default price.
+
+`mission_effects` defines deterministic temporary boons and AI challenges.
+Every entry requires a unique `title`, a `description`, non-negative
+`bonus_run_coins` and `bonus_meta_coins`, plus exactly one of
+`player_reward_ids` or `enemy_reward_id`. Optional `exclusive_reward_ids`
+prevents a boon from being offered when its defining power is already active.
+Optional `buffs_allied_helpers` defaults to `false`.
+
+After reviewing a changed Reloaded reward catalogue, regenerate explicit target
+coverage with:
+
+```powershell
+python tools\rebuild_shop_target_prices.py
+```
+
+This preserves Reloaded's configured TechLevel tier values for units and uses
+Reloaded-specific offensive, secondary, and aid power price bands. Review the
+resulting diff; this command is not a substitute for balance review.
 
 ## Player state
 

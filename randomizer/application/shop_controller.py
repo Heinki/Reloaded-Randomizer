@@ -1,5 +1,6 @@
 """Standalone Shop Mode UI coordination."""
 
+from collections import Counter
 from dataclasses import replace
 from hashlib import sha256
 import uuid
@@ -7,6 +8,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 from ._dependencies import (
+    BUFF_TARGETS,
     BUFF_TYPES,
     DIFFICULTIES,
     GAME_EXE,
@@ -19,13 +21,16 @@ from ._dependencies import (
     ensure_unit_cameos,
 )
 
-from randomizer.missions.tier_one import (
-    expanded_tier_one_defense_ids,
-    expanded_tier_one_unit_ids,
-)
 from randomizer.rewards.reloaded_definitions import unit_display_label
 from randomizer.rewards.display import buff_effect_lines, reward_display_name
-from randomizer.shop.active import active_shop_rewards
+from randomizer.shop.active import (
+    active_shop_rewards,
+    active_shop_starter_defense_ids,
+    active_shop_starter_unit_ids,
+    active_shop_tech_ids,
+    shop_starter_defense_ids,
+    shop_starter_unit_ids,
+)
 from randomizer.shop.archipelago import (
     ARCHIPELAGO_RECEIVED_UNIT_LOADOUT_RANDOM,
     ap_automatic_reward_ids,
@@ -49,8 +54,18 @@ from randomizer.shop.missions import (
     mission_classes_for_stage,
 )
 from randomizer.shop.mission_modifiers import active_mission_modifier
+from randomizer.shop.modifiers import (
+    modifier_difficulty,
+    modifier_effects,
+    modifier_mission_offer_count,
+)
 from randomizer.shop.meta import validate_starting_loadout
-from randomizer.shop.model import BuffPurchase, RunStatus, ShopRewardType
+from randomizer.shop.model import (
+    SHOP_ACCESS_REWARD_MODE,
+    BuffPurchase,
+    RunStatus,
+    ShopRewardType,
+)
 from randomizer.shop.persistence import ShopRepository
 from randomizer.shop.service import ShopProgressionService
 from randomizer.shop.transitions import ShopTransitionError
@@ -71,7 +86,7 @@ SHOP_FACTION_CAMPAIGNS = {
 SHOP_CAMPAIGN_FACTIONS = {
     campaign: label for label, campaign in SHOP_FACTION_CAMPAIGNS.items()
 }
-SHOP_REWARD_MODE = 'Standard'
+SHOP_REWARD_MODE = SHOP_ACCESS_REWARD_MODE
 SHOP_DISCOUNT_SPECIALIZATIONS = ('Units', 'Buffs', 'Powers')
 class ShopController(ShopPolishController):
     def initialize_shop_controller(self):
@@ -127,6 +142,8 @@ class ShopController(ShopPolishController):
             modifier_id: tk.BooleanVar(value=False)
             for modifier_id in self.shop_config.modifiers
         }
+        for variable in self.shop_modifier_vars.values():
+            variable.trace_add('write', self._refresh_shop_modifier_difficulty)
         catalogue = shop_catalogue()
         self._shop_entry_by_reward_id = {
             entry.reward_id: entry for entry in catalogue
@@ -409,7 +426,7 @@ class ShopController(ShopPolishController):
     def active_reward_mode(self):
         run = self._shop_context_run()
         if run is not None:
-            return run.reward_mode
+            return SHOP_REWARD_MODE
         if self._shop_mode_context_selected():
             return SHOP_REWARD_MODE
         return super().active_reward_mode()
@@ -419,6 +436,39 @@ class ShopController(ShopPolishController):
             return 'Shop Mode'
         return super().active_progression_mode()
 
+    def _shop_modifier_clone_seed_plan(self, run):
+        existing = Counter(
+            (
+                str(reward.get('unit') or '').upper(),
+                str(reward.get('buff_type') or ''),
+            )
+            for reward in active_shop_rewards(run)
+            if reward.get('kind') == 'buff'
+        )
+        armor = {}
+        damage = {}
+        for target_id in active_shop_tech_ids(run):
+            target = BUFF_TARGETS.get(target_id, {})
+            try:
+                armor_reward = canonical_reward_for_id(
+                    f'{target.get("label", target_id)} Armor Plating I'
+                )
+            except KeyError:
+                armor_reward = {}
+            if armor_reward.get('buff_type') == 'armor':
+                armor[target_id] = existing[(target_id, 'armor')]
+            if not target.get('weapons'):
+                continue
+            try:
+                damage_reward = canonical_reward_for_id(
+                    f'{target.get("label", target_id)} Firepower I'
+                )
+            except KeyError:
+                damage_reward = {}
+            if damage_reward.get('buff_type') == 'damage':
+                damage[target_id] = existing[(target_id, 'damage')]
+        return armor, damage
+
     def active_reward_settings(self):
         run = self._shop_context_run()
         if run is not None:
@@ -426,6 +476,22 @@ class ShopController(ShopPolishController):
             settings['start_with_tier_one_units'] = True
             settings['start_with_tier_one_defenses'] = True
             settings['failure_assistance'] = False
+            effects = modifier_effects(run.modifiers)
+            for key in (
+                'player_damage_percent',
+                'player_armor_percent',
+                'production_time_percent',
+                'combat_production_time_percent',
+                'player_cost_percent',
+                'mission_starting_credits_flat',
+            ):
+                value = effects[key]
+                settings[f'shop_{key}'] = (
+                    float(value) if key.endswith('_percent') else int(value)
+                )
+            armor_seeds, damage_seeds = self._shop_modifier_clone_seed_plan(run)
+            settings['shop_modifier_armor_seed_stacks'] = armor_seeds
+            settings['shop_modifier_damage_seed_stacks'] = damage_seeds
             mission_modifier = self._active_shop_mission_modifier(run)
             if mission_modifier is not None and mission_modifier.buffs_allied_helpers:
                 settings['buff_allied_helpers'] = True
@@ -434,7 +500,9 @@ class ShopController(ShopPolishController):
 
     def active_launch_rewards(self):
         if self.shop_launch_active():
-            rewards = list(active_shop_rewards(self._shop_launch_run))
+            run = self._shop_launch_run
+            effects = modifier_effects(run.modifiers)
+            rewards = [dict(item) for item in active_shop_rewards(run)]
             starting_credit_level = self.shop_profile.upgrade_level(
                 'mission_starting_credits'
             )
@@ -443,7 +511,7 @@ class ShopController(ShopPolishController):
                 for _index in range(starting_credit_level)
             )
             mission_modifier = self._active_shop_mission_modifier(
-                self._shop_launch_run
+                run
             )
             if mission_modifier is not None:
                 for reward_id in mission_modifier.player_reward_ids:
@@ -451,6 +519,59 @@ class ShopController(ShopPolishController):
                     if reward.get('kind') == 'superweapon':
                         reward['superweapon_ignore_foreign_tech_gate'] = True
                     rewards.append(reward)
+            veteran_targets = set()
+            if self.shop_profile.upgrade_level('veteran_academy'):
+                for reward_id in run.selected_permanent_units:
+                    entry = self._shop_entry_by_reward_id.get(reward_id)
+                    if entry is not None and entry.target_id:
+                        veteran_targets.add(entry.target_id.upper())
+            if effects['starter_veteran']:
+                veteran_targets.update(active_shop_starter_unit_ids(run))
+            for target_id in sorted(veteran_targets):
+                target = BUFF_TARGETS.get(target_id, {})
+                reward_name = (
+                    f'{target.get("label", target_id)} Veteran Training I'
+                )
+                try:
+                    reward = dict(canonical_reward_for_id(reward_name))
+                except KeyError:
+                    continue
+                if reward.get('buff_type') == 'veteran':
+                    rewards.append(reward)
+            if effects['player_armor_percent'] != 1:
+                armor_seeds, _damage_seeds = self._shop_modifier_clone_seed_plan(run)
+                for target_id in armor_seeds:
+                    target = BUFF_TARGETS.get(target_id, {})
+                    reward = dict(canonical_reward_for_id(
+                        f'{target.get("label", target_id)} Armor Plating I'
+                    ))
+                    reward['force_direct_unit_buff'] = True
+                    reward['_shop_modifier_clone_seed'] = True
+                    rewards.append(reward)
+            if effects['player_damage_percent'] != 1:
+                _armor_seeds, damage_seeds = self._shop_modifier_clone_seed_plan(run)
+                for target_id in damage_seeds:
+                    target = BUFF_TARGETS.get(target_id, {})
+                    reward = dict(canonical_reward_for_id(
+                        f'{target.get("label", target_id)} Firepower I'
+                    ))
+                    reward['force_direct_unit_buff'] = True
+                    reward['_shop_modifier_clone_seed'] = True
+                    rewards.append(reward)
+            support_factor = float(effects['support_recharge_percent'])
+            if support_factor != 1.0:
+                for index, reward in enumerate(rewards):
+                    if (
+                        reward.get('kind') == 'superweapon'
+                        and reward.get('power_category') == 'aid'
+                    ):
+                        updated = dict(reward)
+                        updated['superweapon_recharge_multiplier'] = (
+                            float(updated.get(
+                                'superweapon_recharge_multiplier', 1.0
+                            )) * support_factor
+                        )
+                        rewards[index] = updated
             return rewards
         return super().active_launch_rewards()
 
@@ -508,7 +629,7 @@ class ShopController(ShopPolishController):
     def active_starting_tier_one_unit_ids(self):
         run = self._shop_context_run()
         if run is not None:
-            return list(run.starting_unit_ids)
+            return list(active_shop_starter_unit_ids(run))
         if self._shop_mode_context_selected():
             return []
         return super().active_starting_tier_one_unit_ids()
@@ -516,7 +637,7 @@ class ShopController(ShopPolishController):
     def active_starting_tier_one_defense_ids(self):
         run = self._shop_context_run()
         if run is not None:
-            return list(run.starting_defense_ids)
+            return list(active_shop_starter_defense_ids(run))
         if self._shop_mode_context_selected():
             return []
         return super().active_starting_tier_one_defense_ids()
@@ -573,6 +694,11 @@ class ShopController(ShopPolishController):
         return super().record_enemy_reward_applications(code, applications)
 
     def _shop_reroll_capacity(self):
+        run = self.__dict__.get('shop_run')
+        if run is not None and modifier_effects(
+            run.modifiers
+        )['disable_rerolls']:
+            return 0
         level = self.shop_profile.upgrade_level('mission_reroll')
         per_level = self.shop_config.permanent_upgrades[
             'mission_reroll'
@@ -580,6 +706,11 @@ class ShopController(ShopPolishController):
         return level * int(per_level)
 
     def _shop_difficulty_assist_capacity(self):
+        run = self.__dict__.get('shop_run')
+        if run is not None and modifier_effects(
+            run.modifiers
+        )['disable_assists']:
+            return 0
         level = self.shop_profile.upgrade_level('mission_difficulty_assist')
         per_level = self.shop_config.permanent_upgrades[
             'mission_difficulty_assist'
@@ -876,7 +1007,7 @@ class ShopController(ShopPolishController):
             return run
         allowed = mission_classes_for_stage(run.stage, run.run_length)
         offers_valid = bool(
-            len(run.mission_offers) == self.shop_config.mission_offer_count
+            len(run.mission_offers) == modifier_mission_offer_count(run.modifiers)
             and all(
                 offer.economy_class in allowed
                 for offer in run.mission_offers
@@ -891,8 +1022,9 @@ class ShopController(ShopPolishController):
             run_length=run.run_length,
             completed_codes=run.completed_missions,
             reroll_count=run.rerolls_used,
+            offer_count=modifier_mission_offer_count(run.modifiers),
         )
-        if len(offers) != self.shop_config.mission_offer_count:
+        if len(offers) != modifier_mission_offer_count(run.modifiers):
             return run
         repaired = replace(
             run,
@@ -1114,6 +1246,7 @@ class ShopController(ShopPolishController):
                     stage=run.stage + 1,
                     run_length=run.run_length,
                     completed_codes=run.completed_missions + (code,),
+                    offer_count=modifier_mission_offer_count(run.modifiers),
                 )
             transition = self.shop_service.record_victory(
                 code, next_offers=next_offers
@@ -1167,6 +1300,7 @@ class ShopController(ShopPolishController):
                     previous_offer_codes=(
                         offer.mission_code for offer in run.mission_offers
                     ),
+                    offer_count=modifier_mission_offer_count(run.modifiers),
                 )
             transition = self.shop_service.record_failure(
                 code, revival_offers=revival_offers
@@ -1328,6 +1462,12 @@ class ShopController(ShopPolishController):
         salvaged_ore = self.shop_profile.salvaged_run_coins
         self.seed_var.set(seed)
         settings = self.shop_reward_settings_for_new_run()
+        modifiers = tuple(
+            modifier_id
+            for modifier_id, variable in self.shop_modifier_vars.items()
+            if variable.get()
+        )
+        effects = modifier_effects(modifiers)
         faction_filter = self.shop_campaign_filter()
         settings['shop_faction_filter'] = faction_filter
         settings['shop_discount_specialization'] = (
@@ -1339,18 +1479,32 @@ class ShopController(ShopPolishController):
             'reward_mode': SHOP_REWARD_MODE,
         }
         try:
-            starting_units = self.starting_tier_one_unit_ids_for_seed(
+            starting_unit_markers = self.starting_tier_one_unit_ids_for_seed(
                 seed, settings
             )
-            starting_defenses = self.starting_tier_one_defense_ids_for_seed(
+            starting_defense_markers = self.starting_tier_one_defense_ids_for_seed(
                 settings, seed=seed
             )
         finally:
             self._seed_generation_context = previous_context
-        starter_tech_ids = set(expanded_tier_one_unit_ids(starting_units))
-        starter_tech_ids.update(
-            expanded_tier_one_defense_ids(starting_defenses)
+        starting_units = shop_starter_unit_ids(
+            seed=seed,
+            starting_unit_ids=starting_unit_markers,
+            faction_filter=faction_filter,
+            excluded_unit_ids=settings.get('excluded_unit_access_ids', ()),
         )
+        if effects['starter_unit_count_flat'] == -2 and len(starting_units) >= 5:
+            starting_units = (
+                starting_units[0], starting_units[2], starting_units[-1]
+            )
+        starting_defenses = shop_starter_defense_ids(
+            seed=seed,
+            starting_defense_ids=starting_defense_markers,
+            faction_filter=faction_filter,
+            excluded_unit_ids=settings.get('excluded_unit_access_ids', ()),
+        )
+        starter_tech_ids = set(starting_units)
+        starter_tech_ids.update(starting_defenses)
         ap_identity, ap_reward_ids = self.archipelago_shop_context()
         maximum_extra_units = (
             self.shop_config.max_selected_permanent_units
@@ -1436,11 +1590,13 @@ class ShopController(ShopPolishController):
                 mission_pool,
                 run_seed=seed,
                 stage=1,
+                offer_count=modifier_mission_offer_count(modifiers),
             )
-            if len(offers) != self.shop_config.mission_offer_count:
+            expected_offer_count = modifier_mission_offer_count(modifiers)
+            if len(offers) != expected_offer_count:
                 raise ShopTransitionError(
                     'Shop Mode needs at least '
-                    f'{self.shop_config.mission_offer_count} eligible '
+                    f'{expected_offer_count} eligible '
                     'standard missions for its protected opening'
                 )
             self.shop_service.start_run(
@@ -1555,9 +1711,9 @@ class ShopController(ShopPolishController):
             if source not in record['sources']:
                 record['sources'].append(source)
 
-        for unit_id in run.starting_unit_ids:
+        for unit_id in active_shop_starter_unit_ids(run):
             add_access('Tier 1 Starter', unit_id, raw_unit=True)
-        for unit_id in run.starting_defense_ids:
+        for unit_id in active_shop_starter_defense_ids(run):
             add_access('Tier 1 Defense', unit_id, raw_unit=True)
         ap_units = set(ap_unit_entitlement_ids(run.ap_entitlements_snapshot))
         local_units = set(self.shop_profile.permanent_unit_unlocks)
@@ -1842,6 +1998,24 @@ class ShopController(ShopPolishController):
             )
         for button in self.shop_modifier_buttons:
             button.configure(state='disabled' if modifiers_locked else 'normal')
+        self._refresh_shop_modifier_difficulty()
+
+    def _refresh_shop_modifier_difficulty(self, *_args):
+        if not hasattr(self, 'shop_modifier_difficulty_var'):
+            return
+        modifiers = (
+            self.shop_run.modifiers
+            if self.shop_run is not None
+            and self.shop_run.status is RunStatus.ACTIVE
+            else tuple(
+                modifier_id
+                for modifier_id, variable in self.shop_modifier_vars.items()
+                if variable.get()
+            )
+        )
+        self.shop_modifier_difficulty_var.set(
+            f'Run difficulty +{modifier_difficulty(modifiers)}'
+        )
 
     def _refresh_permanent_shop(self):
         active_run = bool(
@@ -1868,7 +2042,7 @@ class ShopController(ShopPolishController):
         )
         for index, entry in enumerate(entries):
             iid = f'permanent-{index}'
-            price = permanent_unit_price(entry.tier or 'tier_1')
+            price = permanent_unit_price(entry.target_id)
             if entry.reward_id in owned:
                 state = 'Owned'
                 row_tag = 'owned'
@@ -1908,6 +2082,8 @@ class ShopController(ShopPolishController):
         for index, (upgrade_id, definition) in enumerate(
             self.shop_config.permanent_upgrades.items()
         ):
+            if not definition.purchasable:
+                continue
             if term and term not in (
                 upgrade_id + ' ' + definition.display_name + ' '
                 + ' '.join(definition.effects)
@@ -1999,7 +2175,7 @@ class ShopController(ShopPolishController):
             stacks = stacks_by_reward.get(entry.reward_id, 0)
             maximum = entry.stack_limit or 1
             maxed = stacks >= maximum
-            price = permanent_buff_price(entry.tier or 'tier_1')
+            price = permanent_buff_price(entry.target_id)
             effect_state = 'MAX' if maxed else f'Stacks {stacks} / {maximum}'
             if maxed:
                 state, row_tag, buyable = 'Maximum stacks', 'maxed', False

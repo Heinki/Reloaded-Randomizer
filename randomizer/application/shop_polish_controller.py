@@ -16,8 +16,10 @@ from randomizer.shop.economy import (
     run_reward_price,
 )
 from randomizer.shop.model import RunStatus, ShopRewardType
-from randomizer.shop.modifiers import hidden_offer_codes
+from randomizer.shop.modifiers import hidden_offer_codes, modifier_effects
 from randomizer.shop.inventory import (
+    guarantee_premium_offer,
+    preserve_locked_offer,
     rotating_power_inventory,
     rotating_unit_inventory,
 )
@@ -25,6 +27,7 @@ from randomizer.shop.mission_modifiers import (
     mission_modifier_for_run_offer,
 )
 from randomizer.shop.summary import reward_breakdown_lines, run_summary_lines
+from randomizer.shop.transitions import ShopTransitionError
 
 from .shop_archipelago_controller import ShopArchipelagoController
 
@@ -567,16 +570,20 @@ class ShopPolishController(ShopArchipelagoController):
             )
             if run.free_buff_tokens_used < capacity:
                 return 0
+        coupon_definition = self.shop_config.permanent_upgrades['coupon_book']
+        coupon_discount = (
+            self.shop_profile.upgrade_level('coupon_book')
+            * int(coupon_definition.effects['ore_per_level'])
+            if run.coupon_used_stage != run.stage else 0
+        )
         return run_reward_price(
             entry,
             shop_discount_level=self.shop_profile.upgrade_level('shop_discount'),
             modifiers=run.modifiers,
-            specialization=run.reward_settings.get(
-                'shop_discount_specialization', ''
-            ),
             specialization_level=self.shop_profile.upgrade_level(
                 'discount_specialization'
             ),
+            coupon_discount_ore=coupon_discount,
         )
 
     def _selected_shop_catalogue_entries(self):
@@ -724,6 +731,7 @@ class ShopPolishController(ShopArchipelagoController):
         self._shop_catalogue_details = {}
         term = self.shop_search_var.get().strip().casefold()
         run = self.shop_run
+        modifier_values = modifier_effects(run.modifiers) if run else None
         active_tech = set(active_shop_tech_ids(run))
         active_powers = set(active_shop_power_ids(run))
         visible = []
@@ -754,6 +762,7 @@ class ShopPolishController(ShopArchipelagoController):
         selected_target = self._sync_shop_buff_target_selector(
             category, candidates, active_tech, active_powers
         )
+        access_candidates = candidates
         if category == 'Units':
             candidates = (
                 rotating_unit_inventory(
@@ -766,7 +775,9 @@ class ShopPolishController(ShopArchipelagoController):
                         * int(self.shop_config.permanent_upgrades[
                             'extra_shop_stock'
                         ].effects['units_per_level'])
+                        + (modifier_values['unit_inventory_flat'] if modifier_values else 0)
                     ),
+                    excluded_target_ids=active_tech,
                 )
                 if run is not None else ()
             )
@@ -782,7 +793,9 @@ class ShopPolishController(ShopArchipelagoController):
                         * int(self.shop_config.permanent_upgrades[
                             'extra_shop_stock'
                         ].effects['powers_per_level'])
+                        + (modifier_values['power_inventory_flat'] if modifier_values else 0)
                     ),
+                    excluded_target_ids=active_powers,
                 )
                 if run is not None else ()
             )
@@ -791,6 +804,37 @@ class ShopPolishController(ShopArchipelagoController):
                 entry for entry in candidates
                 if entry.target_id == selected_target
             )
+        if run is not None and access_category:
+            locked_entry = self._shop_entry_by_reward_id.get(
+                run.stock_lock_reward_id or ''
+            )
+            if (
+                locked_entry is not None
+                and run.stock_lock_stage is not None
+                and run.stage <= run.stock_lock_stage + 1
+                and self._shop_entry_available(locked_entry, run)
+                and locked_entry.target_id not in active_tech
+                and locked_entry.target_id not in active_powers
+            ):
+                candidates = preserve_locked_offer(candidates, locked_entry)
+            protected = (
+                (locked_entry.reward_id,) if locked_entry is not None else ()
+            )
+            premium = self.shop_config.permanent_upgrades['premium_supplier']
+            if self.shop_profile.upgrade_level('premium_supplier'):
+                eligible = tuple(
+                    entry for entry in access_candidates
+                    if entry.target_id not in active_tech
+                    and entry.target_id not in active_powers
+                )
+                candidates = guarantee_premium_offer(
+                    candidates,
+                    eligible,
+                    run_seed=run.seed,
+                    stage=run.stage,
+                    minimum_stage=int(premium.effects['minimum_stage']),
+                    protected_reward_ids=protected,
+                )
         for entry in candidates:
             if term and term not in (
                 entry.reward_id + ' ' + entry.target_id
@@ -1087,6 +1131,33 @@ class ShopPolishController(ShopArchipelagoController):
             selected[0], ''
         ) if selected else ''
         entry = self._shop_entry_by_reward_id.get(reward_id)
+        access_offer = bool(
+            entry is not None
+            and entry.reward_type in {
+                ShopRewardType.UNIT_ACCESS,
+                ShopRewardType.POWER_ACCESS,
+            }
+            and buyable
+        )
+        has_stock_lock = self.shop_profile.upgrade_level('stock_lock') > 0
+        already_locked = bool(
+            self.shop_run is not None
+            and reward_id
+            and self.shop_run.stock_lock_reward_id == reward_id
+        )
+        self.shop_stock_lock_button.configure(
+            state=(
+                'normal'
+                if access_offer and has_stock_lock and not already_locked
+                and not self.shop_launch_active()
+                else 'disabled'
+            ),
+            text=(
+                'Locked for Next Stage'
+                if already_locked else 'Lock Selected Offer'
+                if has_stock_lock else 'Stock Lock Locked'
+            ),
+        )
         active_tech = set(active_shop_tech_ids(self.shop_run))
         active_powers = set(active_shop_power_ids(self.shop_run))
         category = self.shop_category_var.get()
@@ -1145,6 +1216,24 @@ class ShopPolishController(ShopArchipelagoController):
         else:
             self.shop_upgrade_selected_button.pack_forget()
         self.refresh_permanent_purchase_buttons()
+
+    def lock_selected_shop_offer(self):
+        selected = self.shop_catalogue_tree.selection()
+        reward_id = self._shop_catalogue_rows.get(
+            selected[0], ''
+        ) if selected else ''
+        if not reward_id:
+            return
+        try:
+            self.shop_run = self.shop_service.lock_shop_offer(reward_id)
+        except ShopTransitionError as exc:
+            self._set_shop_message(exc, error=True)
+        else:
+            self._shop_focus_reward_id = reward_id
+            self._set_shop_message(
+                f'Locked {reward_id}; it remains offered next stage.'
+            )
+        self.refresh_shop_mode()
 
     def _shop_upgrade_effect_text(self, upgrade_id, definition):
         effects = definition.effects
@@ -1209,13 +1298,34 @@ class ShopPolishController(ShopArchipelagoController):
                 'Tier 1 buff at run start. Preferred buff type is chosen in Shop Setup.'
             ),
             'discount_specialization': (
-                f'Each level reduces prices in the Shop Setup specialization '
+                f'Each level reduces all run-shop prices '
                 f'by {effects.get("ore_per_level", 0)} Ore, minimum price 1 Ore.'
             ),
             'permanent_challenge_slots': (
                 f'Each level guarantees +{effects.get("slots_per_level", 0)} '
                 'special mission choice. Stages 1-5 grant player support; '
                 'stages 6+ become AI challenges with bonus rewards.'
+            ),
+            'coupon_book': (
+                f'First paid Shop purchase each stage costs '
+                f'{effects.get("ore_per_level", 0)} less Ore per level.'
+            ),
+            'stock_lock': (
+                'Preserve one selected unit, building, or power offer through '
+                'next mission-victory stock rotation.'
+            ),
+            'veteran_academy': (
+                'Units selected in permanent starting loadout begin missions '
+                'as Veterans.'
+            ),
+            'gem_dividend': (
+                f'On run victory, gain 1 Command Coin per '
+                f'{effects.get("ore_per_gem", 0)} remaining Ore, capped at '
+                f'{effects.get("maximum_gems_per_level", 0)} per level.'
+            ),
+            'premium_supplier': (
+                f'From stage {effects.get("minimum_stage", 0)}, guarantee '
+                'one higher-tier access offer per stock rotation.'
             ),
         }
         return templates.get(

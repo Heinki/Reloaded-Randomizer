@@ -64,6 +64,11 @@ modes include Standard, Chaos, and Randomizer Arsenal. Advanced controls cover
 unit access, buffs, powers, starting unlocks, enemy rewards, and mission
 assistance.
 
+Shop Mode uses all 108 reviewed Reloaded missions and its complete approved
+catalogue: 166 unit access rewards, 1,885 unit buffs, 18 powers, and 44 power
+buffs. Temporary mission cards can add one of 12 Reloaded player boons or 7
+Reloaded AI challenges; active power boons are not offered twice.
+
 The Reloaded APWorld contains 2,161 items, 108 missions, and 6,030 reserved
 locations for objectives, victories, and Shop Mode.
 

@@ -3,6 +3,7 @@
 from functools import lru_cache
 
 from randomizer.config.game_profile import CAMPAIGN_FILTER_BY_LABEL
+from randomizer.config.schema import StaticConfigError
 from randomizer.rewards.arsenal import arsenal_tier_for_tech_level
 from randomizer.rewards.catalogue import (
     BUFF_TARGETS,
@@ -13,6 +14,7 @@ from randomizer.rewards.catalogue import (
 from randomizer.rewards.reloaded_roster import randomizer_unit_template_values
 from randomizer.rewards.rules import tech_ids_for_rewards
 
+from .config import SHOP_CONFIG
 from .model import ShopCatalogueEntry, ShopRewardType
 
 
@@ -52,6 +54,7 @@ def catalogue_entry(reward):
     kind = canonical.get('kind')
     if (
         not reward_id
+        or reward_id in SHOP_CONFIG.excluded_reward_ids
         or kind in {'message', 'retired'}
         or canonical.get('enemy_reward')
     ):
@@ -106,16 +109,103 @@ def catalogue_entry(reward):
     )
 
 
+def _validate_unit_target_prices(entries):
+    access_targets = {
+        entry.target_id for entry in entries
+        if entry.reward_type is ShopRewardType.UNIT_ACCESS
+    }
+    buff_targets = {
+        entry.target_id for entry in entries
+        if entry.reward_type is ShopRewardType.UNIT_BUFF
+    }
+    expected_targets = access_targets | buff_targets
+    configured_targets = set(SHOP_CONFIG.unit_target_prices)
+    missing = sorted(expected_targets - configured_targets)
+    unknown = sorted(configured_targets - expected_targets)
+    if missing or unknown:
+        raise StaticConfigError(
+            'Shop Mode unit_target_prices must exactly cover Shop unit '
+            f'targets; missing={missing}, unknown={unknown} in shop_mode.json'
+        )
+    invalid_access = sorted(
+        target_id for target_id, definition
+        in SHOP_CONFIG.unit_target_prices.items()
+        if (definition.run_access is not None) != (target_id in access_targets)
+    )
+    invalid_buffs = sorted(
+        target_id for target_id, definition
+        in SHOP_CONFIG.unit_target_prices.items()
+        if (definition.run_buff is not None) != (target_id in buff_targets)
+    )
+    if invalid_access or invalid_buffs:
+        raise StaticConfigError(
+            'Shop Mode unit_target_prices availability does not match Shop '
+            f'catalogue; access={invalid_access}, buffs={invalid_buffs} '
+            'in shop_mode.json'
+        )
+
+
+def _validate_power_target_prices(entries):
+    access_targets = {
+        entry.target_id for entry in entries
+        if entry.reward_type is ShopRewardType.POWER_ACCESS
+    }
+    buff_targets = {
+        entry.target_id for entry in entries
+        if entry.reward_type is ShopRewardType.POWER_BUFF
+    }
+    expected_targets = access_targets | buff_targets
+    configured_targets = set(SHOP_CONFIG.power_target_prices)
+    missing = sorted(expected_targets - configured_targets)
+    unknown = sorted(configured_targets - expected_targets)
+    if missing or unknown:
+        raise StaticConfigError(
+            'Shop Mode power_target_prices must exactly cover Shop power '
+            f'targets; missing={missing}, unknown={unknown} in shop_mode.json'
+        )
+    invalid_access = sorted(
+        target_id for target_id, definition
+        in SHOP_CONFIG.power_target_prices.items()
+        if (definition.run_access is not None) != (target_id in access_targets)
+    )
+    invalid_buffs = sorted(
+        target_id for target_id, definition
+        in SHOP_CONFIG.power_target_prices.items()
+        if (definition.run_buff is not None) != (target_id in buff_targets)
+    )
+    if invalid_access or invalid_buffs:
+        raise StaticConfigError(
+            'Shop Mode power_target_prices availability does not match Shop '
+            f'catalogue; access={invalid_access}, buffs={invalid_buffs} '
+            'in shop_mode.json'
+        )
+
+
 @lru_cache(maxsize=1)
 def shop_catalogue():
     entries = []
     seen = set()
+    excluded = set(SHOP_CONFIG.excluded_reward_ids)
     for reward in REWARD_POOL:
         entry = catalogue_entry(reward)
-        if entry is None or entry.reward_id in seen:
+        if (
+            entry is None
+            or entry.reward_id in seen
+            or entry.reward_id in excluded
+        ):
             continue
         seen.add(entry.reward_id)
         entries.append(entry)
+    unknown_exclusions = sorted(excluded - seen - {
+        canonical_reward_id(reward) for reward in REWARD_POOL
+    })
+    if unknown_exclusions:
+        raise StaticConfigError(
+            'Shop Mode excluded_reward_ids contains unknown rewards: '
+            f'{unknown_exclusions} in shop_mode.json'
+        )
+    _validate_unit_target_prices(entries)
+    _validate_power_target_prices(entries)
     return tuple(entries)
 
 

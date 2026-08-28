@@ -40,12 +40,18 @@ def mission_reward(
         ) from exc
     definition = config.mission_rewards[class_id]
     effects = modifier_effects(modifiers, config)
-    base_run_coins = max(
-        0, int(definition.run_coins * effects['run_reward_percent'])
-    )
-    meta_coins = max(
-        0, int(definition.meta_coins * effects['meta_reward_percent'])
-    )
+    base_run_coins = int(definition.run_coins * effects['run_reward_percent'])
+    meta_coins = int(definition.meta_coins * effects['meta_reward_percent'])
+    if getattr(mission_modifier, 'challenge', False):
+        meta_coins = int(
+            meta_coins * effects['challenge_meta_reward_percent']
+        )
+    else:
+        base_run_coins = int(
+            base_run_coins * effects['normal_run_reward_percent']
+        )
+    base_run_coins = max(0, base_run_coins + effects['run_reward_flat'])
+    meta_coins = max(0, meta_coins + effects['meta_reward_flat'])
     level = _bounded_upgrade_level(
         config, 'victory_run_coin_bonus', victory_coin_bonus_level
     )
@@ -59,6 +65,10 @@ def mission_reward(
     mission_bonus_meta = max(
         0, int(getattr(mission_modifier, 'bonus_meta_coins', 0))
     )
+    if getattr(mission_modifier, 'challenge', False):
+        mission_bonus_meta = int(
+            mission_bonus_meta * effects['challenge_meta_reward_percent']
+        )
     hunter_level = _bounded_upgrade_level(
         config, 'challenge_hunter', challenge_hunter_level
     )
@@ -147,16 +157,13 @@ def discounted_shop_price(
 
 
 def run_unit_price(
-    tier,
+    target_id,
     *,
     shop_discount_level=0,
     modifiers=(),
     config: ShopModeConfig = SHOP_CONFIG,
 ):
-    try:
-        base_price = config.run_unit_prices[str(tier)]
-    except KeyError as exc:
-        raise ValueError(f'Unknown Shop Mode unit tier: {tier!r}') from exc
+    base_price = _unit_target_price(config, target_id, 'run_access')
     return discounted_shop_price(
         base_price,
         shop_discount_level=shop_discount_level,
@@ -166,16 +173,13 @@ def run_unit_price(
 
 
 def run_buff_price(
-    tier,
+    target_id,
     *,
     shop_discount_level=0,
     modifiers=(),
     config: ShopModeConfig = SHOP_CONFIG,
 ):
-    try:
-        base_price = config.run_buff_prices[str(tier)]
-    except KeyError as exc:
-        raise ValueError(f'Unknown Shop Mode buff tier: {tier!r}') from exc
+    base_price = _unit_target_price(config, target_id, 'run_buff')
     return discounted_shop_price(
         base_price,
         shop_discount_level=shop_discount_level,
@@ -184,18 +188,42 @@ def run_buff_price(
     )
 
 
-def permanent_unit_price(tier, *, config: ShopModeConfig = SHOP_CONFIG):
-    try:
-        return int(config.permanent_unit_prices[str(tier)])
-    except KeyError as exc:
-        raise ValueError(f'Unknown Shop Mode unit tier: {tier!r}') from exc
+def _unit_target_price(config, target_id, price_field):
+    normalized_id = str(target_id).upper()
+    definition = config.unit_target_prices.get(normalized_id)
+    if definition is None:
+        raise ValueError(
+            f'Unknown Shop Mode unit price target: {target_id!r}'
+        )
+    price = getattr(definition, price_field)
+    if price is None:
+        raise ValueError(
+            f'Shop Mode target {normalized_id!r} has no {price_field} price'
+        )
+    return int(price)
 
 
-def permanent_buff_price(tier, *, config: ShopModeConfig = SHOP_CONFIG):
-    try:
-        return int(config.permanent_buff_prices[str(tier)])
-    except KeyError as exc:
-        raise ValueError(f'Unknown Shop Mode buff tier: {tier!r}') from exc
+def _power_target_price(config, target_id, price_field):
+    normalized_id = str(target_id).upper()
+    definition = config.power_target_prices.get(normalized_id)
+    if definition is None:
+        raise ValueError(
+            f'Unknown Shop Mode power price target: {target_id!r}'
+        )
+    price = getattr(definition, price_field)
+    if price is None:
+        raise ValueError(
+            f'Shop Mode power {normalized_id!r} has no {price_field} price'
+        )
+    return int(price)
+
+
+def permanent_unit_price(target_id, *, config: ShopModeConfig = SHOP_CONFIG):
+    return _unit_target_price(config, target_id, 'permanent_access')
+
+
+def permanent_buff_price(target_id, *, config: ShopModeConfig = SHOP_CONFIG):
+    return _unit_target_price(config, target_id, 'permanent_buff')
 
 
 def permanent_upgrade_price(
@@ -225,14 +253,11 @@ def run_reward_price(
     modifiers=(),
     specialization='',
     specialization_level=0,
+    coupon_discount_ore=0,
     config: ShopModeConfig = SHOP_CONFIG,
 ):
-    """Return one run-shop price, including selected category specialization."""
-    groups = {
-        'Units': {ShopRewardType.UNIT_ACCESS},
-        'Powers': {ShopRewardType.POWER_ACCESS},
-        'Buffs': {ShopRewardType.UNIT_BUFF, ShopRewardType.POWER_BUFF},
-    }
+    """Return one run-shop price, including all permanent discounts."""
+    del specialization
     specialization_level = _bounded_upgrade_level(
         config, 'discount_specialization', specialization_level
     )
@@ -241,19 +266,28 @@ def run_reward_price(
     ].effects['ore_per_level']
     extra_ore = (
         specialization_level * int(per_level)
-        if entry.reward_type in groups.get(str(specialization), set()) else 0
+        + max(0, int(coupon_discount_ore))
     )
-    base_prices = (
-        config.run_unit_prices
-        if entry.reward_type in {
-            ShopRewardType.UNIT_ACCESS, ShopRewardType.POWER_ACCESS
-        }
-        else config.run_buff_prices
-    )
-    try:
-        base_price = base_prices[str(entry.tier or 'tier_1')]
-    except KeyError as exc:
-        raise ValueError(f'Unknown Shop Mode reward tier: {entry.tier!r}') from exc
+    if entry.reward_type is ShopRewardType.UNIT_ACCESS:
+        base_price = _unit_target_price(
+            config, entry.target_id, 'run_access'
+        )
+    elif entry.reward_type is ShopRewardType.UNIT_BUFF:
+        base_price = _unit_target_price(
+            config, entry.target_id, 'run_buff'
+        )
+    elif entry.reward_type is ShopRewardType.POWER_ACCESS:
+        base_price = _power_target_price(
+            config, entry.target_id, 'run_access'
+        )
+    elif entry.reward_type is ShopRewardType.POWER_BUFF:
+        base_price = _power_target_price(
+            config, entry.target_id, 'run_buff'
+        )
+    else:
+        raise ValueError(
+            f'Unknown Shop Mode reward type: {entry.reward_type!r}'
+        )
     return discounted_shop_price(
         base_price,
         shop_discount_level=shop_discount_level,

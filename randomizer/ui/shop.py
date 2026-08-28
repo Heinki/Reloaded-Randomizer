@@ -244,6 +244,13 @@ def build_shop_tab(self, workspace_tabs):
         style='Launch.TButton',
     )
     self.shop_upgrade_selected_button.pack(side='left')
+    self.shop_stock_lock_button = ttk.Button(
+        shop_action_row,
+        text='Lock Selected Offer',
+        command=self.lock_selected_shop_offer,
+        state='disabled',
+    )
+    self.shop_stock_lock_button.pack(side='left', padx=(8, 0))
     self.shop_purchase_button = ttk.Button(
         shop_action_row,
         text='Purchase Selected',

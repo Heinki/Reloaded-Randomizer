@@ -58,6 +58,90 @@ def _tier_one_variant_entries(role, family=None):
             entries.append(entry)
     return entries
 
+def select_tier_one_unit_variants(
+    rng,
+    starting_unit_ids,
+    *,
+    families,
+    allowed_roles=None,
+    excluded_unit_ids=(),
+):
+    """Resolve each saved role marker to one concrete seeded unit identity."""
+    available_families = tuple(dict.fromkeys(
+        str(family or '').lower()
+        for family in families
+        if str(family or '').lower() in STANDARD_TIER_ONE_FAMILIES
+    ))
+    allowed = (
+        set(TIER_ONE_ROLE_UNITS)
+        if allowed_roles is None
+        else {str(role) for role in allowed_roles}
+    )
+    excluded = {
+        str(unit_id or '').upper()
+        for unit_id in excluded_unit_ids
+        if unit_id
+    }
+    selected = []
+    for value in starting_unit_ids or ():
+        unit_id = str(value or '').upper()
+        role = TIER_ONE_ROLE_BY_MARKER.get(unit_id)
+        if not role:
+            if unit_id and unit_id not in excluded and unit_id not in selected:
+                selected.append(unit_id)
+            continue
+        if role not in allowed:
+            continue
+        candidates = tuple(dict.fromkeys(
+            entry[0]
+            for family in available_families
+            for entry in _tier_one_variant_entries(role, family)
+            if entry[0] not in excluded
+        ))
+        if candidates:
+            unused = tuple(item for item in candidates if item not in selected)
+            selected.append(rng.choice(unused or candidates))
+    return tuple(selected)
+
+def select_tier_one_defense_variants(
+    rng,
+    starting_defense_ids,
+    *,
+    families,
+    excluded_unit_ids=(),
+):
+    """Resolve defense marker to one seeded identity for each defense role."""
+    available_families = tuple(dict.fromkeys(
+        str(family or '').lower()
+        for family in families
+        if str(family or '').lower() in TIER_ONE_DEFENSE_UNITS
+    ))
+    excluded = {
+        str(unit_id or '').upper()
+        for unit_id in excluded_unit_ids
+        if unit_id
+    }
+    selected = []
+    for value in starting_defense_ids or ():
+        unit_id = str(value or '').upper()
+        if unit_id != TIER_ONE_DEFENSE_MARKER:
+            if unit_id and unit_id not in excluded and unit_id not in selected:
+                selected.append(unit_id)
+            continue
+        for role in TIER_ONE_DEFENSE_ROLES:
+            candidates = tuple(dict.fromkeys(
+                TIER_ONE_DEFENSE_ROLE_UNITS[role][family]
+                for family in available_families
+                if (
+                    family in TIER_ONE_DEFENSE_ROLE_UNITS[role]
+                    and TIER_ONE_DEFENSE_ROLE_UNITS[role][family]
+                    not in excluded
+                )
+            ))
+            if candidates:
+                selected.append(rng.choice(candidates))
+    return tuple(dict.fromkeys(selected))
+
 def expanded_tier_one_unit_ids(starting_unit_ids):
     """Expand Standard role markers across reviewed standard families."""
     expanded = set()
