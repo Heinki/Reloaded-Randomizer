@@ -11,12 +11,14 @@ from randomizer.core.mix import extract_mix_members
 from randomizer.core.paths import (
     CAMEO_CACHE_DIR,
     GAME_ROOT,
+    SOURCE_DIR,
 )
 from randomizer.config.game_profile import ART_INI_NAME, RULES_INI_NAME
 
 
 ART_CACHE_PATH = CAMEO_CACHE_DIR / ART_INI_NAME
 RULES_CACHE_PATH = CAMEO_CACHE_DIR / RULES_INI_NAME
+ARCHIPELAGO_CAMEO_PATH = SOURCE_DIR / 'assets' / 'archipelago.png'
 SAFE_ASSET_NAME = re.compile(r'^[A-Za-z0-9_.-]+$')
 _ART_CAMEO_NAMES = None
 _RULES_ART_NAMES = None

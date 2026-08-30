@@ -76,6 +76,12 @@ class StageWeightProfile:
 
 
 @dataclass(frozen=True)
+class StageDifficultyProfile:
+    through_percent: int
+    weights: Mapping[str, int]
+
+
+@dataclass(frozen=True)
 class PermanentUpgradeDefinition:
     id: str
     display_name: str
@@ -124,6 +130,7 @@ class ShopModeConfig:
     excluded_reward_ids: tuple[str, ...]
     mission_rewards: Mapping[MissionEconomyClass, MissionRewardDefinition]
     stage_class_weights: tuple[StageWeightProfile, ...]
+    stage_difficulty_weights: tuple[StageDifficultyProfile, ...]
     power_target_prices: Mapping[str, ShopPowerPriceDefinition]
     unit_target_prices: Mapping[str, ShopTargetPriceDefinition]
     permanent_upgrades: Mapping[str, PermanentUpgradeDefinition]

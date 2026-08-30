@@ -1,5 +1,6 @@
 """Focused executable contracts for Shop Mode domain and persistence."""
 
+from collections import Counter
 from dataclasses import replace
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -13,6 +14,7 @@ from randomizer.maps.shop_modifiers import apply_shop_clone_modifiers
 from randomizer.missions.tier_one import tier_one_defense_ids, tier_one_unit_ids
 from randomizer.rewards.rules import tech_ids_for_rewards
 from randomizer.ui.cameos import (
+    ARCHIPELAGO_CAMEO_PATH,
     cameo_extraction_pending,
     ensure_superweapon_cameos,
     ensure_unit_cameos,
@@ -32,7 +34,10 @@ from .archipelago import (
     random_ap_unit_entitlement_ids,
     shop_reward_ids_from_ap_ledger,
 )
-from .archipelago_purchases import archipelago_purchase_records
+from .archipelago_purchases import (
+    archipelago_purchase_placement_text,
+    archipelago_purchase_records,
+)
 from .config import SHOP_CONFIG
 from .economy import (
     discounted_shop_price,
@@ -59,6 +64,8 @@ from .missions import (
     classify_mission,
     generate_mission_offers,
     mission_classes_for_stage,
+    mission_difficulty,
+    mission_difficulty_weights_for_stage,
 )
 from .mission_modifiers import (
     MISSION_MODIFIERS,
@@ -1153,6 +1160,17 @@ def validate_shop_domain():
         config_validation_valid = False
     except StaticConfigError:
         pass
+    invalid_difficulty_config = load_static_config('shop_mode.json')
+    invalid_difficulty_config['stage_difficulty_weights'][0]['weights'][
+        'Normal'
+    ] = -1
+    try:
+        validate_sections(
+            'shop_mode.json', invalid_difficulty_config, 'shop-self-check'
+        )
+        config_validation_valid = False
+    except StaticConfigError:
+        pass
     invalid_price_config = load_static_config('shop_mode.json')
     invalid_price_config['unit_target_prices']['E1']['run_access'] = 0
     try:
@@ -1229,6 +1247,35 @@ def validate_shop_domain():
         * starting_credit_upgrade.effects['credits_per_level'] == 20000
         and starting_credit_reward.get('credits_per_stack') == 1000
         and starting_credit_reward.get('maximum_credits') == 20000
+    )
+
+    difficulty_samples = {
+        stage: Counter(
+            mission_difficulty(
+                f'SHOP-DIFFICULTY-{sample}', stage, 'ALL01_RA2'
+            )
+            for sample in range(1000)
+        )
+        for stage in (3, 4, 6, 8)
+    }
+    stage_game_difficulty_valid = bool(
+        mission_difficulty_weights_for_stage(3)
+        == {'Casual': 80, 'Normal': 20, 'Hard': 0}
+        and mission_difficulty_weights_for_stage(4)
+        == {'Casual': 35, 'Normal': 65, 'Hard': 0}
+        and mission_difficulty_weights_for_stage(6)
+        == {'Casual': 20, 'Normal': 60, 'Hard': 20}
+        and mission_difficulty_weights_for_stage(8)
+        == {'Casual': 10, 'Normal': 45, 'Hard': 45}
+        and difficulty_samples[3]['Hard'] == 0
+        and difficulty_samples[4]['Normal'] > difficulty_samples[4]['Casual']
+        and difficulty_samples[4]['Hard'] == 0
+        and all(difficulty_samples[6][name] > 0 for name in (
+            'Casual', 'Normal', 'Hard'
+        ))
+        and difficulty_samples[8]['Hard'] > difficulty_samples[8]['Casual']
+        and mission_difficulty('DETERMINISTIC', 6, 'ALL01_RA2')
+        == mission_difficulty('DETERMINISTIC', 6, 'ALL01_RA2')
     )
 
     catalogue = shop_catalogue()
@@ -1599,7 +1646,29 @@ def validate_shop_domain():
     details = {
         'config_validation_valid': config_validation_valid,
         'economy_valid': economy_valid,
+        'stage_game_difficulty_valid': stage_game_difficulty_valid,
         'catalogue_valid': catalogue_valid,
+        'archipelago_cameo_asset_valid': bool(
+            ARCHIPELAGO_CAMEO_PATH.is_file()
+            and ARCHIPELAGO_CAMEO_PATH.read_bytes().startswith(
+                b'\x89PNG\r\n\x1a\n'
+            )
+        ),
+        'archipelago_purchase_display_valid': bool(
+            archipelago_purchase_placement_text({
+                'item_name': 'Progressive Sword',
+                'item': 42,
+                'recipient_player': 'Link',
+                'player': 3,
+                'recipient_game': 'A Link to the Past',
+            }) == (
+                'Progressive Sword',
+                'Link (A Link to the Past)',
+            )
+            and archipelago_purchase_placement_text({}) == (
+                'Awaiting server details', '—'
+            )
+        ),
         'purchase_rules_valid': purchase_rules_valid,
         'permanent_purchase_valid': permanent_purchase_valid,
         'loadout_valid': loadout_valid,

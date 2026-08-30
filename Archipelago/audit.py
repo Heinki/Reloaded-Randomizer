@@ -16,6 +16,7 @@ from Archipelago.catalogue_contract import (
     WORLD_VERSION,
     snapshot_is_current,
 )
+from Archipelago.client.session import _scout_location_ids
 from randomizer.config.game_profile import ENABLE_ARCHIPELAGO, FACTION_ORDER
 
 
@@ -75,6 +76,10 @@ def archipelago_foundation_report():
         for token in ('mental omega', 'mental_omega', 'morp')
     )
     snapshot_current = snapshot_is_current(snapshot)
+    shop_purchase_scouting_valid = _scout_location_ids({
+        'locations': {'MISSION': {'objective': [3, 1]}},
+        'shop': {'purchase_locations': [5, 2]},
+    }) == (1, 2, 3, 5)
     valid = all((
         not missing_files,
         snapshot_current,
@@ -95,6 +100,7 @@ def archipelago_foundation_report():
         ranges_disjoint,
         ids_valid,
         identity_isolated,
+        shop_purchase_scouting_valid,
         not ENABLE_ARCHIPELAGO or snapshot['review_complete'],
     ))
     return {
@@ -111,6 +117,7 @@ def archipelago_foundation_report():
         'ranges_disjoint': ranges_disjoint,
         'ids_valid': ids_valid,
         'identity_isolated': identity_isolated,
+        'shop_purchase_scouting_valid': shop_purchase_scouting_valid,
         'missing_files': missing_files,
         'snapshot_current': snapshot_current,
         'review': snapshot['review'],

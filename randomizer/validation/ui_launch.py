@@ -22,6 +22,9 @@ from randomizer.core.paths import (
     GAME_ROOT,
     LOG_DIR,
     OPTIONS_INI,
+    SHOP_PROFILE_PATH,
+    SHOP_RUN_PATH,
+    SHOP_TRANSACTION_PATH,
     SPAWN_INI,
     STATE_PATH,
     UIMD_INI,
@@ -125,7 +128,16 @@ def run_ui_launch_smoke(mission_code='ALL01_RA2', seed='RLR-UI-SMOKE', timeout=1
 
     snapshots = [
         _snapshot(path)
-        for path in (STATE_PATH, CONFIG_PATH, SPAWN_INI, OPTIONS_INI, UIMD_INI)
+        for path in (
+            STATE_PATH,
+            CONFIG_PATH,
+            SHOP_PROFILE_PATH,
+            SHOP_RUN_PATH,
+            SHOP_TRANSACTION_PATH,
+            SPAWN_INI,
+            OPTIONS_INI,
+            UIMD_INI,
+        )
     ]
     debug_offset = DEBUG_LOG.stat().st_size if DEBUG_LOG.exists() else 0
     started = time.monotonic()
@@ -201,6 +213,10 @@ def run_ui_launch_smoke(mission_code='ALL01_RA2', seed='RLR-UI-SMOKE', timeout=1
                 campaign_filter = f'{mission["side"]} - {mission["campaign"]}'
                 campaign_values = list(app.campaign_combo.cget('values'))
                 app.campaign_var.set(campaign_values[0])
+                # Player state may reopen directly in Shop Mode. Normalize the
+                # baseline before asserting ordinary workspace availability.
+                app.progression_mode_var.set('Classic')
+                app.sync_shop_workspace()
                 workspace_tabs = _tab_report(app.workspace_tabs)
                 info_tabs = _tab_report(app.info_tabs)
                 # Shop intentionally replaces the ordinary mission workspace

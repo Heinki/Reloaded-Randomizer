@@ -27,7 +27,7 @@ def apply_color_mode(self):
         'Stage': '#79c0ff' if self.dark_mode_var.get() else '#0969da',
         'Status': '#7ee787' if self.dark_mode_var.get() else '#1a7f37',
         'Ore': '#f2cc60' if self.dark_mode_var.get() else '#9a6700',
-        'Mental': '#d2a8ff' if self.dark_mode_var.get() else '#8250df',
+        'Command': '#d2a8ff' if self.dark_mode_var.get() else '#8250df',
         'Reroll': '#76e3ea' if self.dark_mode_var.get() else '#096b72',
         'Reward': '#f2cc60' if self.dark_mode_var.get() else '#825800',
         'Help': '#79c0ff' if self.dark_mode_var.get() else '#0550ae',
@@ -37,6 +37,17 @@ def apply_color_mode(self):
     for name, color in shop_colors.items():
         style.configure(
             f'Shop.{name}.TLabel', background=background, foreground=color
+        )
+    shop_difficulty_colors = {
+        'Casual': '#7ee787' if self.dark_mode_var.get() else '#1a7f37',
+        'Normal': '#ffa657' if self.dark_mode_var.get() else '#bc4c00',
+        'Hard': '#ff7b72' if self.dark_mode_var.get() else '#cf222e',
+    }
+    for name, color in shop_difficulty_colors.items():
+        style.configure(
+            f'Shop.Difficulty.{name}.TLabel',
+            background=background,
+            foreground=color,
         )
     style.configure(
         'Archipelago.Disconnected.TLabel',

@@ -69,6 +69,12 @@ catalogue: 166 unit access rewards, 1,885 unit buffs, 18 powers, and 44 power
 buffs. Temporary mission cards can add one of 12 Reloaded player boons or 7
 Reloaded AI challenges; active power boons are not offered twice.
 
+Each Shop mission card shows a deterministic per-offer game difficulty. Early
+stages favor Casual, middle stages favor Normal, and late stages can select
+Hard. Mission Difficulty Assist lowers only its chosen offer by one step while
+preserving the reward. Expanding the launcher log exposes a developer-only
+offer picker for recovery and test completion through normal Shop transitions.
+
 The Reloaded APWorld contains 2,161 items, 108 missions, and 6,030 reserved
 locations for objectives, victories, and Shop Mode.
 

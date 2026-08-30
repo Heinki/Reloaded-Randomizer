@@ -60,6 +60,14 @@ Every entry requires a unique `title`, a `description`, non-negative
 prevents a boon from being offered when its defining power is already active.
 Optional `buffs_allied_helpers` defaults to `false`.
 
+`stage_difficulty_weights` independently controls the actual in-game Casual,
+Normal, and Hard difficulty of every visible offer. Profiles use ascending run
+percentage boundaries ending at 100. Difficulty is derived from run seed,
+stage, and mission code without consuming mission-selection RNG. Stages 1–3
+are Casual-heavy, stages 4–5 are Normal-heavy, stages 6–7 introduce Hard, and
+stages 8–10 weight Normal and Hard equally. Difficulty Assist lowers only its
+chosen offer by one step.
+
 After reviewing a changed Reloaded reward catalogue, regenerate explicit target
 coverage with:
 

@@ -75,6 +75,24 @@
         }
       }
     ],
+    "stage_difficulty_weights": [
+      {
+        "through_percent": 30,
+        "weights": {"Casual": 80, "Normal": 20, "Hard": 0}
+      },
+      {
+        "through_percent": 50,
+        "weights": {"Casual": 35, "Normal": 65, "Hard": 0}
+      },
+      {
+        "through_percent": 70,
+        "weights": {"Casual": 20, "Normal": 60, "Hard": 20}
+      },
+      {
+        "through_percent": 100,
+        "weights": {"Casual": 10, "Normal": 45, "Hard": 45}
+      }
+    ],
     "power_target_prices": {
       "CHRONOSPHERESPECIAL": {
         "run_access": 6,
