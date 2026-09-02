@@ -1093,9 +1093,12 @@ class ShopPolishController(ShopArchipelagoController):
     def _show_shop_buffs_for_target(self, target_id, *, power=False):
         if not target_id:
             return
-        self._shop_requested_buff_target_id = target_id
         self.shop_category_var.set('Power Buffs' if power else 'Unit Buffs')
-        self.shop_search_var.set('')
+        if self.shop_search_var.get():
+            self.shop_search_var.set('')
+        # Search updates the catalogue through a write trace. Set the target
+        # after clearing it so that refresh cannot select a different unit.
+        self._shop_requested_buff_target_id = target_id
         self.refresh_shop_catalogue()
         self.shop_panels.select(0)
 
