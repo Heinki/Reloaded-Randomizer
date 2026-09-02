@@ -137,6 +137,10 @@ Build the launcher and matching APWorld:
 .\build_exe.ps1
 ```
 
+The build script automatically selects an installed Python 3.14.6 even when
+`python` on `PATH` points to an older version. Use `-PythonExecutable` with a
+full path to override discovery.
+
 The build publishes `CnCReloadedRandomizer.exe` and
 `cnc_reloaded.apworld` beside the repository in the game folder. PyInstaller
 extracts the one-file runtime into the Windows temporary directory; a build or

@@ -1,6 +1,6 @@
 param(
     [string]$Output = "..\CnCReloadedRandomizer.exe",
-    [string]$PythonExecutable = "python"
+    [string]$PythonExecutable
 )
 
 $ErrorActionPreference = "Stop"
@@ -25,13 +25,57 @@ $configManifestPath = Join-Path $configManifestDir "bundle_manifest.json"
 New-Item -ItemType Directory -Path $outputDir -Force | Out-Null
 
 $requiredPythonVersion = '3.14.6'
-$pythonVersion = (& $PythonExecutable -c "import platform; print(platform.python_version())" 2>$null).Trim()
-if ($LASTEXITCODE -ne 0 -or $pythonVersion -ne $requiredPythonVersion) {
-    throw (
-        "Python $requiredPythonVersion is required for reproducible launcher builds; " +
-        "found $pythonVersion."
+$pythonCandidates = @()
+if ($PythonExecutable) {
+    $pythonCandidates = @($PythonExecutable)
+} else {
+    $requiredPythonDirectory = 'Python' + (
+        ($requiredPythonVersion.Split('.')[0..1]) -join ''
+    )
+    if ($env:LOCALAPPDATA) {
+        $pythonCandidates += Join-Path $env:LOCALAPPDATA (
+            "Programs\Python\$requiredPythonDirectory\python.exe"
+        )
+    }
+    $pythonCandidates += @(
+        Get-Command python -All -ErrorAction SilentlyContinue |
+            ForEach-Object { $_.Source }
     )
 }
+
+$discoveredPythonVersions = @()
+$selectedPythonExecutable = $null
+foreach ($candidate in @($pythonCandidates | Select-Object -Unique)) {
+    try {
+        $candidateVersion = (
+            & $candidate -c "import platform; print(platform.python_version())" 2>$null
+        ).Trim()
+        if ($LASTEXITCODE -ne 0 -or -not $candidateVersion) {
+            continue
+        }
+        $discoveredPythonVersions += "$candidate ($candidateVersion)"
+        if ($candidateVersion -eq $requiredPythonVersion) {
+            $selectedPythonExecutable = $candidate
+            $pythonVersion = $candidateVersion
+            break
+        }
+    } catch {
+        continue
+    }
+}
+if (-not $selectedPythonExecutable) {
+    $discoveredText = if ($discoveredPythonVersions.Count -gt 0) {
+        $discoveredPythonVersions -join ', '
+    } else {
+        'none'
+    }
+    throw (
+        "Python $requiredPythonVersion is required for reproducible launcher builds; " +
+        "found $discoveredText. Install it or pass -PythonExecutable with its full path."
+    )
+}
+$PythonExecutable = $selectedPythonExecutable
+Write-Host "Using Python ${pythonVersion}: $PythonExecutable"
 if (-not (& $PythonExecutable -m PyInstaller --version 2>$null)) {
     throw "PyInstaller is required. Install build dependencies with: python -m pip install -r requirements-build.txt"
 }
@@ -77,10 +121,10 @@ foreach ($tkRuntimePath in @(
 if ($LASTEXITCODE -ne 0) {
     throw "Static config preflight failed; EXE was not built."
 }
-& $PythonExecutable -m Archipelago.audit
-if ($LASTEXITCODE -ne 0) {
-    throw "Archipelago catalogue/APWorld preflight failed; EXE was not built."
-}
+$apWorldBuildScript = Join-Path $scriptDir 'Archipelago\build_apworld.ps1'
+& $apWorldBuildScript `
+    -OutputDirectory (Split-Path -Parent $apWorldPath) `
+    -PythonExecutable $PythonExecutable
 if (-not (Test-Path -LiteralPath $apWorldPath -PathType Leaf)) {
     throw "Built C&C Reloaded APWorld is missing: $apWorldPath"
 }

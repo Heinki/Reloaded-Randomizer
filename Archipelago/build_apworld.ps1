@@ -1,5 +1,6 @@
 param(
     [string]$OutputDirectory = $PSScriptRoot,
+    [string]$PythonExecutable = 'python',
     [switch]$AllowIncompleteCatalogue
 )
 
@@ -11,7 +12,7 @@ $sourceDirectory = Join-Path $PSScriptRoot "APWorld\$moduleName"
 $cataloguePath = Join-Path $sourceDirectory 'catalogue.json'
 $manifestPath = Join-Path $sourceDirectory 'archipelago.json'
 
-python -m Archipelago.audit | Out-Host
+& $PythonExecutable -m Archipelago.audit | Out-Host
 if ($LASTEXITCODE -ne 0) {
     throw 'C&C Reloaded APWorld source validation failed.'
 }
@@ -94,4 +95,3 @@ finally {
 }
 
 Write-Output $outputPath
-
