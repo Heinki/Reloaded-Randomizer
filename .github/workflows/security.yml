@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
+  schedule:
+    - cron: '23 4 * * 1'
 
 permissions:
   contents: read
@@ -71,3 +73,14 @@ jobs:
           languages: python
       - name: Analyze
         uses: github/codeql-action/analyze@v4
+
+  dependency-review:
+    name: Dependency review
+    # Dependency review has the same GitHub Code Security requirement on private repositories.
+    if: ${{ github.event_name == 'pull_request' && (github.event.repository.private == false || vars.CODE_SECURITY_ENABLED == 'true') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+      - name: Reject vulnerable dependency changes
+        uses: actions/dependency-review-action@v5
