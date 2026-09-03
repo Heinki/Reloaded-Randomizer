@@ -129,9 +129,10 @@ multiworld progression. Synchronization does not grant rewards twice.
 - Enter the password if the room requires one.
 - Confirm that the room is running and has not expired.
 
-For `CERTIFICATE_VERIFY_FAILED`, check the system clock and Windows trusted
-root certificates, then check whether antivirus or a network proxy intercepts
-TLS. Do not disable certificate verification.
+TLS uses the same maintained `certifi` CA bundle as the official Archipelago
+client. For `CERTIFICATE_VERIFY_FAILED`, check the system clock, then check
+whether antivirus or a network proxy intercepts TLS. Do not disable certificate
+verification.
 
 ### Version or manifest mismatch
 
@@ -162,6 +163,12 @@ Regenerate, audit, and build the APWorld from the repository root:
 python -m Archipelago.generate_catalogue
 python -m Archipelago.audit
 .\Archipelago\build_apworld.ps1
+```
+
+The platform-neutral build command is:
+
+```bash
+python3 Archipelago/build_apworld.py
 ```
 
 Output is `Archipelago\cnc_reloaded.apworld`. The launcher build publishes the

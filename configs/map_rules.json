@@ -240,7 +240,7 @@
     "engineer_clone_safety": {
       "identity_fields": {
         "Primary": "DefuseKit",
-        "Secondary": "EngineerScanner",
+        "Secondary": "EngineerVirtualScanner",
         "Engineer": "yes",
         "CanDrive": "yes",
         "GroupAs": "Engineers",

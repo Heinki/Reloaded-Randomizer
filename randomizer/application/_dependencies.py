@@ -1,9 +1,11 @@
 """Shared imports and constants for launcher controllers."""
 
 import logging
+import os
 import queue
 import random
 import re
+import signal
 import shutil
 import subprocess
 import sys
@@ -127,6 +129,7 @@ from randomizer.missions.catalogue import (
 from randomizer.missions.houses import (
     mission_player_production_houses,
 )
+from randomizer.missions.installation import resolve_installed_scenario
 from randomizer.maps.ini import (
     read_text,
     set_ini_value_lines,

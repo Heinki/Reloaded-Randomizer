@@ -15,7 +15,7 @@ $distDir = Join-Path $scriptDir "dist"
 $workDir = Join-Path $scriptDir "build"
 $iconPath = Join-Path $scriptDir "reloaded-randomizer.ico"
 $staticConfigPath = Join-Path $scriptDir "configs"
-$assetPath = Join-Path $scriptDir "assets"
+$assetPath = Join-Path $scriptDir "Assets"
 $apWorldPath = Join-Path $scriptDir "Archipelago\cnc_reloaded.apworld"
 $tkRuntimeHook = Join-Path $scriptDir "tools\pyinstaller_tk_runtime.py"
 $versionInfoPath = Join-Path ([IO.Path]::GetTempPath()) "CnCReloadedRandomizer-$PID-version.txt"
@@ -83,6 +83,10 @@ $websocketsVersion = (& $PythonExecutable -c "import websockets; print(websocket
 if ($LASTEXITCODE -ne 0 -or $websocketsVersion -ne '17.0') {
     throw "websockets 17.0 is required. Install build dependencies with: python -m pip install -r requirements-build.txt"
 }
+$certifiVersion = (& $PythonExecutable -c "import certifi; print(certifi.__version__)" 2>$null).Trim()
+if ($LASTEXITCODE -ne 0 -or $certifiVersion -ne '2026.07.22') {
+    throw "certifi 2026.07.22 is required. Install build dependencies with: python -m pip install -r requirements-build.txt"
+}
 $iconArguments = @()
 if (Test-Path -LiteralPath $iconPath -PathType Leaf) {
     $iconArguments = @('--icon', $iconPath, '--add-data', "$iconPath;.")
@@ -94,7 +98,7 @@ if (-not (Test-Path -LiteralPath $staticConfigPath -PathType Container)) {
 }
 $assetArguments = @()
 if (Test-Path -LiteralPath $assetPath -PathType Container) {
-    $assetArguments = @('--add-data', "$assetPath;assets")
+    $assetArguments = @('--add-data', "$assetPath;Assets")
 } else {
     Write-Warning "Launcher asset directory is missing; no custom art will be bundled."
 }
@@ -205,8 +209,8 @@ New-Item -ItemType Directory -Path $configManifestDir -Force | Out-Null
     [Text.UTF8Encoding]::new($false)
 )
 
-# Archipelago uses compressed ws/wss connections. Keep SSL, HTTP, and email
-# available for the bundled websockets handshake implementation.
+# Archipelago uses compressed ws/wss connections. Keep SSL, HTTP, email, and
+# the maintained certifi CA bundle available for the handshake implementation.
 try {
     & $PythonExecutable -m PyInstaller `
         --noconfirm `

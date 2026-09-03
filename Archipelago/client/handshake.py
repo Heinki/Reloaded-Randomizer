@@ -11,6 +11,8 @@ from typing import Any, Mapping
 from urllib.parse import urlsplit, urlunsplit
 from urllib.request import getproxies
 
+import certifi
+
 from randomizer.core.version import APP_VERSION
 
 
@@ -55,7 +57,7 @@ class ArchipelagoTlsError(ArchipelagoHandshakeError):
         )
         super().__init__(
             f'TLS certificate verification failed for {self.endpoint}: '
-            f'{detail}. System clock, Windows trusted roots, antivirus/proxy '
+            f'{detail}. System clock, antivirus/proxy '
             'TLS inspection, or server certificate chain may be responsible.'
         )
 
@@ -135,7 +137,7 @@ def tls_diagnostics(endpoint, context=None, error=None):
     paths = ssl.get_default_verify_paths()
     if context is None and parsed.scheme == 'wss':
         try:
-            context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+            context = _verified_ssl_context()
         except Exception:
             context = None
     stats = {}
@@ -158,6 +160,8 @@ def tls_diagnostics(endpoint, context=None, error=None):
         'default_capath': paths.capath,
         'openssl_cafile': paths.openssl_cafile,
         'openssl_capath': paths.openssl_capath,
+        'ca_bundle': certifi.where(),
+        'ca_bundle_version': getattr(certifi, '__version__', ''),
         'ssl_cert_file_override': bool(os.environ.get('SSL_CERT_FILE')),
         'ssl_cert_dir_override': bool(os.environ.get('SSL_CERT_DIR')),
         'proxies': _sanitized_proxies(),
@@ -169,13 +173,22 @@ def tls_diagnostics(endpoint, context=None, error=None):
     }
 
 
+def _verified_ssl_context():
+    """Use same maintained CA bundle as official Archipelago client."""
+    context = ssl.create_default_context(
+        ssl.Purpose.SERVER_AUTH,
+        cafile=certifi.where(),
+    )
+    context.check_hostname = True
+    context.verify_mode = ssl.CERT_REQUIRED
+    return context
+
+
 def _connect_websocket(connect, endpoint, **kwargs):
     """Open one verified WebSocket and preserve actionable TLS failure data."""
     context = None
     if urlsplit(endpoint).scheme == 'wss':
-        context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
-        context.check_hostname = True
-        context.verify_mode = ssl.CERT_REQUIRED
+        context = _verified_ssl_context()
         kwargs['ssl'] = context
     try:
         return connect(endpoint, **kwargs)
@@ -709,5 +722,4 @@ def connect_slot(server, slot_name, password='', client_uuid='cnc-reloaded', tim
         raise ArchipelagoProtocolError(
             'Archipelago handshake packet is missing required data.'
         ) from exc
-
 

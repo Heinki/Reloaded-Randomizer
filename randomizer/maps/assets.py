@@ -16,7 +16,7 @@ from randomizer.rewards.reloaded_definitions import UNIT_SIDEBAR_IMAGES
 
 
 CUSTOM_ASSET_DIR = APP_DIR / 'assets'
-BUNDLED_ASSET_DIR = SOURCE_DIR / 'assets'
+BUNDLED_ASSET_DIR = SOURCE_DIR / 'Assets'
 SIDEBAR_WIDTH = 60
 SIDEBAR_HEIGHT = 48
 GENERATED_ART_MARKER = (

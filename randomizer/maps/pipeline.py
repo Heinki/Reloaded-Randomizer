@@ -151,6 +151,7 @@ from randomizer.missions.overrides import (
 from randomizer.missions.safety import safe_build_countries
 from randomizer.missions.access import PRODUCTION_BUILDINGS
 from randomizer.missions.catalogue import normalize_faction
+from randomizer.missions.installation import resolve_installed_scenario
 from randomizer.core.paths import DEBUG_LOG, GAME_ROOT, GENERATED_MAP_DIR
 from randomizer.rewards.catalogue import (
     ALWAYS_AVAILABLE_TECH_IDS,
@@ -250,7 +251,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         )
 
     source_path = self.extract_campaign_map(scenario)
-    authored_source_path = GAME_ROOT / scenario
+    authored_source_path = resolve_installed_scenario(scenario)
     integrity_path = (
         authored_source_path if authored_source_path.is_file() else source_path
     )
@@ -1892,6 +1893,67 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             player_forbidden_houses=player_native_exclusions,
             player_factory_forbidden_houses=player_factory_exclusions,
         )
+        # Keep a second, engine-native lock on the selected original Engineer
+        # whenever no authored TaskForce needs that exact identity. The hidden
+        # negative gate remains the general isolation mechanism, but older
+        # Ares/Phobos combinations can still expose the original InfantryType
+        # beside its generated clone while rebuilding sidebar prerequisites.
+        # TechLevel 11 cannot affect placements or trigger-created Engineers;
+        # TaskForce identities retain their installed TechLevel above.
+        native_engineer_hard_locks = (
+            set(fallback_tech_ids).intersection(ENGINEER_UNIT_IDS)
+            - set(scripted_story_unit_ids)
+        )
+        selected_engineer_ids = set(fallback_tech_ids).intersection(
+            ENGINEER_UNIT_IDS
+        )
+        # FactoryOwners.Forbidden is production-only, so it can backstop the
+        # negative prerequisite without rejecting authored Engineer teams.
+        # Include reviewed transferred-factory owners as well as the player's
+        # initial country; otherwise both native and generated Engineer cameos
+        # can appear after a campaign barracks handover.
+        for source_id in selected_engineer_ids:
+            source_rules = production_gate_rules.setdefault(source_id, {})
+            existing_factory_forbidden = native_value(
+                source_rules,
+                'FactoryOwners.Forbidden',
+                native_value(
+                    native_map_sections.get(
+                        native_names.get(source_id.lower()), {}
+                    ),
+                    'FactoryOwners.Forbidden',
+                    native_value(
+                        installed_rule_sections.get(
+                            installed_names.get(source_id.lower()), {}
+                        ),
+                        'FactoryOwners.Forbidden',
+                        '',
+                    ),
+                ),
+            )
+            source_rules['FactoryOwners.Forbidden'] = ','.join(
+                unique_in_order(
+                    [
+                        value.strip()
+                        for value in str(
+                            existing_factory_forbidden or ''
+                        ).split(',')
+                        if value.strip()
+                        and value.strip().casefold() not in {'none', '<none>'}
+                    ]
+                    + list(player_factory_exclusions)
+                )
+            ) or None
+        for source_id in native_engineer_hard_locks:
+            production_gate_rules.setdefault(source_id, {})[
+                'TechLevel'
+            ] = LOCKED_TECH_LEVEL
+        if native_engineer_hard_locks:
+            self.append_log(
+                'Applied redundant native Engineer production lock for: '
+                + ', '.join(sorted(native_engineer_hard_locks))
+                + '.'
+            )
         if production_alias_ids:
             aliases = MISSION_NATIVE_PRODUCTION_ALIASES.get(code, {})
             self.append_log(
@@ -2630,6 +2692,68 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         }
         if final_engineer_gate_rules:
             merge_ini_section_values(lines, final_engineer_gate_rules)
+
+        if len(selected_engineer_ids) > 1:
+            raise ValueError(
+                'More than one buildable Engineer identity was selected: '
+                + ', '.join(sorted(selected_engineer_ids))
+            )
+        final_sections = {
+            str(section).upper(): {
+                str(key).lower(): value for key, value in values.items()
+            }
+            for section, values in all_section_value_maps(lines).items()
+        }
+        for source_id in sorted(selected_engineer_ids):
+            clone_id = str(
+                (clone_handled.get(source_id) or {}).get('clone_id') or ''
+            ).upper()
+            clone_values = final_sections.get(clone_id, {})
+            if not clone_id or not clone_values:
+                raise ValueError(
+                    f'Selected Engineer {source_id} has no generated clone.'
+                )
+            if str(clone_values.get('secondary') or '').casefold() != (
+                'EngineerVirtualScanner'.casefold()
+            ):
+                raise ValueError(
+                    f'Generated Engineer {clone_id} has unsafe Secondary='
+                    f'{clone_values.get("secondary") or "<missing>"}.'
+                )
+            native_values = final_sections.get(source_id, {})
+            negatives = {
+                value.strip().casefold()
+                for value in str(
+                    native_values.get('prerequisite.negative') or ''
+                ).split(',')
+                if value.strip()
+            }
+            if PLAYER_ORIGINAL_PRODUCTION_GATE_ID.casefold() not in negatives:
+                raise ValueError(
+                    f'Native Engineer {source_id} lacks player production gate.'
+                )
+            factory_forbidden = {
+                value.strip().casefold()
+                for value in str(
+                    native_values.get('factoryowners.forbidden') or ''
+                ).split(',')
+                if value.strip()
+            }
+            missing_factory_owners = {
+                str(value).casefold() for value in player_factory_exclusions
+            } - factory_forbidden
+            if missing_factory_owners:
+                raise ValueError(
+                    f'Native Engineer {source_id} lacks factory-owner gates: '
+                    + ', '.join(sorted(missing_factory_owners))
+                )
+            if (
+                source_id in native_engineer_hard_locks
+                and str(native_values.get('techlevel')) != LOCKED_TECH_LEVEL
+            ):
+                raise ValueError(
+                    f'Native Engineer {source_id} lost redundant TechLevel lock.'
+                )
 
     runtime_weapon_restore_ids = (
         MISSION_NATIVE_RUNTIME_WEAPON_PRESERVE_IDS.get(code, ())

@@ -56,7 +56,36 @@ def installed_mission_catalogue(battle_path=BATTLE_INI):
 def resolve_installed_scenario(scenario, game_root=GAME_ROOT):
     """Resolve one catalogue path without allowing escape from game root."""
     game_root = Path(game_root).resolve()
-    candidate = (game_root / str(scenario).replace('/', '\\')).resolve()
+    normalized = str(scenario or '').replace('\\', '/').lstrip('/')
+    components = [
+        part for part in normalized.split('/') if part not in {'', '.'}
+    ]
+    if not components or '..' in components:
+        raise ValueError(f'Invalid mission scenario path: {scenario}')
+
+    candidate = game_root.joinpath(*components).resolve()
+    if candidate != game_root and game_root not in candidate.parents:
+        raise ValueError(f'Mission scenario escapes game root: {scenario}')
+    if candidate.is_file():
+        return candidate
+
+    # Battle.ini paths follow Windows' case-insensitive rules. Linux game
+    # installations may preserve a different spelling for any path component.
+    candidate = game_root
+    try:
+        for component in components:
+            exact = candidate / component
+            if exact.exists():
+                candidate = exact
+                continue
+            folded = component.casefold()
+            candidate = next(
+                child for child in candidate.iterdir()
+                if child.name.casefold() == folded
+            )
+    except (OSError, StopIteration):
+        candidate = game_root.joinpath(*components)
+    candidate = candidate.resolve()
     if candidate != game_root and game_root not in candidate.parents:
         raise ValueError(f'Mission scenario escapes game root: {scenario}')
     return candidate
@@ -79,7 +108,9 @@ def installation_catalogue_report(
         if not path.is_file():
             missing.append({'code': mission['code'], 'scenario': scenario})
         side_counts[mission['side'].strip().lower()] += 1
-        parts = Path(scenario.replace('/', '\\')).parts
+        parts = tuple(
+            part for part in scenario.replace('\\', '/').split('/') if part
+        )
         if len(parts) >= 3:
             folder_counts[parts[2]] += 1
 

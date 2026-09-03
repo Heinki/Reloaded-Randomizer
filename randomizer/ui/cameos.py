@@ -18,7 +18,7 @@ from randomizer.config.game_profile import ART_INI_NAME, RULES_INI_NAME
 
 ART_CACHE_PATH = CAMEO_CACHE_DIR / ART_INI_NAME
 RULES_CACHE_PATH = CAMEO_CACHE_DIR / RULES_INI_NAME
-ARCHIPELAGO_CAMEO_PATH = SOURCE_DIR / 'assets' / 'archipelago.png'
+ARCHIPELAGO_CAMEO_PATH = SOURCE_DIR / 'Assets' / 'archipelago.png'
 SAFE_ASSET_NAME = re.compile(r'^[A-Za-z0-9_.-]+$')
 _ART_CAMEO_NAMES = None
 _RULES_ART_NAMES = None
@@ -135,10 +135,13 @@ def _read_ini_sections(path):
     return sections
 
 
-def _extract_ini_key_mapping(cache_path, source_name, key_name):
+def _extract_ini_key_mapping(
+    cache_path, source_name, key_name, *, synchronous=False
+):
     """Return safe values for one INI key, indexed by upper-case section."""
     if not cache_path.exists():
-        extract_mix_files([(source_name, cache_path)])
+        extractor = extract_mix_files_sync if synchronous else extract_mix_files
+        extractor([(source_name, cache_path)])
     if not cache_path.exists():
         return {}
 
@@ -179,25 +182,29 @@ def installed_rules_registry():
     return superweapon_types, sections
 
 
-def art_cameo_names():
+def art_cameo_names(*, synchronous=False):
     global _ART_CAMEO_NAMES
     if _ART_CAMEO_NAMES is not None:
         return _ART_CAMEO_NAMES
     mapping = _extract_ini_key_mapping(
-        ART_CACHE_PATH, ART_INI_NAME, 'CameoPCX'
+        ART_CACHE_PATH,
+        ART_INI_NAME,
+        'CameoPCX',
+        synchronous=synchronous,
     )
     if mapping or ART_CACHE_PATH.exists():
         _ART_CAMEO_NAMES = mapping
     return mapping
 
 
-def _load_rules_asset_names():
+def _load_rules_asset_names(*, synchronous=False):
     """Populate Image and SidebarPCX maps in one rules-file pass."""
     global _RULES_ART_NAMES, _RULES_SIDEBAR_NAMES
     if _RULES_ART_NAMES is not None and _RULES_SIDEBAR_NAMES is not None:
         return
     if not RULES_CACHE_PATH.exists():
-        extract_mix_files([(RULES_INI_NAME, RULES_CACHE_PATH)])
+        extractor = extract_mix_files_sync if synchronous else extract_mix_files
+        extractor([(RULES_INI_NAME, RULES_CACHE_PATH)])
     if not RULES_CACHE_PATH.exists():
         return
     art_names = {}
@@ -216,14 +223,14 @@ def _load_rules_asset_names():
     _RULES_SIDEBAR_NAMES = sidebar_names
 
 
-def rules_art_names():
-    _load_rules_asset_names()
+def rules_art_names(*, synchronous=False):
+    _load_rules_asset_names(synchronous=synchronous)
     return _RULES_ART_NAMES or {}
 
 
-def rules_sidebar_names():
+def rules_sidebar_names(*, synchronous=False):
     """Return installed SidebarPCX filenames keyed by rules section."""
-    _load_rules_asset_names()
+    _load_rules_asset_names(synchronous=synchronous)
     return _RULES_SIDEBAR_NAMES or {}
 
 
@@ -304,7 +311,7 @@ def decode_pcx_to_png(pcx_path, png_path):
     return True
 
 
-def ensure_requested_cameos(requested):
+def ensure_requested_cameos(requested, *, synchronous=False):
     """Extract and decode a mapping of stable UI keys to PCX filenames."""
     missing_pcxs = []
     for cameo_name in set(requested.values()):
@@ -318,7 +325,10 @@ def ensure_requested_cameos(requested):
             missing_pcxs.append((cameo_name, pcx_path))
     if missing_pcxs:
         _ATTEMPTED_CAMEOS.update(name.upper() for name, _path in missing_pcxs)
-        extract_mix_files(missing_pcxs)
+        if synchronous:
+            extract_mix_files_sync(missing_pcxs)
+        else:
+            extract_mix_files(missing_pcxs)
 
     result = {}
     for asset_id, cameo_name in requested.items():
@@ -334,12 +344,12 @@ def ensure_requested_cameos(requested):
     return result
 
 
-def ensure_unit_cameos(unit_ids):
+def ensure_unit_cameos(unit_ids, *, synchronous=False):
     from randomizer.maps.assets import custom_sidebar_preview
     from randomizer.rewards.catalogue import UNIT_SIDEBAR_IMAGES
 
-    cameo_names = art_cameo_names()
-    art_names = rules_art_names()
+    cameo_names = art_cameo_names(synchronous=synchronous)
+    art_names = rules_art_names(synchronous=synchronous)
     try:
         from randomizer.rewards.reloaded_roster import randomizer_unit_roster
         _paths, _clone_ids, templates = randomizer_unit_roster()
@@ -372,13 +382,20 @@ def ensure_unit_cameos(unit_ids):
         cameo_name = cameo_names.get(str(art_id).upper())
         if cameo_name:
             requested[unit_id] = cameo_name
-    result.update(ensure_requested_cameos(requested))
+    result.update(
+        ensure_requested_cameos(requested, synchronous=synchronous)
+    )
     return result
 
 
-def ensure_superweapon_cameos(superweapon_ids, sidebar_overrides=None):
+def ensure_superweapon_cameos(
+    superweapon_ids,
+    sidebar_overrides=None,
+    *,
+    synchronous=False,
+):
     """Resolve the installed sidebar icon for each requested superweapon."""
-    sidebar_names = rules_sidebar_names()
+    sidebar_names = rules_sidebar_names(synchronous=synchronous)
     sidebar_names.update({
         str(superweapon_id).upper(): str(cameo_name)
         for superweapon_id, cameo_name in (sidebar_overrides or {}).items()
@@ -390,4 +407,4 @@ def ensure_superweapon_cameos(superweapon_ids, sidebar_overrides=None):
         cameo_name = sidebar_names.get(superweapon_id)
         if cameo_name:
             requested[superweapon_id] = cameo_name
-    return ensure_requested_cameos(requested)
+    return ensure_requested_cameos(requested, synchronous=synchronous)

@@ -5,7 +5,6 @@ from dataclasses import replace
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
-import time
 
 from randomizer.config.schema import StaticConfigError, validate_sections
 from randomizer.config.static import load_static_config
@@ -15,7 +14,6 @@ from randomizer.missions.tier_one import tier_one_defense_ids, tier_one_unit_ids
 from randomizer.rewards.rules import tech_ids_for_rewards
 from randomizer.ui.cameos import (
     ARCHIPELAGO_CAMEO_PATH,
-    cameo_extraction_pending,
     ensure_superweapon_cameos,
     ensure_unit_cameos,
 )
@@ -278,17 +276,9 @@ def _permanent_feature_checks(mission_pool):
         for reward in power_rewards
         if (reward.get('superweapon_rules') or {}).get('SidebarPCX')
     }
-    power_cameos = ensure_superweapon_cameos(power_ids, sidebar_overrides)
-    # UI extraction is intentionally asynchronous on the main Tk thread.
-    # This executable domain check has no event loop, so wait for that same
-    # read-only extraction and resolve the completed cache once.
-    deadline = time.monotonic() + 15
-    while cameo_extraction_pending() and time.monotonic() < deadline:
-        time.sleep(0.05)
-    if cameo_extraction_pending() is False:
-        power_cameos = ensure_superweapon_cameos(
-            power_ids, sidebar_overrides
-        )
+    power_cameos = ensure_superweapon_cameos(
+        power_ids, sidebar_overrides, synchronous=True
+    )
     offers = generate_mission_offers(
         mission_pool, run_seed='SHOP-PERMANENT-FEATURES', stage=1
     )
@@ -369,15 +359,8 @@ def _permanent_feature_checks(mission_pool):
     concrete_starters = active_shop_starter_unit_ids(marker_run)
     concrete_defenses = active_shop_starter_defense_ids(marker_run)
     starter_cameos = ensure_unit_cameos(
-        (*concrete_starters, *concrete_defenses)
+        (*concrete_starters, *concrete_defenses), synchronous=True
     )
-    deadline = time.monotonic() + 15
-    while cameo_extraction_pending() and time.monotonic() < deadline:
-        time.sleep(0.05)
-    if cameo_extraction_pending() is False:
-        starter_cameos = ensure_unit_cameos(
-            (*concrete_starters, *concrete_defenses)
-        )
     committed = commit_selected_mission(run, offers[0].mission_code)
     revived = apply_mission_failure(
         committed,

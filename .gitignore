@@ -9,7 +9,7 @@ generated_maps/
 cameo_cache/
 randomizer_state.json
 self_check.json
-RandomizerLauncherData/
+ReloadedRandomizerData/
 logs/
 bugreports/
 build/

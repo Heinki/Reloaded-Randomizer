@@ -114,14 +114,27 @@ Each maintained document has one purpose:
 
 ## Developer workflow
 
-Run from source with Python 3.14.6:
+Run from source with Python 3.14.6 from the fixed `Reloaded-Randomizer`
+directory:
 
 ```powershell
 python -m pip install -r requirements-build.txt
 python launcher_gui.py
 ```
 
-Validate changes from the `RandomizerLauncher` directory:
+On Linux, create a virtual environment, install the runtime dependency, and
+launch the same entry point. The launcher starts C&C Reloaded through Wine, so
+both `wine` and `winepath` must be available on `PATH`.
+
+```bash
+cd Reloaded-Randomizer
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-runtime.txt
+python launcher_gui.py
+```
+
+Validate changes from the `Reloaded-Randomizer` directory:
 
 ```powershell
 python -m compileall -q randomizer Archipelago launcher_gui.py
@@ -131,7 +144,7 @@ python -m Archipelago.audit
 python tools\all_mission_generation_smoke.py
 ```
 
-Build the launcher and matching APWorld:
+Build the launcher and matching APWorld on Windows:
 
 ```powershell
 .\build_exe.ps1
@@ -140,6 +153,21 @@ Build the launcher and matching APWorld:
 The build script automatically selects an installed Python 3.14.6 even when
 `python` on `PATH` points to an older version. Use `-PythonExecutable` with a
 full path to override discovery.
+
+On Linux, Wine and the pinned Windows Python 3.14.6 runtime at
+`C:\Python3146` can build both normal release artifacts:
+
+```bash
+cd Reloaded-Randomizer
+./build_all_linux.sh
+```
+
+Set `WINE_PYTHON` if Windows Python is installed elsewhere. The individual
+commands are `./build_exe_wine.sh` and
+`python3 Archipelago/build_apworld.py`. They still produce the Windows
+`CnCReloadedRandomizer.exe`; there is no separate Linux executable format.
+The combined build also refreshes the tracked APWorld and publishes a copy in
+the game folder beside the EXE.
 
 The build publishes `CnCReloadedRandomizer.exe` and
 `cnc_reloaded.apworld` beside the repository in the game folder. PyInstaller
@@ -162,7 +190,9 @@ runtime extraction directory is not part of the project.
 | `randomizer/ui/`          | Tk user interface                                                         |
 | `Archipelago/`            | APWorld, embedded client, manifest, and YAML integration                  |
 | `configs/`                | Reloaded-owned static JSON policy and ignored local player data           |
-| `tools/`                  | Maintainer audits and data-generation tools                               |
+| `tools/`                  | Maintainer audits, data generation, and Windows packaging driver          |
+| `build_exe_wine.sh`       | Windows PyInstaller build through Wine on Linux                           |
+| `build_all_linux.sh`      | Combined Linux-side launcher and APWorld release build                    |
 
 ## Troubleshooting
 

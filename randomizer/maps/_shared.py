@@ -102,7 +102,7 @@ _ENGINE_LIMITS = _MAP_CONFIG['engine_limits']
 _ENGINEER_CLONE_SAFETY = _MAP_CONFIG.get('engineer_clone_safety', {
     'identity_fields': {
         'Primary': 'DefuseKit',
-        'Secondary': 'EngineerScanner',
+        'Secondary': 'EngineerVirtualScanner',
         'Engineer': 'yes',
         'CanDrive': 'yes',
         'GroupAs': 'Engineers',
