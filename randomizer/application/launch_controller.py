@@ -791,7 +791,10 @@ class LaunchController:
                     check_id,
                     'In-game hook',
                 )
-                if check_id == 'victory' and unlocked:
+                # The check may already be marked unlocked when Archipelago
+                # syncs a reward before the local hook is processed.  Victory
+                # is still authoritative for closing this spawned mission.
+                if check_id == 'victory':
                     self.schedule_game_close_after_victory()
 
             if 'MapClass::Init_Clear entry' in line:

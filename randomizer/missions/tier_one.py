@@ -11,6 +11,7 @@ from .access import (
     TIER_ONE_DEFENSE_ROLE_UNITS,
     TIER_ONE_DEFENSE_UNITS,
     TIER_ONE_GROUND_ROLES,
+    TIER_ONE_NAVAL_ROLES,
     TIER_ONE_ROLE_BY_MARKER,
     TIER_ONE_ROLE_MARKERS,
     TIER_ONE_ROLE_UNITS,
@@ -199,7 +200,7 @@ def _random_tier_one_variant(rng, role, family):
     return rng.choice(variants)[0]
 
 def random_chaos_tier_one_unit_ids(rng):
-    """Assign every faction once on ground, plus one seeded basic aircraft."""
+    """Assign ground, aircraft, and naval T1 access across factions."""
     families = list(STANDARD_TIER_ONE_FAMILIES)
     rng.shuffle(families)
     units = [
@@ -208,6 +209,12 @@ def random_chaos_tier_one_unit_ids(rng):
     ]
     aircraft_family = rng.choice(tuple(TIER_ONE_ROLE_UNITS['basic_aircraft']))
     units.append(_random_tier_one_variant(rng, 'basic_aircraft', aircraft_family))
+    naval_families = list(STANDARD_TIER_ONE_FAMILIES)
+    rng.shuffle(naval_families)
+    units.extend(
+        _random_tier_one_variant(rng, role, family)
+        for role, family in zip(TIER_ONE_NAVAL_ROLES, naval_families)
+    )
     return tuple(units)
 
 def random_chaos_tier_one_defense_ids(rng):
@@ -540,21 +547,23 @@ def starting_tier_one_rules(
             for house in player_controlled_houses(lines, records=records)
         }
         for family in player_families.intersection(allowed_families):
-            production_categories.update({
-                (family, 'base'),
-                (family, 'infantry'),
-                (family, 'vehicles'),
-                (family, 'air'),
-            })
+                production_categories.update({
+                    (family, 'base'),
+                    (family, 'infantry'),
+                    (family, 'vehicles'),
+                    (family, 'air'),
+                    (family, 'naval'),
+                })
     available_categories = set()
     for family, category in production_categories:
         if family not in allowed_families:
             continue
-        available_categories.add((family, category))
-        if category == 'base':
-            available_categories.add((family, 'infantry'))
-            available_categories.add((family, 'vehicles'))
-            available_categories.add((family, 'air'))
+            available_categories.add((family, category))
+            if category == 'base':
+                available_categories.add((family, 'infantry'))
+                available_categories.add((family, 'vehicles'))
+                available_categories.add((family, 'air'))
+                available_categories.add((family, 'naval'))
 
     for role in TIER_ONE_ROLE_UNITS:
         if role not in selected_roles:

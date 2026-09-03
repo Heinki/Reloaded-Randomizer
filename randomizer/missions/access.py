@@ -76,6 +76,7 @@ TIER_ONE_SUBFACTION_UNITS = {
     for role, countries in _TIER_ONE_CONFIG['subfaction_units'].items()
 }
 TIER_ONE_GROUND_ROLES = tuple(_TIER_ONE_CONFIG['ground_roles'])
+TIER_ONE_NAVAL_ROLES = tuple(_TIER_ONE_CONFIG.get('naval_roles', ()))
 
 STANDARD_TIER_ONE_FAMILIES = tuple(
     family for family in _TIER_ONE_CONFIG['standard_families']
