@@ -512,6 +512,28 @@ def _shop_item_pool(rewards_by_code, mission_order, count):
     return Counter(names[index % len(names)] for index in range(count))
 
 
+def validate_manifest_location_capacity(manifest):
+    """Reject launcher output that cannot be represented by the APWorld."""
+    capacities = {
+        (mission["code"], check["id"]): int(check["maximum_slots"])
+        for mission in build_catalogue_projection()["missions"]
+        for check in mission["checks"]
+    }
+    for code, checks in manifest.get("locations", {}).items():
+        for check_id, count in checks.items():
+            capacity = capacities.get((code, check_id))
+            if capacity is None:
+                raise ValueError(
+                    f"APWorld has no location capacity for {code}/{check_id}."
+                )
+            if int(count) > capacity:
+                raise ValueError(
+                    f"APWorld location capacity for {code}/{check_id} is "
+                    f"{capacity}, but the generated run needs {count}."
+                )
+    return manifest
+
+
 def build_run_manifest(state, launcher_config=None):
     """Freeze one generated run without reimplementing its generation logic."""
     if not isinstance(state, dict):
@@ -634,6 +656,7 @@ def build_run_manifest(state, launcher_config=None):
         },
         "state_snapshot": _server_state_snapshot(state),
     }
+    validate_manifest_location_capacity(manifest)
     unsigned = _canonical_json(manifest).encode("utf-8")
     manifest["manifest_checksum"] = sha256(unsigned).hexdigest()
     return manifest
@@ -670,5 +693,4 @@ def validate_run_manifest_for_state(state, manifest):
 
 def serialize_run_manifest(state, launcher_config=None):
     return _canonical_json(build_run_manifest(state, launcher_config))
-
 

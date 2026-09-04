@@ -22,7 +22,7 @@ multiworld game.
 ## What you need
 
 - C&C Reloaded 2.7.0 in a separate, unmodified game installation
-- C&C Reloaded Randomizer Launcher 0.5.0
+- C&C Reloaded Randomizer Launcher 0.5.1
 - Archipelago 0.6.7 or newer
 - `cnc_reloaded.apworld` from the same Randomizer release as the launcher
 

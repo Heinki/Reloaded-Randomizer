@@ -22,7 +22,7 @@ from randomizer.rewards.weights import main_reward_weight_type
 SNAPSHOT_SCHEMA_VERSION = 1
 GAME_NAME = 'C&C Reloaded'
 PACKAGE_NAMESPACE = 'cnc_reloaded'
-WORLD_VERSION = '0.3.0'
+WORLD_VERSION = '0.3.1'
 MINIMUM_AP_VERSION = '0.6.7'
 
 # New mnemonic RL ranges. They never overlap Mental Omega's published IDs.
@@ -88,13 +88,26 @@ def build_catalogue_projection():
             }
             for index in range(1, objective_count + 1)
         ]
+        # The launcher applies a finale multiplier to every active reward
+        # check, then places all multiplier bonuses on the victory check.
+        # Reserve the victory's own base slots plus the worst-case bonus for
+        # every objective and victory check.  The previous ``base *
+        # multiplier`` capacity was too small as soon as a multiplied mission
+        # also exposed an objective (for example YUR13 needed 150 slots but
+        # the APWorld reserved only 90).
+        reward_multiplier = max(
+            1, int(mission.get('reward_multiplier') or 1)
+        )
+        active_check_count = len(checks) + 1
         checks.append({
             'id': 'victory',
             'name': 'Mission Complete',
             'hint': 'Win the mission.',
             'maximum_slots': (
                 MAX_REWARDS_PER_CHECK
-                * max(1, int(mission.get('reward_multiplier') or 1))
+                + active_check_count
+                * MAX_REWARDS_PER_CHECK
+                * (reward_multiplier - 1)
             ),
         })
         missions.append({
@@ -104,7 +117,7 @@ def build_catalogue_projection():
             'faction': mission.get('faction', ''),
             'side': mission.get('side', ''),
             'scenario': mission['scenario'],
-            'reward_multiplier': int(mission.get('reward_multiplier') or 1),
+            'reward_multiplier': reward_multiplier,
             'checks': checks,
         })
 

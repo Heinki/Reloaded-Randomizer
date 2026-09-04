@@ -64,7 +64,6 @@ def build(
     manifest.update({
         'compatible_version': 7,
         'version': 7,
-        'maximum_ap_version': '0.6.7',
     })
     manifest_data = json.dumps(
         manifest,

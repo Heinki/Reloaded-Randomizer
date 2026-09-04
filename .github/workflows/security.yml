@@ -54,6 +54,52 @@ jobs:
           python Archipelago/build_apworld.py
           python -m Archipelago.audit
 
+  archipelago-compatibility:
+    name: Archipelago ${{ matrix.label }} generation
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: '0.6.7'
+            commit: debe4cf035c7c15efe6fb95f72343af0d420c68c
+          - label: '0.6.8-dev'
+            commit: 1e1efa3f5c8fd0a63df0d0f95ec6c824e413318a
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+      - name: Set up supported Archipelago Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: requirements-runtime.txt
+      - name: Install generation dependencies
+        run: >-
+          python -m pip install --disable-pip-version-check
+          -r requirements-runtime.txt
+          schema==0.7.8 PyYAML==6.0.3 jellyfish==1.2.1
+          jinja2==3.1.6 platformdirs==4.9.4 typing_extensions==4.15.0
+          pathspec==1.0.4 bsdiff4==1.2.6
+      - name: Build maximum-capacity fixture
+        run: |
+          python Archipelago/build_apworld.py --output-directory build/ap-smoke
+          python tools/archipelago_generation_fixture.py build/ap-smoke/Players/Compatibility_Smoke.yaml
+      - name: Check out pinned Archipelago core
+        run: |
+          git init build/archipelago-core
+          git -C build/archipelago-core remote add origin https://github.com/ArchipelagoMW/Archipelago.git
+          git -C build/archipelago-core fetch --depth 1 origin ${{ matrix.commit }}
+          git -C build/archipelago-core checkout --detach FETCH_HEAD
+      - name: Generate with the packaged APWorld
+        run: |
+          test "$(git -C build/archipelago-core rev-parse HEAD)" = "${{ matrix.commit }}"
+          mkdir -p build/archipelago-core/custom_worlds build/archipelago-core/Players build/archipelago-core/output
+          cp build/ap-smoke/cnc_reloaded.apworld build/archipelago-core/custom_worlds/
+          cp build/ap-smoke/Players/Compatibility_Smoke.yaml build/archipelago-core/Players/
+          cd build/archipelago-core
+          SKIP_REQUIREMENTS_UPDATE=1 python Generate.py --player_files_path Players --outputpath output --skip_output --log_level warning
+
   codeql:
     name: CodeQL (Python)
     # Private repositories require GitHub Code Security before CodeQL can upload results.

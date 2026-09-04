@@ -2,9 +2,9 @@
   "schema_version": 1,
   "game": "C&C Reloaded",
   "package_namespace": "cnc_reloaded",
-  "world_version": "0.3.0",
+  "world_version": "0.3.1",
   "minimum_ap_version": "0.6.7",
-  "randomizer_version": "0.5.0",
+  "randomizer_version": "0.5.1",
   "supported_game_version": "2.7.0",
   "active_factions": [
     "Allies",
@@ -15514,7 +15514,7 @@
           "id": "victory",
           "name": "Mission Complete",
           "hint": "Win the mission.",
-          "maximum_slots": 90
+          "maximum_slots": 150
         }
       ]
     },
@@ -16064,7 +16064,7 @@
           "id": "victory",
           "name": "Mission Complete",
           "hint": "Win the mission.",
-          "maximum_slots": 90
+          "maximum_slots": 150
         }
       ]
     },
@@ -17087,7 +17087,7 @@
           "id": "victory",
           "name": "Mission Complete",
           "hint": "Win the mission.",
-          "maximum_slots": 90
+          "maximum_slots": 150
         }
       ]
     },
@@ -17422,7 +17422,7 @@
       ]
     }
   ],
-  "catalogue_checksum": "775c8143b534f634eca325f8f959a0ec742d85df26a195ec51b9b34949a0547b",
+  "catalogue_checksum": "0053e46817c9e2f6d952b803d9cb9784da2bb2fde3f9e72a211a057b20ad827d",
   "id_ranges": {
     "items": {
       "first": 86294528,
@@ -25837,6 +25837,426 @@
       "mission": "YUR13",
       "check": "victory",
       "slot": 90
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 91",
+      "id": 86380635,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 91
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 92",
+      "id": 86380636,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 92
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 93",
+      "id": 86380637,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 93
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 94",
+      "id": 86380638,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 94
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 95",
+      "id": 86380639,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 95
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 96",
+      "id": 86380640,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 96
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 97",
+      "id": 86380641,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 97
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 98",
+      "id": 86380642,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 98
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 99",
+      "id": 86380643,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 99
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 100",
+      "id": 86380644,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 100
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 101",
+      "id": 86380645,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 101
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 102",
+      "id": 86380646,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 102
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 103",
+      "id": 86380647,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 103
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 104",
+      "id": 86380648,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 104
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 105",
+      "id": 86380649,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 105
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 106",
+      "id": 86380650,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 106
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 107",
+      "id": 86380651,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 107
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 108",
+      "id": 86380652,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 108
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 109",
+      "id": 86380653,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 109
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 110",
+      "id": 86380654,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 110
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 111",
+      "id": 86380655,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 111
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 112",
+      "id": 86380656,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 112
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 113",
+      "id": 86380657,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 113
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 114",
+      "id": 86380658,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 114
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 115",
+      "id": 86380659,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 115
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 116",
+      "id": 86380660,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 116
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 117",
+      "id": 86380661,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 117
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 118",
+      "id": 86380662,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 118
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 119",
+      "id": 86380663,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 119
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 120",
+      "id": 86380664,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 120
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 121",
+      "id": 86380665,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 121
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 122",
+      "id": 86380666,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 122
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 123",
+      "id": 86380667,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 123
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 124",
+      "id": 86380668,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 124
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 125",
+      "id": 86380669,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 125
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 126",
+      "id": 86380670,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 126
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 127",
+      "id": 86380671,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 127
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 128",
+      "id": 86380672,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 128
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 129",
+      "id": 86380673,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 129
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 130",
+      "id": 86380674,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 130
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 131",
+      "id": 86380675,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 131
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 132",
+      "id": 86380676,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 132
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 133",
+      "id": 86380677,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 133
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 134",
+      "id": 86380678,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 134
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 135",
+      "id": 86380679,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 135
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 136",
+      "id": 86380680,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 136
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 137",
+      "id": 86380681,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 137
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 138",
+      "id": 86380682,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 138
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 139",
+      "id": 86380683,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 139
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 140",
+      "id": 86380684,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 140
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 141",
+      "id": 86380685,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 141
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 142",
+      "id": 86380686,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 142
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 143",
+      "id": 86380687,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 143
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 144",
+      "id": 86380688,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 144
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 145",
+      "id": 86380689,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 145
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 146",
+      "id": 86380690,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 146
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 147",
+      "id": 86380691,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 147
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 148",
+      "id": 86380692,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 148
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 149",
+      "id": 86380693,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 149
+    },
+    {
+      "name": "Mission 13: Moonbase Assault [YUR13] - Mission Complete - Reward 150",
+      "id": 86380694,
+      "mission": "YUR13",
+      "check": "victory",
+      "slot": 150
     },
     {
       "name": "Mission 1: Time Lapse [ALL01] - Mission Complete - Reward 1",
@@ -36337,6 +36757,426 @@
       "mission": "ALL12_RA2",
       "check": "victory",
       "slot": 90
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 91",
+      "id": 86380695,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 91
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 92",
+      "id": 86380696,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 92
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 93",
+      "id": 86380697,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 93
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 94",
+      "id": 86380698,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 94
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 95",
+      "id": 86380699,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 95
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 96",
+      "id": 86380700,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 96
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 97",
+      "id": 86380701,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 97
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 98",
+      "id": 86380702,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 98
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 99",
+      "id": 86380703,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 99
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 100",
+      "id": 86380704,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 100
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 101",
+      "id": 86380705,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 101
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 102",
+      "id": 86380706,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 102
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 103",
+      "id": 86380707,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 103
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 104",
+      "id": 86380708,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 104
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 105",
+      "id": 86380709,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 105
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 106",
+      "id": 86380710,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 106
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 107",
+      "id": 86380711,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 107
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 108",
+      "id": 86380712,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 108
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 109",
+      "id": 86380713,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 109
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 110",
+      "id": 86380714,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 110
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 111",
+      "id": 86380715,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 111
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 112",
+      "id": 86380716,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 112
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 113",
+      "id": 86380717,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 113
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 114",
+      "id": 86380718,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 114
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 115",
+      "id": 86380719,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 115
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 116",
+      "id": 86380720,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 116
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 117",
+      "id": 86380721,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 117
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 118",
+      "id": 86380722,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 118
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 119",
+      "id": 86380723,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 119
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 120",
+      "id": 86380724,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 120
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 121",
+      "id": 86380725,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 121
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 122",
+      "id": 86380726,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 122
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 123",
+      "id": 86380727,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 123
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 124",
+      "id": 86380728,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 124
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 125",
+      "id": 86380729,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 125
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 126",
+      "id": 86380730,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 126
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 127",
+      "id": 86380731,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 127
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 128",
+      "id": 86380732,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 128
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 129",
+      "id": 86380733,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 129
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 130",
+      "id": 86380734,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 130
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 131",
+      "id": 86380735,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 131
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 132",
+      "id": 86380736,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 132
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 133",
+      "id": 86380737,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 133
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 134",
+      "id": 86380738,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 134
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 135",
+      "id": 86380739,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 135
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 136",
+      "id": 86380740,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 136
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 137",
+      "id": 86380741,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 137
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 138",
+      "id": 86380742,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 138
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 139",
+      "id": 86380743,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 139
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 140",
+      "id": 86380744,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 140
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 141",
+      "id": 86380745,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 141
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 142",
+      "id": 86380746,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 142
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 143",
+      "id": 86380747,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 143
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 144",
+      "id": 86380748,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 144
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 145",
+      "id": 86380749,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 145
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 146",
+      "id": 86380750,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 146
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 147",
+      "id": 86380751,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 147
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 148",
+      "id": 86380752,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 148
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 149",
+      "id": 86380753,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 149
+    },
+    {
+      "name": "Mission 12: Chrono Storm [ALL12_RA2] - Mission Complete - Reward 150",
+      "id": 86380754,
+      "mission": "ALL12_RA2",
+      "check": "victory",
+      "slot": 150
     },
     {
       "name": "Mission 1: Red Dawn [SOV01_RA2] - Mission Complete - Reward 1",
@@ -54187,6 +55027,426 @@
       "mission": "NOD12A_TS",
       "check": "victory",
       "slot": 90
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 91",
+      "id": 86380755,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 91
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 92",
+      "id": 86380756,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 92
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 93",
+      "id": 86380757,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 93
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 94",
+      "id": 86380758,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 94
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 95",
+      "id": 86380759,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 95
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 96",
+      "id": 86380760,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 96
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 97",
+      "id": 86380761,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 97
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 98",
+      "id": 86380762,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 98
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 99",
+      "id": 86380763,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 99
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 100",
+      "id": 86380764,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 100
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 101",
+      "id": 86380765,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 101
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 102",
+      "id": 86380766,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 102
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 103",
+      "id": 86380767,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 103
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 104",
+      "id": 86380768,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 104
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 105",
+      "id": 86380769,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 105
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 106",
+      "id": 86380770,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 106
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 107",
+      "id": 86380771,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 107
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 108",
+      "id": 86380772,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 108
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 109",
+      "id": 86380773,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 109
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 110",
+      "id": 86380774,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 110
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 111",
+      "id": 86380775,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 111
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 112",
+      "id": 86380776,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 112
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 113",
+      "id": 86380777,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 113
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 114",
+      "id": 86380778,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 114
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 115",
+      "id": 86380779,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 115
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 116",
+      "id": 86380780,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 116
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 117",
+      "id": 86380781,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 117
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 118",
+      "id": 86380782,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 118
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 119",
+      "id": 86380783,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 119
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 120",
+      "id": 86380784,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 120
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 121",
+      "id": 86380785,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 121
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 122",
+      "id": 86380786,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 122
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 123",
+      "id": 86380787,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 123
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 124",
+      "id": 86380788,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 124
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 125",
+      "id": 86380789,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 125
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 126",
+      "id": 86380790,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 126
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 127",
+      "id": 86380791,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 127
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 128",
+      "id": 86380792,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 128
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 129",
+      "id": 86380793,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 129
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 130",
+      "id": 86380794,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 130
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 131",
+      "id": 86380795,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 131
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 132",
+      "id": 86380796,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 132
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 133",
+      "id": 86380797,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 133
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 134",
+      "id": 86380798,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 134
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 135",
+      "id": 86380799,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 135
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 136",
+      "id": 86380800,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 136
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 137",
+      "id": 86380801,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 137
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 138",
+      "id": 86380802,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 138
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 139",
+      "id": 86380803,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 139
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 140",
+      "id": 86380804,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 140
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 141",
+      "id": 86380805,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 141
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 142",
+      "id": 86380806,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 142
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 143",
+      "id": 86380807,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 143
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 144",
+      "id": 86380808,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 144
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 145",
+      "id": 86380809,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 145
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 146",
+      "id": 86380810,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 146
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 147",
+      "id": 86380811,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 147
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 148",
+      "id": 86380812,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 148
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 149",
+      "id": 86380813,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 149
+    },
+    {
+      "name": "Mission 12 (2/2): A New Beginning [NOD12A_TS] - Mission Complete - Reward 150",
+      "id": 86380814,
+      "mission": "NOD12A_TS",
+      "check": "victory",
+      "slot": 150
     },
     {
       "name": "Mission 1: Secure the Tacitus [GDI01A_FS] - Objective 1 - Reward 1",

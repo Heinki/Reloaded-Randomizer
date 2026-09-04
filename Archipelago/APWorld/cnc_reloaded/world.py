@@ -128,7 +128,15 @@ class CncReloadedWorld(World):
         by_code = {}
         for code in self.run_manifest["mission_order"]:
             mission = MISSION_DATA[code]
-            region = Region(mission["title"], self.player, self.multiworld)
+            # Mission titles repeat across the four bundled campaigns.  AP
+            # requires region and generated entrance names to be unique, so
+            # retain the human title while disambiguating it with the stable
+            # mission code used everywhere else in the world data.
+            region = Region(
+                f'{mission["title"]} [{code}]',
+                self.player,
+                self.multiworld,
+            )
             active = {}
             for check_id, count in self.run_manifest["locations"][code].items():
                 active.update(dict(location_entries(code, check_id, count)))
@@ -365,4 +373,3 @@ class CncReloadedWorld(World):
                 for code in self.run_manifest["mission_order"]
             } if shop is None else {}),
         }
-
