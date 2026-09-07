@@ -23,6 +23,71 @@ def _value_case_insensitive(values, key, default=None):
     )
 
 
+def foreign_capturable_factory_forbidden_houses(
+    native_sections,
+    installed_sections,
+    records,
+    source_ids,
+    production_lookup,
+    target_factions_by_source,
+):
+    """Find foreign factory builders that could leak locked native units.
+
+    Player-owned scripted units cannot always carry the hidden negative
+    prerequisite: it can stop their authored TeamType from forming.  Their
+    fallback ``FactoryOwners.Forbidden`` gate must therefore also cover
+    capturable foreign factories present on this map.  Only foreign production
+    families are added, preserving normal AI production for the unit's own
+    faction.
+    """
+    sections_by_upper = {
+        str(section).upper(): values
+        for section, values in (native_sections or {}).items()
+    }
+    installed_by_upper = {
+        str(section).upper(): values
+        for section, values in (installed_sections or {}).items()
+    }
+    foreign_builders = []
+    for placement in sections_by_upper.get('STRUCTURES', {}).values():
+        tokens = [token.strip() for token in str(placement).split(',')]
+        if len(tokens) < 2:
+            continue
+        owner_house, factory_id = tokens[0], tokens[1].upper()
+        production = production_lookup.get(factory_id)
+        if not production:
+            continue
+        factory_values = dict(installed_by_upper.get(factory_id, {}))
+        factory_values.update(sections_by_upper.get(factory_id, {}))
+        if str(_value_case_insensitive(
+            factory_values, 'Capturable', 'true'
+        )).strip().lower() == 'no':
+            continue
+        owner_record = (records or {}).get(owner_house, {})
+        owner_country = str(
+            owner_record.get('country')
+            or owner_house.removesuffix(' House')
+        ).strip()
+        if owner_country:
+            foreign_builders.append((str(production[0]).lower(), owner_country))
+
+    result = {}
+    for source_id in source_ids or ():
+        source_id = str(source_id).upper()
+        target_factions = {
+            str(faction).lower()
+            for faction in target_factions_by_source.get(source_id, ())
+        }
+        forbidden = unique_in_order(
+            country
+            for family, country in foreign_builders
+            if family not in target_factions
+        )
+        if forbidden:
+            result[source_id] = forbidden
+    return result
+
+
 def original_player_production_gate_rules(
     lines,
     installed_sections,
@@ -36,6 +101,7 @@ def original_player_production_gate_rules(
     player_runtime_ids=(),
     player_forbidden_houses=(),
     player_factory_forbidden_houses=(),
+    foreign_factory_forbidden_houses_by_source=None,
 ):
     """Block native production for houses owning the hidden player gate.
 
@@ -107,6 +173,16 @@ def original_player_production_gate_rules(
             if str(house).strip()
         ]
     )
+    foreign_factory_forbidden_houses_by_source = {
+        str(source_id).upper(): unique_in_order(
+            str(house).strip()
+            for house in houses
+            if str(house).strip()
+        )
+        for source_id, houses in (
+            foreign_factory_forbidden_houses_by_source or {}
+        ).items()
+    }
 
     installed_by_lower = {
         str(section).lower(): values
@@ -241,7 +317,11 @@ def original_player_production_gate_rules(
                     and source_id not in player_runtime_ids
                 )
                 else ','.join(unique_in_order(
-                    factory_forbidden + list(player_factory_forbidden_houses)
+                    factory_forbidden
+                    + list(player_factory_forbidden_houses)
+                    + list(foreign_factory_forbidden_houses_by_source.get(
+                        source_id, ()
+                    ))
                 )) or None
             )
         installed_values = installed_by_lower.get(source_id.lower(), {})
@@ -295,6 +375,7 @@ def validate_native_taskforce_production_filters(
     player_runtime_ids=(),
     player_forbidden_houses=(),
     player_factory_forbidden_houses=(),
+    foreign_factory_forbidden_houses_by_source=None,
 ):
     """Reject player-isolation gates on authored non-player team payloads."""
     installed_by_lower = {
@@ -317,6 +398,16 @@ def validate_native_taskforce_production_filters(
             + list(player_factory_forbidden_houses or ())
         )
         if str(value).strip()
+    }
+    foreign_factory_forbidden_houses_by_source = {
+        str(source_id).upper(): {
+            str(value).strip().casefold()
+            for value in values
+            if str(value).strip()
+        }
+        for source_id, values in (
+            foreign_factory_forbidden_houses_by_source or {}
+        ).items()
     }
 
     def effective_value(source_id, values, key):
@@ -365,6 +456,9 @@ def validate_native_taskforce_production_filters(
                 not authored_factory.issubset(generated_factory)
                 or not added_factory_owners.issubset(
                     allowed_player_factory_owners
+                    | foreign_factory_forbidden_houses_by_source.get(
+                        source_id, set()
+                    )
                 )
             ):
                 failures.append(f'{source_id}: factory-owner filter changed')

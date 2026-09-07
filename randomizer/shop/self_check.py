@@ -1292,11 +1292,11 @@ def validate_shop_domain():
           if modifier.enemy_reward_id),
     }
     catalogue_valid = bool(
-        len(catalogue) == 2113
-        and len(access_entries) == 166
-        and len(buff_entries) == 1885
+        len(catalogue) == 2007
+        and len(access_entries) == 154
+        and len(buff_entries) == 1791
         and len(power_entries) == 18
-        and len(SHOP_CONFIG.unit_target_prices) == 186
+        and len(SHOP_CONFIG.unit_target_prices) == 174
         and len(SHOP_CONFIG.power_target_prices) == 18
         and len(MISSION_MODIFIERS) == 19
         and mission_effect_reward_ids.issubset(

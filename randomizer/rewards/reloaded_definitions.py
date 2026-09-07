@@ -19,6 +19,25 @@ _FACTIONS = load_static_config('factions.json')
 _RULES, _RULES_SOURCE = read_rules_sections()
 _RULE_NAMES = {str(name).upper(): name for name in _RULES}
 
+# These buildings only expose powers already granted directly by Randomizer,
+# or support another redundant provider in this set. Keep them out of access
+# and buff catalogues so one effect cannot appear as two rewards.
+REDUNDANT_POWER_PROVIDERS = {
+    'GACSPH': ('Allied Chrono Sphere', 'Allies', 'Chrono Sphere Power'),
+    'GAWEAT': ('Allied Weather Controller', 'Allies', 'Weather Storm Power'),
+    'GAPULS': ('GDI EMP Cannon', 'GDI', 'EM Pulse Power'),
+    'NAIRON': ('Soviet Iron Curtain Device', 'Soviets', 'Iron Curtain Power'),
+    'NAMISL': ('Soviet Nuclear Missile Silo', 'Soviets', 'Nuclear Missile Power'),
+    'NAPULS': ('Nod EMP Cannon', 'Nod', 'EM Pulse Power'),
+    'TSGAPLUG2': ('Seeker Control', 'GDI', 'Hunter Seeker Power'),
+    'TSGAPLUG4': ('Drop Pod Node', 'GDI', 'Drop Pods Power'),
+    'TSNAMISL': ('Nod Missile Silo', 'Nod', 'Multi-Missile Power'),
+    'TSNAWAST': ('Tiberium Waste Facility', 'Nod', 'Chemical Bomb Power'),
+    'YAGNTC': ('Yuri Genetic Mutator Device', 'Yuri', 'Genetic Converter Power'),
+    'YAPPET': ('Yuri Puppet Master', 'Yuri', 'Psychic Dominator Power'),
+}
+REDUNDANT_POWER_PROVIDER_IDS = frozenset(REDUNDANT_POWER_PROVIDERS)
+
 DEFAULT_UNLOCK_BUILD_HOUSES = _FACTIONS['default_unlock_build_houses']
 DEFAULT_REWARDS_PER_CHECK = int(REWARD_PLANNING['default_rewards_per_check'])
 MAX_REWARDS_PER_CHECK = int(REWARD_PLANNING['maximum_rewards_per_check'])
@@ -45,6 +64,7 @@ _RUNTIME_RECORDS = tuple(
     for category, record in _source_records()
     if _approved_factions(record)
     and not str(record['id']).upper().endswith('_AI')
+    and str(record['id']).upper() not in REDUNDANT_POWER_PROVIDER_IDS
 )
 
 
@@ -566,9 +586,9 @@ BUFF_TYPES = (
 SPECIAL_BUILDING_DEFINITIONS = ()
 SPECIAL_REWARD_UNIT_IDS = frozenset()
 UNIT_SIDEBAR_IMAGES = {
-    # Reloaded's TS Jumpjet Infantry art points at projectile art, so its
-    # actual sidebar asset cannot be inferred from Image/Cameo keys.
-    'TSJUMPJET': {'source_pcx': 'JJETICON.PCX'},
+    # Pin the TS Jumpjet cameo explicitly because its inline-commented
+    # projectile section can corrupt catalogue-derived art inference.
+    'TSJUMPJET': {'source_pcx': 'TSJJETICON.PCX'},
 }
 STANDALONE_WEAPON_TEMPLATES = {}
 STANDALONE_UNIT_RULE_TEMPLATES = {}
@@ -645,6 +665,28 @@ RETIRED_REWARD_BY_NAME = {
         'Firestorm Defense Power Accelerated Recharge I',
     )
 }
+for _provider_label, _provider_faction, _replacement_power in (
+    REDUNDANT_POWER_PROVIDERS.values()
+):
+    for _retired_name in (
+        f'{_provider_label} Access',
+        *(f'{_provider_label} {buff_type["name"]} I'
+          for buff_type in BUFF_TYPES),
+    ):
+        RETIRED_REWARD_BY_NAME[_retired_name] = {
+            'name': (
+                f'{_retired_name} '
+                f'(retired: duplicates {_replacement_power})'
+            ),
+            'description': (
+                'Disabled because this building only provides or supports '
+                f'the separately available {_replacement_power} reward.'
+            ),
+            'rules': {},
+            'factions': [_provider_faction],
+            'kind': 'retired',
+            'retired_reward': True,
+        }
 REWARD_ALIASES = {}
 
 

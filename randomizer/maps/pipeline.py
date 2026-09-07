@@ -49,6 +49,7 @@ from randomizer.maps.rules import (
     helper_ai_autobuild_plan,
     helper_ai_autobuild_rules,
     is_generated_hooked_map,
+    foreign_capturable_factory_forbidden_houses,
     mission_assistance_buff_rules,
     mission_assistance_direct_rewards,
     mission_assistance_unit_ids,
@@ -121,6 +122,7 @@ from randomizer.missions.overrides import (
     MISSION_NATIVE_DIRECT_BUFF_EXCLUSIONS,
     MISSION_NATIVE_TECHNO_CLONE_EXCLUSIONS,
     MISSION_NATIVE_PRODUCTION_GATE_EXCLUSIONS,
+    MISSION_NATIVE_PRODUCTION_HARD_LOCKS,
     MISSION_NATIVE_PRODUCTION_ALIASES,
     MISSION_NATIVE_RUNTIME_ACTION_TEAM_FACTORY_FORBIDDEN_HOUSES,
     MISSION_NATIVE_RUNTIME_PLAYER_FORBIDDEN_IDS,
@@ -149,7 +151,7 @@ from randomizer.missions.overrides import (
     MISSION_VICTORY_HOOK_ACTION_IDS,
 )
 from randomizer.missions.safety import safe_build_countries
-from randomizer.missions.access import PRODUCTION_BUILDINGS
+from randomizer.missions.access import PRODUCTION_BUILDINGS, PRODUCTION_LOOKUP
 from randomizer.missions.catalogue import normalize_faction
 from randomizer.missions.installation import resolve_installed_scenario
 from randomizer.core.paths import DEBUG_LOG, GAME_ROOT, GENERATED_MAP_DIR
@@ -1858,6 +1860,29 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             set(MISSION_NATIVE_PRODUCTION_GATE_EXCLUSIONS.get(code, ()))
             | refinery_building_ids
         )
+        factory_owner_only_source_ids = (
+            (
+                build_only_clone_source_ids
+                | (player_runtime_unit_ids - safe_player_clone_unit_ids)
+            )
+            - non_player_taskforce_unit_ids
+            - set(ENGINEER_UNIT_IDS)
+        )
+        foreign_factory_forbidden_houses_by_source = (
+            foreign_capturable_factory_forbidden_houses(
+                native_map_sections,
+                installed_rule_sections,
+                records,
+                factory_owner_only_source_ids,
+                PRODUCTION_LOOKUP,
+                {
+                    source_id: BUFF_TARGETS.get(source_id, {}).get(
+                        'factions', ()
+                    )
+                    for source_id in factory_owner_only_source_ids
+                },
+            )
+        )
         production_gate_rules = original_player_production_gate_rules(
             lines,
             installed_rule_sections,
@@ -1877,14 +1902,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             # exposes the native Engineer beside its player clone. Engineers
             # always use the exact-player-House negative gate instead; this
             # leaves authored placements and scripted creation intact.
-            factory_owner_only_ids=(
-                (
-                    build_only_clone_source_ids
-                    | (player_runtime_unit_ids - safe_player_clone_unit_ids)
-                )
-                - non_player_taskforce_unit_ids
-                - set(ENGINEER_UNIT_IDS)
-            ),
+            factory_owner_only_ids=factory_owner_only_source_ids,
             preserve_forbidden_house_ids=ENGINEER_UNIT_IDS,
             player_runtime_ids=(
                 player_runtime_unit_ids - safe_player_clone_unit_ids
@@ -1892,6 +1910,9 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             ),
             player_forbidden_houses=player_native_exclusions,
             player_factory_forbidden_houses=player_factory_exclusions,
+            foreign_factory_forbidden_houses_by_source=(
+                foreign_factory_forbidden_houses_by_source
+            ),
         )
         # Keep a second, engine-native lock on the selected original Engineer
         # whenever no authored TaskForce needs that exact identity. The hidden
@@ -2755,6 +2776,15 @@ def prepare_hooked_map(self, mission, extra_rules=None):
                     f'Native Engineer {source_id} lost redundant TechLevel lock.'
                 )
 
+    native_production_hard_locks = (
+        MISSION_NATIVE_PRODUCTION_HARD_LOCKS.get(code, ())
+    )
+    if native_production_hard_locks:
+        merge_ini_section_values(lines, {
+            source_id: {'TechLevel': LOCKED_TECH_LEVEL}
+            for source_id in native_production_hard_locks
+        })
+
     runtime_weapon_restore_ids = (
         MISSION_NATIVE_RUNTIME_WEAPON_PRESERVE_IDS.get(code, ())
     )
@@ -2852,6 +2882,9 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         ),
         player_forbidden_houses=player_native_exclusions,
         player_factory_forbidden_houses=player_factory_exclusions,
+        foreign_factory_forbidden_houses_by_source=(
+            foreign_factory_forbidden_houses_by_source
+        ),
     )
     if validated_native_team_units:
         self.append_log(

@@ -684,69 +684,6 @@
       "id": 86296673
     },
     {
-      "name": "Allied Chrono Sphere Access",
-      "classification": "progression",
-      "category": "unit_unlocks",
-      "repeatable": false,
-      "id": 86294566
-    },
-    {
-      "name": "Allied Chrono Sphere Armor Plating I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86294567
-    },
-    {
-      "name": "Allied Chrono Sphere Drill I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86294568
-    },
-    {
-      "name": "Allied Chrono Sphere Logistics I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86294569
-    },
-    {
-      "name": "Allied Chrono Sphere Recon Package I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86294570
-    },
-    {
-      "name": "Allied Chrono Sphere Reinforced Frames I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86294571
-    },
-    {
-      "name": "Allied Chrono Sphere Sensor Suite I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86294572
-    },
-    {
-      "name": "Allied Chrono Sphere Stealth Systems I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86294573
-    },
-    {
-      "name": "Allied Chrono Sphere Veteran Training I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86294574
-    },
-    {
       "name": "Allied Engineer Armor Plating I",
       "classification": "useful",
       "category": "unit_buffs",
@@ -1235,69 +1172,6 @@
       "category": "unit_buffs",
       "repeatable": true,
       "id": 86294644
-    },
-    {
-      "name": "Allied Weather Controller Access",
-      "classification": "progression",
-      "category": "unit_unlocks",
-      "repeatable": false,
-      "id": 86294645
-    },
-    {
-      "name": "Allied Weather Controller Armor Plating I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86294646
-    },
-    {
-      "name": "Allied Weather Controller Drill I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86294647
-    },
-    {
-      "name": "Allied Weather Controller Logistics I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86294648
-    },
-    {
-      "name": "Allied Weather Controller Recon Package I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86294649
-    },
-    {
-      "name": "Allied Weather Controller Reinforced Frames I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86294650
-    },
-    {
-      "name": "Allied Weather Controller Sensor Suite I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86294651
-    },
-    {
-      "name": "Allied Weather Controller Stealth Systems I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86294652
-    },
-    {
-      "name": "Allied Weather Controller Veteran Training I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86294653
     },
     {
       "name": "Amphibious APC Access",
@@ -4191,55 +4065,6 @@
       "id": 86295044
     },
     {
-      "name": "Drop Pod Node Access",
-      "classification": "progression",
-      "category": "unit_unlocks",
-      "repeatable": false,
-      "id": 86295045
-    },
-    {
-      "name": "Drop Pod Node Drill I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295046
-    },
-    {
-      "name": "Drop Pod Node Logistics I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295047
-    },
-    {
-      "name": "Drop Pod Node Recon Package I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295048
-    },
-    {
-      "name": "Drop Pod Node Sensor Suite I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295049
-    },
-    {
-      "name": "Drop Pod Node Stealth Systems I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295050
-    },
-    {
-      "name": "Drop Pod Node Veteran Training I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295051
-    },
-    {
       "name": "Drop Pods Power",
       "classification": "progression",
       "category": "power_unlocks",
@@ -4924,76 +4749,6 @@
       "category": "power_buffs",
       "repeatable": true,
       "id": 86296738
-    },
-    {
-      "name": "GDI EMP Cannon Access",
-      "classification": "progression",
-      "category": "unit_unlocks",
-      "repeatable": false,
-      "id": 86295139
-    },
-    {
-      "name": "GDI EMP Cannon Armor Plating I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295140
-    },
-    {
-      "name": "GDI EMP Cannon Drill I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295141
-    },
-    {
-      "name": "GDI EMP Cannon Logistics I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295142
-    },
-    {
-      "name": "GDI EMP Cannon Optics I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295143
-    },
-    {
-      "name": "GDI EMP Cannon Recon Package I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295144
-    },
-    {
-      "name": "GDI EMP Cannon Reinforced Frames I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295145
-    },
-    {
-      "name": "GDI EMP Cannon Sensor Suite I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295146
-    },
-    {
-      "name": "GDI EMP Cannon Stealth Systems I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295147
-    },
-    {
-      "name": "GDI EMP Cannon Veteran Training I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295148
     },
     {
       "name": "GDI Engineer Armor Plating I",
@@ -8566,76 +8321,6 @@
       "id": 86295640
     },
     {
-      "name": "Nod EMP Cannon Access",
-      "classification": "progression",
-      "category": "unit_unlocks",
-      "repeatable": false,
-      "id": 86295641
-    },
-    {
-      "name": "Nod EMP Cannon Armor Plating I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295642
-    },
-    {
-      "name": "Nod EMP Cannon Drill I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295643
-    },
-    {
-      "name": "Nod EMP Cannon Logistics I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295644
-    },
-    {
-      "name": "Nod EMP Cannon Optics I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295645
-    },
-    {
-      "name": "Nod EMP Cannon Recon Package I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295646
-    },
-    {
-      "name": "Nod EMP Cannon Reinforced Frames I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295647
-    },
-    {
-      "name": "Nod EMP Cannon Sensor Suite I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295648
-    },
-    {
-      "name": "Nod EMP Cannon Stealth Systems I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295649
-    },
-    {
-      "name": "Nod EMP Cannon Veteran Training I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295650
-    },
-    {
       "name": "Nod Engineer Armor Plating I",
       "classification": "useful",
       "category": "unit_buffs",
@@ -9019,69 +8704,6 @@
       "category": "unit_buffs",
       "repeatable": true,
       "id": 86295705
-    },
-    {
-      "name": "Nod Missile Silo Access",
-      "classification": "progression",
-      "category": "unit_unlocks",
-      "repeatable": false,
-      "id": 86295706
-    },
-    {
-      "name": "Nod Missile Silo Armor Plating I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295707
-    },
-    {
-      "name": "Nod Missile Silo Drill I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295708
-    },
-    {
-      "name": "Nod Missile Silo Logistics I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295709
-    },
-    {
-      "name": "Nod Missile Silo Recon Package I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295710
-    },
-    {
-      "name": "Nod Missile Silo Reinforced Frames I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295711
-    },
-    {
-      "name": "Nod Missile Silo Sensor Suite I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295712
-    },
-    {
-      "name": "Nod Missile Silo Stealth Systems I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295713
-    },
-    {
-      "name": "Nod Missile Silo Veteran Training I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295714
     },
     {
       "name": "Nod Mobile Sensor Array Access",
@@ -11002,55 +10624,6 @@
       "id": 86295977
     },
     {
-      "name": "Seeker Control Access",
-      "classification": "progression",
-      "category": "unit_unlocks",
-      "repeatable": false,
-      "id": 86295978
-    },
-    {
-      "name": "Seeker Control Drill I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295979
-    },
-    {
-      "name": "Seeker Control Logistics I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295980
-    },
-    {
-      "name": "Seeker Control Recon Package I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295981
-    },
-    {
-      "name": "Seeker Control Sensor Suite I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295982
-    },
-    {
-      "name": "Seeker Control Stealth Systems I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295983
-    },
-    {
-      "name": "Seeker Control Veteran Training I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295984
-    },
-    {
       "name": "Sentinel Bot Access",
       "classification": "progression",
       "category": "unit_unlocks",
@@ -11891,69 +11464,6 @@
       "id": 86296101
     },
     {
-      "name": "Soviet Iron Curtain Device Access",
-      "classification": "progression",
-      "category": "unit_unlocks",
-      "repeatable": false,
-      "id": 86296102
-    },
-    {
-      "name": "Soviet Iron Curtain Device Armor Plating I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296103
-    },
-    {
-      "name": "Soviet Iron Curtain Device Drill I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296104
-    },
-    {
-      "name": "Soviet Iron Curtain Device Logistics I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296105
-    },
-    {
-      "name": "Soviet Iron Curtain Device Recon Package I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296106
-    },
-    {
-      "name": "Soviet Iron Curtain Device Reinforced Frames I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296107
-    },
-    {
-      "name": "Soviet Iron Curtain Device Sensor Suite I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296108
-    },
-    {
-      "name": "Soviet Iron Curtain Device Stealth Systems I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296109
-    },
-    {
-      "name": "Soviet Iron Curtain Device Veteran Training I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296110
-    },
-    {
       "name": "Soviet Iron Fist Access",
       "classification": "progression",
       "category": "unit_unlocks",
@@ -12197,69 +11707,6 @@
       "category": "unit_buffs",
       "repeatable": true,
       "id": 86296145
-    },
-    {
-      "name": "Soviet Nuclear Missile Silo Access",
-      "classification": "progression",
-      "category": "unit_unlocks",
-      "repeatable": false,
-      "id": 86296146
-    },
-    {
-      "name": "Soviet Nuclear Missile Silo Armor Plating I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296147
-    },
-    {
-      "name": "Soviet Nuclear Missile Silo Drill I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296148
-    },
-    {
-      "name": "Soviet Nuclear Missile Silo Logistics I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296149
-    },
-    {
-      "name": "Soviet Nuclear Missile Silo Recon Package I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296150
-    },
-    {
-      "name": "Soviet Nuclear Missile Silo Reinforced Frames I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296151
-    },
-    {
-      "name": "Soviet Nuclear Missile Silo Sensor Suite I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296152
-    },
-    {
-      "name": "Soviet Nuclear Missile Silo Stealth Systems I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296153
-    },
-    {
-      "name": "Soviet Nuclear Missile Silo Veteran Training I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296154
     },
     {
       "name": "Soviet Sentry Gun Access",
@@ -13382,69 +12829,6 @@
       "id": 86296309
     },
     {
-      "name": "Tiberium Waste Facility Access",
-      "classification": "progression",
-      "category": "unit_unlocks",
-      "repeatable": false,
-      "id": 86296310
-    },
-    {
-      "name": "Tiberium Waste Facility Armor Plating I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296311
-    },
-    {
-      "name": "Tiberium Waste Facility Drill I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296312
-    },
-    {
-      "name": "Tiberium Waste Facility Logistics I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296313
-    },
-    {
-      "name": "Tiberium Waste Facility Recon Package I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296314
-    },
-    {
-      "name": "Tiberium Waste Facility Reinforced Frames I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296315
-    },
-    {
-      "name": "Tiberium Waste Facility Sensor Suite I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296316
-    },
-    {
-      "name": "Tiberium Waste Facility Stealth Systems I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296317
-    },
-    {
-      "name": "Tiberium Waste Facility Veteran Training I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296318
-    },
-    {
       "name": "Tick Tank Access",
       "classification": "progression",
       "category": "unit_unlocks",
@@ -14502,69 +13886,6 @@
       "id": 86296466
     },
     {
-      "name": "Yuri Genetic Mutator Device Access",
-      "classification": "progression",
-      "category": "unit_unlocks",
-      "repeatable": false,
-      "id": 86296467
-    },
-    {
-      "name": "Yuri Genetic Mutator Device Armor Plating I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296468
-    },
-    {
-      "name": "Yuri Genetic Mutator Device Drill I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296469
-    },
-    {
-      "name": "Yuri Genetic Mutator Device Logistics I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296470
-    },
-    {
-      "name": "Yuri Genetic Mutator Device Recon Package I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296471
-    },
-    {
-      "name": "Yuri Genetic Mutator Device Reinforced Frames I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296472
-    },
-    {
-      "name": "Yuri Genetic Mutator Device Sensor Suite I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296473
-    },
-    {
-      "name": "Yuri Genetic Mutator Device Stealth Systems I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296474
-    },
-    {
-      "name": "Yuri Genetic Mutator Device Veteran Training I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296475
-    },
-    {
       "name": "Yuri Hover Transport Armor Plating I",
       "classification": "useful",
       "category": "unit_buffs",
@@ -14934,69 +14255,6 @@
       "category": "unit_buffs",
       "repeatable": true,
       "id": 86296528
-    },
-    {
-      "name": "Yuri Puppet Master Access",
-      "classification": "progression",
-      "category": "unit_unlocks",
-      "repeatable": false,
-      "id": 86296529
-    },
-    {
-      "name": "Yuri Puppet Master Armor Plating I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296530
-    },
-    {
-      "name": "Yuri Puppet Master Drill I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296531
-    },
-    {
-      "name": "Yuri Puppet Master Logistics I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296532
-    },
-    {
-      "name": "Yuri Puppet Master Recon Package I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296533
-    },
-    {
-      "name": "Yuri Puppet Master Reinforced Frames I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296534
-    },
-    {
-      "name": "Yuri Puppet Master Sensor Suite I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296535
-    },
-    {
-      "name": "Yuri Puppet Master Stealth Systems I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296536
-    },
-    {
-      "name": "Yuri Puppet Master Veteran Training I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86296537
     },
     {
       "name": "Yuri Tank Bunker Access",
@@ -17422,7 +16680,7 @@
       ]
     }
   ],
-  "catalogue_checksum": "9ec2bdeeb358e41d20f6f4982b9f711285b082235159762448c7a6945f55a0dc",
+  "catalogue_checksum": "2cc28118e2efe5c2ead40c65a793109764d083a30832a151c69cc42d21dd2df3",
   "compatible_catalogue_checksums": [
     "0053e46817c9e2f6d952b803d9cb9784da2bb2fde3f9e72a211a057b20ad827d"
   ],
@@ -61675,7 +60933,7 @@
     "generated_world": "mapping"
   },
   "review": {
-    "standalone_reward_items": 2161,
+    "standalone_reward_items": 2055,
     "victory_missions_verified": 108,
     "objective_runtime_enabled": true,
     "cabal_deferred": true

@@ -996,12 +996,19 @@ def build_player_clone_sections(
                         _value_case_insensitive(weapon_values, 'ROF', 0), 0
                     ),
                 }
+        # Engineer Secondary is a virtual engine scanner, never a buffable
+        # weapon reference. Excluding it here prevents creation of an unused
+        # scanner clone and makes the safety rule independent of later repair.
         direct_weapon_keys = {
             weapon.upper(): [
                 key
                 for key, value in clone_source_values.items()
                 if (
                     _is_direct_weapon_reference_key(key)
+                    and not (
+                        target_unit_id in ENGINEER_UNIT_IDS
+                        and str(key).lower() == 'secondary'
+                    )
                     and str(value).strip().lower() == weapon.lower()
                 )
             ]
@@ -1241,6 +1248,13 @@ def build_player_clone_sections(
                 clone_values[key] = weapon_clone
             handled_weapon_ids.add(weapon.upper())
             weapon_clone_ids[weapon.upper()] = weapon_clone
+
+        if target_unit_id in ENGINEER_UNIT_IDS:
+            # EngineerVirtualScanner is engine behavior, not an offensive
+            # weapon.  Range/reload buffs may clone DefuseKit, but Secondary
+            # must retain this exact identity or Engineers can attack and map
+            # generation's safety contract correctly rejects the clone.
+            clone_values['Secondary'] = 'EngineerVirtualScanner'
 
         if target.get('special_damage_fields') and 'damage' in weapon_buff_types:
             unsupported.append(

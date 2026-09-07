@@ -414,12 +414,6 @@
         "permanent_access": 25,
         "permanent_buff": 8
       },
-      "GACSPH": {
-        "run_access": 10,
-        "run_buff": 6,
-        "permanent_access": 50,
-        "permanent_buff": 12
-      },
       "GAFIRE": {
         "run_access": 10,
         "run_buff": 6,
@@ -443,12 +437,6 @@
         "run_buff": 6,
         "permanent_access": 50,
         "permanent_buff": 12
-      },
-      "GAPULS": {
-        "run_access": 6,
-        "run_buff": 4,
-        "permanent_access": 25,
-        "permanent_buff": 8
       },
       "GAROCK": {
         "run_access": 6,
@@ -479,12 +467,6 @@
         "run_buff": 2,
         "permanent_access": 10,
         "permanent_buff": 5
-      },
-      "GAWEAT": {
-        "run_access": 10,
-        "run_buff": 6,
-        "permanent_access": 50,
-        "permanent_buff": 12
       },
       "GDICRUISER": {
         "run_access": 10,
@@ -714,29 +696,11 @@
         "permanent_access": 25,
         "permanent_buff": 8
       },
-      "NAIRON": {
-        "run_access": 10,
-        "run_buff": 6,
-        "permanent_access": 50,
-        "permanent_buff": 12
-      },
       "NALASR": {
         "run_access": 3,
         "run_buff": 2,
         "permanent_access": 10,
         "permanent_buff": 5
-      },
-      "NAMISL": {
-        "run_access": 10,
-        "run_buff": 6,
-        "permanent_access": 50,
-        "permanent_buff": 12
-      },
-      "NAPULS": {
-        "run_access": 6,
-        "run_buff": 4,
-        "permanent_access": 25,
-        "permanent_buff": 8
       },
       "NASAM": {
         "run_access": 6,
@@ -1056,19 +1020,7 @@
         "permanent_access": 10,
         "permanent_buff": 5
       },
-      "TSGAPLUG2": {
-        "run_access": 10,
-        "run_buff": 6,
-        "permanent_access": 50,
-        "permanent_buff": 12
-      },
       "TSGAPLUG3": {
-        "run_access": 10,
-        "run_buff": 6,
-        "permanent_access": 50,
-        "permanent_buff": 12
-      },
-      "TSGAPLUG4": {
         "run_access": 10,
         "run_buff": 6,
         "permanent_access": 50,
@@ -1111,18 +1063,6 @@
         "permanent_buff": 8
       },
       "TSMHIJACK_MP": {
-        "run_access": 10,
-        "run_buff": 6,
-        "permanent_access": 50,
-        "permanent_buff": 12
-      },
-      "TSNAMISL": {
-        "run_access": 10,
-        "run_buff": 6,
-        "permanent_access": 50,
-        "permanent_buff": 12
-      },
-      "TSNAWAST": {
         "run_access": 10,
         "run_buff": 6,
         "permanent_access": 50,
@@ -1229,18 +1169,6 @@
         "run_buff": 4,
         "permanent_access": 25,
         "permanent_buff": 8
-      },
-      "YAGNTC": {
-        "run_access": 10,
-        "run_buff": 6,
-        "permanent_access": 50,
-        "permanent_buff": 12
-      },
-      "YAPPET": {
-        "run_access": 10,
-        "run_buff": 6,
-        "permanent_access": 50,
-        "permanent_buff": 12
       },
       "YAPSYT": {
         "run_access": 10,

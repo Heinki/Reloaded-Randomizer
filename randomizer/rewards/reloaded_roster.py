@@ -11,6 +11,20 @@ _CONTENT = load_static_config('rewards/reloaded_content_catalogue.json')[
     'content'
 ]
 
+# Reloaded writes an inline comment after the TS jumpjet projectile section
+# header.  The catalogue's conservative INI reader consequently folds that
+# projectile into TSJUMPJET.  Never copy those projectile-only fields into the
+# standalone InfantryType: the bad Image=BULLET_01 clone crashes when built.
+_CLONE_TEMPLATE_REMOVED_FIELDS = {
+    'TSJUMPJET': frozenset({
+        'AA', 'AG', 'Acceleration', 'Arm', 'Proximity', 'ROT', 'Ranged',
+        'SubjectToCliffs', 'SubjectToElevation', 'SubjectToWalls',
+    }),
+}
+_CLONE_TEMPLATE_OVERRIDES = {
+    'TSJUMPJET': {'Image': 'TSJUMPJET'},
+}
+
 
 def _approved_source_ids():
     result = set()
@@ -57,6 +71,16 @@ def randomizer_unit_template_values():
         if not values:
             missing.append(source_id)
             continue
+        removed_fields = {
+            field.casefold()
+            for field in _CLONE_TEMPLATE_REMOVED_FIELDS.get(source_id, ())
+        }
+        values = {
+            key: value
+            for key, value in values.items()
+            if str(key).casefold() not in removed_fields
+        }
+        values.update(_CLONE_TEMPLATE_OVERRIDES.get(source_id, {}))
         values.setdefault('Image', source_id)
         templates[source_id] = values
     if missing:

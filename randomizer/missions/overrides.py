@@ -155,6 +155,13 @@ MISSION_NATIVE_RUNTIME_PLAYER_FORBIDDEN_IDS = _frozenset_mapping(
     'native_runtime_player_forbidden_ids'
 )
 
+# Player starts with this authored unit, but no TaskForce builds it.  Keep the
+# placed object while hiding its native factory cameo; Chaos may grant a
+# different tier-one naval unit for production.
+MISSION_NATIVE_PRODUCTION_HARD_LOCKS = {
+    'SOV04_RA2': frozenset({'SUB'}),
+}
+
 # Physical launch-provider buildings owned by a transient campaign House can
 # be deleted during a stage handoff while an enemy scan still holds a pointer.
 # Defer only reviewed provider-backed powers for that map; earned power access
