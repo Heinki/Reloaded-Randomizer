@@ -208,7 +208,7 @@ class CncReloadedWorld(World):
         )
         menu.locations.append(victory)
 
-        for placement in self.run_manifest["local_placements"]:
+        for placement in self.run_manifest.get("local_placements", []):
             name, _location_id = location_entries(
                 placement["mission"],
                 placement["check"],
@@ -277,14 +277,14 @@ class CncReloadedWorld(World):
 
     def create_items(self) -> None:
         remaining = Counter(self.run_manifest["item_pool"])
-        for placement in self.run_manifest["local_placements"]:
+        for placement in self.run_manifest.get("local_placements", []):
             remaining[placement["item"]] -= 1
         self.multiworld.itempool += [
             self.create_item(name)
             for name, count in remaining.items()
             for _ in range(count)
         ]
-        for name, count in self.run_manifest["starting_items"].items():
+        for name, count in self.run_manifest.get("starting_items", {}).items():
             for _ in range(count):
                 self.multiworld.push_precollected(self.create_item(name))
 
@@ -312,7 +312,7 @@ class CncReloadedWorld(World):
                 for check_id, count in self.run_manifest["locations"][code].items()
             }
         used_items = set(self.run_manifest["item_pool"]) | set(
-            self.run_manifest["starting_items"]
+            self.run_manifest.get("starting_items", {})
         )
         shop = self.run_manifest.get("shop")
         shop_slot_data = None
@@ -344,7 +344,7 @@ class CncReloadedWorld(World):
             "slot_data_version": 6 if shop is not None else 5,
             "randomizer_version": self.run_manifest["randomizer_version"],
             "randomizer_seed": self.run_manifest["randomizer_seed"],
-            "catalogue_checksum": CATALOGUE_CHECKSUM,
+            "catalogue_checksum": self.run_manifest["catalogue_checksum"],
             "manifest_checksum": self.run_manifest["manifest_checksum"],
             "campaign_filter": self.run_manifest["campaign_filter"],
             "progression_mode": self.run_manifest["progression_mode"],

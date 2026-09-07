@@ -313,7 +313,11 @@ class ShopArchipelagoController:
     def is_run_complete(self):
         if self.archipelago_progression_mode() == 'Shop Mode':
             run = self.shop_repository.load_run()
-            return run is not None and run.status is RunStatus.COMPLETED
+            identity, _reward_ids = self.archipelago_shop_context()
+            return bool(
+                identity and run is not None and run.ap_identity == identity
+                and run.status is RunStatus.COMPLETED
+            )
         return super().is_run_complete()
 
     def reconcile_archipelago_checks(self):
@@ -349,6 +353,6 @@ class ShopArchipelagoController:
                 identity,
                 getattr(self, '_archipelago_server_checked_locations', ()),
             )
-        if self.shop_mode_selected():
+        if self.shop_archipelago_game_active() or self.shop_mode_selected():
             self.refresh_shop_mode()
         return result

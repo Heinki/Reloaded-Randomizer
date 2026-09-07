@@ -22,7 +22,7 @@ from randomizer.rewards.weights import main_reward_weight_type
 SNAPSHOT_SCHEMA_VERSION = 1
 GAME_NAME = 'C&C Reloaded'
 PACKAGE_NAMESPACE = 'cnc_reloaded'
-WORLD_VERSION = '0.3.1'
+WORLD_VERSION = '0.3.2'
 MINIMUM_AP_VERSION = '0.6.7'
 
 # New mnemonic RL ranges. They never overlap Mental Omega's published IDs.
@@ -43,8 +43,17 @@ def _canonical_json(value):
     )
 
 
+# This published catalogue has identical item/mission semantics and IDs. Its
+# checksum included release metadata, which is excluded from new checksums.
+BACKWARD_COMPATIBLE_CATALOGUE_CHECKSUMS = frozenset({
+    '0053e46817c9e2f6d952b803d9cb9784da2bb2fde3f9e72a211a057b20ad827d',
+})
+
+
 def projection_checksum(projection):
-    return sha256(_canonical_json(projection).encode('utf-8')).hexdigest()
+    content = {key: value for key, value in projection.items()
+               if key not in {'world_version', 'randomizer_version'}}
+    return sha256(_canonical_json(content).encode('utf-8')).hexdigest()
 
 
 def _item_classification(reward):
@@ -230,6 +239,9 @@ def build_snapshot(existing=None):
     return {
         **projection,
         'catalogue_checksum': projection_checksum(projection),
+        'compatible_catalogue_checksums': sorted(
+            BACKWARD_COMPATIBLE_CATALOGUE_CHECKSUMS
+        ),
         'id_ranges': {
             'items': {'first': ITEM_ID_BASE, 'last': ITEM_ID_END},
             'locations': {'first': LOCATION_ID_BASE, 'last': LOCATION_ID_END},
@@ -263,7 +275,10 @@ def runtime_catalogue_checksum():
 
 
 def runtime_catalogue_is_compatible(checksum):
-    return str(checksum or '') == runtime_catalogue_checksum()
+    return (
+        str(checksum or '') == runtime_catalogue_checksum()
+        or str(checksum or '') in BACKWARD_COMPATIBLE_CATALOGUE_CHECKSUMS
+    )
 
 
 def snapshot_is_current(snapshot):

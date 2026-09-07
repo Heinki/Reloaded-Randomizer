@@ -26,6 +26,9 @@ _SNAPSHOT = json.loads(
     files(__package__).joinpath("catalogue.json").read_text(encoding="utf-8")
 )
 CATALOGUE_CHECKSUM = _SNAPSHOT["catalogue_checksum"]
+COMPATIBLE_CATALOGUE_CHECKSUMS = frozenset(
+    _SNAPSHOT.get("compatible_catalogue_checksums", ())
+)
 RANDOMIZER_VERSION = _SNAPSHOT["randomizer_version"]
 MAXIMUM_REWARDS_PER_CHECK = int(_SNAPSHOT["maximum_rewards_per_check"])
 
