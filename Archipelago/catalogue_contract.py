@@ -22,7 +22,7 @@ from randomizer.rewards.weights import main_reward_weight_type
 SNAPSHOT_SCHEMA_VERSION = 1
 GAME_NAME = 'C&C Reloaded'
 PACKAGE_NAMESPACE = 'cnc_reloaded'
-WORLD_VERSION = '0.3.2'
+WORLD_VERSION = '1.0'
 MINIMUM_AP_VERSION = '0.6.7'
 
 # New mnemonic RL ranges. They never overlap Mental Omega's published IDs.

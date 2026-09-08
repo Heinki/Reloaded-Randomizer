@@ -1,3 +1,3 @@
 """Single source of truth for the launcher release version."""
 
-APP_VERSION = '0.5.1'
+APP_VERSION = '1.0'

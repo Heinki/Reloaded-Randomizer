@@ -2,9 +2,9 @@
   "schema_version": 1,
   "game": "C&C Reloaded",
   "package_namespace": "cnc_reloaded",
-  "world_version": "0.3.2",
+  "world_version": "1.0",
   "minimum_ap_version": "0.6.7",
-  "randomizer_version": "0.5.1",
+  "randomizer_version": "1.0",
   "supported_game_version": "2.7.0",
   "active_factions": [
     "Allies",
