@@ -45,6 +45,16 @@ canonical reward names and removes those rewards before inventory construction.
 Keep it empty unless a reviewed Reloaded reward is unsafe or unusable in Shop
 Mode.
 
+The first two Shop missions offer Standard choices, including a fixed-unit or
+hero mission when available. From mission 3 onward, every remaining eligible
+mission has equal selection probability, regardless of class or run length.
+All three choices can be finales. Completed missions cannot repeat, and the
+configured mission pool still applies.
+
+The former `stage_class_weights` section is no longer used; older configuration
+files containing it remain loadable. `stage_difficulty_weights` still controls
+the separate in-game difficulty curve.
+
 `unit_target_prices` must exactly cover every Reloaded unit target exposed by
 the Shop catalogue. Each uppercase TechnoType ID has `run_access`, `run_buff`,
 `permanent_access`, and `permanent_buff`. Use `null` only when that target has no

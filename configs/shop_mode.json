@@ -31,50 +31,6 @@
         "meta_coins": 4
       }
     },
-    "stage_class_weights": [
-      {
-        "through_percent": 20,
-        "weights": {
-          "standard": 100,
-          "finale": 0
-        }
-      },
-      {
-        "through_percent": 40,
-        "weights": {
-          "standard": 100,
-          "finale": 0
-        }
-      },
-      {
-        "through_percent": 60,
-        "weights": {
-          "standard": 100,
-          "finale": 0
-        }
-      },
-      {
-        "through_percent": 80,
-        "weights": {
-          "standard": 100,
-          "finale": 0
-        }
-      },
-      {
-        "through_percent": 90,
-        "weights": {
-          "standard": 80,
-          "finale": 20
-        }
-      },
-      {
-        "through_percent": 100,
-        "weights": {
-          "standard": 45,
-          "finale": 55
-        }
-      }
-    ],
     "stage_difficulty_weights": [
       {
         "through_percent": 30,

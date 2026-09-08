@@ -69,6 +69,12 @@ catalogue: 166 unit access rewards, 1,885 unit buffs, 18 powers, and 44 power
 buffs. Temporary mission cards can add one of 12 Reloaded player boons or 7
 Reloaded AI challenges; active power boons are not offered twice.
 
+The first two Shop missions offer Standard choices, including a fixed-unit or
+hero mission when available. From mission 3 onward, every remaining eligible
+mission has equal selection probability, regardless of class or run length.
+All three choices can be finales. Completed missions cannot repeat, and the
+configured mission pool still applies.
+
 Each Shop mission card shows a deterministic per-offer game difficulty. Early
 stages favor Casual, middle stages favor Normal, and late stages can select
 Hard. Mission Difficulty Assist lowers only its chosen offer by one step while
