@@ -63,15 +63,16 @@ visible in the launcher.
 6. Give the YAML to the room host, or place it in Archipelago's `Players`
    folder when generating the room yourself.
 
-To change the run, change launcher settings and export a new YAML before room
-generation. Do not hand-edit generated manifest data. Do not replace the YAML
-after a room has been generated; a changed YAML describes a different run.
+Reuse the same YAML to generate additional rooms with the same settings.
+Archipelago assigns a fresh Randomizer seed during each room generation.
+Re-export only after changing launcher settings. Do not hand-edit generated
+template data or replace YAML after a room has already been generated.
 
 ## Generate and host the room
 
 Generate the multiworld normally with Archipelago after every player's YAML is
-in the `Players` folder. Upload or host the generated output using the normal
-Archipelago workflow.
+in the `Players` folder. Reusing a Player YAML does not reuse its Randomizer
+seed. Upload or host generated output using the normal Archipelago workflow.
 
 The Reloaded world reserves locations for mission objectives, victories, and
 Shop Mode purchases. One private local-victory event per mission connects real
@@ -183,10 +184,12 @@ is updated.
 
 Launcher release labels no longer reject an otherwise compatible run. Schema,
 mission/reward catalogue, and manifest integrity checks still reject incompatible
-or damaged input. The APWorld preserves the exported manifest unchanged,
-including legacy optional fields. Player YAML uses JSON-compatible YAML mappings
-to preserve setting types exactly. Re-export through **Save Player YAML** when
-changing settings or replacing an incompatible catalogue.
+or damaged input. The APWorld validates exported template data, derives a fresh
+deterministic Randomizer seed from each Archipelago generation, then signs
+room-specific data sent to the launcher. Legacy fixed-manifest YAMLs are
+reseeded too. Player YAML uses JSON-compatible YAML mappings to preserve setting
+types exactly. Re-export through **Save Player YAML** when changing settings or
+replacing an incompatible catalogue.
 
 For an AP Shop run, select **Shop Mode**, save the Player YAML, generate and host
 the room, then connect the launcher. **Start Shop Mode** remains available after

@@ -41,7 +41,10 @@ def _scout_location_ids(slot_data):
     if isinstance(shop, Mapping):
         locations.update(
             int(location)
-            for location in shop.get('purchase_locations', ())
+            for location in (
+                shop.get('item_locations')
+                or shop.get('purchase_locations', ())
+            )
             if int(location) > 0
         )
     return tuple(sorted(locations))
@@ -956,4 +959,3 @@ class ArchipelagoSession:
             str(part.get('text', ''))
             for part in self._message_segments(packet)
         ).strip()
-

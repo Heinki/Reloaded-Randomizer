@@ -81,8 +81,11 @@ Hard. Mission Difficulty Assist lowers only its chosen offer by one step while
 preserving the reward. Expanding the launcher log exposes a developer-only
 offer picker for recovery and test completion through normal Shop transitions.
 
-The Reloaded APWorld contains 2,161 items, 108 missions, and 6,030 reserved
-locations for objectives, victories, and Shop Mode.
+The Reloaded APWorld contains 2,161 items, 108 missions, and reserved locations
+for objectives, victories, and Shop Mode. Each Shop seed has 120 shuffled item
+locations. Mission victories release up to 12 unchecked locations across failed
+and restarted runs. Completing the run releases every remaining location before
+reporting the goal.
 
 ## Installation safety
 
