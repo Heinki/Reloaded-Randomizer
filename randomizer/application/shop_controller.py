@@ -1556,6 +1556,17 @@ class ShopController(ShopPolishController):
                 parent=self,
             )
             return
+        if not messagebox.askokcancel(
+            'Shop Mode Rules',
+            'Shop Mode is a one-attempt run.\n\n'
+            'Do not save, load, or restart a mission. Any of these actions, '
+            'a defeat, or closing the game before victory counts as a failed '
+            'mission and can end the run.\n\n'
+            'Select OK only when you are ready to begin.',
+            icon='warning',
+            parent=self,
+        ):
+            return
         seed = self.seed_var.get().strip() or uuid.uuid4().hex[:16].upper()
         salvaged_ore = self.shop_profile.salvaged_run_coins
         self.seed_var.set(seed)

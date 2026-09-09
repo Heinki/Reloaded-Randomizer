@@ -34,6 +34,11 @@ Player unit clones use `RLRP`; cloned weapons use `RLRW`. These clones are for
 future player production. Map-authored placements, TaskForces, triggers,
 events, and actions must retain native identities.
 
+Player-production clones preserve each source TechnoType's authored
+`UIDescription`, keeping Phobos sidebar tooltips available for Shop Mode units
+and their buffed variants. `clone_policy.ui_description` in
+`rewards/tuning.json` is used only when a source type has no description.
+
 `reloaded_content_catalogue.json` and `reloaded_balance_catalogue.json` retain
 the broader installed-rule evidence. Runtime reward construction uses only the
 approved five-faction subset in `randomizer/rewards/reloaded_definitions.py`.

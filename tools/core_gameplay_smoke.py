@@ -10,6 +10,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from randomizer.application.launch_controller import LaunchController
+from randomizer.content.inventory import read_rules_sections
 from randomizer.core.paths import BATTLE_INI
 from randomizer.maps.generated import file_sha256, generated_map_name
 from randomizer.maps.ini import IniLines, all_section_value_maps, read_text
@@ -215,6 +216,7 @@ def run(
         else 'not_friendly_starting_type'
     )
     source_sections = all_section_value_maps(source_lines)
+    installed_sections, _rules_source = read_rules_sections()
     harness = _Harness(
         rewards,
         mission['side'],
@@ -239,6 +241,27 @@ def run(
                 f'Generated clone section missing: {clone_id} '
                 f'(mission={mission_code}, buff={buff_type or "none"})'
             )
+        if buff_type != 'veteran':
+            native_ui_description = (
+                _section_field(source_sections, tech_id, 'UIDescription')
+                or _section_field(
+                    installed_sections, tech_id, 'UIDescription'
+                )
+            )
+            clone_ui_description = _section_field(
+                generated_sections, clone_id, 'UIDescription'
+            )
+            if native_ui_description:
+                if clone_ui_description != native_ui_description:
+                    raise ValueError(
+                        f'Generated clone lost native tooltip for {tech_id}: '
+                        f'expected {native_ui_description!r}, found '
+                        f'{clone_ui_description!r}'
+                    )
+            elif not clone_ui_description:
+                raise ValueError(
+                    f'Generated clone tooltip missing for {tech_id}'
+                )
         expected_access = access_rules.get(tech_id, {})
         if expected_access and buff_type != 'veteran':
             prerequisite_fields = {
