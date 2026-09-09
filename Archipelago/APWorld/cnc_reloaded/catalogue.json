@@ -2,7 +2,7 @@
   "schema_version": 1,
   "game": "C&C Reloaded",
   "package_namespace": "cnc_reloaded",
-  "world_version": "1.0",
+  "world_version": "1.0.0",
   "minimum_ap_version": "0.6.7",
   "randomizer_version": "1.0",
   "supported_game_version": "2.7.0",

@@ -1691,10 +1691,10 @@
       },
       "veteran_economy": {
         "display_name": "Veteran Economy",
-        "description": "+20% run-shop prices, +30% mission Ore.",
+        "description": "+20% run-shop prices; each successfully completed mission gives +2 Ore.",
         "effects": {
           "shop_price_percent": 120,
-          "run_reward_percent": 130
+          "run_reward_flat": 2
         }
       },
       "poor_logistics": {
@@ -1782,9 +1782,9 @@
       },
       "narrow_intelligence": {
         "display_name": "Narrow Intelligence",
-        "description": "+30% mission Ore; only 2 mission offers per stage.",
+        "description": "Each successfully completed mission gives +2 Ore; only 2 mission offers per stage.",
         "effects": {
-          "run_reward_percent": 130,
+          "run_reward_flat": 2,
           "mission_offer_count_flat": -1
         }
       },

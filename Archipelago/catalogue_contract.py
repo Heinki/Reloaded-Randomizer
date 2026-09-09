@@ -15,14 +15,12 @@ from randomizer.config.game_profile import (
 from randomizer.core.paths import BATTLE_INI
 from randomizer.core.version import APP_VERSION
 from randomizer.missions.catalogue import parse_missions
-from randomizer.rewards.catalogue import MAX_REWARDS_PER_CHECK, REWARD_POOL
-from randomizer.rewards.weights import main_reward_weight_type
 
 
 SNAPSHOT_SCHEMA_VERSION = 1
 GAME_NAME = 'C&C Reloaded'
 PACKAGE_NAMESPACE = 'cnc_reloaded'
-WORLD_VERSION = '1.0'
+WORLD_VERSION = '1.0.0'
 MINIMUM_AP_VERSION = '0.6.7'
 
 # New mnemonic RL ranges. They never overlap Mental Omega's published IDs.
@@ -56,6 +54,51 @@ def projection_checksum(projection):
     return sha256(_canonical_json(content).encode('utf-8')).hexdigest()
 
 
+def snapshot_checksum_is_valid(snapshot):
+    """Validate checked-in generated data without installed game assets."""
+    if not isinstance(snapshot, dict):
+        return False
+    projection_keys = (
+        'schema_version',
+        'game',
+        'package_namespace',
+        'world_version',
+        'minimum_ap_version',
+        'randomizer_version',
+        'supported_game_version',
+        'active_factions',
+        'deferred_factions',
+        'maximum_rewards_per_check',
+        'items',
+        'missions',
+    )
+    if any(key not in snapshot for key in projection_keys):
+        return False
+    projection = {
+        key: snapshot[key]
+        for key in projection_keys
+    }
+    projection['items'] = [
+        {key: value for key, value in item.items() if key != 'id'}
+        for item in snapshot['items']
+        if isinstance(item, dict)
+    ]
+    return snapshot.get('catalogue_checksum') == projection_checksum(projection)
+
+
+def catalogue_sources_available():
+    """Return whether live Reloaded inputs needed for regeneration exist."""
+    if not BATTLE_INI.is_file():
+        return False
+    from randomizer.content.inventory import read_rules_sections
+
+    try:
+        read_rules_sections()
+    except (FileNotFoundError, OSError):
+        return False
+    return True
+
+
 def _item_classification(reward):
     if reward.get('enemy_reward'):
         return 'trap'
@@ -70,6 +113,12 @@ def _check_name(check_id):
 
 def build_catalogue_projection():
     """Return stable AP data derived from live Reloaded catalogues."""
+    # Reward definitions intentionally inspect installed Reloaded rules. Keep
+    # this import lazy so clean source checkouts can package and verify the
+    # already-reviewed, checked-in catalogue without proprietary game assets.
+    from randomizer.rewards.catalogue import MAX_REWARDS_PER_CHECK, REWARD_POOL
+    from randomizer.rewards.weights import main_reward_weight_type
+
     items = [
         {
             'name': reward['name'],

@@ -30,6 +30,7 @@ def build(
 ) -> Path:
     sys.path.insert(0, str(PROJECT_ROOT))
     from Archipelago.audit import archipelago_foundation_report
+    from Archipelago.catalogue_contract import catalogue_sources_available
     from Archipelago.generate_catalogue import main as generate_catalogue
     from randomizer.core.version import APP_VERSION
 
@@ -38,8 +39,12 @@ def build(
     if not manifest_path.is_file():
         raise FileNotFoundError(f'APWorld manifest not found: {manifest_path}')
 
-    generate_catalogue()
-    report = archipelago_foundation_report()
+    verify_live_sources = catalogue_sources_available()
+    if verify_live_sources:
+        generate_catalogue()
+    report = archipelago_foundation_report(
+        verify_live_sources=verify_live_sources,
+    )
     if not report['valid']:
         raise RuntimeError('C&C Reloaded APWorld source validation failed.')
     if not report['review_complete'] and not allow_incomplete_catalogue:
@@ -62,7 +67,8 @@ def build(
 
     manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
     manifest.update({
-        'compatible_version': 8,
+        # Format 8 output only uses container features readable since format 7.
+        'compatible_version': 7,
         'version': 8,
     })
     manifest_data = json.dumps(

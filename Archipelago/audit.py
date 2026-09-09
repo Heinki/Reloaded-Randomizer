@@ -14,6 +14,8 @@ from Archipelago.catalogue_contract import (
     MINIMUM_AP_VERSION,
     PACKAGE_NAMESPACE,
     WORLD_VERSION,
+    catalogue_sources_available,
+    snapshot_checksum_is_valid,
     snapshot_is_current,
 )
 from Archipelago.client.session import _scout_location_ids
@@ -26,7 +28,7 @@ CATALOGUE_PATH = WORLD_ROOT / 'catalogue.json'
 MANIFEST_PATH = WORLD_ROOT / 'archipelago.json'
 
 
-def archipelago_foundation_report():
+def archipelago_foundation_report(*, verify_live_sources=None):
     snapshot = json.loads(CATALOGUE_PATH.read_text(encoding='utf-8'))
     manifest = json.loads(MANIFEST_PATH.read_text(encoding='utf-8'))
     required_files = (
@@ -75,13 +77,21 @@ def archipelago_foundation_report():
         token in python_identity_text
         for token in ('mental omega', 'mental_omega', 'morp')
     )
-    snapshot_current = snapshot_is_current(snapshot)
+    if verify_live_sources is None:
+        verify_live_sources = catalogue_sources_available()
+    snapshot_checksum_valid = snapshot_checksum_is_valid(snapshot)
+    snapshot_current = (
+        snapshot_is_current(snapshot)
+        if verify_live_sources
+        else snapshot_checksum_valid
+    )
     shop_purchase_scouting_valid = _scout_location_ids({
         'locations': {'MISSION': {'objective': [3, 1]}},
         'shop': {'purchase_locations': [5, 2]},
     }) == (1, 2, 3, 5)
     valid = all((
         not missing_files,
+        snapshot_checksum_valid,
         snapshot_current,
         manifest == {
             'game': GAME_NAME,
@@ -119,6 +129,8 @@ def archipelago_foundation_report():
         'identity_isolated': identity_isolated,
         'shop_purchase_scouting_valid': shop_purchase_scouting_valid,
         'missing_files': missing_files,
+        'live_source_validation': bool(verify_live_sources),
+        'snapshot_checksum_valid': snapshot_checksum_valid,
         'snapshot_current': snapshot_current,
         'review': snapshot['review'],
         'review_complete': snapshot['review_complete'],
