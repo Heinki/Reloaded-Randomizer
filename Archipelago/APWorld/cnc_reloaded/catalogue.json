@@ -4,7 +4,7 @@
   "package_namespace": "cnc_reloaded",
   "world_version": "1.0.0",
   "minimum_ap_version": "0.6.7",
-  "randomizer_version": "1.0",
+  "randomizer_version": "1.1",
   "supported_game_version": "2.7.0",
   "active_factions": [
     "Allies",
