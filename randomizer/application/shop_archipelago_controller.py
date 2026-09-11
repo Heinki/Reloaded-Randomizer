@@ -308,7 +308,7 @@ class ShopArchipelagoController:
             self._report_archipelago_location_groups((group,))
             purchase_index = shop['purchase_locations'].index(location_id) + 1
             self._set_shop_message(
-                f'Spent {validation.cost} Command Coins on generated AP '
+                f'Spent {validation.cost} Gems on generated AP '
                 f'purchase {purchase_index}. The server determines its item.'
             )
         else:

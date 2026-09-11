@@ -203,7 +203,10 @@ class ShopPolishController(ShopArchipelagoController):
         return tuple(
             canonical_reward_for_id(reward_id)
             for reward_id in (
-                profile.permanent_unit_unlocks if profile is not None else ()
+                (
+                    *profile.permanent_unit_unlocks,
+                    *profile.permanent_power_unlocks,
+                ) if profile is not None else ()
             )
         )
 
@@ -222,7 +225,10 @@ class ShopPolishController(ShopArchipelagoController):
             return []
         return [
             ('Selected permanent Shop unlock', canonical_reward_for_id(reward_id))
-            for reward_id in run.selected_permanent_units
+            for reward_id in (
+                *run.selected_permanent_units,
+                *run.permanent_power_unlocks_snapshot,
+            )
         ]
 
     def unlock_dashboard_sources(self):
@@ -478,7 +484,7 @@ class ShopPolishController(ShopArchipelagoController):
                 'Exact reward hidden until mission launch'
                 if reward_hidden else
                 f'Base +{definition.run_coins} Ore / '
-                f'+{definition.meta_coins} Command  •  '
+                f'+{definition.meta_coins} Gems  •  '
                 f'Estimated +{reward.run_coins} / +{reward.meta_coins}'
                 + ('  •  Full reward retained' if assisted else '')
             )
@@ -1321,7 +1327,7 @@ class ShopPolishController(ShopArchipelagoController):
                 f'Each level adds +{effects.get("run_coins_per_level", 0)} '
                 'Ore to challenge victories; every '
                 f'{effects.get("meta_coins_every_levels", 0)} levels also adds '
-                '+1 Command Coin.'
+                '+1 Gem.'
             ),
             'recovery_salvage': (
                 f'Each level saves up to {effects.get("ore_per_level", 0)} '
@@ -1354,7 +1360,7 @@ class ShopPolishController(ShopArchipelagoController):
                 'as Veterans.'
             ),
             'gem_dividend': (
-                f'On run victory, gain 1 Command Coin per '
+                f'On run victory, gain 1 Gem per '
                 f'{effects.get("ore_per_gem", 0)} remaining Ore, capped at '
                 f'{effects.get("maximum_gems_per_level", 0)} per level.'
             ),
@@ -1459,6 +1465,15 @@ class ShopPolishController(ShopArchipelagoController):
         return (
             f'{reward_id}\nPermanent local entitlement. '
             'Selectable in future Shop run loadouts.'
+        )
+
+    def shop_permanent_power_tooltip(self, row_id):
+        reward_id = self._shop_permanent_power_rows.get(row_id)
+        if not reward_id:
+            return ''
+        return (
+            f'{reward_id}\nPermanent local power entitlement. '
+            'Automatically active in future Shop runs.'
         )
 
     def shop_upgrade_tooltip(self, row_id):

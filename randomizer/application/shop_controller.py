@@ -22,6 +22,7 @@ from ._dependencies import (
 )
 
 from randomizer.rewards.reloaded_definitions import unit_display_label
+from randomizer.rewards.rules import tech_ids_for_rewards
 from randomizer.rewards.display import (
     buff_effect_lines, reward_display_name, unit_buff_counts, inherited_unit_buff_rewards,
 )
@@ -30,6 +31,7 @@ from randomizer.shop.active import (
     active_shop_starter_defense_ids,
     active_shop_starter_unit_ids,
     active_shop_tech_ids,
+    permanent_buff_snapshot,
     shop_starter_defense_ids,
     shop_starter_unit_ids,
 )
@@ -48,6 +50,8 @@ from randomizer.shop.catalogue import (
 from randomizer.shop.config import SHOP_CONFIG
 from randomizer.shop.economy import (
     permanent_buff_price,
+    permanent_power_buff_price,
+    permanent_power_price,
     permanent_unit_price,
     permanent_upgrade_price,
 )
@@ -101,7 +105,7 @@ class ShopController(ShopPolishController):
         self.shop_stage_var = tk.StringVar(value='Run — / 10')
         self.shop_status_var = tk.StringVar(value='Status: No Run')
         self.shop_run_coins_var = tk.StringVar(value='Ore: 0')
-        self.shop_meta_coins_var = tk.StringVar(value='Command Coins: 0')
+        self.shop_meta_coins_var = tk.StringVar(value='Gems: 0')
         self.shop_rerolls_var = tk.StringVar(value='Rerolls: 0 / 0')
         self.shop_message_var = tk.StringVar(value='')
         self.shop_ap_purchase_status_var = tk.StringVar(value='')
@@ -135,6 +139,7 @@ class ShopController(ShopPolishController):
         self.shop_category_var = tk.StringVar(value='Units')
         self.shop_buff_target_var = tk.StringVar(value='')
         self.shop_permanent_buff_target_var = tk.StringVar(value='')
+        self.shop_permanent_power_buff_target_var = tk.StringVar(value='')
         self.shop_search_var = tk.StringVar(value='')
         self.shop_loadout_search_var = tk.StringVar(value='')
         self.shop_setup_search_var = tk.StringVar(value='')
@@ -173,11 +178,16 @@ class ShopController(ShopPolishController):
         self._shop_catalogue_upgrade_targets = {}
         self._shop_permanent_rows = {}
         self._shop_permanent_buyable = {}
+        self._shop_permanent_power_rows = {}
+        self._shop_permanent_power_buyable = {}
         self._shop_upgrade_rows = {}
         self._shop_upgrade_buyable = {}
         self._shop_permanent_buff_rows = {}
         self._shop_permanent_buff_buyable = {}
         self._shop_permanent_buff_target_ids = {}
+        self._shop_permanent_power_buff_rows = {}
+        self._shop_permanent_power_buff_buyable = {}
+        self._shop_permanent_power_buff_target_ids = {}
         self._shop_loadout_rows = {}
         self._shop_pending_loadout_selection = set()
         self._shop_current_loadout_targets = {}
@@ -607,7 +617,10 @@ class ShopController(ShopPolishController):
         if run is not None:
             return [
                 canonical_reward_for_id(reward_id)
-                for reward_id in run.selected_permanent_units
+                for reward_id in (
+                    *run.selected_permanent_units,
+                    *run.permanent_power_unlocks_snapshot,
+                )
             ]
         return super().active_starting_rewards_for_report()
 
@@ -819,11 +832,11 @@ class ShopController(ShopPolishController):
                 if run is None or run.status is RunStatus.ACTIVE
                 else 'Error.TLabel'
                 if run.status is RunStatus.FAILED
-                else 'Shop.Command.TLabel'
+                else 'Shop.Gem.TLabel'
             )
             self.shop_status_label.configure(style=status_style)
         self.shop_meta_coins_var.set(
-            f'Command Coins: {self.shop_profile.meta_coins}'
+            f'Gems: {self.shop_profile.meta_coins}'
         )
         capacity = self._shop_reroll_capacity()
         used = run.rerolls_used if run is not None else 0
@@ -1066,7 +1079,7 @@ class ShopController(ShopPolishController):
             'Give Up Shop Run?',
             'End this run now?\n\n'
             'Run Ore and run purchases will be abandoned. '
-            'Command Coins and permanent unlocks are kept.',
+            'Gems and permanent unlocks are kept.',
             parent=self,
         ):
             return
@@ -1668,23 +1681,23 @@ class ShopController(ShopPolishController):
                 ap_identity=ap_identity,
                 excluded_reward_ids=selected,
             )
-        permanent_buff_targets = set(starter_tech_ids)
-        permanent_buff_targets.update(
-            entry.target_id
-            for reward_id in selected
+        permanent_powers = tuple(
+            reward_id for reward_id in self.shop_profile.permanent_power_unlocks
             for entry in [self._shop_entry_by_reward_id.get(reward_id)]
-            if entry is not None and entry.target_id
+            if entry is not None and self._shop_entry_available(entry)
         )
+        permanent_buff_targets = set(starter_tech_ids)
+        permanent_buff_targets.update(tech_ids_for_rewards(
+            canonical_reward_for_id(reward_id) for reward_id in selected
+        ))
         starting_draft_buffs = self._starting_buff_draft(
             seed, permanent_buff_targets
         )
-        permanent_buffs = tuple(
-            item for item in self.shop_profile.permanent_buffs
-            if (
-                (entry := self._shop_entry_by_reward_id.get(item.reward_id))
-                is not None
-                and entry.target_id in permanent_buff_targets
-            )
+        permanent_buffs = permanent_buff_snapshot(
+            self.shop_profile,
+            selected_unit_reward_ids=selected,
+            permanent_power_reward_ids=permanent_powers,
+            starter_tech_ids=starter_tech_ids,
         )
         modifiers = tuple(
             modifier_id for modifier_id, variable in self.shop_modifier_vars.items()
@@ -1724,8 +1737,12 @@ class ShopController(ShopPolishController):
                 starting_unit_ids=starting_units,
                 starting_defense_ids=starting_defenses,
                 selected_reward_ids=selected,
+                permanent_power_reward_ids=permanent_powers,
                 permanent_entitlement_ids=(
                     self.shop_profile.permanent_unit_unlocks
+                ),
+                permanent_power_entitlement_ids=(
+                    self.shop_profile.permanent_power_unlocks
                 ),
                 permanent_buffs=permanent_buffs,
                 starting_draft_buffs=starting_draft_buffs,
@@ -1838,6 +1855,8 @@ class ShopController(ShopPolishController):
             else:
                 source = 'Permanent Selected'
             add_access(source, reward_id, archipelago=reward_id in ap_units)
+        for reward_id in run.permanent_power_unlocks_snapshot:
+            add_access('Permanent Power', reward_id)
         ap_rewards = tuple(ap_automatic_reward_ids(
             run.ap_entitlements_snapshot
         ))
@@ -2047,7 +2066,9 @@ class ShopController(ShopPolishController):
             f'Starting Buff Draft: {draft_level} free Tier 1 buff(s) at run '
             f'start; {"choose preferred type above" if draft_level else "locked"}. '
             f'Discount Specialization: {specialization_ore} Ore off selected '
-            f'category; {"choose category above" if specialization_level else "locked"}.'
+            f'category; {"choose category above" if specialization_level else "locked"}. '
+            f'{len(self.shop_profile.permanent_power_unlocks)} permanent power(s) '
+            'activate automatically.'
         )
         local_owned = set(self.shop_profile.permanent_unit_unlocks)
         _ap_identity, ap_reward_ids = self.archipelago_shop_context()
@@ -2060,14 +2081,11 @@ class ShopController(ShopPolishController):
             ap_owned if not random_ap_loadout or active_run else set()
         )
         owned = local_owned | selectable_ap_owned
-        selected = set(
-            self.shop_run.selected_permanent_units
-            if self.shop_run is not None else ()
-        )
-        if self.shop_run is None:
-            selected = set(self._shop_pending_loadout_selection)
-        else:
+        if active_run:
+            selected = set(self.shop_run.selected_permanent_units)
             self._shop_pending_loadout_selection = set(selected)
+        else:
+            selected = set(self._shop_pending_loadout_selection)
         entries = sorted(
             (
                 entry for entry in self._shop_unit_entries
@@ -2209,7 +2227,7 @@ class ShopController(ShopPolishController):
                     entry.reward_id,
                     (entry.tier or '').replace('_', ' ').title(),
                     state,
-                    f'{price} Command',
+                    f'{price} Gems',
                 ),
             }
             cameo = cameo_images.get(entry.reward_id)
@@ -2218,6 +2236,61 @@ class ShopController(ShopPolishController):
             unit_tree.insert('', 'end', **options)
             self._shop_permanent_rows[iid] = entry.reward_id
             self._shop_permanent_buyable[iid] = buyable
+        power_tree = self.shop_permanent_power_tree
+        power_tree.delete(*power_tree.get_children())
+        self._shop_permanent_power_rows = {}
+        self._shop_permanent_power_buyable = {}
+        owned_powers = set(self.shop_profile.permanent_power_unlocks)
+        power_entries = sorted(
+            (
+                entry for entry in self._shop_power_entries
+                if not term or term in (
+                    entry.reward_id + ' ' + entry.target_id
+                ).casefold()
+            ),
+            key=lambda item: item.reward_id.casefold(),
+        )
+        power_cameos = self._prepare_shop_unit_cameos(
+            entry.reward_id for entry in power_entries
+        )
+        power_types = {
+            'offensive': 'Superweapon',
+            'secondary': 'Secondary',
+            'aid': 'Support',
+        }
+        for index, entry in enumerate(power_entries):
+            iid = f'permanent-power-{index}'
+            price = permanent_power_price(entry.target_id)
+            if entry.reward_id in owned_powers:
+                state, row_tag, buyable = 'Owned', 'owned', False
+            elif active_run:
+                state, row_tag, buyable = (
+                    'Locked: run active', 'unavailable', False
+                )
+            elif self.shop_profile.meta_coins < price:
+                state = f'Need {price - self.shop_profile.meta_coins} more'
+                row_tag, buyable = 'unavailable', False
+            else:
+                state, row_tag, buyable = 'Available', 'available', True
+            reward = canonical_reward_for_id(entry.reward_id)
+            options = {
+                'iid': iid,
+                'tags': (row_tag,),
+                'values': (
+                    entry.reward_id,
+                    power_types.get(
+                        str(reward.get('power_category') or ''), 'Power'
+                    ),
+                    state,
+                    f'{price} Gems',
+                ),
+            }
+            cameo = power_cameos.get(entry.reward_id)
+            if cameo is not None:
+                options['image'] = cameo
+            power_tree.insert('', 'end', **options)
+            self._shop_permanent_power_rows[iid] = entry.reward_id
+            self._shop_permanent_power_buyable[iid] = buyable
         upgrade_tree = self.shop_upgrade_tree
         upgrade_tree.delete(*upgrade_tree.get_children())
         self._shop_upgrade_rows = {}
@@ -2247,7 +2320,7 @@ class ShopController(ShopPolishController):
                 row_tag, buyable = 'unavailable', False
             else:
                 state, row_tag, buyable = 'Available', 'available', True
-            next_price = 'Max' if maxed else f'{price} Command'
+            next_price = 'Max' if maxed else f'{price} Gems'
             iid = f'upgrade-{index}'
             upgrade_tree.insert(
                 '', 'end', iid=iid,
@@ -2262,6 +2335,7 @@ class ShopController(ShopPolishController):
             self._shop_upgrade_rows[iid] = upgrade_id
             self._shop_upgrade_buyable[iid] = buyable
         self._refresh_permanent_buffs(active_run)
+        self._refresh_permanent_power_buffs(active_run)
         self.configure_shop_tree_tags()
 
     def _refresh_permanent_buffs(self, active_run):
@@ -2347,7 +2421,7 @@ class ShopController(ShopPolishController):
                     ),
                     f'{stacks} / {maximum}',
                     state,
-                    'Max' if maxed else f'{price} Command',
+                    'Max' if maxed else f'{price} Gems',
                 ),
             }
             cameo = cameo_images.get(entry.reward_id)
@@ -2389,6 +2463,147 @@ class ShopController(ShopPolishController):
         )
         self.refresh_permanent_purchase_buttons()
 
+    def _refresh_permanent_power_buffs(self, active_run):
+        tree = self.shop_permanent_power_buff_tree
+        tree.delete(*tree.get_children())
+        self._shop_permanent_power_buff_rows = {}
+        self._shop_permanent_power_buff_buyable = {}
+        owned = set(self.shop_profile.permanent_power_unlocks)
+        owned_entries = sorted(
+            (
+                entry for entry in self._shop_power_entries
+                if entry.reward_id in owned
+            ),
+            key=lambda entry: entry.reward_id.casefold(),
+        )
+        labels = [entry.reward_id for entry in owned_entries]
+        self._shop_permanent_power_buff_target_ids = {
+            entry.reward_id: entry.target_id for entry in owned_entries
+        }
+        selected_label = self.shop_permanent_power_buff_target_var.get()
+        if selected_label not in self._shop_permanent_power_buff_target_ids:
+            selected_label = labels[0] if labels else ''
+            self.shop_permanent_power_buff_target_var.set(selected_label)
+        self.shop_permanent_power_buff_target_combo.configure(
+            values=labels,
+            state='readonly' if labels else 'disabled',
+        )
+        target_id = self._shop_permanent_power_buff_target_ids.get(
+            selected_label, ''
+        )
+        term = self.shop_permanent_search_var.get().strip().casefold()
+        entries = sorted(
+            (
+                entry for entry in self._shop_power_buff_entries
+                if entry.target_id == target_id
+                and (
+                    not term or term in (
+                        entry.reward_id + ' '
+                        + self._shop_catalogue_display_name(entry, '', 0)
+                    ).casefold()
+                )
+            ),
+            key=lambda entry: entry.reward_id.casefold(),
+        )
+        stacks_by_reward = {
+            item.reward_id: item.stacks
+            for item in self.shop_profile.permanent_buffs
+        }
+        cameo_images = self._prepare_shop_unit_cameos(
+            entry.reward_id for entry in entries
+        )
+        for index, entry in enumerate(entries):
+            stacks = stacks_by_reward.get(entry.reward_id, 0)
+            maximum = entry.stack_limit or 1
+            maxed = stacks >= maximum
+            price = permanent_power_buff_price(entry.target_id)
+            effect_state = 'MAX' if maxed else f'Stacks {stacks} / {maximum}'
+            if maxed:
+                state, row_tag, buyable = 'Maximum stacks', 'maxed', False
+            elif active_run:
+                state, row_tag, buyable = (
+                    'Locked: run active', 'unavailable', False
+                )
+            elif self.shop_profile.meta_coins < price:
+                state = f'Need {price - self.shop_profile.meta_coins} more'
+                row_tag, buyable = 'unavailable', False
+            else:
+                state, row_tag, buyable = 'Available', 'available', True
+            iid = f'permanent-power-buff-{index}'
+            options = {
+                'iid': iid,
+                'tags': (row_tag,),
+                'values': (
+                    self._shop_catalogue_display_name(
+                        entry, effect_state, stacks
+                    ),
+                    f'{stacks} / {maximum}',
+                    state,
+                    'Max' if maxed else f'{price} Gems',
+                ),
+            }
+            cameo = cameo_images.get(entry.reward_id)
+            if cameo is not None:
+                options['image'] = cameo
+            tree.insert('', 'end', **options)
+            self._shop_permanent_power_buff_rows[iid] = entry.reward_id
+            self._shop_permanent_power_buff_buyable[iid] = buyable
+        self.refresh_permanent_power_buff_button()
+
+    def refresh_permanent_power_button(self, _event=None):
+        selected = self.shop_permanent_power_tree.selection()
+        allowed = bool(
+            selected
+            and self._shop_permanent_power_buyable.get(selected[0], False)
+        )
+        self.shop_permanent_power_button.configure(
+            state='normal' if allowed else 'disabled'
+        )
+        if not selected:
+            self.shop_permanent_power_info_var.set(
+                'Select a superweapon or support power.'
+            )
+            self.shop_permanent_power_button.configure(text='Select a Power')
+            return
+        values = self.shop_permanent_power_tree.item(selected[0], 'values')
+        self.shop_permanent_power_info_var.set(
+            f'{values[0]} • {values[1]} • {values[2]} • {values[3]}. '
+            'Permanent powers activate automatically in future Shop runs.'
+        )
+        self.shop_permanent_power_button.configure(
+            text=f'Buy {values[0]} — {values[3]}' if allowed else values[2]
+        )
+
+    def refresh_permanent_power_buff_button(self, _event=None):
+        selected = self.shop_permanent_power_buff_tree.selection()
+        allowed = bool(
+            selected
+            and self._shop_permanent_power_buff_buyable.get(selected[0], False)
+        )
+        self.shop_permanent_power_buff_button.configure(
+            state='normal' if allowed else 'disabled'
+        )
+        if not selected:
+            self.shop_permanent_power_buff_info_var.set(
+                'Select a permanently unlocked power, then choose a buff.'
+            )
+            self.shop_permanent_power_buff_button.configure(
+                text='Select a Permanent Power Buff'
+            )
+            return
+        values = self.shop_permanent_power_buff_tree.item(
+            selected[0], 'values'
+        )
+        self.shop_permanent_power_buff_info_var.set(
+            f'{values[0]} • {values[1]} • {values[2]} • Next: {values[3]}.'
+        )
+        self.shop_permanent_power_buff_button.configure(
+            text=(
+                f'Buy Permanent Stack — {values[3]}'
+                if allowed else values[2]
+            )
+        )
+
     def buy_selected_permanent_unit(self):
         selected = self.shop_permanent_unit_tree.selection()
         if not selected:
@@ -2398,6 +2613,21 @@ class ShopController(ShopPolishController):
             return
         try:
             outcome = self.shop_service.purchase_permanent_unit(reward_id)
+        except ShopTransitionError as exc:
+            self._set_shop_message(exc, error=True)
+        else:
+            self._report_profile_purchase(outcome, reward_id)
+        self.refresh_shop_mode()
+
+    def buy_selected_permanent_power(self):
+        selected = self.shop_permanent_power_tree.selection()
+        if not selected:
+            return
+        reward_id = self._shop_permanent_power_rows.get(selected[0])
+        if not reward_id:
+            return
+        try:
+            outcome = self.shop_service.purchase_permanent_power(reward_id)
         except ShopTransitionError as exc:
             self._set_shop_message(exc, error=True)
         else:
@@ -2434,11 +2664,26 @@ class ShopController(ShopPolishController):
             self._report_profile_purchase(outcome, reward_id)
         self.refresh_shop_mode()
 
+    def buy_selected_permanent_power_buff(self):
+        selected = self.shop_permanent_power_buff_tree.selection()
+        if not selected:
+            return
+        reward_id = self._shop_permanent_power_buff_rows.get(selected[0])
+        if not reward_id:
+            return
+        try:
+            outcome = self.shop_service.purchase_permanent_buff(reward_id)
+        except ShopTransitionError as exc:
+            self._set_shop_message(exc, error=True)
+        else:
+            self._report_profile_purchase(outcome, reward_id)
+        self.refresh_shop_mode()
+
     def _report_profile_purchase(self, outcome, item_id):
         validation = outcome.validation
         if validation.allowed:
             self._set_shop_message(
-                f'Purchased {item_id} for {validation.cost} Command Coins.'
+                f'Purchased {item_id} for {validation.cost} Gems.'
             )
         else:
             self._set_shop_message(

@@ -29,7 +29,7 @@ class ShopMissionModifier:
     def reward_text(self):
         return (
             f'+{self.bonus_run_coins} Ore / '
-            f'+{self.bonus_meta_coins} Command Coins'
+            f'+{self.bonus_meta_coins} Gems'
         )
 
 

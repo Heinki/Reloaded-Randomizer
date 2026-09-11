@@ -18,7 +18,7 @@ deferred and must not be added through inferred ownership.
 - `production_topology.json`: factories, MCVs, engineers, harvesters, and
   clone/production safety evidence
 - `tier_one.json`: reviewed unit and defense starters for five factions
-- `shop_mode.json`: Reloaded Shop economy, run settings, Command Coins,
+- `shop_mode.json`: Reloaded Shop economy, run settings, Gems,
   mission effects, exclusions, and exact unit/power prices
 - `archipelago.json`: Reloaded APWorld/client compatibility
 - `map_rules.json`: generated namespaces and engine/parser limits
@@ -64,9 +64,9 @@ the separate in-game difficulty curve.
 the Shop catalogue. Each uppercase TechnoType ID has `run_access`, `run_buff`,
 `permanent_access`, and `permanent_buff`. Use `null` only when that target has no
 matching access or buff reward. `power_target_prices` follows the same rule for
-SuperWeaponType IDs, with `run_access` and `run_buff`. Missing, unknown, or
-availability-mismatched targets stop startup instead of silently receiving a
-default price.
+SuperWeaponType IDs, with run and permanent access/buff prices. Missing,
+unknown, or availability-mismatched targets stop startup instead of silently
+receiving a default price.
 
 `mission_effects` defines deterministic temporary boons and AI challenges.
 Every entry requires a unique `title`, a `description`, non-negative

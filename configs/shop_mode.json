@@ -34,93 +34,145 @@
     "stage_difficulty_weights": [
       {
         "through_percent": 30,
-        "weights": {"Casual": 80, "Normal": 20, "Hard": 0}
+        "weights": {
+          "Casual": 80,
+          "Normal": 20,
+          "Hard": 0
+        }
       },
       {
         "through_percent": 50,
-        "weights": {"Casual": 35, "Normal": 65, "Hard": 0}
+        "weights": {
+          "Casual": 35,
+          "Normal": 65,
+          "Hard": 0
+        }
       },
       {
         "through_percent": 70,
-        "weights": {"Casual": 20, "Normal": 60, "Hard": 20}
+        "weights": {
+          "Casual": 20,
+          "Normal": 60,
+          "Hard": 20
+        }
       },
       {
         "through_percent": 100,
-        "weights": {"Casual": 10, "Normal": 45, "Hard": 45}
+        "weights": {
+          "Casual": 10,
+          "Normal": 45,
+          "Hard": 45
+        }
       }
     ],
     "power_target_prices": {
       "CHRONOSPHERESPECIAL": {
         "run_access": 6,
-        "run_buff": 4
+        "run_buff": 4,
+        "permanent_access": 25,
+        "permanent_buff": 8
       },
       "DROPPODSPECIAL": {
         "run_access": 5,
-        "run_buff": 3
+        "run_buff": 3,
+        "permanent_access": 25,
+        "permanent_buff": 5
       },
       "EMPULSESPECIAL": {
         "run_access": 6,
-        "run_buff": 4
+        "run_buff": 4,
+        "permanent_access": 25,
+        "permanent_buff": 8
       },
       "FORCESHIELDSPECIAL": {
         "run_access": 6,
-        "run_buff": 4
+        "run_buff": 4,
+        "permanent_access": 25,
+        "permanent_buff": 8
       },
       "GENETICCONVERTERSPECIAL": {
         "run_access": 5,
-        "run_buff": 3
+        "run_buff": 3,
+        "permanent_access": 25,
+        "permanent_buff": 5
       },
       "HUNTSEEKSPECIAL": {
         "run_access": 5,
-        "run_buff": 3
+        "run_buff": 3,
+        "permanent_access": 25,
+        "permanent_buff": 5
       },
       "IRONCURTAINSPECIAL": {
         "run_access": 6,
-        "run_buff": 4
+        "run_buff": 4,
+        "permanent_access": 25,
+        "permanent_buff": 8
       },
       "LIGHTNINGSTORMSPECIAL": {
         "run_access": 10,
-        "run_buff": 6
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
       },
       "NUKESPECIAL": {
         "run_access": 10,
-        "run_buff": 6
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
       },
       "PARADROPSPECIAL": {
         "run_access": 5,
-        "run_buff": 3
+        "run_buff": 3,
+        "permanent_access": 25,
+        "permanent_buff": 5
       },
       "PSYCHICDOMINATORSPECIAL": {
         "run_access": 10,
-        "run_buff": 6
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
       },
       "PSYCHICREVEALSPECIAL": {
         "run_access": 5,
-        "run_buff": 3
+        "run_buff": 3,
+        "permanent_access": 25,
+        "permanent_buff": 5
       },
       "SONARPULSESPECIAL": {
         "run_access": 5,
-        "run_buff": 3
+        "run_buff": 3,
+        "permanent_access": 25,
+        "permanent_buff": 5
       },
       "SPAWNCARRYALLFROMAIRSW": {
         "run_access": 5,
-        "run_buff": 3
+        "run_buff": 3,
+        "permanent_access": 25,
+        "permanent_buff": 5
       },
       "SPYPLANESPECIAL": {
         "run_access": 5,
-        "run_buff": 3
+        "run_buff": 3,
+        "permanent_access": 25,
+        "permanent_buff": 5
       },
       "TIBERIUMSHOWERSPECIAL": {
         "run_access": 5,
-        "run_buff": 3
+        "run_buff": 3,
+        "permanent_access": 25,
+        "permanent_buff": 5
       },
       "TSIONCANNONSPECIAL": {
         "run_access": 10,
-        "run_buff": 6
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
       },
       "TSMULTISPECIAL": {
         "run_access": 10,
-        "run_buff": 6
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
       }
     },
     "unit_target_prices": {
@@ -1425,7 +1477,11 @@
       "coupon_book": {
         "display_name": "Coupon Book",
         "max_level": 3,
-        "prices": [20, 45, 80],
+        "prices": [
+          20,
+          45,
+          80
+        ],
         "effects": {
           "ore_per_level": 1
         }
@@ -1433,7 +1489,9 @@
       "stock_lock": {
         "display_name": "Stock Lock",
         "max_level": 1,
-        "prices": [55],
+        "prices": [
+          55
+        ],
         "effects": {
           "locks_per_stage": 1
         }
@@ -1441,15 +1499,21 @@
       "veteran_academy": {
         "display_name": "Veteran Academy",
         "max_level": 1,
-        "prices": [70],
+        "prices": [
+          70
+        ],
         "effects": {
           "veteran_loadout": 1
         }
       },
       "gem_dividend": {
-        "display_name": "Command Coin Dividend",
+        "display_name": "Gem Dividend",
         "max_level": 3,
-        "prices": [30, 65, 110],
+        "prices": [
+          30,
+          65,
+          110
+        ],
         "effects": {
           "ore_per_gem": 5,
           "maximum_gems_per_level": 1
@@ -1458,7 +1522,9 @@
       "premium_supplier": {
         "display_name": "Premium Supplier",
         "max_level": 1,
-        "prices": [65],
+        "prices": [
+          65
+        ],
         "effects": {
           "minimum_stage": 3,
           "guaranteed_offers": 1
@@ -1683,7 +1749,7 @@
     "modifiers": {
       "greedy": {
         "display_name": "Greedy",
-        "description": "+25% Command Coins earned, -2 starting Ore.",
+        "description": "+25% Gems earned, -2 starting Ore.",
         "effects": {
           "meta_reward_percent": 125,
           "starting_run_coins_flat": -2
@@ -1707,7 +1773,7 @@
       },
       "generous_command": {
         "display_name": "Generous Command",
-        "description": "+5 starting Ore, -20% Command Coins earned.",
+        "description": "+5 starting Ore, -20% Gems earned.",
         "effects": {
           "starting_run_coins_flat": 5,
           "meta_reward_percent": 80
@@ -1756,7 +1822,7 @@
       },
       "no_safety_net": {
         "display_name": "No Safety Net",
-        "description": "+1 Command Coin per victory; rerolls, assists, and Emergency Revival disabled.",
+        "description": "+1 Gem per victory; rerolls, assists, and Emergency Revival disabled.",
         "effects": {
           "meta_reward_flat": 1,
           "disable_rerolls": 1,
@@ -1798,7 +1864,7 @@
       },
       "treasure_hunter": {
         "display_name": "Treasure Hunter",
-        "description": "Challenge missions give double base Command Coins; normal missions give 25% less Ore.",
+        "description": "Challenge missions give double base Gems; normal missions give 25% less Ore.",
         "effects": {
           "challenge_meta_reward_percent": 200,
           "normal_run_reward_percent": 75

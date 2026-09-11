@@ -69,7 +69,7 @@ def validate_run_purchase(
     if entry.reward_type is ShopRewardType.POWER_BUFF:
         if entry.target_id not in {str(item).upper() for item in active_power_ids}:
             return PurchaseValidation(
-                PurchaseResult.REQUIRES_UNIT_ACCESS, reward_id, price
+                PurchaseResult.REQUIRES_POWER_ACCESS, reward_id, price
             )
     if entry.reward_type in {
         ShopRewardType.UNIT_BUFF,

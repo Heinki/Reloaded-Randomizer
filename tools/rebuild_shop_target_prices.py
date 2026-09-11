@@ -27,9 +27,9 @@ UNIT_PRICES = {
     'tier_3': (10, 6, 50, 12),
 }
 POWER_PRICES = {
-    'offensive': (10, 6),
-    'secondary': (6, 4),
-    'aid': (5, 3),
+    'offensive': (10, 6, 50, 12),
+    'secondary': (6, 4, 25, 8),
+    'aid': (5, 3, 25, 5),
 }
 
 
@@ -92,10 +92,18 @@ def _power_prices(entries):
         source = access.get(target_id) or buffs[target_id]
         reward = canonical_reward_for_id(source.reward_id)
         category = str(reward.get('power_category') or 'aid')
-        run_access, run_buff = POWER_PRICES[category]
+        run_access, run_buff, permanent_access, permanent_buff = (
+            POWER_PRICES[category]
+        )
         prices[target_id] = {
             'run_access': run_access if target_id in access else None,
             'run_buff': run_buff if target_id in buffs else None,
+            'permanent_access': (
+                permanent_access if target_id in access else None
+            ),
+            'permanent_buff': (
+                permanent_buff if target_id in buffs else None
+            ),
         }
     return prices
 

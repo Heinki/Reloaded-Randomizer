@@ -107,7 +107,7 @@ normal messages and Archipelago commands such as `!hint` and `!release`.
 
 In Grid Mode, visible nodes and mission availability come from the connected
 room. In Shop Mode, use the **Shop Run** workspace. Victories report stage and
-mission locations; **AP Purchases** spend displayed Command Coins to report
+mission locations; **AP Purchases** spend displayed Gems to report
 generated purchase locations. Each purchase row uses the Archipelago emblem
 and shows the scouted item plus its recipient player/world. Received AP items
 use the same emblem in Shop loadouts and Unlocks views. Pending purchases retry

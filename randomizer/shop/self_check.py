@@ -25,6 +25,7 @@ from .active import (
     active_shop_starter_defense_ids,
     active_shop_starter_unit_ids,
     active_shop_tech_ids,
+    permanent_buff_snapshot,
 )
 from .archipelago import (
     ap_unit_entitlement_ids,
@@ -42,6 +43,8 @@ from .economy import (
     discounted_shop_price,
     mission_reward,
     permanent_buff_price,
+    permanent_power_buff_price,
+    permanent_power_price,
     permanent_unit_price,
     run_buff_price,
     run_reward_price,
@@ -49,6 +52,7 @@ from .economy import (
 )
 from .meta import (
     purchase_permanent_buff,
+    purchase_permanent_power,
     purchase_permanent_unit,
     purchase_permanent_upgrade,
     validate_starting_loadout,
@@ -1224,6 +1228,10 @@ def validate_shop_domain():
         and permanent_buff_price('E1')
         < permanent_buff_price('JUMPJET')
         < permanent_buff_price('GHOST')
+        and permanent_power_price('DROPPODSPECIAL') == 25
+        and permanent_power_price('NUKESPECIAL') == 50
+        and permanent_power_buff_price('DROPPODSPECIAL') == 5
+        and permanent_power_buff_price('NUKESPECIAL') == 12
         and starting_run_coins(starting_capital_level=999) == 50
         and starting_credit_upgrade.max_level == 20
         and starting_credit_upgrade.effects['credits_per_level'] == 1000
@@ -1276,6 +1284,11 @@ def validate_shop_domain():
         entry for entry in catalogue
         if entry.reward_type is ShopRewardType.POWER_ACCESS
     ]
+    power_buff_entries = [
+        entry for entry in catalogue
+        if entry.reward_type is ShopRewardType.POWER_BUFF
+        and entry.stack_limit is not None
+    ]
     shop_reward_ids = {entry.reward_id for entry in catalogue}
     mission_effect_reward_ids = {
         reward_id
@@ -1297,8 +1310,13 @@ def validate_shop_domain():
         and len(access_entries) == 154
         and len(buff_entries) == 1791
         and len(power_entries) == 18
+        and len(power_buff_entries) == 44
         and len(SHOP_CONFIG.unit_target_prices) == 174
         and len(SHOP_CONFIG.power_target_prices) == 18
+        and all(
+            price.permanent_access > 0 and price.permanent_buff > 0
+            for price in SHOP_CONFIG.power_target_prices.values()
+        )
         and len(MISSION_MODIFIERS) == 19
         and mission_effect_reward_ids.issubset(
             shop_reward_ids | known_non_shop_effect_ids
@@ -1352,9 +1370,36 @@ def validate_shop_domain():
     permanent_buff_purchase = purchase_permanent_buff(
         first_purchase.profile, gi_buff, price=5
     )
-    restored_profile = normalize_shop_profile(
-        permanent_buff_purchase.profile.to_dict()
+    power_entry = next(
+        entry for entry in power_entries
+        if any(
+            buff.target_id == entry.target_id for buff in power_buff_entries
+        )
     )
+    power_buff_entry = next(
+        entry for entry in power_buff_entries
+        if entry.target_id == power_entry.target_id
+    )
+    power_reward = _reward(power_entry.reward_id)
+    power_buff_reward = _reward(power_buff_entry.reward_id)
+    blocked_power_buff = purchase_permanent_buff(
+        permanent_buff_purchase.profile, power_buff_reward, price=1
+    )
+    permanent_power_purchase = purchase_permanent_power(
+        permanent_buff_purchase.profile, power_reward, price=10
+    )
+    permanent_power_buff_purchase = purchase_permanent_buff(
+        permanent_power_purchase.profile, power_buff_reward, price=5
+    )
+    restored_profile = normalize_shop_profile(
+        permanent_power_buff_purchase.profile.to_dict()
+    )
+    permanent_snapshot = permanent_buff_snapshot(
+        permanent_power_buff_purchase.profile,
+        selected_unit_reward_ids=(first_purchase.validation.reward_id,),
+        permanent_power_reward_ids=(permanent_power_purchase.validation.reward_id,),
+    )
+    permanent_snapshot_ids = {item.reward_id for item in permanent_snapshot}
     permanent_purchase_valid = bool(
         first_purchase.validation.result is PurchaseResult.OK
         and first_purchase.profile.meta_coins == 90
@@ -1364,7 +1409,15 @@ def validate_shop_domain():
         and permanent_buff_purchase.profile.meta_coins == 85
         and permanent_buff_purchase.profile.permanent_buffs
         == (BuffPurchase(gi_buff_entry.reward_id, 1),)
-        and restored_profile == permanent_buff_purchase.profile
+        and blocked_power_buff.validation.result
+        is PurchaseResult.REQUIRES_POWER_ACCESS
+        and permanent_power_purchase.validation.result is PurchaseResult.OK
+        and permanent_power_buff_purchase.validation.result is PurchaseResult.OK
+        and permanent_power_buff_purchase.profile.permanent_power_unlocks
+        == (power_entry.reward_id,)
+        and permanent_snapshot_ids
+        == {gi_buff_entry.reward_id, power_buff_entry.reward_id}
+        and restored_profile == permanent_power_buff_purchase.profile
     )
 
     nonstarter_entries = []
@@ -1465,6 +1518,38 @@ def validate_shop_domain():
     ]
     offers = generate_mission_offers(
         mission_pool, run_seed='SHOP-SELF-CHECK', stage=1
+    )
+    permanent_mode_runs = tuple(
+        start_new_run(
+            permanent_power_buff_purchase.profile,
+            run_id=f'permanent-{mode}',
+            seed=f'PERMANENT-{mode}',
+            mission_offers=offers,
+            reward_mode=mode,
+            starter_tech_ids=(),
+            selected_reward_ids=(first_purchase.validation.reward_id,),
+            permanent_entitlement_ids=(first_purchase.validation.reward_id,),
+            permanent_power_reward_ids=(
+                permanent_power_purchase.validation.reward_id,
+            ),
+            permanent_power_entitlement_ids=(
+                permanent_power_purchase.validation.reward_id,
+            ),
+            permanent_buffs=permanent_snapshot,
+        ).run
+        for mode in ('Standard', 'Chaos', 'Randomizer Arsenal')
+    )
+    expected_permanent_rewards = {
+        first_purchase.validation.reward_id,
+        gi_buff_entry.reward_id,
+        permanent_power_purchase.validation.reward_id,
+        power_buff_entry.reward_id,
+    }
+    permanent_rewards_all_modes_valid = all(
+        expected_permanent_rewards.issubset({
+            reward.get('name') for reward in active_shop_rewards(run)
+        })
+        for run in permanent_mode_runs
     )
     rerolled = generate_mission_offers(
         mission_pool,
@@ -1658,6 +1743,7 @@ def validate_shop_domain():
         ),
         'purchase_rules_valid': purchase_rules_valid,
         'permanent_purchase_valid': permanent_purchase_valid,
+        'permanent_rewards_all_modes_valid': permanent_rewards_all_modes_valid,
         'loadout_valid': loadout_valid,
         'rotating_inventory_valid': rotating_inventory_valid,
         'rotating_power_inventory_valid': rotating_power_inventory_valid,

@@ -69,6 +69,11 @@ catalogue: 166 unit access rewards, 1,885 unit buffs, 18 powers, and 44 power
 buffs. Temporary mission cards can add one of 12 Reloaded player boons or 7
 Reloaded AI challenges; active power boons are not offered twice.
 
+Permanent Shop progression spends Gems on unit access, unit buffs, all 18
+reviewed superweapons and support powers, plus their 44 power buffs. Purchased
+permanent powers activate automatically in future Shop runs; unit buffs follow
+selected starting-loadout access.
+
 The first two Shop missions offer Standard choices, including a fixed-unit or
 hero mission when available. From mission 3 onward, every remaining eligible
 mission has equal selection probability, regardless of class or run length.
