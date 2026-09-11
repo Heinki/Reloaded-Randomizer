@@ -538,7 +538,10 @@ def validate_manifest_location_capacity(manifest):
     return manifest
 
 
-def build_run_manifest(state, launcher_config=None):
+def build_run_manifest(
+    state, launcher_config=None, *, catalogue_checksum=None,
+    validate_capacity=True,
+):
     """Freeze one generated run without reimplementing its generation logic."""
     if not isinstance(state, dict):
         raise ValueError("Randomizer state must be an object.")
@@ -597,7 +600,7 @@ def build_run_manifest(state, launcher_config=None):
         "schema_version": MANIFEST_SCHEMA_VERSION,
         "randomizer_version": APP_VERSION,
         "randomizer_seed": str(state.get("seed") or ""),
-        "catalogue_checksum": runtime_catalogue_checksum(),
+        "catalogue_checksum": catalogue_checksum or runtime_catalogue_checksum(),
         "campaign_filter": str(state.get("campaign_filter") or ""),
         "progression_mode": progression_mode,
         "mission_goal": (
@@ -656,7 +659,8 @@ def build_run_manifest(state, launcher_config=None):
         },
         "state_snapshot": _server_state_snapshot(state),
     }
-    validate_manifest_location_capacity(manifest)
+    if validate_capacity:
+        validate_manifest_location_capacity(manifest)
     unsigned = _canonical_json(manifest).encode("utf-8")
     manifest["manifest_checksum"] = sha256(unsigned).hexdigest()
     return manifest
