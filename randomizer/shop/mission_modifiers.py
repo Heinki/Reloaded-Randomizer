@@ -8,6 +8,7 @@ from randomizer.config.static import load_static_config
 from .active import active_shop_reward_ids
 from .model import MissionEconomyClass
 from .modifiers import modifier_effects
+from .text import gem_text
 
 
 @dataclass(frozen=True)
@@ -30,7 +31,7 @@ class ShopMissionModifier:
     def reward_text(self):
         return (
             f'+{self.bonus_run_coins} Ore / '
-            f'+{self.bonus_meta_coins} Gems'
+            f'+{gem_text(self.bonus_meta_coins)}'
         )
 
 

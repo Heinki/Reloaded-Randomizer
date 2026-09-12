@@ -4,6 +4,7 @@ from .config import SHOP_CONFIG
 from .economy import mission_reward
 from .model import RunStatus
 from .modifiers import modifier_difficulty
+from .text import gem_text
 
 
 def run_modifier_reward_delta(
@@ -40,10 +41,9 @@ def run_modifier_reward_delta(
 
 
 def run_modifier_bonus_text(run_coins, meta_coins):
-    gem_label = 'Gem' if abs(meta_coins) == 1 else 'Gems'
     return (
         f'Run modifier bonus: {run_coins:+d} Ore / '
-        f'{meta_coins:+d} {gem_label}'
+        f'{meta_coins:+d} {"Gem" if abs(meta_coins) == 1 else "Gems"}'
     )
 
 
@@ -67,7 +67,7 @@ def reward_breakdown_lines(
     )
     lines = [
         f'{definition.display_name} base: +{definition.run_coins} Ore, '
-        f'+{definition.meta_coins} Gems',
+        f'+{gem_text(definition.meta_coins)}',
     ]
     if modifiers:
         modifier_run_coins, modifier_meta_coins = run_modifier_reward_delta(
@@ -90,17 +90,17 @@ def reward_breakdown_lines(
         lines.append(
             f'{mission_modifier.title}: '
             f'+{reward.mission_bonus_run_coins} Ore, '
-            f'+{reward.mission_bonus_meta_coins} Gems'
+            f'+{gem_text(reward.mission_bonus_meta_coins)}'
         )
     if reward.challenge_hunter_run_coins or reward.challenge_hunter_meta_coins:
         lines.append(
             'Challenge Hunter: '
             f'+{reward.challenge_hunter_run_coins} Ore, '
-            f'+{reward.challenge_hunter_meta_coins} Gems'
+            f'+{gem_text(reward.challenge_hunter_meta_coins)}'
         )
     lines.append(
         f'Total: +{reward.run_coins} Ore, '
-        f'+{reward.meta_coins} Gems'
+        f'+{gem_text(reward.meta_coins)}'
     )
     return tuple(lines)
 

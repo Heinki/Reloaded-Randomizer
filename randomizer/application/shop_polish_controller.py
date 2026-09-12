@@ -43,6 +43,7 @@ from randomizer.shop.summary import (
     run_modifier_reward_delta,
     run_summary_lines,
 )
+from randomizer.shop.text import gem_text
 from randomizer.shop.transitions import ShopTransitionError
 
 from .shop_archipelago_controller import ShopArchipelagoController
@@ -513,7 +514,7 @@ class ShopPolishController(ShopArchipelagoController):
                 'Exact reward hidden until mission launch'
                 if reward_hidden else
                 f'Base +{definition.run_coins} Ore / '
-                f'+{definition.meta_coins} Gems  •  '
+                f'+{gem_text(definition.meta_coins)}  •  '
                 f'Estimated +{reward.run_coins} / +{reward.meta_coins}'
                 + (
                     '\n' + run_modifier_bonus_text(
@@ -1620,12 +1621,12 @@ class ShopPolishController(ShopArchipelagoController):
         self._set_shop_message(
             f'{source}: {code} victory. ' + ' | '.join(lines)
             + (
-                f' | Run Victory: +{base_completion_gems} Gems'
+                f' | Run Victory: +{gem_text(base_completion_gems)}'
                 if completion_bonus else ''
             )
             + (
                 f' | Run modifier bonus: '
-                f'+{modifier_completion_gems} Gems'
+                f'+{gem_text(modifier_completion_gems)}'
                 if modifier_completion_gems else ''
             )
         )
