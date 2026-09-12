@@ -264,7 +264,7 @@ def _mission_offers(value):
             required=True,
         ).upper()
         if code in seen:
-            raise ShopStateError(f'Duplicate Shop mission offer {code!r}')
+            raise ShopStateError(f'Duplicate Shop mission choice {code!r}')
         try:
             economy_class = MissionEconomyClass(offer.get('class'))
         except ValueError as exc:
@@ -292,12 +292,12 @@ def normalize_shop_run(document, *, config=SHOP_CONFIG):
     stage = _positive_int(document.get('stage'), 'stage', 1)
     if stage > run_length:
         raise ShopStateError(
-            f'Shop run stage {stage} exceeds run length {run_length}'
+            f'Shop stage {stage} exceeds run length {run_length}'
         )
     offers = _mission_offers(document.get('mission_offers'))
     if len(offers) > config.mission_offer_count:
         raise ShopStateError(
-            f'Shop run has {len(offers)} mission offers; maximum is '
+            f'Shop run has {len(offers)} mission choices; maximum is '
             f'{config.mission_offer_count}'
         )
     selected_mission = _string(

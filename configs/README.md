@@ -50,8 +50,8 @@ canonical reward names and removes those rewards before inventory construction.
 Keep it empty unless a reviewed Reloaded reward is unsafe or unusable in Shop
 Mode.
 
-The first two Shop missions offer Standard choices, including a fixed-unit or
-hero mission when available. From mission 3 onward, every remaining eligible
+The first two Shop stages offer Standard mission choices, including a fixed-unit
+or hero mission when available. From stage 3 onward, every remaining eligible
 mission has equal selection probability, regardless of class or run length.
 All three choices can be finales. Completed missions cannot repeat, and the
 configured mission pool still applies.
@@ -76,12 +76,12 @@ prevents a boon from being offered when its defining power is already active.
 Optional `buffs_allied_helpers` defaults to `false`.
 
 `stage_difficulty_weights` independently controls the actual in-game Casual,
-Normal, and Hard difficulty of every visible offer. Profiles use ascending run
-percentage boundaries ending at 100. Difficulty is derived from run seed,
+Normal, and Hard difficulty of every visible mission choice. Profiles use
+ascending run percentage boundaries ending at 100. Difficulty is derived from run seed,
 stage, and mission code without consuming mission-selection RNG. Stages 1–3
 are Casual-heavy, stages 4–5 are Normal-heavy, stages 6–7 introduce Hard, and
 stages 8–10 weight Normal and Hard equally. Difficulty Assist lowers only its
-chosen offer by one step.
+chosen mission by one step.
 
 After reviewing a changed Reloaded reward catalogue, regenerate explicit target
 coverage with:

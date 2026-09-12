@@ -1,4 +1,4 @@
-"""Mission classification and deterministic Shop Mode offer generation."""
+"""Mission classification and deterministic Shop Mode choice generation."""
 
 import random
 
@@ -73,7 +73,7 @@ def mission_difficulty(
     run_length=None,
     config: ShopModeConfig = SHOP_CONFIG,
 ):
-    """Choose one deterministic per-offer game difficulty for a Shop stage."""
+    """Choose one deterministic per-choice game difficulty for a Shop stage."""
     weights = mission_difficulty_weights_for_stage(
         stage, run_length, config
     )
@@ -124,7 +124,7 @@ def generate_mission_offers(
     offer_count=None,
     config: ShopModeConfig = SHOP_CONFIG,
 ):
-    """Return an isolated, repeatable offer without touching other RNG streams."""
+    """Return isolated, repeatable choices without touching other RNG streams."""
     run_length = config.run_length if run_length is None else int(run_length)
     stage = int(stage)
     reroll_count = int(reroll_count)

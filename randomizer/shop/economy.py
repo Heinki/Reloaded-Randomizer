@@ -267,7 +267,7 @@ def run_reward_price(
     coupon_discount_ore=0,
     config: ShopModeConfig = SHOP_CONFIG,
 ):
-    """Return one run-shop price, including all permanent discounts."""
+    """Return one current-run Shop price, including permanent discounts."""
     del specialization
     specialization_level = _bounded_upgrade_level(
         config, 'discount_specialization', specialization_level

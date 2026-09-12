@@ -107,7 +107,7 @@ def start_new_run(
     if not offers or len(offers) > config.mission_offer_count or any(
         not isinstance(offer, MissionOffer) for offer in offers
     ):
-        raise ShopTransitionError('New Shop run has invalid mission offers')
+        raise ShopTransitionError('New Shop run has invalid mission choices')
     ap_entitlements = tuple(
         str(reward_id) for reward_id in ap_entitlement_ids if str(reward_id)
     )
@@ -291,11 +291,12 @@ def select_mission(run, mission_code):
         if run.selected_mission_code == mission_code:
             return run
         raise ShopTransitionError(
-            f'Shop stage already committed to {run.selected_mission_code}'
+            f'Current Shop stage already committed to mission '
+            f'{run.selected_mission_code}'
         )
     if mission_code not in {offer.mission_code for offer in run.mission_offers}:
         raise ShopTransitionError(
-            f'Mission {mission_code!r} is not in current Shop offer'
+            f'Mission {mission_code!r} is not a current mission choice'
         )
     return replace(run, selected_mission_code=mission_code)
 
@@ -319,7 +320,7 @@ def reroll_missions(
     if not offers or len(offers) > config.mission_offer_count or any(
         not isinstance(offer, MissionOffer) for offer in offers
     ):
-        raise ShopTransitionError('Shop reroll produced invalid mission offers')
+        raise ShopTransitionError('Shop reroll produced invalid mission choices')
     replaced_mission_code = str(replaced_mission_code or '').upper()
     if replaced_mission_code:
         old_codes = {offer.mission_code for offer in run.mission_offers}
@@ -332,7 +333,7 @@ def reroll_missions(
             or replaced_mission_code in new_codes
         ):
             raise ShopTransitionError(
-                'Shop reroll must replace only selected mission offer'
+                'Shop reroll must replace only selected mission choice'
             )
     return replace(
         run,
@@ -361,9 +362,11 @@ def apply_mission_difficulty_assist(
     if run.mission_committed:
         raise ShopTransitionError('Cannot ease a committed mission')
     if mission_code not in {offer.mission_code for offer in run.mission_offers}:
-        raise ShopTransitionError('Mission is not in current Shop offer')
+        raise ShopTransitionError('Mission is not a current mission choice')
     if run.assisted_mission_code:
-        raise ShopTransitionError('One mission is already eased for this stage')
+        raise ShopTransitionError(
+            'One mission is already eased for this Shop stage'
+        )
     if run.difficulty_assists_used >= max(0, int(maximum_assists)):
         raise ShopTransitionError('No Shop difficulty assists remain')
     return replace(
@@ -381,12 +384,13 @@ def commit_selected_mission(run, mission_code):
         if run.selected_mission_code == mission_code:
             return run
         raise ShopTransitionError(
-            f'Shop stage already committed to {run.selected_mission_code}'
+            f'Current Shop stage already committed to mission '
+            f'{run.selected_mission_code}'
         )
     offered = {offer.mission_code for offer in run.mission_offers}
     if mission_code not in offered:
         raise ShopTransitionError(
-            f'Mission {mission_code!r} is not in current Shop offer'
+            f'Mission {mission_code!r} is not a current mission choice'
         )
     if mission_code in set(run.completed_missions):
         raise ShopTransitionError(
@@ -440,7 +444,9 @@ def apply_mission_victory(
         if next_offers:
             raise ShopTransitionError('Completed Shop run cannot create more offers')
     elif not next_offers or len(next_offers) > config.mission_offer_count:
-        raise ShopTransitionError('Next Shop stage requires valid mission offers')
+        raise ShopTransitionError(
+            'Next Shop stage requires valid mission choices'
+        )
     completed_codes = set(run.completed_missions)
     completed_codes.add(mission_code)
     if any(
@@ -560,7 +566,7 @@ def apply_mission_failure(
             not isinstance(offer, MissionOffer) for offer in revival_offers
         ):
             raise ShopTransitionError(
-                'Emergency Revival requires replacement mission offers'
+                'Emergency Revival requires replacement mission choices'
             )
         revived = replace(
             run,

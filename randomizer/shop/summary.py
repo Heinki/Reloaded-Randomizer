@@ -118,8 +118,8 @@ def run_summary_lines(profile, run, mission_titles=None, config=SHOP_CONFIG):
         status_heading,
         f'Seed: {run.seed}',
         f'Missions won: {len(run.completed_missions)} / {run.run_length}',
-        f'Ore remaining: {run.run_coins}',
-        f'Persistent Gems: {profile.meta_coins}',
+        f'Run Ore remaining: {run.run_coins}',
+        f'Permanent Gems: {profile.meta_coins}',
         f'Run purchases: {sum(item.quantity for item in run.run_purchases)}',
         f'Buff stacks purchased: {sum(item.stacks for item in run.run_buffs)}',
         f'Free starting draft buffs: '

@@ -64,6 +64,13 @@ modes include Standard, Chaos, and Randomizer Arsenal. Advanced controls cover
 unit access, buffs, powers, starting unlocks, enemy rewards, and mission
 assistance.
 
+Shop Mode is a deterministic roguelite. One **Shop run** is the complete
+ten-stage session. A **stage** is one numbered step in that run, displayed as
+`Stage 1 / 10`. A **mission** is one of the maps offered as a choice at that
+stage. Each selected mission gets one attempt. An **Emergency Revival** keeps
+the Shop run alive after a failed mission by repeating the same stage with new
+mission choices.
+
 Shop Mode uses all 108 reviewed Reloaded missions and its complete approved
 catalogue: 166 unit access rewards, 1,885 unit buffs, 18 powers, and 44 power
 buffs. Temporary mission cards can add one of 12 Reloaded player boons or 7
@@ -74,17 +81,18 @@ reviewed superweapons and support powers, plus their 44 power buffs. Purchased
 permanent powers activate automatically in future Shop runs; unit buffs follow
 selected starting-loadout access.
 
-The first two Shop missions offer Standard choices, including a fixed-unit or
-hero mission when available. From mission 3 onward, every remaining eligible
+The first two Shop stages offer Standard mission choices, including a fixed-unit
+or hero mission when available. From stage 3 onward, every remaining eligible
 mission has equal selection probability, regardless of class or run length.
 All three choices can be finales. Completed missions cannot repeat, and the
 configured mission pool still applies.
 
-Each Shop mission card shows a deterministic per-offer game difficulty. Early
+Each Shop mission card shows a deterministic difficulty for that choice. Early
 stages favor Casual, middle stages favor Normal, and late stages can select
-Hard. Mission Difficulty Assist lowers only its chosen offer by one step while
+Hard. Mission Difficulty Assist lowers only its chosen mission by one step while
 preserving the reward. Expanding the launcher log exposes a developer-only
-offer picker for recovery and test completion through normal Shop transitions.
+mission-choice picker for recovery and test completion through normal Shop
+transitions.
 
 The Reloaded APWorld contains 2,161 items, 108 missions, and reserved locations
 for objectives, victories, and Shop Mode. Each Shop seed has 120 shuffled item

@@ -233,7 +233,7 @@ class CncReloadedWorld(World):
         previous_marker = None
         for stage in range(1, shop["run_length"] + 1):
             region = Region(
-                f"Shop Run Stage {stage}", self.player, self.multiworld
+                f"Shop Stage {stage}", self.player, self.multiworld
             )
             if previous_marker is None:
                 menu.connect(region)
@@ -329,7 +329,7 @@ class CncReloadedWorld(World):
                         "stage": stage,
                         "location": (
                             SHOP_STAGE_LOCATION_TABLE[
-                                f"Shop Run Mission {stage} Victory"
+                                f"Shop Stage {stage} Victory"
                             ]
                             if shop["mission_victories_are_locations"]
                             else None
