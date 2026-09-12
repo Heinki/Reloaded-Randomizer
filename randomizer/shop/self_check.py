@@ -77,9 +77,14 @@ from .mission_modifiers import (
 )
 from .modifiers import (
     hidden_offer_codes,
+    modifier_allows_faction_pool,
+    modifier_allows_loadout_entry,
+    modifier_allows_shop_offer,
     modifier_difficulty,
     modifier_effects,
+    modifier_forces_hardest_difficulty,
     modifier_mission_offer_count,
+    modifier_shop_faction,
 )
 from .model import (
     BuffPurchase,
@@ -131,7 +136,8 @@ def _current_shop_feature_checks():
         'glass_cannon', 'overclocked_factories', 'black_market',
         'elite_force', 'no_safety_net', 'support_doctrine',
         'war_economy', 'narrow_intelligence', 'liquid_assets',
-        'treasure_hunter',
+        'treasure_hunter', 'low_tech_war', 'superweapon_arms_race',
+        'hardcore', 'faction_roulette',
     }
     all_modifier_ids = tuple(SHOP_CONFIG.modifiers)
     effects = modifier_effects(all_modifier_ids)
@@ -164,6 +170,15 @@ def _current_shop_feature_checks():
         selected_mission_code='FINALE', mission_committed=True,
     )
     dividend = apply_mission_victory(profile, final_run, 'FINALE')
+    modifier_completion = apply_mission_victory(
+        ShopProfile(),
+        replace(
+            final_run,
+            run_id='modifier-completion',
+            modifiers=('greedy', 'hardcore'),
+        ),
+        'FINALE',
+    )
     liquid_offer = MissionOffer('NEXT', MissionEconomyClass.STANDARD)
     liquid_run = replace(
         final_run, run_id='liquid', stage=1, run_coins=99,
@@ -206,6 +221,23 @@ def _current_shop_feature_checks():
         MissionEconomyClass.STANDARD, modifiers=('treasure_hunter',)
     )
     base_reward = SHOP_CONFIG.mission_rewards[MissionEconomyClass.STANDARD]
+    greedy_reward = mission_reward(
+        MissionEconomyClass.STANDARD, modifiers=('greedy',)
+    )
+    generous_reward = mission_reward(
+        MissionEconomyClass.STANDARD, modifiers=('generous_command',)
+    )
+    veteran_effects = modifier_effects(('veteran_economy',))
+    low_tech_effects = modifier_effects(('low_tech_war',))
+    arms_effects = modifier_effects(('superweapon_arms_race',))
+    tier_three = ShopCatalogueEntry(
+        'Test Tier Three Access', ShopRewardType.UNIT_ACCESS,
+        'TESTTHREE', 'tier_3', None, ('Allies',),
+    )
+    power = ShopCatalogueEntry(
+        'Test Power Access', ShopRewardType.POWER_ACCESS,
+        'TESTPOWER', None, None, ('Allies',),
+    )
     return {
         'requested_permanent_upgrades_valid': required_upgrades.issubset(
             SHOP_CONFIG.permanent_upgrades
@@ -232,11 +264,58 @@ def _current_shop_feature_checks():
             dividend.reward.gem_dividend_meta_coins == 3
             and dividend.profile.meta_coins == dividend.reward.meta_coins
         ),
+        'run_completion_modifier_bonus_valid': bool(
+            dividend.reward.run_completion_meta_coins == 20
+            and modifier_completion.reward.run_completion_meta_coins == 24
+            and modifier_completion.profile.meta_coins
+            == modifier_completion.reward.meta_coins
+        ),
+        'flat_currency_modifiers_valid': bool(
+            starting_run_coins(modifiers=('greedy',)) == 3
+            and greedy_reward.meta_coins == base_reward.meta_coins + 1
+            and starting_run_coins(modifiers=('generous_command',)) == 10
+            and generous_reward.meta_coins
+            == max(0, base_reward.meta_coins - 1)
+            and discounted_shop_price(4, modifiers=('black_market',)) == 6
+            and discounted_shop_price(4, modifiers=('liquid_assets',)) == 2
+            and veteran_effects['mission_starting_credits_flat'] == 2000
+            and veteran_effects['run_reward_flat'] == -1
+        ),
+        'new_modifier_effects_valid': bool(
+            low_tech_effects['run_reward_flat'] == 2
+            and low_tech_effects['exclude_tier_3_offers']
+            and low_tech_effects['exclude_special_offers']
+            and low_tech_effects['exclude_power_offers']
+            and not modifier_allows_shop_offer(
+                tier_three, {}, ('low_tech_war',)
+            )
+            and not modifier_allows_shop_offer(
+                power, {}, ('low_tech_war',)
+            )
+            and not modifier_allows_loadout_entry(
+                tier_three, {}, ('low_tech_war',)
+            )
+            and arms_effects['power_inventory_flat'] == 2
+            and arms_effects['cross_faction_power_offers']
+            and arms_effects['enemy_armor_stacks'] == 1
+            and modifier_forces_hardest_difficulty(('hardcore',))
+            and modifier_effects(('hardcore',))['force_enemy_challenge']
+            and tuple(
+                modifier_shop_faction(('faction_roulette',), stage)
+                for stage in range(1, 7)
+            ) == ('Allies', 'Soviets', 'Yuri', 'GDI', 'Nod', 'Allies')
+            and modifier_allows_faction_pool(
+                ('faction_roulette',), 'All Campaigns'
+            )
+            and not modifier_allows_faction_pool(
+                ('faction_roulette',), 'Allies - Red Alert 2'
+            )
+        ),
         'liquid_assets_valid': liquid.run.run_coins == liquid_reward.run_coins,
         'treasure_hunter_valid': bool(
             challenge_reward.meta_coins == base_reward.meta_coins * 2
             and normal_reward.base_run_coins
-            == int(base_reward.run_coins * 0.75)
+            == max(0, base_reward.run_coins - 2)
         ),
         'shop_clone_modifiers_valid': bool(
             rules['CLONE']['Strength'] == '80'
@@ -1111,10 +1190,11 @@ def _phase_seven_checks():
             len(hidden) == 1
             and hidden == hidden_offer_codes(run)
             and hidden[0] in {offer.mission_code for offer in offers}
-            and adjusted.run_coins == 13
+            and adjusted.run_coins == 10
             and adjusted.meta_coins == 5
             and any('Permanent Victory Bonus: +2' in line for line in breakdown)
-            and any('Total: +15 Ore' in line for line in breakdown)
+            and any('Run modifier bonus: +0 Ore / +1 Gem' in line for line in breakdown)
+            and any('Total: +12 Ore' in line for line in breakdown)
             and restored == run
         ),
         'power_shop_purchase_valid': bool(

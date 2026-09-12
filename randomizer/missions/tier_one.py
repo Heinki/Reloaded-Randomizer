@@ -2,7 +2,6 @@
 
 from .access import (
     CHAOS_PRIMARY_PRODUCTION,
-    CHAOS_PRODUCTION_ALTERNATIVES,
     PRODUCTION_LOOKUP,
     STANDARD_TIER_ONE_FAMILIES,
     TIER_ONE_AIRFIELDS,
@@ -257,9 +256,8 @@ def _tier_one_airfield_rules(
     _owners,
     _required_houses,
     chaos_mode=False,
-    chaos_alternatives=None,
 ):
-    """Unlock required AircraftType factories behind matching faction tech."""
+    """Unlock required AircraftType factories behind the player's yard."""
     base_families = {
         family for family in base_families if family in CHAOS_PRIMARY_PRODUCTION
     }
@@ -267,14 +265,11 @@ def _tier_one_airfield_rules(
         return {}
 
     if chaos_mode:
-        # Chaos shares unlocked production buildings across factions. Any
-        # Construction Yard may build the selected aircraft's airfield.
-        conyards = (
-            chaos_alternatives or CHAOS_PRODUCTION_ALTERNATIVES
-        )['base']
-        airfield_families = set(aircraft_families)
+        # Chaos aircraft can use any compatible airfield. Unlock the player's
+        # physical faction airfield, not the aircraft's native one: the latter
+        # can have incompatible Owner and prerequisite fields.
+        airfield_families = set(base_families) if aircraft_families else set()
     else:
-        conyards = ()
         airfield_families = set(base_families).intersection(aircraft_families)
 
     rules = {}
@@ -282,13 +277,39 @@ def _tier_one_airfield_rules(
         airfield = TIER_ONE_AIRFIELDS.get(family)
         if not airfield:
             continue
-        prerequisites = conyards or (CHAOS_PRIMARY_PRODUCTION[family]['base'],)
         values = {
             'TechLevel': '1',
             'BuildLimit': None,
         }
-        values.update(_alternative_prerequisite_rules(prerequisites))
+        values.update(_alternative_prerequisite_rules((
+            CHAOS_PRIMARY_PRODUCTION[family]['base'],
+        )))
         rules[airfield] = values
+    return rules
+
+
+def _tier_one_factory_rules(base_families, selected_categories):
+    """Expose required factories at low campaign tech levels."""
+    rules = {}
+    for family in sorted(set(base_families)):
+        production = CHAOS_PRIMARY_PRODUCTION.get(family, {})
+        for category in sorted(set(selected_categories)):
+            building_id = (
+                TIER_ONE_AIRFIELDS.get(family)
+                if category == 'air'
+                else production.get(category)
+                if category in {'infantry', 'vehicles', 'naval'}
+                else None
+            )
+            if building_id:
+                values = {
+                    'TechLevel': '1',
+                    'BuildLimit': None,
+                }
+                conyard = production.get('base')
+                if conyard:
+                    values.update(_alternative_prerequisite_rules((conyard,)))
+                rules[building_id] = values
     return rules
 
 def starting_tier_one_defense_rules(
@@ -499,6 +520,7 @@ def starting_tier_one_rules(
             additional_production_houses=additional_production_houses,
         )
         selected_aircraft_families = set()
+        selected_factory_categories = set()
         for role in TIER_ONE_ROLE_UNITS:
             if role not in selected_roles:
                 continue
@@ -510,6 +532,7 @@ def starting_tier_one_rules(
                         continue
                     if category == 'air':
                         selected_aircraft_families.add(family)
+                    selected_factory_categories.add(category)
                     values = {
                         'TechLevel': '1',
                         'Owner': owners,
@@ -529,7 +552,10 @@ def starting_tier_one_rules(
             owners,
             required_houses,
             chaos_mode=True,
-            chaos_alternatives=map_chaos_alternatives,
+        ))
+        rules.update(_tier_one_factory_rules(
+            base_families,
+            selected_factory_categories,
         ))
         return rules
 
@@ -565,6 +591,7 @@ def starting_tier_one_rules(
                 available_categories.add((family, 'air'))
                 available_categories.add((family, 'naval'))
 
+    selected_factory_categories = set()
     for role in TIER_ONE_ROLE_UNITS:
         if role not in selected_roles:
             continue
@@ -579,6 +606,7 @@ def starting_tier_one_rules(
                 continue
             if (family, category) not in available_categories:
                 continue
+            selected_factory_categories.add(category)
             prerequisite = CHAOS_PRIMARY_PRODUCTION[family][category]
             values = {
                 'TechLevel': '1',
@@ -597,6 +625,10 @@ def starting_tier_one_rules(
         ),
         owners,
         required_houses,
+    ))
+    rules.update(_tier_one_factory_rules(
+        base_families.intersection(allowed_families),
+        selected_factory_categories,
     ))
     return rules
 
@@ -658,14 +690,18 @@ def chaos_earned_access_rules(
         lines,
         house_records=records,
     )
+    required_production_categories = set()
     for tech_id, entries in entries_by_tech.items():
         tech_level = earned_tech_levels.get(tech_id, entries[0][1])
         native_owners = entries[0][5]
         alternatives = []
         for _tech_id, _level, _family, category, prerequisite, _owners in entries:
-            alternatives.extend(map_chaos_alternatives.get(category, ()))
+            if category != 'base':
+                required_production_categories.add(category)
+            production_alternatives = map_chaos_alternatives.get(category, ())
+            alternatives.extend(production_alternatives)
             alternatives.extend(special_alternatives.get(category, ()))
-            if not map_chaos_alternatives.get(category):
+            if not production_alternatives:
                 alternatives.append(prerequisite)
         rules[tech_id] = _build_access_rule(
             lines,
@@ -675,6 +711,24 @@ def chaos_earned_access_rules(
             native_owners,
             prerequisite_alternatives=alternatives,
         )
+    base_families = {
+        family
+        for building_id in _mission_production_buildings(
+            lines,
+            records,
+            include_capturable=False,
+        )
+        for production in (PRODUCTION_LOOKUP.get(building_id),)
+        if production
+        for family, category in (production,)
+        if category == 'base'
+    }
+    if not base_families and player_family:
+        base_families.add(player_family)
+    rules.update(_tier_one_factory_rules(
+        base_families,
+        required_production_categories,
+    ))
     for section, values in chaos_cameo_priority_rules(player_family).items():
         rules.setdefault(section, {}).update(values)
     return rules

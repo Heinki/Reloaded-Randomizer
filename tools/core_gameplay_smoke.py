@@ -13,13 +13,23 @@ from randomizer.application.launch_controller import LaunchController
 from randomizer.content.inventory import read_rules_sections
 from randomizer.core.paths import BATTLE_INI
 from randomizer.maps.generated import file_sha256, generated_map_name
+from randomizer.maps.houses import player_country_from_map
 from randomizer.maps.ini import IniLines, all_section_value_maps, read_text
 from randomizer.maps.pipeline import prepare_hooked_map
 from randomizer.maps.rules import is_generated_hooked_map
 from randomizer.maps.starting_units import starting_unit_buff_plan
 from randomizer.missions.catalogue import parse_missions
 from randomizer.missions.installation import resolve_installed_scenario
-from randomizer.rewards.catalogue import REWARD_POOL
+from randomizer.missions.access import (
+    CHAOS_PRIMARY_PRODUCTION,
+    TIER_ONE_AIRFIELDS,
+    country_family,
+)
+from randomizer.rewards.catalogue import (
+    BUFF_TARGETS,
+    NAVAL_UNIT_IDS,
+    REWARD_POOL,
+)
 from randomizer.rewards.rules import tech_ids_for_rewards
 
 
@@ -278,6 +288,104 @@ def run(
                     )
         if '[RLRPOriginalGate]' not in generated_text:
             raise ValueError('Generated native-production gate is missing.')
+        if reward_mode == 'Chaos' and buff_type != 'veteran':
+            player_country = player_country_from_map(source_lines)
+            player_family = country_family({'country': player_country})
+            target_category = str(
+                BUFF_TARGETS.get(tech_id, {}).get('category') or ''
+            )
+            factory_category = {
+                'infantry': 'infantry',
+                'units': 'naval' if tech_id in NAVAL_UNIT_IDS else 'vehicles',
+                'aircraft': 'air',
+            }.get(target_category)
+            conyard_id = CHAOS_PRIMARY_PRODUCTION.get(
+                player_family, {}
+            ).get('base')
+            if (
+                factory_category or target_category == 'defenses'
+            ) and not conyard_id:
+                raise ValueError(
+                    f'No Construction Yard configured for '
+                    f'{player_family or player_country}.'
+                )
+            if factory_category:
+                factory_id = (
+                    TIER_ONE_AIRFIELDS.get(player_family)
+                    if factory_category == 'air'
+                    else CHAOS_PRIMARY_PRODUCTION.get(
+                        player_family, {}
+                    ).get(factory_category)
+                )
+                if not factory_id:
+                    raise ValueError(
+                        f'No {factory_category} factory configured for '
+                        f'{player_family or player_country}.'
+                    )
+                if _section_field(
+                    generated_sections, factory_id, 'TechLevel'
+                ) != '1':
+                    raise ValueError(
+                        f'Earned {tech_id} did not unlock {factory_id}.'
+                    )
+                if _section_field(
+                    generated_sections, factory_id, 'Prerequisite'
+                ) != conyard_id:
+                    raise ValueError(
+                        f'{factory_id} is not available directly behind '
+                        f'{conyard_id}.'
+                    )
+            elif target_category == 'defenses':
+                building_prerequisites = {
+                    str(value).upper()
+                    for field, value in generated_sections.get(
+                        clone_id, {}
+                    ).items()
+                    if str(field).lower() == 'prerequisite'
+                    or str(field).lower().startswith('prerequisite.list')
+                }
+                if conyard_id.upper() not in building_prerequisites:
+                    raise ValueError(
+                        f'Earned building {tech_id} is not available directly '
+                        f'from {conyard_id}.'
+                    )
+
+            native_isolation = {
+                'forbidden': {
+                    item.strip().upper()
+                    for item in str(_section_field(
+                        generated_sections, tech_id, 'ForbiddenHouses'
+                    ) or '').split(',')
+                    if item.strip()
+                },
+                'negative': {
+                    item.strip().upper()
+                    for item in str(_section_field(
+                        generated_sections,
+                        tech_id,
+                        'Prerequisite.Negative',
+                    ) or '').split(',')
+                    if item.strip()
+                },
+                'factory': {
+                    item.strip().upper()
+                    for item in str(_section_field(
+                        generated_sections,
+                        tech_id,
+                        'FactoryOwners.Forbidden',
+                    ) or '').split(',')
+                    if item.strip()
+                },
+            }
+            if not (
+                player_country.upper() in native_isolation['forbidden']
+                or 'RLRPORIGINALGATE' in native_isolation['negative']
+                or player_country.upper() in native_isolation['factory']
+            ):
+                raise ValueError(
+                    f'Native {tech_id} lacks Mental Omega-style player '
+                    'production isolation.'
+                )
         if buff_type:
             validation_lines = [
                 entry['message'] for entry in harness.logs

@@ -37,7 +37,7 @@
     "ground_roles": ["ground_infantry", "anti_air_infantry", "ground_vehicle", "anti_air_vehicle"],
     "naval_roles": ["naval_attack", "anti_air_ship"],
     "standard_families": ["allies", "soviets", "yuri", "gdi", "nod"],
-    "airfields": {"allies": "GAAIRC", "soviets": "NAHELIPAD", "gdi": "TSGAHPAD", "nod": "TSNAHPAD"},
+    "airfields": {"allies": "GAAIRC", "soviets": "NAHELIPAD", "yuri": "GAAIRC", "gdi": "TSGAHPAD", "nod": "TSNAHPAD"},
     "production_aliases": {
       "allies": {"infantry": ["ALLRAX"]},
       "soviets": {"infantry": ["SOVRAX"]},

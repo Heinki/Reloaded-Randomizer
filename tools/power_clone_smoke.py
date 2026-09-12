@@ -17,6 +17,7 @@ from randomizer.maps.ini import (
     read_text,
     section_value_map_preserve,
 )
+from randomizer.maps.houses import player_country_from_map
 from randomizer.maps.pipeline import prepare_hooked_map
 from randomizer.maps.rules import is_generated_hooked_map
 from randomizer.missions.catalogue import parse_missions
@@ -46,12 +47,12 @@ def main():
         reward for reward in REWARD_POOL
         if reward.get('kind') == 'buff'
         and str(reward.get('unit') or '').upper() in {'E1', 'TSE1', 'TSE2'}
-        and reward.get('buff_type') == 'health'
+        and reward.get('buff_type') in {'health', 'cloak', 'veteran'}
     ]
     rewards = power_rewards + power_buff_rewards + payload_unit_buffs
     mission = next(
         mission for mission in parse_missions(BATTLE_INI)
-        if mission['code'] == 'ALL01_RA2'
+        if mission['code'] == 'ALL09_RA2'
     )
     harness = _Harness(
         rewards,
@@ -176,6 +177,25 @@ def main():
                 'Paratrooper Drop did not use player unit clones: '
                 + ','.join(paradrop_types)
             )
+        for type_id in set(paradrop_types):
+            values = sections.get(type_id, {})
+            if value(values, 'Cloakable').lower() != 'yes':
+                failures.append(
+                    f'Paratrooper payload clone is not cloaked: {type_id}.'
+                )
+        veteran_infantry = {
+            type_id.upper()
+            for type_id in value(
+                sections.get(player_country_from_map(lines), {}),
+                'VeteranInfantry',
+            ).split(',')
+            if type_id
+        }
+        for type_id in set(paradrop_types):
+            if type_id.upper() not in veteran_infantry:
+                failures.append(
+                    f'Paratrooper payload clone is not veteran: {type_id}.'
+                )
 
         drop_pod_types = str(
             value(

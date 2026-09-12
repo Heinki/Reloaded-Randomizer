@@ -1621,9 +1621,15 @@ def build_player_clone_sections(
         )
         if (
             unit_id == target_unit_id
-            and unit_id in buildable_ids
+            and (
+                unit_id in buildable_ids
+                or power_delivery_clone
+            )
             and unit_id not in NONTRAINABLE_UNIT_IDS
         ):
+            # Paradrop/DropPod payloads are not factory-buildable, but country
+            # Veteran* lists still govern their initial rank. Bind earned
+            # veterancy to the exact delivered clone just like production.
             player_veterancy_replacements[unit_id] = clone_id
 
     # Static owned templates keep deploy/convert/payload links on their stable

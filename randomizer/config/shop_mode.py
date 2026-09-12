@@ -16,6 +16,8 @@ def validate_shop_mode_config(sections, path, invalid):
         'max_selected_permanent_units': (0, 100),
         'starting_run_coins': (0, 1000000),
         'maximum_starting_ore': (1, 1000000),
+        'run_completion_meta_coins': (0, 1000000),
+        'run_completion_modifier_meta_coins': (0, 1000000),
         'minimum_shop_price': (1, 1000000),
         'archipelago_purchase_locations': (0, 25),
         'archipelago_purchase_meta_coin_cost': (1, 1000000),
@@ -327,6 +329,15 @@ def validate_shop_mode_config(sections, path, invalid):
         'liquidate_ore_after_victory',
         'challenge_meta_reward_percent',
         'normal_run_reward_percent',
+        'normal_run_reward_flat',
+        'exclude_tier_3_offers',
+        'exclude_special_offers',
+        'exclude_power_offers',
+        'cross_faction_power_offers',
+        'enemy_armor_stacks',
+        'force_hardest_difficulty',
+        'force_enemy_challenge',
+        'rotate_shop_faction',
     }
     for modifier_id, definition in sections['modifiers'].items():
         effects = definition.get('effects') if isinstance(definition, dict) else None
