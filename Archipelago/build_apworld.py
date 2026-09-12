@@ -30,7 +30,10 @@ def build(
 ) -> Path:
     sys.path.insert(0, str(PROJECT_ROOT))
     from Archipelago.audit import archipelago_foundation_report
-    from Archipelago.bundle_generation import generation_files
+    from Archipelago.bundle_generation import (
+        checked_in_generation_missions,
+        generation_files,
+    )
     from Archipelago.catalogue_contract import catalogue_sources_available
     from Archipelago.generate_catalogue import main as generate_catalogue
     from randomizer.core.version import APP_VERSION
@@ -63,9 +66,15 @@ def build(
             f'launcher={APP_VERSION}, '
             f'APWorld={catalogue.get("randomizer_version")}.'
         )
-    bundled_files = generation_files()
+    bundled_files = generation_files(
+        use_live_sources=verify_live_sources
+    )
+    missions = (
+        parse_missions(BATTLE_INI)
+        if verify_live_sources else checked_in_generation_missions()
+    )
     missions_data = json.dumps(
-        parse_missions(BATTLE_INI), sort_keys=True,
+        missions, sort_keys=True,
     ).encode('utf-8')
 
     output_directory = output_directory.resolve()

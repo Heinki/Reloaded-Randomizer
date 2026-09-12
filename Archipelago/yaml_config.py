@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from Archipelago.player_settings import gameplay_config_snapshot
 from randomizer.config.player import parse_simple_yaml_text
 
 GAME_NAME = "C&C Reloaded"
@@ -14,8 +15,6 @@ def _quote(value):
 
 def serialize_player_yaml(settings, slot_name):
     """Export reusable gameplay settings, never generated run data."""
-    from Archipelago.run_manifest import gameplay_config_snapshot
-
     if not isinstance(settings, dict):
         raise ValueError("Launcher settings must be a mapping.")
     if "frozen_settings" in settings:

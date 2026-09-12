@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 from copy import deepcopy
+import json
 from pathlib import Path
 import sys
 
@@ -12,17 +13,28 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from Archipelago.yaml_config import parse_player_yaml, serialize_player_yaml
 from randomizer.config.player import DEFAULT_CONFIG
-from randomizer.rewards.catalogue import MAX_REWARDS_PER_CHECK
+
+
+CATALOGUE_PATH = (
+    PROJECT_ROOT
+    / 'Archipelago'
+    / 'APWorld'
+    / 'cnc_reloaded'
+    / 'catalogue.json'
+)
 
 
 def build_fixture_yaml() -> str:
+    catalogue = json.loads(CATALOGUE_PATH.read_text(encoding='utf-8'))
     settings = deepcopy(DEFAULT_CONFIG)
     settings.update({
         'seed': 'LOCAL-SEED-MUST-NOT-LEAK',
         'campaign_filter': 'All Campaigns',
         'progression_mode': 'Mission List',
         'mission_goal': 108,
-        'rewards_per_objective': MAX_REWARDS_PER_CHECK,
+        'rewards_per_objective': int(
+            catalogue['maximum_rewards_per_check']
+        ),
     })
     text = serialize_player_yaml(settings, 'Compatibility Smoke')
     parsed = parse_player_yaml(text)
