@@ -4,7 +4,7 @@
 
 - Game: `C&C Reloaded`
 - Package namespace: `cnc_reloaded`
-- World version: 0.3.1
+- World version: matches the launcher release version
 - Supported mod version: C&C Reloaded 2.7.0
 - Minimum Archipelago version: 0.6.7
 - Active factions: Allies, Soviets, Yuri, GDI, and Nod

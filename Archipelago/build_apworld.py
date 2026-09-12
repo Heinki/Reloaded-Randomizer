@@ -36,11 +36,11 @@ def build(
     )
     from Archipelago.catalogue_contract import catalogue_sources_available
     from Archipelago.generate_catalogue import main as generate_catalogue
-    from randomizer.core.version import APP_VERSION
+    from randomizer.core.version import APP_VERSION, APWORLD_VERSION
     from randomizer.core.paths import BATTLE_INI
     from randomizer.missions.catalogue import parse_missions
 
-    manifest_path = SOURCE_DIR / 'archipelago.json'
+    manifest_path = SOURCE_DIR / 'archipelago.json.in'
     catalogue_path = SOURCE_DIR / 'catalogue.json'
     if not manifest_path.is_file():
         raise FileNotFoundError(f'APWorld manifest not found: {manifest_path}')
@@ -66,6 +66,12 @@ def build(
             f'launcher={APP_VERSION}, '
             f'APWorld={catalogue.get("randomizer_version")}.'
         )
+    if catalogue.get('world_version') != APWORLD_VERSION:
+        raise RuntimeError(
+            'APWorld release version does not match its single source of truth: '
+            f'source={APWORLD_VERSION}, '
+            f'catalogue={catalogue.get("world_version")}.'
+        )
     bundled_files = generation_files(
         use_live_sources=verify_live_sources
     )
@@ -83,6 +89,7 @@ def build(
 
     manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
     manifest.update({
+        'world_version': APWORLD_VERSION,
         # Format 8 output only uses container features readable since format 7.
         'compatible_version': 7,
         'version': 8,

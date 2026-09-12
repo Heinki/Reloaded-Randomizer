@@ -25,15 +25,17 @@ from randomizer.config.game_profile import ENABLE_ARCHIPELAGO, FACTION_ORDER
 ROOT = Path(__file__).resolve().parent
 WORLD_ROOT = ROOT / 'APWorld' / PACKAGE_NAMESPACE
 CATALOGUE_PATH = WORLD_ROOT / 'catalogue.json'
-MANIFEST_PATH = WORLD_ROOT / 'archipelago.json'
+MANIFEST_TEMPLATE_PATH = WORLD_ROOT / 'archipelago.json.in'
 
 
 def archipelago_foundation_report(*, verify_live_sources=None):
     snapshot = json.loads(CATALOGUE_PATH.read_text(encoding='utf-8'))
-    manifest = json.loads(MANIFEST_PATH.read_text(encoding='utf-8'))
+    manifest_template = json.loads(
+        MANIFEST_TEMPLATE_PATH.read_text(encoding='utf-8')
+    )
     required_files = (
         '__init__.py',
-        'archipelago.json',
+        'archipelago.json.in',
         'catalogue.json',
         'data.py',
         'options.py',
@@ -93,10 +95,9 @@ def archipelago_foundation_report(*, verify_live_sources=None):
         not missing_files,
         snapshot_checksum_valid,
         snapshot_current,
-        manifest == {
+        manifest_template == {
             'game': GAME_NAME,
             'minimum_ap_version': MINIMUM_AP_VERSION,
-            'world_version': WORLD_VERSION,
             'authors': ['C&C Reloaded Randomizer contributors'],
         },
         snapshot['game'] == GAME_NAME,

@@ -1,7 +1,6 @@
 {
   "game": "C&C Reloaded",
   "minimum_ap_version": "0.6.7",
-  "world_version": "1.0.0",
   "authors": [
     "C&C Reloaded Randomizer contributors"
   ]

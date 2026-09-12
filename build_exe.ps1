@@ -87,11 +87,8 @@ $certifiVersion = (& $PythonExecutable -c "import certifi; print(certifi.__versi
 if ($LASTEXITCODE -ne 0 -or $certifiVersion -ne '2026.07.22') {
     throw "certifi 2026.07.22 is required. Install build dependencies with: python -m pip install -r requirements-build.txt"
 }
-$iconArguments = @()
-if (Test-Path -LiteralPath $iconPath -PathType Leaf) {
-    $iconArguments = @('--icon', $iconPath, '--add-data', "$iconPath;.")
-} else {
-    Write-Warning "Launcher icon is missing; building with the default executable icon."
+if (-not (Test-Path -LiteralPath $iconPath -PathType Leaf)) {
+    throw "Launcher icon is missing: $iconPath"
 }
 if (-not (Test-Path -LiteralPath $staticConfigPath -PathType Container)) {
     throw "Static config directory is missing: $staticConfigPath"
@@ -219,8 +216,9 @@ try {
         --noupx `
         --optimize 1 `
         --windowed `
-        @iconArguments `
+        --icon $iconPath `
         --version-file $versionInfoPath `
+        --add-data "$iconPath;." `
         --add-data "$staticConfigPath\*.json;configs" `
         --add-data "$staticConfigPath\README.md;configs" `
         --add-data "$staticConfigPath\rewards;configs\rewards" `
@@ -264,6 +262,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 $archiveText = $archiveListing -join "`n"
 $requiredArchiveEntries = @(
+    "'reloaded-randomizer.ico'",
     "'_tkinter.pyd'",
     "'tcl86t.dll'",
     "'tk86t.dll'",

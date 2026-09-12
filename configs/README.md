@@ -20,7 +20,6 @@ deferred and must not be added through inferred ownership.
 - `tier_one.json`: reviewed unit and defense starters for five factions
 - `shop_mode.json`: Reloaded Shop economy, run settings, Gems,
   mission effects, exclusions, and exact unit/power prices
-- `archipelago.json`: Reloaded APWorld/client compatibility
 - `map_rules.json`: generated namespaces and engine/parser limits
 
 ## Reward configuration

@@ -154,7 +154,9 @@ def build(output: Path) -> None:
     build_apworld(PROJECT_ROOT / 'Archipelago')
 
     python_root = Path(sys.base_prefix)
-    icon = PROJECT_ROOT / 'reloaded-randomizer.ico'
+    icon = require_path(
+        PROJECT_ROOT / 'reloaded-randomizer.ico', 'Launcher icon'
+    )
     configs = require_path(PROJECT_ROOT / 'configs', 'Static config directory')
     assets = require_path(PROJECT_ROOT / 'Assets', 'Asset directory')
     apworld_source = require_path(
@@ -208,11 +210,8 @@ def build(output: Path) -> None:
             '--version-file',
             str(version_info),
         ]
-        if icon.is_file():
-            command.extend(('--icon', str(icon)))
-            add_bundle_argument(command, '--add-data', icon, '.')
-        else:
-            print('Warning: launcher icon is missing; using the default executable icon.')
+        command.extend(('--icon', str(icon)))
+        add_bundle_argument(command, '--add-data', icon, '.')
 
         for source, target in (
             (configs / '*.json', 'configs'),
@@ -280,6 +279,7 @@ def build(output: Path) -> None:
         while '//' in normalized_archive:
             normalized_archive = normalized_archive.replace('//', '/')
         required_entries = (
+            "'reloaded-randomizer.ico'",
             "'_tkinter.pyd'",
             "'tcl86t.dll'",
             "'tk86t.dll'",

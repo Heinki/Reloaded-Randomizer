@@ -13,14 +13,14 @@ from randomizer.config.game_profile import (
     SUPPORTED_GAME_VERSION,
 )
 from randomizer.core.paths import BATTLE_INI
-from randomizer.core.version import APP_VERSION
+from randomizer.core.version import APP_VERSION, APWORLD_VERSION
 from randomizer.missions.catalogue import parse_missions
 
 
 SNAPSHOT_SCHEMA_VERSION = 1
 GAME_NAME = 'C&C Reloaded'
 PACKAGE_NAMESPACE = 'cnc_reloaded'
-WORLD_VERSION = '1.0.0'
+WORLD_VERSION = APWORLD_VERSION
 MINIMUM_AP_VERSION = '0.6.7'
 
 # New mnemonic RL ranges. They never overlap Mental Omega's published IDs.
