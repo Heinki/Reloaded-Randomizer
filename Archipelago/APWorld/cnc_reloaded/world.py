@@ -27,7 +27,11 @@ from .manifest import (
     parse_manifest,
     progression_for_manifest,
 )
-from .options import CncReloadedOptions
+from .options import (
+    CNC_RELOADED_OPTION_GROUPS,
+    CncReloadedOptions,
+    launcher_settings_from_options,
+)
 
 
 class CncReloadedItem(Item):
@@ -40,6 +44,7 @@ class CncReloadedLocation(Location):
 
 class CncReloadedWebWorld(WebWorld):
     theme = "partyTime"
+    option_groups = CNC_RELOADED_OPTION_GROUPS
     tutorials = [
         Tutorial(
             "C&C Reloaded Multiworld Setup Guide",
@@ -88,6 +93,8 @@ class CncReloadedWorld(World):
             settings = template.get("frozen_settings", {}).get("launcher")
             if not settings:
                 raise ValueError("Legacy YAML has no launcher_settings; export it again.")
+        if not settings:
+            settings = launcher_settings_from_options(self.options)
         self.run_manifest = generate_manifest(
             settings, f"RLR-{self.random.getrandbits(64):016X}"
         )

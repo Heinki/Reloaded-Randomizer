@@ -443,8 +443,9 @@ def _build_right_panel(self, main_frame):
     self.reward_mode_combo.bind('<<ComboboxSelected>>', self.on_reward_mode_changed, add='+')
     WidgetTooltip(
         self.reward_mode_combo,
-        'Standard mode is the only mode exposed during the Reloaded catalogue '
-        'port. Chaos and Randomizer Arsenal return after faction and production review.',
+        'Standard limits rewards to factions available in each mission. '
+        'Chaos draws from all enabled factions. Randomizer Arsenal gives each '
+        'mission a seed-fixed mixed roster.',
     )
 
     ttk.Label(options_row, text='Progression').grid(row=10, column=0, sticky='w', pady=(6, 0), padx=(0, 8))
