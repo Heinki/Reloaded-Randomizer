@@ -675,6 +675,20 @@ def _build_right_panel(self, main_frame):
         values=self.shop_discount_specialization_options,
     )
     self.shop_discount_specialization_combo.grid(row=1, column=1, sticky='ew')
+    self.shop_buff_allied_helpers_check = ttk.Checkbutton(
+        permanent_setup_frame,
+        text='Share purchased buffs with allied helpers',
+        variable=self.buff_allied_helpers_var,
+    )
+    self.shop_buff_allied_helpers_check.grid(
+        row=2, column=0, columnspan=2, sticky='w', pady=(4, 0)
+    )
+    WidgetTooltip(
+        self.shop_buff_allied_helpers_check,
+        'Applies purchased unit buffs to reviewed allied helper forces when '
+        'they can be isolated safely. Shared or hostile native unit types '
+        'remain unchanged. This choice is exported to Archipelago.',
+    )
     for combo in (
         self.shop_starting_buff_draft_combo,
         self.shop_discount_specialization_combo,
