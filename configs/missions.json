@@ -4115,16 +4115,29 @@
       }
     },
     "objective_hook_action_redirects": {},
+    "victory_hook_action_redirects": {
+      "SOV11_RA2": {
+        "092D6E5C": "089FDF3C"
+      }
+    },
     "special_infantry_factory_exclusions": {},
     "native_runtime_action_team_factory_forbidden_houses": {},
     "native_runtime_player_forbidden_ids": {},
-    "unsafe_static_provider_superweapon_ids": {},
+    "unsafe_static_provider_superweapon_ids": {
+      "SOV01": ["PsychicDominatorSpecial"]
+    },
     "native_runtime_weapon_preserve_ids": {},
     "native_runtime_identity_preserve_ids": {},
     "objective_clone_event_refs": {},
     "required_access_rules": {},
     "techno_base_rules": {},
-    "map_section_rules": {},
+    "map_section_rules": {
+      "SOV11_RA2": {
+        "Actions": {
+          "089FDF3C": "3,53,2,092D6E5C,0,0,0,0,A,53,2,0CEDB2BC,0,0,0,0,A,1,0,1,0,0,0,0,A"
+        }
+      }
+    },
     "native_direct_buff_exclusions": {},
     "native_variant_buff_rules": {},
     "native_tech_unlock_ids": {},

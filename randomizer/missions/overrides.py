@@ -105,6 +105,19 @@ MISSION_OBJECTIVE_HOOK_ACTION_REDIRECTS = {
     ).items()
 }
 
+# Victory chains whose reviewed terminal action is too late or fragile to
+# extend. The target must contain an equivalent terminal winner action after
+# mission map-section overrides have been applied.
+MISSION_VICTORY_HOOK_ACTION_REDIRECTS = {
+    code: {
+        str(source_action_id): str(target_action_id)
+        for source_action_id, target_action_id in redirects.items()
+    }
+    for code, redirects in _MISSION_CONFIG.get(
+        'victory_hook_action_redirects', {}
+    ).items()
+}
+
 # Reviewed Action-to-check mappings. Objective UI/message Actions are not
 # sufficient evidence; only map-reviewed completion Actions belong here.
 MISSION_OBJECTIVE_HOOK_ACTION_IDS = {
@@ -162,9 +175,8 @@ MISSION_NATIVE_PRODUCTION_HARD_LOCKS = {
     'SOV04_RA2': frozenset({'SUB'}),
 }
 
-# Physical launch-provider buildings owned by a transient campaign House can
-# be deleted during a stage handoff while an enemy scan still holds a pointer.
-# Defer only reviewed provider-backed powers for that map; earned power access
+# Mission-authored power state and physical providers can conflict with a
+# randomizer clone. Defer only reviewed powers on that map; earned access
 # remains available in every other mission.
 MISSION_UNSAFE_STATIC_PROVIDER_SUPERWEAPON_IDS = _frozenset_mapping(
     'unsafe_static_provider_superweapon_ids'

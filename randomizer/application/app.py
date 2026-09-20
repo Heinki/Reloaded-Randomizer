@@ -470,7 +470,9 @@ class LauncherApp(
             for weight_id, _label in POWER_BUFF_WEIGHT_TYPES
         }
         if self.unlimited_hero_units_var.get():
-            self.buff_type_vars['build_limit'].set(False)
+            build_limit_var = self.buff_type_vars.get('build_limit')
+            if build_limit_var is not None:
+                build_limit_var.set(False)
         self.log_visible_var = tk.BooleanVar(value=False)
         self.mission_search_var = tk.StringVar(value='')
         self.unlock_dashboard_search_var = tk.StringVar(value='')

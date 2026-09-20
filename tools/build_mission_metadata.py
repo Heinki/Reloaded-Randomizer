@@ -421,6 +421,7 @@ def clean_mission_policy(metadata):
         'team_house_overrides', 'original_mcv_access',
         'native_production_gate_exclusions', 'native_production_aliases',
         'objective_hook_action_ids', 'objective_hook_action_redirects',
+        'victory_hook_action_redirects',
         'special_infantry_factory_exclusions',
         'native_runtime_action_team_factory_forbidden_houses',
         'native_runtime_player_forbidden_ids',

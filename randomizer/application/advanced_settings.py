@@ -1173,11 +1173,14 @@ class AdvancedSettingsController:
 
     def on_unlimited_hero_units_changed(self):
         if self.unlimited_hero_units_var.get():
-            self.buff_type_vars['build_limit'].set(False)
+            build_limit_var = self.buff_type_vars.get('build_limit')
+            if build_limit_var is not None:
+                build_limit_var.set(False)
         self.refresh_setting_states()
 
     def on_hero_limit_buff_changed(self):
-        if self.buff_type_vars['build_limit'].get():
+        build_limit_var = self.buff_type_vars.get('build_limit')
+        if build_limit_var is not None and build_limit_var.get():
             self.unlimited_hero_units_var.set(False)
         self.refresh_setting_states()
 

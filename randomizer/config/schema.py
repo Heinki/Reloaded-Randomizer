@@ -45,8 +45,10 @@ REQUIRED_SECTIONS = {
         'native_production_aliases': dict,
         'objective_hook_action_ids': dict,
         'objective_hook_action_redirects': dict,
+        'victory_hook_action_redirects': dict,
         'special_infantry_factory_exclusions': dict,
         'victory_hook_action_ids': dict,
+        'unsafe_static_provider_superweapon_ids': dict,
         'objective_clone_event_refs': dict,
         'required_access_rules': dict,
         'techno_base_rules': dict,
@@ -377,6 +379,7 @@ def _validate_missions(sections, path):
         'native_production_gate_exclusions',
         'special_infantry_factory_exclusions',
         'victory_hook_action_ids',
+        'unsafe_static_provider_superweapon_ids',
         'native_runtime_identity_preserve_ids',
         'time_freeze_immune_techno_ids',
     ):
@@ -431,24 +434,26 @@ def _validate_missions(sections, path):
                 path,
             )
 
-    for code, redirects in sections.get(
-        'objective_hook_action_redirects', {}
-    ).items():
-        if (
-            not _is_nonempty_string(code)
-            or code not in sections['build_classifications']
-            or not isinstance(redirects, dict)
-            or not redirects
-            or any(
-                not _is_nonempty_string(source_action_id)
-                or not _is_nonempty_string(target_action_id)
-                for source_action_id, target_action_id in redirects.items()
-            )
-        ):
-            _invalid(
-                f'Invalid objective_hook_action_redirects entry for {code!r}',
-                path,
-            )
+    for redirect_section in (
+        'objective_hook_action_redirects',
+        'victory_hook_action_redirects',
+    ):
+        for code, redirects in sections.get(redirect_section, {}).items():
+            if (
+                not _is_nonempty_string(code)
+                or code not in sections['build_classifications']
+                or not isinstance(redirects, dict)
+                or not redirects
+                or any(
+                    not _is_nonempty_string(source_action_id)
+                    or not _is_nonempty_string(target_action_id)
+                    for source_action_id, target_action_id in redirects.items()
+                )
+            ):
+                _invalid(
+                    f'Invalid {redirect_section} entry for {code!r}',
+                    path,
+                )
 
     for code, action_checks in sections.get(
         'objective_hook_action_ids', {}

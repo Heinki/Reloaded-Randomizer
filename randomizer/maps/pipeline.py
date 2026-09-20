@@ -131,6 +131,7 @@ from randomizer.missions.overrides import (
     MISSION_NATIVE_RUNTIME_WEAPON_PRESERVE_IDS,
     MISSION_OBJECTIVE_HOOK_ACTION_IDS,
     MISSION_OBJECTIVE_HOOK_ACTION_REDIRECTS,
+    MISSION_VICTORY_HOOK_ACTION_REDIRECTS,
     MISSION_ORIGINAL_MCV_ACCESS_IDS,
     MISSION_OBJECTIVE_CLONE_EVENT_REFS,
     MISSION_NATIVE_TECH_UNLOCK_IDS,
@@ -811,7 +812,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         ]
         if deferred_power_rewards:
             self.append_log(
-                f'Deferred unsafe physical-provider powers for {code}: '
+                f'Deferred mission-incompatible powers for {code}: '
                 + ', '.join(
                     reward_display_name(reward)
                     for reward in deferred_power_rewards
@@ -3083,15 +3084,22 @@ def prepare_hooked_map(self, mission, extra_rules=None):
     if removed_techlevel_actions:
         self.append_log(f'Removed {removed_techlevel_actions} native tech unlock action(s) blocked by the randomizer.')
     checks = self.mission_checks(code) if launch_active else []
+    objective_hook_redirects = MISSION_OBJECTIVE_HOOK_ACTION_REDIRECTS.get(
+        code, {}
+    )
+    victory_hook_redirects = MISSION_VICTORY_HOOK_ACTION_REDIRECTS.get(
+        code, {}
+    )
+    hook_action_redirects = {
+        **objective_hook_redirects,
+        **victory_hook_redirects,
+    }
     patch_plan, missing_victory, completed_objectives = pending_check_hook_plan(
         lines,
         checks,
         MISSION_VICTORY_HOOK_ACTION_IDS.get(code, ()),
         MISSION_OBJECTIVE_HOOK_ACTION_IDS.get(code, {}),
-        MISSION_OBJECTIVE_HOOK_ACTION_REDIRECTS.get(code, {}),
-    )
-    objective_hook_redirects = MISSION_OBJECTIVE_HOOK_ACTION_REDIRECTS.get(
-        code, {}
+        hook_action_redirects,
     )
     if objective_hook_redirects:
         self.append_log(
@@ -3100,6 +3108,16 @@ def prepare_hooked_map(self, mission, extra_rules=None):
                 f'{source_action_id} -> {target_action_id}'
                 for source_action_id, target_action_id
                 in objective_hook_redirects.items()
+            )
+            + '.'
+        )
+    if victory_hook_redirects:
+        self.append_log(
+            'Redirected fragile victory marker action(s): '
+            + ', '.join(
+                f'{source_action_id} -> {target_action_id}'
+                for source_action_id, target_action_id
+                in victory_hook_redirects.items()
             )
             + '.'
         )

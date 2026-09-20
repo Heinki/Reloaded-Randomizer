@@ -40,25 +40,29 @@ def pending_check_hook_plan(
     checks,
     configured_victory_action_ids=(),
     configured_objective_action_ids=None,
-    objective_action_redirects=None,
+    action_redirects=None,
 ):
     """Plan only reviewed objective and victory Action hooks."""
     configured_objective_action_ids = configured_objective_action_ids or {}
-    objective_action_redirects = objective_action_redirects or {}
+    action_redirects = action_redirects or {}
     available_action_ids = {
         action_id.lower(): action_id
         for action_id in action_line_ids(lines, lambda _groups: True)
     }
-    configured_victory_action_ids = [
-        available_action_ids[str(action_id).lower()]
-        for action_id in configured_victory_action_ids
-        if str(action_id).lower() in available_action_ids
-    ]
-    victory_action_ids = unique_in_order(configured_victory_action_ids)
     normalized_redirects = {
         str(source_id).lower(): str(target_id).lower()
-        for source_id, target_id in objective_action_redirects.items()
+        for source_id, target_id in action_redirects.items()
     }
+    resolved_victory_action_ids = []
+    for action_id in configured_victory_action_ids:
+        source_key = str(action_id).lower()
+        if source_key not in available_action_ids:
+            continue
+        target_key = normalized_redirects.get(source_key, source_key)
+        resolved_victory_action_ids.append(
+            available_action_ids.get(target_key, available_action_ids[source_key])
+        )
+    victory_action_ids = unique_in_order(resolved_victory_action_ids)
 
     plan = []
     objective_checks = [

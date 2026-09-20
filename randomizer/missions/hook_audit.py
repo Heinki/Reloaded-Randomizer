@@ -3,10 +3,12 @@
 from collections import Counter
 
 from randomizer.config.game_profile import TERMINAL_END_ACTION_CODES
+from randomizer.maps.base import resolved_map_section_rules
 from randomizer.maps.generated import file_sha256
 from randomizer.maps.hooks import MAX_MAP_ACTION_LINE_LENGTH
 from randomizer.maps.ini import (
     IniLines,
+    merge_ini_section_values,
     parse_action_groups,
     read_text,
     section_lines,
@@ -24,6 +26,8 @@ from randomizer.missions.installation import resolve_installed_scenario
 from randomizer.missions.overrides import (
     MISSION_OBJECTIVE_HOOK_ACTION_IDS,
     MISSION_OBJECTIVE_HOOK_ACTION_REDIRECTS,
+    MISSION_MAP_SECTION_RULES,
+    MISSION_VICTORY_HOOK_ACTION_REDIRECTS,
     MISSION_VICTORY_HOOK_ACTION_IDS,
 )
 
@@ -62,6 +66,12 @@ def progress_hook_audit_report():
         source_path = resolve_installed_scenario(metadata['scenario'])
         source_hash_before = file_sha256(source_path)
         lines = IniLines(read_text(source_path).splitlines())
+        merge_ini_section_values(
+            lines,
+            resolved_map_section_rules(
+                lines, MISSION_MAP_SECTION_RULES.get(code, {})
+            ),
+        )
         original_actions = section_value_map_preserve(lines, 'Actions')
         expected_ids = tuple(metadata['verified_victory_action_ids'])
         configured_ids = tuple(MISSION_VICTORY_HOOK_ACTION_IDS.get(code, ()))
@@ -93,21 +103,27 @@ def progress_hook_audit_report():
             }
             for index in range(1, objective_count + 1)
         ] + [{'id': 'victory', 'name': 'Victory', 'unlocked': False}]
+        objective_redirects = MISSION_OBJECTIVE_HOOK_ACTION_REDIRECTS.get(
+            code, {}
+        )
+        victory_redirects = MISSION_VICTORY_HOOK_ACTION_REDIRECTS.get(
+            code, {}
+        )
+        hook_redirects = {**objective_redirects, **victory_redirects}
         plan, missing_victory, _completed_objectives = pending_check_hook_plan(
             lines,
             checks,
             configured_ids,
             MISSION_OBJECTIVE_HOOK_ACTION_IDS.get(code, {}),
-            MISSION_OBJECTIVE_HOOK_ACTION_REDIRECTS.get(code, {}),
+            hook_redirects,
         )
         planned_ids = tuple(action_id.lower() for _check, action_id in plan)
         action_names = {
             str(action_id).lower(): action_id for action_id in original_actions
         }
-        redirects = MISSION_OBJECTIVE_HOOK_ACTION_REDIRECTS.get(code, {})
         redirect_names = {
             str(source).lower(): str(target).lower()
-            for source, target in redirects.items()
+            for source, target in hook_redirects.items()
         }
         expected_objective_ids = []
         for action_id in configured_objectives:
@@ -116,8 +132,12 @@ def progress_hook_audit_report():
             expected_objective_ids.append(
                 target_key if target_key in action_names else source_key
             )
-        expected_planned_ids = tuple(expected_objective_ids) + tuple(
-            action_id.lower() for action_id in expected_ids
+        expected_victory_ids = tuple(
+            redirect_names.get(action_id.lower(), action_id.lower())
+            for action_id in expected_ids
+        )
+        expected_planned_ids = (
+            tuple(expected_objective_ids) + expected_victory_ids
         )
         if missing_victory or planned_ids != expected_planned_ids:
             failures.append({
@@ -152,7 +172,7 @@ def progress_hook_audit_report():
             continue
 
         patched_actions = section_value_map_preserve(lines, 'Actions')
-        for action_id in configured_ids:
+        for action_id in expected_victory_ids:
             before = _parsed_groups(original_actions, action_id)
             after = _parsed_groups(patched_actions, action_id)
             if before is None or after is None:

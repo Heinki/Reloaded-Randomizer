@@ -230,6 +230,56 @@ def main():
             _remove_generated(hook['root_map'])
             _remove_generated(hook['generated_map'])
 
+    psychic_reward = next(
+        reward for reward in power_rewards
+        if reward.get('superweapon') == 'PsychicDominatorSpecial'
+    )
+    time_shift = next(
+        mission for mission in parse_missions(BATTLE_INI)
+        if mission['code'] == 'SOV01'
+    )
+    compatibility_harness = _Harness(
+        [psychic_reward],
+        time_shift['side'],
+        time_shift['campaign'],
+        seed='RLR-POWER-COMPATIBILITY-SMOKE',
+    )
+    compatibility_hook = None
+    try:
+        compatibility_hook = prepare_hooked_map(
+            compatibility_harness, time_shift
+        )
+        compatibility_lines = IniLines(
+            read_text(Path(compatibility_hook['generated_map'])).splitlines()
+        )
+        compatibility_registered = {
+            str(value).upper()
+            for value in section_value_map_preserve(
+                compatibility_lines, 'SuperWeaponTypes'
+            ).values()
+        }
+        psychic_clone = str(
+            psychic_reward.get('superweapon_clone')
+            or randomizer_clone_type_id('PsychicDominatorSpecial')
+        ).upper()
+        if psychic_clone in compatibility_registered:
+            failures.append(
+                'Time Shift received the mission-incompatible Psychic '
+                'Dominator clone.'
+            )
+        if not any(
+            'Deferred mission-incompatible powers for SOV01:'
+            in entry['message']
+            for entry in compatibility_harness.logs
+        ):
+            failures.append(
+                'Time Shift Psychic Dominator deferral was not reported.'
+            )
+    finally:
+        if compatibility_hook:
+            _remove_generated(compatibility_hook['root_map'])
+            _remove_generated(compatibility_hook['generated_map'])
+
     report = {
         'valid': not failures and len(power_rewards) == 18,
         'power_reward_count': len(power_rewards),
