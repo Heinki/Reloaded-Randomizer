@@ -1927,6 +1927,14 @@
           "disable_assists": 1
         }
       },
+      "blockbuster_special": {
+        "display_name": "Blockbuster Special",
+        "description": "Current-run Shop purchases last only for the current stage. Each victory gives 10 extra Ore.",
+        "effects": {
+          "run_reward_flat": 10,
+          "reset_run_purchases_after_victory": 1
+        }
+      },
       "faction_roulette": {
         "display_name": "Faction Roulette",
         "description": "All Factions only. Shop stock rotates through Allies, Soviets, Yuri, GDI, and Nod each stage. Mission rerolls are disabled.",

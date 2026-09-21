@@ -341,6 +341,7 @@ def validate_shop_mode_config(sections, path, invalid):
         'mission_starting_credits_flat',
         'mission_offer_count_flat',
         'liquidate_ore_after_victory',
+        'reset_run_purchases_after_victory',
         'challenge_meta_reward_percent',
         'normal_run_reward_percent',
         'normal_run_reward_flat',

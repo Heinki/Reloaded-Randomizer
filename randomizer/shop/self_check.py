@@ -87,6 +87,7 @@ from .modifiers import (
     modifier_forces_hardest_difficulty,
     modifier_mission_offer_count,
     modifier_shop_faction,
+    shop_faction_rotation,
 )
 from .model import (
     BuffPurchase,
@@ -226,7 +227,7 @@ def _current_shop_feature_checks():
         'elite_force', 'no_safety_net', 'support_doctrine',
         'war_economy', 'narrow_intelligence', 'liquid_assets',
         'treasure_hunter', 'low_tech_war', 'superweapon_arms_race',
-        'hardcore', 'faction_roulette',
+        'hardcore', 'blockbuster_special', 'faction_roulette',
     }
     all_modifier_ids = tuple(SHOP_CONFIG.modifiers)
     effects = modifier_effects(all_modifier_ids)
@@ -327,6 +328,8 @@ def _current_shop_feature_checks():
         'Test Power Access', ShopRewardType.POWER_ACCESS,
         'TESTPOWER', None, None, ('Allies',),
     )
+    roulette_key = 'RLR-SHOP-FACTION-ROULETTE:run-1'
+    roulette_rotation = shop_faction_rotation(roulette_key)
     return {
         'requested_permanent_upgrades_valid': required_upgrades.issubset(
             SHOP_CONFIG.permanent_upgrades
@@ -389,10 +392,25 @@ def _current_shop_feature_checks():
             and arms_effects['enemy_armor_stacks'] == 1
             and modifier_forces_hardest_difficulty(('hardcore',))
             and modifier_effects(('hardcore',))['force_enemy_challenge']
+            and modifier_effects(
+                ('blockbuster_special',)
+            )['run_reward_flat'] == 10
+            and modifier_effects(
+                ('blockbuster_special',)
+            )['reset_run_purchases_after_victory']
+            and set(roulette_rotation) == {
+                'Allies', 'Soviets', 'Yuri', 'GDI', 'Nod'
+            }
             and tuple(
-                modifier_shop_faction(('faction_roulette',), stage)
-                for stage in range(1, 7)
-            ) == ('Allies', 'Soviets', 'Yuri', 'GDI', 'Nod', 'Allies')
+                modifier_shop_faction(
+                    ('faction_roulette',), stage, run_key=roulette_key
+                )
+                for stage in range(1, 11)
+            ) == roulette_rotation * 2
+            and shop_faction_rotation(roulette_key) == roulette_rotation
+            and shop_faction_rotation(
+                roulette_key + '-other'
+            ) != roulette_rotation
             and modifier_allows_faction_pool(
                 ('faction_roulette',), 'All Campaigns'
             )

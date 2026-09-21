@@ -81,7 +81,7 @@ from randomizer.shop.model import (
     RunStatus,
     ShopRewardType,
 )
-from randomizer.shop.persistence import ShopRepository
+from randomizer.shop.persistence import ShopPersistenceError, ShopRepository
 from randomizer.shop.service import ShopProgressionService
 from randomizer.shop.transitions import ShopTransitionError
 from randomizer.config.game_profile import CAMPAIGN_FILTER_SPECS
@@ -323,6 +323,7 @@ class ShopController(ShopPolishController):
                     self.settings_tab if needs_setup else self.shop_tab
                 )
             self.sync_shop_settings_view()
+            self.on_workspace_tab_changed()
             self.refresh_shop_mode()
             return
 
@@ -359,6 +360,7 @@ class ShopController(ShopPolishController):
         if replace_selected_tab:
             self.workspace_tabs.select(self.mission_view_frame)
         self.sync_shop_settings_view()
+        self.on_workspace_tab_changed()
 
     def sync_shop_settings_view(self, *, reset_scroll=False):
         if not all(hasattr(self, name) for name in (
@@ -647,7 +649,10 @@ class ShopController(ShopPolishController):
                 item for item in run.mission_offers
                 if item.mission_code == run.selected_mission_code
             ), None)
-            return self._shop_enemy_scaling_entries_for_offer(run, offer)
+            entries = self._shop_enemy_scaling_entries_for_offer(run, offer)
+            if self.archipelago_run_active():
+                entries.extend(super().active_enemy_scaling_entries())
+            return entries
         return super().active_enemy_scaling_entries()
 
     def launch_rewards_for_mission(self, code):
@@ -867,7 +872,10 @@ class ShopController(ShopPolishController):
             effects = modifier_effects(run.modifiers)
             if stock:
                 campaign_filter = modifier_shop_faction(
-                    run.modifiers, run.stage, campaign_filter
+                    run.modifiers,
+                    run.stage,
+                    campaign_filter,
+                    run_key=f'{run.seed}:{run.run_id}',
                 )
                 if (
                     effects['cross_faction_power_offers']
@@ -943,6 +951,50 @@ class ShopController(ShopPolishController):
                     if run is not None else 'Mission Choices'
                 )
             )
+        if hasattr(self, 'shop_run_ended_frame'):
+            if run is not None and run.status is not RunStatus.ACTIVE:
+                self.shop_choices_frame.grid_remove()
+                self.shop_actions_frame.grid_remove()
+                self.shop_run_ended_frame.grid()
+                if run.status is RunStatus.FAILED:
+                    self.shop_run_ended_title_label.configure(
+                        style='Error.TLabel'
+                    )
+                    self.shop_run_ended_title_var.set('RUN ENDED')
+                    if run.failed_mission_code == 'GAVE_UP':
+                        detail = f'Run ended at stage {run.failed_stage}.'
+                    else:
+                        mission = self._shop_mission(
+                            run.failed_mission_code
+                        )
+                        mission_name = (
+                            mission.get('title') or run.failed_mission_code
+                        )
+                        detail = (
+                            f'Mission failed at stage {run.failed_stage}: '
+                            f'{mission_name}'
+                        )
+                    if self.shop_profile.salvaged_run_coins:
+                        detail += (
+                            f'\nRecovery Salvage banked: '
+                            f'{self.shop_profile.salvaged_run_coins} Ore.'
+                        )
+                    self.shop_run_ended_detail_var.set(
+                        f'{detail}\nStart a new run when ready.'
+                    )
+                else:
+                    self.shop_run_ended_title_label.configure(
+                        style='Shop.Gem.TLabel'
+                    )
+                    self.shop_run_ended_title_var.set('RUN COMPLETE')
+                    self.shop_run_ended_detail_var.set(
+                        f'All {run.run_length} stages completed.\n'
+                        'Start a new run when ready.'
+                    )
+            else:
+                self.shop_run_ended_frame.grid_remove()
+                self.shop_choices_frame.grid()
+                self.shop_actions_frame.grid()
         self._refresh_shop_missions()
         self.refresh_shop_catalogue()
         self._refresh_shop_loadout()
@@ -1199,6 +1251,31 @@ class ShopController(ShopPolishController):
         if self.shop_run is not None and self.shop_run.status is not RunStatus.ACTIVE:
             self.workspace_tabs.select(self.settings_tab)
             self.sync_shop_settings_view(reset_scroll=True)
+
+    def reset_shop_profile(self):
+        if self.shop_launch_active():
+            self._set_shop_message(
+                'Close the running mission before resetting the Shop profile.',
+                error=True,
+            )
+            return
+        if not messagebox.askyesno(
+            'Reset Shop Profile?',
+            'This permanently deletes all Shop Gems, permanent units and '
+            'powers, permanent buffs, upgrades, lifetime totals, and the current '
+            'Shop run. This cannot be undone.\n\nReset everything?',
+            parent=self,
+        ):
+            return
+        try:
+            self.shop_profile, self.shop_run = self.shop_service.reset_profile()
+        except (OSError, ShopPersistenceError) as exc:
+            self._set_shop_message(f'Profile reset failed: {exc}', error=True)
+            return
+        self._shop_pending_loadout_selection.clear()
+        self._shop_loadout_selection_initialized = True
+        self._set_shop_message('Shop profile and current run reset.')
+        self.refresh_shop_mode()
 
     def _repair_shop_mission_offers(self, run):
         if (
@@ -2503,6 +2580,13 @@ class ShopController(ShopPolishController):
             self._shop_permanent_power_rows[iid] = entry.reward_id
             self._shop_permanent_power_buyable[iid] = buyable
         upgrade_tree = self.shop_upgrade_tree
+        previous_upgrade_selection = upgrade_tree.selection()
+        selected_upgrade_id = self.__dict__.pop(
+            '_shop_upgrade_focus_id', ''
+        ) or (
+            self._shop_upgrade_rows.get(previous_upgrade_selection[0], '')
+            if previous_upgrade_selection else ''
+        )
         upgrade_tree.delete(*upgrade_tree.get_children())
         self._shop_upgrade_rows = {}
         self._shop_upgrade_buyable = {}
@@ -2538,13 +2622,19 @@ class ShopController(ShopPolishController):
                 tags=(row_tag,),
                 values=(
                     definition.display_name,
+                    '◀' if level > 0 else '',
                     f'{level} / {definition.max_level}',
+                    '▶' if not maxed else '',
                     state,
                     next_price,
                 ),
             )
             self._shop_upgrade_rows[iid] = upgrade_id
             self._shop_upgrade_buyable[iid] = buyable
+            if upgrade_id == selected_upgrade_id:
+                upgrade_tree.selection_set(iid)
+                upgrade_tree.focus(iid)
+                upgrade_tree.see(iid)
         self._refresh_permanent_buffs(active_run)
         self._refresh_permanent_power_buffs(active_run)
         self.configure_shop_tree_tags()
@@ -2845,19 +2935,77 @@ class ShopController(ShopPolishController):
             self._report_profile_purchase(outcome, reward_id)
         self.refresh_shop_mode()
 
-    def buy_selected_permanent_upgrade(self):
+    def on_shop_upgrade_tree_click(self, event):
+        tree = self.shop_upgrade_tree
+        row_id = tree.identify_row(event.y)
+        column = tree.identify_column(event.x)
+        if not row_id or column not in {'#2', '#4'}:
+            return None
+        upgrade_id = self._shop_upgrade_rows.get(row_id, '')
+        definition = self.shop_config.permanent_upgrades.get(upgrade_id)
+        if definition is None:
+            return 'break'
+        level = self.shop_profile.upgrade_level(upgrade_id)
+        tree.selection_set(row_id)
+        tree.focus(row_id)
+        if column == '#2' and level > 0:
+            self.remove_selected_permanent_upgrade()
+        elif column == '#4' and level < definition.max_level:
+            self.buy_selected_permanent_upgrade()
+        return 'break'
+
+    def on_shop_upgrade_tree_double_click(self, event):
+        tree = self.shop_upgrade_tree
+        row_id = tree.identify_row(event.y)
+        if not row_id:
+            return 'break'
+        if tree.identify_column(event.x) in {'#2', '#4'}:
+            return self.on_shop_upgrade_tree_click(event)
+        tree.selection_set(row_id)
+        tree.focus(row_id)
+        self.buy_selected_permanent_upgrade()
+        return 'break'
+
+    def buy_selected_permanent_upgrade(self, _event=None):
         selected = self.shop_upgrade_tree.selection()
         if not selected:
             return
         upgrade_id = self._shop_upgrade_rows.get(selected[0])
         if not upgrade_id:
             return
+        self._shop_upgrade_focus_id = upgrade_id
         try:
             outcome = self.shop_service.purchase_permanent_upgrade(upgrade_id)
         except ShopTransitionError as exc:
             self._set_shop_message(exc, error=True)
         else:
             self._report_profile_purchase(outcome, upgrade_id)
+        self.refresh_shop_mode()
+
+    def remove_selected_permanent_upgrade(self):
+        selected = self.shop_upgrade_tree.selection()
+        if not selected:
+            return
+        upgrade_id = self._shop_upgrade_rows.get(selected[0])
+        if not upgrade_id:
+            return
+        self._shop_upgrade_focus_id = upgrade_id
+        try:
+            outcome = self.shop_service.refund_permanent_upgrade(upgrade_id)
+        except ShopTransitionError as exc:
+            self._set_shop_message(exc, error=True)
+        else:
+            if outcome.validation.allowed:
+                self._set_shop_message(
+                    f'Removed one {upgrade_id} level. Refunded '
+                    f'{outcome.validation.cost} Gems.'
+                )
+            else:
+                self._set_shop_message(
+                    'Upgrade adjustment failed: '
+                    f'{outcome.validation.result.value.replace("_", " ")}.',
+                    error=True,
+                )
         self.refresh_shop_mode()
 
     def buy_selected_permanent_buff(self):
