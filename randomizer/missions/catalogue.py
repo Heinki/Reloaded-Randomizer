@@ -199,6 +199,19 @@ def parse_long_description_objectives(text):
     return objectives
 
 
+def normalize_long_description(text):
+    """Turn client INI paragraph markers into readable tooltip text."""
+    if not text:
+        return ''
+    paragraphs = []
+    for paragraph in re.split(r'@{2,}|\n\s*\n', str(text)):
+        value = re.sub(r'\s*@\s*', ' ', paragraph)
+        value = re.sub(r'[ \t]+', ' ', value).strip()
+        if value:
+            paragraphs.append(value)
+    return '\n\n'.join(paragraphs)
+
+
 def parse_missions(path, fallback_objective_count=FALLBACK_OBJECTIVE_COUNT):
     """Read the ordered campaign catalogue from C&C Reloaded ``Battle.ini``."""
     if not path.exists():
@@ -240,6 +253,7 @@ def parse_missions(path, fallback_objective_count=FALLBACK_OBJECTIVE_COUNT):
         position = len(missions) + 1
         metadata = MISSION_METADATA_BY_CODE.get(code.upper(), {})
         objectives = parse_long_description_objectives(section.get('LongDescription', ''))
+        briefing = normalize_long_description(section.get('LongDescription', ''))
         reviewed_build_classification = metadata.get('build_classification')
         build_classification = (
             reviewed_build_classification
@@ -255,6 +269,7 @@ def parse_missions(path, fallback_objective_count=FALLBACK_OBJECTIVE_COUNT):
             'scenario': scenario,
             'title': section.get('Description') or section.get('description') or code,
             'side': section.get('SideName') or section.get('Side') or '',
+            'briefing': briefing,
             'faction': metadata.get('faction') or normalize_faction(
                 section.get('SideName') or section.get('Side') or ''
             ),
