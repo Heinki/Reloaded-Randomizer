@@ -695,11 +695,11 @@ class ShopPolishController(ShopArchipelagoController):
             self.shop_catalogue_back_button.pack_forget()
             self._shop_buff_target_ids = {}
             return ''
-        self.shop_catalogue_back_button.pack(
-            side='left', before=self.shop_buff_target_frame, padx=(0, 10)
-        )
         self.shop_buff_target_frame.pack(
             side='left', before=self.shop_search_label
+        )
+        self.shop_catalogue_back_button.pack(
+            side='left', before=self.shop_buff_target_frame, padx=(0, 10)
         )
         is_unit = category == 'Unit Buffs'
         owned = active_tech if is_unit else active_powers
@@ -1556,7 +1556,7 @@ class ShopPolishController(ShopArchipelagoController):
             ),
             'starting_buff_draft': (
                 f'Each level grants +{effects.get("buffs_per_level", 0)} free '
-                'Tier 1 buff at run start. Preferred buff type is chosen in Shop Setup.'
+                'Tier 1 buff selected automatically at run start.'
             ),
             'discount_specialization': (
                 f'Each level reduces all current-run Shop prices '

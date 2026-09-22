@@ -1,6 +1,10 @@
 """Shop Mode bridge for Archipelago stage and purchase locations."""
 
-from ._dependencies import CAMPAIGN_FILTERS, mission_matches_campaign_filter
+from ._dependencies import (
+    CAMPAIGN_FILTERS,
+    filter_missions_by_build_settings,
+    mission_matches_campaign_filter,
+)
 
 from randomizer.shop.archipelago import (
     ARCHIPELAGO_RECEIVED_UNIT_LOADOUT_MANUAL,
@@ -42,12 +46,20 @@ class ShopArchipelagoController:
             panels.forget(panel)
 
     def _shop_campaign_missions(self, campaign):
-        if campaign == CAMPAIGN_FILTERS[0]:
-            return list(self.missions)
-        return [
+        missions = [
             mission for mission in self.missions
-            if mission_matches_campaign_filter(mission, campaign)
+            if (
+                campaign == CAMPAIGN_FILTERS[0]
+                or mission_matches_campaign_filter(mission, campaign)
+            )
         ]
+        return filter_missions_by_build_settings(
+            missions,
+            include_true_no_build=self.include_no_build_missions_var.get(),
+            include_no_build_production=(
+                self.include_no_build_production_missions_var.get()
+            ),
+        )
 
     def filtered_missions_for_seed(self):
         variable = self.__dict__.get('progression_mode_var')

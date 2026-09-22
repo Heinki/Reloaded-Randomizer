@@ -595,6 +595,41 @@ def _build_right_panel(self, main_frame):
     self.shop_progression_mode_combo.bind(
         '<MouseWheel>', self.on_settings_control_mousewheel, add='+'
     )
+
+    shop_mission_pool_frame = ttk.LabelFrame(
+        shop_settings_frame, text='Mission Pool', padding=8
+    )
+    shop_mission_pool_frame.grid(
+        row=9, column=0, columnspan=2, sticky='ew', pady=(10, 0)
+    )
+    self.shop_include_no_build_missions_check = ttk.Checkbutton(
+        shop_mission_pool_frame,
+        text='Include true no-build / fixed-unit missions',
+        variable=self.include_no_build_missions_var,
+        command=self.on_mission_pool_settings_changed,
+    )
+    self.shop_include_no_build_missions_check.grid(
+        row=0, column=0, sticky='w'
+    )
+    WidgetTooltip(
+        self.shop_include_no_build_missions_check,
+        'Includes missions completed only with fixed units, heroes, or '
+        'scripted map powers and no player production.',
+    )
+    self.shop_include_no_build_production_missions_check = ttk.Checkbutton(
+        shop_mission_pool_frame,
+        text='Include no-build missions with production',
+        variable=self.include_no_build_production_missions_var,
+        command=self.on_mission_pool_settings_changed,
+    )
+    self.shop_include_no_build_production_missions_check.grid(
+        row=1, column=0, sticky='w', pady=(4, 0)
+    )
+    WidgetTooltip(
+        self.shop_include_no_build_production_missions_check,
+        'Includes missions without normal base building that still provide '
+        'limited unit production.',
+    )
     ttk.Label(
         shop_settings_frame,
         text=(
@@ -611,22 +646,22 @@ def _build_right_panel(self, main_frame):
     ).grid(row=8, column=0, columnspan=2, sticky='ew', pady=(12, 0))
 
     ttk.Separator(shop_settings_frame, orient='horizontal').grid(
-        row=9, column=0, columnspan=2, sticky='ew', pady=12
+        row=10, column=0, columnspan=2, sticky='ew', pady=12
     )
     ttk.Label(
         shop_settings_frame,
         text='Starting Loadout',
         font=('Segoe UI', 10, 'bold'),
-    ).grid(row=10, column=0, columnspan=2, sticky='w')
+    ).grid(row=11, column=0, columnspan=2, sticky='w')
     ttk.Label(
         shop_settings_frame,
         textvariable=self.shop_loadout_help_var,
         style='Muted.TLabel',
         wraplength=720,
-    ).grid(row=11, column=0, columnspan=2, sticky='ew', pady=(2, 6))
+    ).grid(row=12, column=0, columnspan=2, sticky='ew', pady=(2, 6))
     shop_loadout_search = ttk.Frame(shop_settings_frame)
     shop_loadout_search.grid(
-        row=12, column=0, columnspan=2, sticky='ew', pady=(0, 6)
+        row=13, column=0, columnspan=2, sticky='ew', pady=(0, 6)
     )
     ttk.Label(shop_loadout_search, text='Search permanent loadout:').pack(
         side='left'
@@ -636,7 +671,7 @@ def _build_right_panel(self, main_frame):
     ).pack(side='left', fill='x', expand=True, padx=(6, 0))
     shop_loadout_frame = ttk.Frame(shop_settings_frame)
     shop_loadout_frame.grid(
-        row=13, column=0, columnspan=2, sticky='nsew'
+        row=14, column=0, columnspan=2, sticky='nsew'
     )
     self.shop_loadout_select_tree = _tree(
         shop_loadout_frame,
@@ -653,65 +688,6 @@ def _build_right_panel(self, main_frame):
     self.shop_loadout_select_tree.bind(
         '<<TreeviewSelect>>', self.capture_shop_setup_selection
     )
-
-    permanent_setup_frame = ttk.LabelFrame(
-        shop_settings_frame, text='Permanent Run Bonuses', padding=8
-    )
-    permanent_setup_frame.grid(
-        row=14, column=0, columnspan=2, sticky='ew', pady=(10, 0)
-    )
-    permanent_setup_frame.columnconfigure(1, weight=1)
-    ttk.Label(permanent_setup_frame, text='Starting Buff Draft').grid(
-        row=0, column=0, sticky='w', padx=(0, 12), pady=2
-    )
-    self.shop_starting_buff_draft_combo = ttk.Combobox(
-        permanent_setup_frame,
-        state='readonly',
-        textvariable=self.shop_starting_buff_draft_var,
-        values=[label for label, _value in self.shop_buff_draft_options],
-    )
-    self.shop_starting_buff_draft_combo.grid(row=0, column=1, sticky='ew')
-    ttk.Label(permanent_setup_frame, text='Discount specialization').grid(
-        row=1, column=0, sticky='w', padx=(0, 12), pady=2
-    )
-    self.shop_discount_specialization_combo = ttk.Combobox(
-        permanent_setup_frame,
-        state='readonly',
-        textvariable=self.shop_discount_specialization_var,
-        values=self.shop_discount_specialization_options,
-    )
-    self.shop_discount_specialization_combo.grid(row=1, column=1, sticky='ew')
-    self.shop_buff_allied_helpers_check = ttk.Checkbutton(
-        permanent_setup_frame,
-        text='Share purchased buffs with allied helpers',
-        variable=self.buff_allied_helpers_var,
-    )
-    self.shop_buff_allied_helpers_check.grid(
-        row=2, column=0, columnspan=2, sticky='w', pady=(4, 0)
-    )
-    WidgetTooltip(
-        self.shop_buff_allied_helpers_check,
-        'Applies purchased unit buffs to reviewed allied helper forces when '
-        'they can be isolated safely. Shared or hostile native unit types '
-        'remain unchanged. This choice is exported to Archipelago.',
-    )
-    for combo in (
-        self.shop_starting_buff_draft_combo,
-        self.shop_discount_specialization_combo,
-    ):
-        combo.bind(
-            '<<ComboboxSelected>>',
-            lambda _event: self.save_current_launcher_config(),
-            add='+',
-        )
-        combo.bind('<MouseWheel>', self.on_settings_control_mousewheel, add='+')
-    ttk.Label(
-        permanent_setup_frame,
-        textvariable=self.shop_permanent_setup_help_var,
-        style='Shop.Help.TLabel',
-        justify='left',
-        wraplength=720,
-    ).grid(row=2, column=0, columnspan=2, sticky='ew', pady=(6, 0))
 
     modifier_frame = ttk.LabelFrame(
         shop_settings_frame, text='Optional Run Modifiers', padding=8

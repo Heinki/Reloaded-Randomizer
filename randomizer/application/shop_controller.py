@@ -126,15 +126,6 @@ class ShopController(ShopPolishController):
             )
         self.shop_faction_pool_options = SHOP_FACTION_POOLS
         self.shop_faction_pool_var = tk.StringVar(value=saved_faction_pool)
-        self.shop_buff_draft_options = (
-            ('Any Buff', ''),
-            *((item['setting_label'], item['id']) for item in BUFF_TYPES),
-        )
-        draft_labels = {label for label, _value in self.shop_buff_draft_options}
-        saved_draft = str(self.config.get('shop_starting_buff_draft') or '')
-        if saved_draft not in draft_labels:
-            saved_draft = 'Any Buff'
-        self.shop_starting_buff_draft_var = tk.StringVar(value=saved_draft)
         saved_specialization = str(
             self.config.get('shop_discount_specialization') or 'Units'
         )
@@ -145,7 +136,6 @@ class ShopController(ShopPolishController):
             value=saved_specialization
         )
         self.shop_loadout_help_var = tk.StringVar(value='')
-        self.shop_permanent_setup_help_var = tk.StringVar(value='')
         self.shop_category_var = tk.StringVar(value='Units')
         self.shop_buff_target_var = tk.StringVar(value='')
         self.shop_permanent_buff_target_var = tk.StringVar(value='')
@@ -251,9 +241,7 @@ class ShopController(ShopPolishController):
 
     def save_current_launcher_config(self):
         self.config['shop_faction_pool'] = self.shop_faction_pool_var.get()
-        self.config['shop_starting_buff_draft'] = (
-            self.shop_starting_buff_draft_var.get()
-        )
+        self.config.pop('shop_starting_buff_draft', None)
         self.config['shop_discount_specialization'] = (
             self.shop_discount_specialization_var.get()
         )
@@ -265,10 +253,6 @@ class ShopController(ShopPolishController):
         self.shop_faction_pool_var.set(
             saved if saved in SHOP_FACTION_POOLS else SHOP_FACTION_POOLS[0]
         )
-        draft = str(self.config.get('shop_starting_buff_draft') or 'Any Buff')
-        if draft not in {item[0] for item in self.shop_buff_draft_options}:
-            draft = 'Any Buff'
-        self.shop_starting_buff_draft_var.set(draft)
         specialization = str(
             self.config.get('shop_discount_specialization') or 'Units'
         )
@@ -399,32 +383,12 @@ class ShopController(ShopPolishController):
         for name in (
             'shop_include_no_build_missions_check',
             'shop_include_no_build_production_missions_check',
-            'shop_buff_allied_helpers_check',
         ):
             check = getattr(self, name, None)
             if check is not None:
                 check.configure(
                     state='disabled' if locked or active else 'normal'
                 )
-        setup_combos = (
-            (
-                self.shop_starting_buff_draft_combo,
-                'starting_buff_draft',
-            ),
-            (
-                self.shop_discount_specialization_combo,
-                'discount_specialization',
-            ),
-        )
-        for combo, upgrade_id in setup_combos:
-            combo.configure(
-                state=(
-                    'disabled'
-                    if locked or active
-                    or self.shop_profile.upgrade_level(upgrade_id) <= 0
-                    else 'readonly'
-                )
-            )
         for combo in (
             self.shop_game_speed_combo,
             self.shop_difficulty_combo,
@@ -1750,12 +1714,7 @@ class ShopController(ShopPolishController):
         count = level * per_level
         if count <= 0:
             return ()
-        selected_label = self.shop_starting_buff_draft_var.get()
-        selected_type = dict(self.shop_buff_draft_options).get(
-            selected_label, ''
-        )
-        preferred = []
-        fallback = []
+        candidates = []
         for entry in self._shop_buff_entries:
             if (
                 entry.tier != 'tier_1'
@@ -1763,11 +1722,7 @@ class ShopController(ShopPolishController):
                 or not self._shop_entry_available(entry)
             ):
                 continue
-            reward = canonical_reward_for_id(entry.reward_id)
-            if selected_type and reward.get('buff_type') == selected_type:
-                preferred.append(entry)
-            else:
-                fallback.append(entry)
+            candidates.append(entry)
         sort_key = lambda entry: (
             sha256(
                 f'{seed}\0starting_buff_draft\0{entry.reward_id}'.encode(
@@ -1776,9 +1731,7 @@ class ShopController(ShopPolishController):
             ).digest(),
             entry.reward_id,
         )
-        preferred.sort(key=sort_key)
-        fallback.sort(key=sort_key)
-        candidates = preferred + fallback
+        candidates.sort(key=sort_key)
         return tuple(
             BuffPurchase(entry.reward_id, 1) for entry in candidates[:count]
         )
@@ -2300,23 +2253,6 @@ class ShopController(ShopPolishController):
                 'extra units. Mandatory Tier 1 starters are added '
                 'automatically.'
             )
-        draft_level = self.shop_profile.upgrade_level('starting_buff_draft')
-        specialization_level = self.shop_profile.upgrade_level(
-            'discount_specialization'
-        )
-        specialization_ore = (
-            specialization_level * int(self.shop_config.permanent_upgrades[
-                'discount_specialization'
-            ].effects['ore_per_level'])
-        )
-        self.shop_permanent_setup_help_var.set(
-            f'Starting Buff Draft: {draft_level} free Tier 1 buff(s) at run '
-            f'start; {"choose preferred type above" if draft_level else "locked"}. '
-            f'Discount Specialization: {specialization_ore} Ore off selected '
-            f'category; {"choose category above" if specialization_level else "locked"}. '
-            f'{len(self.shop_profile.permanent_power_unlocks)} permanent power(s) '
-            'activate automatically.'
-        )
         local_owned = set(self.shop_profile.permanent_unit_unlocks)
         _ap_identity, ap_reward_ids = self.archipelago_shop_context()
         ap_owned = set(ap_unit_entitlement_ids(ap_reward_ids))
