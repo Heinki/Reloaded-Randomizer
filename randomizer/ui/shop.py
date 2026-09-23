@@ -73,7 +73,7 @@ def _build_loadout_upgrade_view(self, parent):
             ('name', 'Effect', 480),
             ('tier', 'Tier', 100),
             ('state', 'State', 155),
-            ('price', 'Price', 85),
+            ('price', 'Price', 160),
         ),
         cameos=True,
     )
@@ -395,7 +395,7 @@ def build_shop_tab(self, workspace_tabs):
             ('name', 'Reward', 270),
             ('tier', 'Tier', 75),
             ('state', 'State', 155),
-            ('price', 'Price', 85),
+            ('price', 'Price', 160),
             ('upgrades', 'Upgrades', 145),
         ),
         cameos=True,
@@ -634,7 +634,9 @@ def build_shop_tab(self, workspace_tabs):
         permanent_buffs,
         text=(
             'Spend Gems on lasting unit buff stacks. Buffs apply in '
-            'future runs whenever that permanently unlocked unit is used.'
+            'future runs whenever that permanently unlocked unit is used. '
+            'Between runs, use arrows to buy or refund one stack for its '
+            'full Gem price.'
         ),
         style='Shop.Help.TLabel',
         wraplength=820,
@@ -656,15 +658,22 @@ def build_shop_tab(self, workspace_tabs):
     permanent_buff_tree_frame.grid(row=2, column=0, sticky='nsew')
     self.shop_permanent_buff_tree = _tree(
         permanent_buff_tree_frame,
-        ('effect', 'stacks', 'state', 'price'),
+        ('effect', 'decrease', 'stacks', 'increase', 'state', 'price'),
         (
             ('effect', 'Permanent Effect', 380),
+            ('decrease', '', 38),
             ('stacks', 'Stacks', 90),
+            ('increase', '', 38),
             ('state', 'State', 160),
             ('price', 'Next Price', 100),
         ),
         height=10,
         cameos=True,
+    )
+    self.shop_permanent_buff_tree.column('decrease', stretch=False, anchor='center')
+    self.shop_permanent_buff_tree.column('increase', stretch=False, anchor='center')
+    self.shop_permanent_buff_tree.bind(
+        '<Button-1>', self.on_shop_permanent_buff_tree_click
     )
     self.shop_permanent_buff_tree.bind(
         '<<TreeviewSelect>>', self.refresh_permanent_buff_button
