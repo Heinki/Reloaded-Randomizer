@@ -120,6 +120,8 @@ def main():
     )
     for key in legacy_keys:
         sections.pop(key, None)
+    sections.pop('power_target_prices', None)
+    sections.pop('unit_target_prices', None)
     insertion = list(sections).index('permanent_upgrades')
     ordered = list(sections.items())
     ordered[insertion:insertion] = [

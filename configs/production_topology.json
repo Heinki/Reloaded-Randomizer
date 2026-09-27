@@ -5,7 +5,7 @@
     "catalogue_version": 1,
     "game_version": "2.7.0",
     "rules_source": "expandmd02.mix::rulesmd.ini",
-    "rules_fingerprint_sha256": "e29fb42836fb1ab9e768c343042df4ab27914fdad381b80b2cba41416ba842ab",
+    "rules_fingerprint_sha256": "099ae7afd7d3ec96c1979460016be87fcfc76177c321fb7ed6aecd22565e00d9",
     "active_families": [
       "allies",
       "soviets",

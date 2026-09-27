@@ -1493,12 +1493,12 @@ def validate_shop_domain():
           if modifier.enemy_reward_id),
     }
     catalogue_valid = bool(
-        len(catalogue) == 2007
-        and len(access_entries) == 154
-        and len(buff_entries) == 1791
+        len(catalogue) == 2056
+        and len(access_entries) == 157
+        and len(buff_entries) == 1837
         and len(power_entries) == 18
         and len(power_buff_entries) == 44
-        and len(SHOP_CONFIG.unit_target_prices) == 174
+        and len(SHOP_CONFIG.unit_target_prices) == 177
         and len(SHOP_CONFIG.power_target_prices) == 18
         and all(
             price.permanent_access > 0 and price.permanent_buff > 0

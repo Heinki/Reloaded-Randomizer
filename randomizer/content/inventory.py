@@ -72,8 +72,9 @@ def _read_rules_text(text):
         line = raw_line.strip()
         if not line or line.startswith(';'):
             continue
-        if line.startswith('[') and line.endswith(']'):
-            current = line[1:-1].strip()
+        header = _strip_comment(line)
+        if header.startswith('[') and header.endswith(']'):
+            current = header[1:-1].strip()
             sections.setdefault(current, OrderedDict())
             continue
         if current and '=' in line:

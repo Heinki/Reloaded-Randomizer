@@ -5,7 +5,7 @@
     "catalogue_version": 1,
     "game_version": "2.7.0",
     "rules_source": "expandmd02.mix::rulesmd.ini",
-    "rules_fingerprint_sha256": "e29fb42836fb1ab9e768c343042df4ab27914fdad381b80b2cba41416ba842ab",
+    "rules_fingerprint_sha256": "099ae7afd7d3ec96c1979460016be87fcfc76177c321fb7ed6aecd22565e00d9",
     "content": {
       "units": {
         "infantry": [
@@ -2111,7 +2111,7 @@
             "id": "TSJUMPJET",
             "name": "Jumpjet Infantry",
             "ui_name": "name:TSJUMPJET",
-            "image": "BULLET_01",
+            "image": "TSJUMPJET",
             "tech_level": 3,
             "cost": 600,
             "build_limit": null,
@@ -2133,7 +2133,7 @@
             "secondary": "",
             "cameo": {
               "sidebar_pcx": "",
-              "art_image": "BULLET_01",
+              "art_image": "TSJUMPJET",
               "status": "pending_review"
             },
             "reviews": {
@@ -2744,6 +2744,54 @@
                 "status": "approved",
                 "flags": [],
                 "notes": "Approved from installed C&C Reloaded 2.7.0 rules: exactly one active canonical faction, explicit production path, buildable TechLevel, and no review hazard flags."
+              }
+            },
+            "category": "infantry",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "HCLEG",
+            "name": "Chrono Legionnaire (non-teleporter)",
+            "ui_name": "Name:CLEG",
+            "image": "HCLEG",
+            "tech_level": 10,
+            "cost": 1500,
+            "build_limit": null,
+            "owner": [
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "French"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "GAPILE",
+              "GATECHLAB"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Allies"
+            ],
+            "primary": "NeutronRifle",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "HCLEG",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [],
+                "notes": "Approved from installed C&C Reloaded 2.7.0 production-path evidence: Prerequisite=GAPILE,GATECHLAB; resolved active faction scope is Allies. No unresolved review hazard remains beyond broad Owner/provider ownership."
               }
             },
             "category": "infantry",
@@ -4688,6 +4736,54 @@
             },
             "category": "vehicles",
             "naval": true,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "MGTK",
+            "name": "Mirage Tank",
+            "ui_name": "Name:MGTK",
+            "image": "RTNK",
+            "tech_level": 9,
+            "cost": 1000,
+            "build_limit": null,
+            "owner": [
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "Germans",
+              "Americans",
+              "alliance",
+              "French"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "ALLWEAP",
+              "ALLTECH"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Allies"
+            ],
+            "primary": "MirageGun",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "RTNK",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [],
+                "notes": "Approved from installed C&C Reloaded 2.7.0 production-path evidence: Prerequisite=ALLWEAP,ALLTECH; resolved active faction scope is Allies. No unresolved review hazard remains beyond broad Owner/provider ownership."
+              }
+            },
+            "category": "vehicles",
+            "naval": false,
             "harvester": false,
             "engineer": false,
             "trainable": true,
@@ -7170,11 +7266,11 @@
           },
           {
             "id": "YHVR_AI",
-            "name": "Mini-Sub",
-            "ui_name": "Name:MINISUB",
+            "name": "Hover Transport Yuri",
+            "ui_name": "Name:SAPC",
             "image": "YHVR",
             "tech_level": 2,
-            "cost": 700,
+            "cost": 900,
             "build_limit": null,
             "owner": [
               "YuriCountry",
@@ -7183,13 +7279,13 @@
             "required_houses": [],
             "forbidden_houses": [],
             "prerequisite": [
-              "YURYARD"
+              "CGPYR01"
             ],
             "built_at": [],
             "eligible_factions": [
               "Yuri"
             ],
-            "primary": "MiniSubTorpedo",
+            "primary": "LongVirtualScannerAI",
             "secondary": "LongVirtualScannerAI",
             "cameo": {
               "sidebar_pcx": "",
@@ -7969,6 +8065,48 @@
             "deploys_into": ""
           },
           {
+            "id": "YMINISUB",
+            "name": "Mini-Sub",
+            "ui_name": "Name:MINISUB",
+            "image": "YMINISUB",
+            "tech_level": 2,
+            "cost": 700,
+            "build_limit": null,
+            "owner": [
+              "YuriCountry",
+              "YuriCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "YURYARD"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Yuri"
+            ],
+            "primary": "MiniSubTorpedo",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "YMINISUB",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Yuri": {
+                "status": "approved",
+                "flags": [],
+                "notes": "Approved from installed C&C Reloaded 2.7.0 production-path evidence: Prerequisite=YURYARD; resolved active faction scope is Yuri. No unresolved review hazard remains beyond broad Owner/provider ownership."
+              }
+            },
+            "category": "vehicles",
+            "naval": true,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
             "id": "RECKONER",
             "name": "Reckoner",
             "ui_name": "Name:RECKONER",
@@ -8315,6 +8453,111 @@
                   "non_scoring"
                 ],
                 "notes": ""
+              }
+            },
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": false,
+            "deploys_into": ""
+          },
+          {
+            "id": "TSCARRYALL_DUMMY",
+            "name": "Call Carryall from the sky",
+            "ui_name": "name:TSCARRYALL",
+            "image": "NOVOXEL",
+            "tech_level": 11,
+            "cost": 1,
+            "build_limit": null,
+            "owner": [
+              "RobotCountry",
+              "RobotCountry2",
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "TSGACNST"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Allies",
+              "Soviets",
+              "Yuri",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "NOVOXEL",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "excluded",
+                "flags": [
+                  "broad_owner_list",
+                  "hidden_tech_level",
+                  "non_scoring"
+                ],
+                "notes": "Excluded from Allies: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=TSGACNST) resolves to GDI, so this faction cannot build or provide the entry through that path."
+              },
+              "Soviets": {
+                "status": "excluded",
+                "flags": [
+                  "broad_owner_list",
+                  "hidden_tech_level",
+                  "non_scoring"
+                ],
+                "notes": "Excluded from Soviets: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=TSGACNST) resolves to GDI, so this faction cannot build or provide the entry through that path."
+              },
+              "Yuri": {
+                "status": "excluded",
+                "flags": [
+                  "broad_owner_list",
+                  "hidden_tech_level",
+                  "non_scoring"
+                ],
+                "notes": "Excluded from Yuri: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=TSGACNST) resolves to GDI, so this faction cannot build or provide the entry through that path."
+              },
+              "GDI": {
+                "status": "pending_review",
+                "flags": [
+                  "broad_owner_list",
+                  "hidden_tech_level",
+                  "non_scoring"
+                ],
+                "notes": ""
+              },
+              "Nod": {
+                "status": "excluded",
+                "flags": [
+                  "broad_owner_list",
+                  "hidden_tech_level",
+                  "non_scoring"
+                ],
+                "notes": "Excluded from Nod: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=TSGACNST) resolves to GDI, so this faction cannot build or provide the entry through that path."
               }
             },
             "category": "vehicles",
@@ -10163,11 +10406,11 @@
           },
           {
             "id": "TSCARRYALL",
-            "name": "Call Carryall from the sky",
+            "name": "Carryall",
             "ui_name": "name:TSCARRYALL",
-            "image": "NOVOXEL",
+            "image": "TSCARRYALL",
             "tech_level": 11,
-            "cost": 1,
+            "cost": 750,
             "build_limit": null,
             "owner": [
               "RobotCountry",
@@ -10209,7 +10452,7 @@
             "secondary": "",
             "cameo": {
               "sidebar_pcx": "",
-              "art_image": "NOVOXEL",
+              "art_image": "TSCARRYALL",
               "status": "pending_review"
             },
             "reviews": {
@@ -10217,8 +10460,7 @@
                 "status": "excluded",
                 "flags": [
                   "broad_owner_list",
-                  "hidden_tech_level",
-                  "non_scoring"
+                  "hidden_tech_level"
                 ],
                 "notes": "Excluded from Allies: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=TSGACNST) resolves to GDI, so this faction cannot build or provide the entry through that path."
               },
@@ -10226,8 +10468,7 @@
                 "status": "excluded",
                 "flags": [
                   "broad_owner_list",
-                  "hidden_tech_level",
-                  "non_scoring"
+                  "hidden_tech_level"
                 ],
                 "notes": "Excluded from Soviets: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=TSGACNST) resolves to GDI, so this faction cannot build or provide the entry through that path."
               },
@@ -10235,8 +10476,7 @@
                 "status": "excluded",
                 "flags": [
                   "broad_owner_list",
-                  "hidden_tech_level",
-                  "non_scoring"
+                  "hidden_tech_level"
                 ],
                 "notes": "Excluded from Yuri: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=TSGACNST) resolves to GDI, so this faction cannot build or provide the entry through that path."
               },
@@ -10244,8 +10484,7 @@
                 "status": "pending_review",
                 "flags": [
                   "broad_owner_list",
-                  "hidden_tech_level",
-                  "non_scoring"
+                  "hidden_tech_level"
                 ],
                 "notes": ""
               },
@@ -10253,8 +10492,7 @@
                 "status": "excluded",
                 "flags": [
                   "broad_owner_list",
-                  "hidden_tech_level",
-                  "non_scoring"
+                  "hidden_tech_level"
                 ],
                 "notes": "Excluded from Nod: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=TSGACNST) resolves to GDI, so this faction cannot build or provide the entry through that path."
               }
@@ -15637,6 +15875,100 @@
                 "broad_owner_list"
               ],
               "notes": "Excluded from Nod: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=YATECH) resolves to Yuri, so this faction cannot build or provide the entry through that path."
+            }
+          },
+          "category": "defense",
+          "powered": false
+        },
+        {
+          "id": "GAFWLL",
+          "name": "Yuri Citadel Wall",
+          "ui_name": "Name:Citadel",
+          "image": "GAFWLL",
+          "tech_level": 2,
+          "cost": 75,
+          "build_limit": null,
+          "owner": [
+            "AlliesCountry",
+            "AlliesCountry2",
+            "British",
+            "French",
+            "Germans",
+            "Americans",
+            "Alliance",
+            "SovietCountry",
+            "SovietCountry2",
+            "Russians",
+            "Confederation",
+            "Africans",
+            "Arabs",
+            "YuriCountry",
+            "YuriCountry2",
+            "GDICountry",
+            "GDICountry2",
+            "NodCountry",
+            "NodCountry2"
+          ],
+          "required_houses": [],
+          "forbidden_houses": [],
+          "prerequisite": [
+            "YABRCK"
+          ],
+          "built_at": [],
+          "eligible_factions": [
+            "Allies",
+            "Soviets",
+            "Yuri",
+            "GDI",
+            "Nod"
+          ],
+          "primary": "",
+          "secondary": "",
+          "cameo": {
+            "sidebar_pcx": "",
+            "art_image": "GAFWLL",
+            "status": "pending_review"
+          },
+          "reviews": {
+            "Allies": {
+              "status": "excluded",
+              "flags": [
+                "broad_owner_list",
+                "non_scoring"
+              ],
+              "notes": "Excluded from Allies: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=YABRCK) resolves to Yuri, so this faction cannot build or provide the entry through that path."
+            },
+            "Soviets": {
+              "status": "excluded",
+              "flags": [
+                "broad_owner_list",
+                "non_scoring"
+              ],
+              "notes": "Excluded from Soviets: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=YABRCK) resolves to Yuri, so this faction cannot build or provide the entry through that path."
+            },
+            "Yuri": {
+              "status": "pending_review",
+              "flags": [
+                "broad_owner_list",
+                "non_scoring"
+              ],
+              "notes": ""
+            },
+            "GDI": {
+              "status": "excluded",
+              "flags": [
+                "broad_owner_list",
+                "non_scoring"
+              ],
+              "notes": "Excluded from GDI: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=YABRCK) resolves to Yuri, so this faction cannot build or provide the entry through that path."
+            },
+            "Nod": {
+              "status": "excluded",
+              "flags": [
+                "broad_owner_list",
+                "non_scoring"
+              ],
+              "notes": "Excluded from Nod: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=YABRCK) resolves to Yuri, so this faction cannot build or provide the entry through that path."
             }
           },
           "category": "defense",
@@ -22327,6 +22659,7 @@
             "TSCYBORG",
             "CHITZ",
             "YURIE",
+            "HCLEG",
             "HUEY"
           ],
           "vehicles": [
@@ -22342,6 +22675,7 @@
             "TTNK",
             "CMIN",
             "SREF",
+            "MGTK",
             "FV",
             "DTRUCK",
             "BFRT",
@@ -22355,6 +22689,7 @@
             "RA1TTNK",
             "MRJ_ALL",
             "MRJ_ALLW",
+            "TSCARRYALL_DUMMY",
             "LIMPET",
             "CMOBILEMP",
             "FLMTNK",
@@ -22418,6 +22753,7 @@
           "GAGAP",
           "GAPILL",
           "NACLON",
+          "GAFWLL",
           "YAGGUN",
           "YAPSYT",
           "YAGNTC",
@@ -22546,6 +22882,7 @@
             "RA1TTNK",
             "MRJ_SOV",
             "RA3APOC",
+            "TSCARRYALL_DUMMY",
             "CMOBILEMP",
             "FLMTNK",
             "TDFLMTNK",
@@ -22613,6 +22950,7 @@
           "GAPILL",
           "NAFLAK",
           "NACLON",
+          "GAFWLL",
           "YAGGUN",
           "YAPSYT",
           "YAGNTC",
@@ -22738,8 +23076,10 @@
             "GATSUB",
             "YHVR_AI",
             "RA1TTNK",
+            "YMINISUB",
             "YHARV",
             "OVERLORD",
+            "TSCARRYALL_DUMMY",
             "CMOBILEMP",
             "FLMTNK",
             "TDFLMTNK",
@@ -22800,6 +23140,7 @@
           "GAGAP",
           "GAPILL",
           "NACLON",
+          "GAFWLL",
           "YAGGUN",
           "YAPSYT",
           "YAGNTC",
@@ -22935,6 +23276,7 @@
             "SLINGSHOT",
             "SHATTERER",
             "MMKIIPROTO",
+            "TSCARRYALL_DUMMY",
             "LIMPET",
             "MOBWARG",
             "CMOBILEMP",
@@ -23005,6 +23347,7 @@
           "GAGAP",
           "GAPILL",
           "NACLON",
+          "GAFWLL",
           "YAGGUN",
           "YAPSYT",
           "YAGNTC",
@@ -23169,6 +23512,7 @@
             "BEAMARTILLERY",
             "FLAMETANK",
             "NHUNTER",
+            "TSCARRYALL_DUMMY",
             "MOBWARN",
             "CMOBILEMP",
             "FLMTNK",
@@ -23238,6 +23582,7 @@
           "GAGAP",
           "GAPILL",
           "NACLON",
+          "GAFWLL",
           "YAGGUN",
           "YAPSYT",
           "YAGNTC",
@@ -23336,9 +23681,9 @@
       }
     },
     "review_summary": {
-      "approved": 257,
-      "excluded": 437,
-      "pending_review": 249
+      "approved": 260,
+      "excluded": 445,
+      "pending_review": 251
     },
     "review_complete": false
   }

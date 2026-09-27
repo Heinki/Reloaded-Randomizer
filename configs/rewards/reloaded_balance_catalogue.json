@@ -5,7 +5,7 @@
     "catalogue_version": 1,
     "game_version": "2.7.0",
     "rules_source": "expandmd02.mix::rulesmd.ini",
-    "rules_fingerprint_sha256": "e29fb42836fb1ab9e768c343042df4ab27914fdad381b80b2cba41416ba842ab",
+    "rules_fingerprint_sha256": "099ae7afd7d3ec96c1979460016be87fcfc76177c321fb7ed6aecd22565e00d9",
     "active_factions": [
       "Allies",
       "Soviets",
@@ -278,13 +278,13 @@
           },
           {
             "id": "EngineerVirtualScanner",
-            "damage": null,
+            "damage": 1,
             "rof": null,
-            "range": null,
+            "range": 5,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "InvisibleLow",
+            "warhead": "EngineerWH",
+            "source_present": true
           }
         ],
         "shared_weapon_users": {
@@ -332,7 +332,6 @@
             "sensors"
           ],
           "flags": [
-            "missing_weapon_section",
             "shared_weapon_requires_clone",
             "nontrainable"
           ],
@@ -797,13 +796,13 @@
           },
           {
             "id": "LowVirtualScanner",
-            "damage": null,
+            "damage": 1,
             "rof": null,
-            "range": null,
+            "range": 5,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "InvisibleLow",
+            "warhead": "SA",
+            "source_present": true
           }
         ],
         "shared_weapon_users": {
@@ -845,7 +844,6 @@
             "sensors"
           ],
           "flags": [
-            "missing_weapon_section",
             "shared_weapon_requires_clone",
             "nontrainable"
           ],
@@ -893,7 +891,16 @@
             "source_present": true
           }
         ],
-        "shared_weapon_users": {},
+        "shared_weapon_users": {
+          "NeutronRifle": [
+            "CLEG",
+            "HCLEG"
+          ],
+          "NeutronRifleE": [
+            "CLEG",
+            "HCLEG"
+          ]
+        },
         "candidate_buff_types": [
           "health",
           "armor",
@@ -926,7 +933,9 @@
           "excluded_buff_types": [
             "sensors"
           ],
-          "flags": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
           "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
         }
       },
@@ -956,8 +965,8 @@
             "rof": 100,
             "range": -2,
             "burst": null,
-            "projectile": "Invisible",
-            "warhead": "TankSnapshot",
+            "projectile": "InvisibleAll",
+            "warhead": "Snapshot",
             "source_present": true
           }
         ],
@@ -1266,49 +1275,52 @@
         "weapons": [
           {
             "id": "FlakGuyGun",
-            "damage": null,
-            "rof": null,
-            "range": null,
+            "damage": 20,
+            "rof": 20,
+            "range": 5,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "FlakTProj",
+            "warhead": "FlakTWH",
+            "source_present": true
           },
           {
             "id": "FlakGuyAAGun",
-            "damage": null,
-            "rof": null,
-            "range": null,
+            "damage": 25,
+            "rof": 25,
+            "range": 8,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "FlakProj",
+            "warhead": "FlakGuyWH",
+            "source_present": true
           },
           {
             "id": "FlakGuyGunE",
-            "damage": null,
-            "rof": null,
-            "range": null,
-            "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "damage": 20,
+            "rof": 20,
+            "range": 6,
+            "burst": 2,
+            "projectile": "FlakTProj",
+            "warhead": "FlakTWH",
+            "source_present": true
           },
           {
             "id": "FlakGuyAAGunE",
-            "damage": null,
-            "rof": null,
-            "range": null,
-            "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "damage": 25,
+            "rof": 25,
+            "range": 8,
+            "burst": 2,
+            "projectile": "FlakProj",
+            "warhead": "FlakGuyWH",
+            "source_present": true
           }
         ],
         "shared_weapon_users": {},
         "candidate_buff_types": [
           "health",
           "armor",
+          "damage",
+          "reload",
+          "range",
           "speed",
           "sight",
           "cost",
@@ -1323,8 +1335,11 @@
             "armor",
             "cloak",
             "cost",
+            "damage",
             "health",
             "production",
+            "range",
+            "reload",
             "sight",
             "speed",
             "veteran"
@@ -1332,9 +1347,7 @@
           "excluded_buff_types": [
             "sensors"
           ],
-          "flags": [
-            "missing_weapon_section"
-          ],
+          "flags": [],
           "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
         }
       },
@@ -1436,13 +1449,13 @@
           },
           {
             "id": "EngineerVirtualScanner",
-            "damage": null,
+            "damage": 1,
             "rof": null,
-            "range": null,
+            "range": 5,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "InvisibleLow",
+            "warhead": "EngineerWH",
+            "source_present": true
           }
         ],
         "shared_weapon_users": {
@@ -1490,7 +1503,6 @@
             "sensors"
           ],
           "flags": [
-            "missing_weapon_section",
             "shared_weapon_requires_clone",
             "nontrainable"
           ],
@@ -1529,13 +1541,13 @@
           },
           {
             "id": "LowVirtualScanner",
-            "damage": null,
+            "damage": 1,
             "rof": null,
-            "range": null,
+            "range": 5,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "InvisibleLow",
+            "warhead": "SA",
+            "source_present": true
           }
         ],
         "shared_weapon_users": {
@@ -1577,7 +1589,6 @@
             "sensors"
           ],
           "flags": [
-            "missing_weapon_section",
             "shared_weapon_requires_clone",
             "nontrainable"
           ],
@@ -1616,13 +1627,13 @@
           },
           {
             "id": "EngineerVirtualScanner",
-            "damage": null,
+            "damage": 1,
             "rof": null,
-            "range": null,
+            "range": 5,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "InvisibleLow",
+            "warhead": "EngineerWH",
+            "source_present": true
           }
         ],
         "shared_weapon_users": {
@@ -1670,7 +1681,6 @@
             "sensors"
           ],
           "flags": [
-            "missing_weapon_section",
             "shared_weapon_requires_clone",
             "nontrainable"
           ],
@@ -1807,12 +1817,12 @@
           },
           {
             "id": "PsychicJabE",
-            "damage": 25,
-            "rof": 25,
-            "range": 8,
-            "burst": 2,
-            "projectile": "FlakProj",
-            "warhead": "FlakGuyWH",
+            "damage": 30,
+            "rof": 15,
+            "range": 6,
+            "burst": null,
+            "projectile": "InvisibleLow",
+            "warhead": "SAFlame",
             "source_present": true
           }
         ],
@@ -2529,13 +2539,13 @@
           },
           {
             "id": "VirtualScanner",
-            "damage": null,
+            "damage": 1,
             "rof": null,
-            "range": null,
+            "range": 5,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "InvisibleAll",
+            "warhead": "SA",
+            "source_present": true
           }
         ],
         "shared_weapon_users": {
@@ -2575,7 +2585,6 @@
             "sensors"
           ],
           "flags": [
-            "missing_weapon_section",
             "shared_weapon_requires_clone"
           ],
           "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
@@ -3119,13 +3128,13 @@
           },
           {
             "id": "EngineerVirtualScanner",
-            "damage": null,
+            "damage": 1,
             "rof": null,
-            "range": null,
+            "range": 5,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "InvisibleLow",
+            "warhead": "EngineerWH",
+            "source_present": true
           }
         ],
         "shared_weapon_users": {
@@ -3173,7 +3182,6 @@
             "sensors"
           ],
           "flags": [
-            "missing_weapon_section",
             "shared_weapon_requires_clone",
             "nontrainable"
           ],
@@ -3212,13 +3220,13 @@
           },
           {
             "id": "EngineerVirtualScanner",
-            "damage": null,
+            "damage": 1,
             "rof": null,
-            "range": null,
+            "range": 5,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "InvisibleLow",
+            "warhead": "EngineerWH",
+            "source_present": true
           }
         ],
         "shared_weapon_users": {
@@ -3266,7 +3274,6 @@
             "sensors"
           ],
           "flags": [
-            "missing_weapon_section",
             "shared_weapon_requires_clone",
             "nontrainable"
           ],
@@ -3705,6 +3712,95 @@
             "sensors"
           ],
           "flags": [],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "HCLEG",
+        "category": "infantry",
+        "name": "Chrono Legionnaire (non-teleporter)",
+        "eligible_factions": [
+          "Allies"
+        ],
+        "stats": {
+          "strength": 125,
+          "armor": "flak",
+          "cost": 1500,
+          "speed": 4,
+          "sight": 6,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": true
+        },
+        "weapons": [
+          {
+            "id": "NeutronRifle",
+            "damage": 8,
+            "rof": 120,
+            "range": 5,
+            "burst": null,
+            "projectile": "InvisibleMedium",
+            "warhead": "ChronoBeam",
+            "source_present": true
+          },
+          {
+            "id": "NeutronRifleE",
+            "damage": 16,
+            "rof": 120,
+            "range": 5,
+            "burst": null,
+            "projectile": "InvisibleMedium",
+            "warhead": "ChronoBeam",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "NeutronRifle": [
+            "CLEG",
+            "HCLEG"
+          ],
+          "NeutronRifleE": [
+            "CLEG",
+            "HCLEG"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [
+            "sensors"
+          ],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
           "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
         }
       },
@@ -5131,13 +5227,13 @@
           },
           {
             "id": "LowVirtualScanner",
-            "damage": null,
+            "damage": 1,
             "rof": null,
-            "range": null,
+            "range": 5,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "InvisibleLow",
+            "warhead": "SA",
+            "source_present": true
           }
         ],
         "shared_weapon_users": {
@@ -5178,7 +5274,6 @@
           ],
           "excluded_buff_types": [],
           "flags": [
-            "missing_weapon_section",
             "shared_weapon_requires_clone",
             "nontrainable"
           ],
@@ -5207,43 +5302,43 @@
         "weapons": [
           {
             "id": "FlakTrackGun",
-            "damage": null,
-            "rof": null,
-            "range": null,
+            "damage": 25,
+            "rof": 20,
+            "range": 5.25,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "FlakTProj",
+            "warhead": "FlakTWH",
+            "source_present": true
           },
           {
             "id": "FlakTrackAAGun",
-            "damage": null,
-            "rof": null,
-            "range": null,
+            "damage": 40,
+            "rof": 25,
+            "range": 10,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "FlakProj",
+            "warhead": "FlakWH",
+            "source_present": true
           },
           {
             "id": "FlakTrackGunE",
-            "damage": null,
-            "rof": null,
-            "range": null,
-            "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "damage": 25,
+            "rof": 25,
+            "range": 5.25,
+            "burst": 2,
+            "projectile": "FlakTProj",
+            "warhead": "FlakTWH",
+            "source_present": true
           },
           {
             "id": "FlakTrackAAGunE",
-            "damage": null,
-            "rof": null,
-            "range": null,
-            "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "damage": 25,
+            "rof": 25,
+            "range": 9,
+            "burst": 2,
+            "projectile": "FlakProj",
+            "warhead": "FlakWH",
+            "source_present": true
           }
         ],
         "shared_weapon_users": {
@@ -5259,6 +5354,9 @@
         "candidate_buff_types": [
           "health",
           "armor",
+          "damage",
+          "reload",
+          "range",
           "speed",
           "sight",
           "cost",
@@ -5274,9 +5372,12 @@
             "armor",
             "cloak",
             "cost",
+            "damage",
             "health",
             "passenger_capacity",
             "production",
+            "range",
+            "reload",
             "sensors",
             "sight",
             "speed",
@@ -5284,7 +5385,6 @@
           ],
           "excluded_buff_types": [],
           "flags": [
-            "missing_weapon_section",
             "shared_weapon_requires_clone"
           ],
           "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
@@ -5608,12 +5708,12 @@
         "weapons": [
           {
             "id": "DredLauncher",
-            "damage": 1,
+            "damage": 50,
             "rof": 50,
-            "range": 3,
+            "range": 25,
             "burst": 2,
-            "projectile": "InvisibleAll",
-            "warhead": "NeverUseDummyWH",
+            "projectile": "InvisibleHigh",
+            "warhead": "Super",
             "source_present": true
           }
         ],
@@ -5621,6 +5721,7 @@
         "candidate_buff_types": [
           "health",
           "armor",
+          "damage",
           "reload",
           "range",
           "speed",
@@ -5637,6 +5738,7 @@
             "armor",
             "cloak",
             "cost",
+            "damage",
             "health",
             "production",
             "range",
@@ -6309,43 +6411,43 @@
         "weapons": [
           {
             "id": "FlakTrackGun",
-            "damage": null,
-            "rof": null,
-            "range": null,
+            "damage": 25,
+            "rof": 20,
+            "range": 5.25,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "FlakTProj",
+            "warhead": "FlakTWH",
+            "source_present": true
           },
           {
             "id": "FlakWeapon",
-            "damage": null,
-            "rof": null,
-            "range": null,
+            "damage": 45,
+            "rof": 20,
+            "range": 12,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "FlakProj",
+            "warhead": "FlakWH",
+            "source_present": true
           },
           {
             "id": "FlakTrackGunE",
-            "damage": null,
-            "rof": null,
-            "range": null,
-            "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "damage": 25,
+            "rof": 25,
+            "range": 5.25,
+            "burst": 2,
+            "projectile": "FlakTProj",
+            "warhead": "FlakTWH",
+            "source_present": true
           },
           {
             "id": "FlakWeaponE",
-            "damage": null,
-            "rof": null,
-            "range": null,
-            "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "damage": 38,
+            "rof": 20,
+            "range": 11,
+            "burst": 2,
+            "projectile": "FlakProj",
+            "warhead": "FlakWH",
+            "source_present": true
           }
         ],
         "shared_weapon_users": {
@@ -6365,6 +6467,9 @@
         "candidate_buff_types": [
           "health",
           "armor",
+          "damage",
+          "reload",
+          "range",
           "speed",
           "sight",
           "cost",
@@ -6379,8 +6484,11 @@
             "armor",
             "cloak",
             "cost",
+            "damage",
             "health",
             "production",
+            "range",
+            "reload",
             "sensors",
             "sight",
             "speed",
@@ -6388,9 +6496,85 @@
           ],
           "excluded_buff_types": [],
           "flags": [
-            "missing_weapon_section",
             "shared_weapon_requires_clone"
           ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "MGTK",
+        "category": "vehicles",
+        "name": "Mirage Tank",
+        "eligible_factions": [
+          "Allies"
+        ],
+        "stats": {
+          "strength": 200,
+          "armor": "light",
+          "cost": 1000,
+          "speed": 5,
+          "sight": 9,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "MirageGun",
+            "damage": 100,
+            "rof": 70,
+            "range": 7,
+            "burst": null,
+            "projectile": "InvisibleLow",
+            "warhead": "MirageWH",
+            "source_present": true
+          },
+          {
+            "id": "MirageGunE",
+            "damage": 150,
+            "rof": 80,
+            "range": 9,
+            "burst": null,
+            "projectile": "InvisibleLow",
+            "warhead": "MirageWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [],
           "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
         }
       },
@@ -7637,13 +7821,13 @@
           },
           {
             "id": "LowVirtualScanner",
-            "damage": null,
+            "damage": 1,
             "rof": null,
-            "range": null,
+            "range": 5,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "InvisibleLow",
+            "warhead": "SA",
+            "source_present": true
           }
         ],
         "shared_weapon_users": {
@@ -7684,7 +7868,6 @@
           ],
           "excluded_buff_types": [],
           "flags": [
-            "missing_weapon_section",
             "shared_weapon_requires_clone",
             "nontrainable"
           ],
@@ -9241,13 +9424,13 @@
           },
           {
             "id": "VirtualScanner",
-            "damage": null,
+            "damage": 1,
             "rof": null,
-            "range": null,
+            "range": 5,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "InvisibleAll",
+            "warhead": "SA",
+            "source_present": true
           }
         ],
         "shared_weapon_users": {
@@ -9284,7 +9467,6 @@
           ],
           "excluded_buff_types": [],
           "flags": [
-            "missing_weapon_section",
             "shared_weapon_requires_clone",
             "nontrainable"
           ],
@@ -9933,13 +10115,13 @@
         "weapons": [
           {
             "id": "LongVirtualScannerAI",
-            "damage": null,
+            "damage": 1,
             "rof": null,
-            "range": null,
+            "range": 45,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "InvisibleAll",
+            "warhead": "NeverUseDummyWH",
+            "source_present": true
           }
         ],
         "shared_weapon_users": {
@@ -9954,6 +10136,7 @@
         "candidate_buff_types": [
           "health",
           "armor",
+          "range",
           "speed",
           "sight",
           "cost",
@@ -9967,7 +10150,6 @@
           "approved_buff_types": [],
           "excluded_buff_types": [],
           "flags": [
-            "missing_weapon_section",
             "shared_weapon_requires_clone",
             "nontrainable"
           ],
@@ -9996,95 +10178,12 @@
         "weapons": [
           {
             "id": "LongVirtualScannerAI",
-            "damage": null,
+            "damage": 1,
             "rof": null,
-            "range": null,
+            "range": 45,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
-          }
-        ],
-        "shared_weapon_users": {
-          "LongVirtualScannerAI": [
-            "GDIHVR_AI",
-            "LCRF_AI",
-            "NODHVR_AI",
-            "SAPC_AI",
-            "YHVR_AI"
-          ]
-        },
-        "candidate_buff_types": [
-          "health",
-          "armor",
-          "speed",
-          "sight",
-          "cost",
-          "production",
-          "passenger_capacity",
-          "sensors",
-          "cloak"
-        ],
-        "review": {
-          "status": "pending_review",
-          "approved_buff_types": [],
-          "excluded_buff_types": [],
-          "flags": [
-            "missing_weapon_section",
-            "shared_weapon_requires_clone",
-            "nontrainable"
-          ],
-          "notes": ""
-        }
-      },
-      {
-        "id": "YHVR_AI",
-        "category": "vehicles",
-        "name": "Mini-Sub",
-        "eligible_factions": [
-          "Yuri"
-        ],
-        "stats": {
-          "strength": 340,
-          "armor": "underwater_heavy_armor",
-          "cost": 700,
-          "speed": 6,
-          "sight": 5,
-          "ammo": null,
-          "passengers": 12,
-          "trainable": false,
-          "cloakable": true,
-          "sensors": true
-        },
-        "weapons": [
-          {
-            "id": "MiniSubTorpedo",
-            "damage": 60,
-            "rof": 85,
-            "range": 6,
-            "burst": null,
-            "projectile": "Torpedo",
-            "warhead": "APSplash2",
-            "source_present": true
-          },
-          {
-            "id": "LongVirtualScannerAI",
-            "damage": null,
-            "rof": null,
-            "range": null,
-            "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
-          },
-          {
-            "id": "MiniSubTorpedoE",
-            "damage": 110,
-            "rof": 85,
-            "range": 6,
-            "burst": null,
-            "projectile": "Torpedo",
-            "warhead": "APSplash2",
+            "projectile": "InvisibleAll",
+            "warhead": "NeverUseDummyWH",
             "source_present": true
           }
         ],
@@ -10100,8 +10199,6 @@
         "candidate_buff_types": [
           "health",
           "armor",
-          "damage",
-          "reload",
           "range",
           "speed",
           "sight",
@@ -10116,7 +10213,69 @@
           "approved_buff_types": [],
           "excluded_buff_types": [],
           "flags": [
-            "missing_weapon_section",
+            "shared_weapon_requires_clone",
+            "nontrainable"
+          ],
+          "notes": ""
+        }
+      },
+      {
+        "id": "YHVR_AI",
+        "category": "vehicles",
+        "name": "Hover Transport Yuri",
+        "eligible_factions": [
+          "Yuri"
+        ],
+        "stats": {
+          "strength": 300,
+          "armor": "naval_heavy_armor",
+          "cost": 900,
+          "speed": 6,
+          "sight": 6,
+          "ammo": null,
+          "passengers": 12,
+          "trainable": false,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "LongVirtualScannerAI",
+            "damage": 1,
+            "rof": null,
+            "range": 45,
+            "burst": null,
+            "projectile": "InvisibleAll",
+            "warhead": "NeverUseDummyWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "LongVirtualScannerAI": [
+            "GDIHVR_AI",
+            "LCRF_AI",
+            "NODHVR_AI",
+            "SAPC_AI",
+            "YHVR_AI"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "passenger_capacity",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "pending_review",
+          "approved_buff_types": [],
+          "excluded_buff_types": [],
+          "flags": [
             "shared_weapon_requires_clone",
             "nontrainable"
           ],
@@ -10145,13 +10304,13 @@
         "weapons": [
           {
             "id": "LongVirtualScannerAI",
-            "damage": null,
+            "damage": 1,
             "rof": null,
-            "range": null,
+            "range": 45,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "InvisibleAll",
+            "warhead": "NeverUseDummyWH",
+            "source_present": true
           }
         ],
         "shared_weapon_users": {
@@ -10166,6 +10325,7 @@
         "candidate_buff_types": [
           "health",
           "armor",
+          "range",
           "speed",
           "sight",
           "cost",
@@ -10179,7 +10339,6 @@
           "approved_buff_types": [],
           "excluded_buff_types": [],
           "flags": [
-            "missing_weapon_section",
             "shared_weapon_requires_clone",
             "nontrainable"
           ],
@@ -10208,13 +10367,13 @@
         "weapons": [
           {
             "id": "LongVirtualScannerAI",
-            "damage": null,
+            "damage": 1,
             "rof": null,
-            "range": null,
+            "range": 45,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "InvisibleAll",
+            "warhead": "NeverUseDummyWH",
+            "source_present": true
           }
         ],
         "shared_weapon_users": {
@@ -10229,6 +10388,7 @@
         "candidate_buff_types": [
           "health",
           "armor",
+          "range",
           "speed",
           "sight",
           "cost",
@@ -10242,7 +10402,6 @@
           "approved_buff_types": [],
           "excluded_buff_types": [],
           "flags": [
-            "missing_weapon_section",
             "shared_weapon_requires_clone",
             "nontrainable"
           ],
@@ -11259,6 +11418,84 @@
         }
       },
       {
+        "id": "YMINISUB",
+        "category": "vehicles",
+        "name": "Mini-Sub",
+        "eligible_factions": [
+          "Yuri"
+        ],
+        "stats": {
+          "strength": 340,
+          "armor": "underwater_heavy_armor",
+          "cost": 700,
+          "speed": 6,
+          "sight": 5,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": true,
+          "sensors": true
+        },
+        "weapons": [
+          {
+            "id": "MiniSubTorpedo",
+            "damage": 60,
+            "rof": 85,
+            "range": 6,
+            "burst": null,
+            "projectile": "Torpedo",
+            "warhead": "APSplash2",
+            "source_present": true
+          },
+          {
+            "id": "MiniSubTorpedoE",
+            "damage": 110,
+            "rof": 85,
+            "range": 6,
+            "burst": null,
+            "projectile": "Torpedo",
+            "warhead": "APSplash2",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [
+            "cloak",
+            "sensors"
+          ],
+          "flags": [],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
         "id": "RECKONER",
         "category": "vehicles",
         "name": "Reckoner",
@@ -11767,6 +12004,48 @@
           "excluded_buff_types": [],
           "flags": [
             "shared_weapon_requires_clone",
+            "nontrainable"
+          ],
+          "notes": ""
+        }
+      },
+      {
+        "id": "TSCARRYALL_DUMMY",
+        "category": "vehicles",
+        "name": "Call Carryall from the sky",
+        "eligible_factions": [
+          "GDI"
+        ],
+        "stats": {
+          "strength": 10000000,
+          "armor": "unkillable_armor",
+          "cost": 1,
+          "speed": 16,
+          "sight": 1,
+          "ammo": null,
+          "passengers": null,
+          "trainable": false,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "pending_review",
+          "approved_buff_types": [],
+          "excluded_buff_types": [],
+          "flags": [
+            "no_direct_weapon",
             "nontrainable"
           ],
           "notes": ""
@@ -12744,16 +13023,16 @@
       {
         "id": "TSCARRYALL",
         "category": "aircraft",
-        "name": "Call Carryall from the sky",
+        "name": "Carryall",
         "eligible_factions": [
           "GDI"
         ],
         "stats": {
-          "strength": 10000000,
-          "armor": "unkillable_armor",
-          "cost": 1,
+          "strength": 150,
+          "armor": "air_light_armor",
+          "cost": 750,
           "speed": 16,
-          "sight": 1,
+          "sight": 7,
           "ammo": null,
           "passengers": null,
           "trainable": false,
@@ -13918,13 +14197,13 @@
         "weapons": [
           {
             "id": "FlakWeapon",
-            "damage": null,
-            "rof": null,
-            "range": null,
+            "damage": 45,
+            "rof": 20,
+            "range": 12,
             "burst": null,
-            "projectile": "",
-            "warhead": "",
-            "source_present": false
+            "projectile": "FlakProj",
+            "warhead": "FlakWH",
+            "source_present": true
           }
         ],
         "shared_weapon_users": {
@@ -13936,6 +14215,9 @@
         "candidate_buff_types": [
           "health",
           "armor",
+          "damage",
+          "reload",
+          "range",
           "sight",
           "cost",
           "production",
@@ -13949,8 +14231,11 @@
             "armor",
             "cloak",
             "cost",
+            "damage",
             "health",
             "production",
+            "range",
+            "reload",
             "sight",
             "veteran"
           ],
@@ -13958,7 +14243,6 @@
             "sensors"
           ],
           "flags": [
-            "missing_weapon_section",
             "shared_weapon_requires_clone"
           ],
           "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
@@ -14012,6 +14296,47 @@
             "no_direct_weapon"
           ],
           "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "GAFWLL",
+        "category": "defenses",
+        "name": "Yuri Citadel Wall",
+        "eligible_factions": [
+          "Yuri"
+        ],
+        "stats": {
+          "strength": 750,
+          "armor": "wall_concrete_armor",
+          "cost": 75,
+          "speed": null,
+          "sight": 1,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "pending_review",
+          "approved_buff_types": [],
+          "excluded_buff_types": [],
+          "flags": [
+            "no_direct_weapon"
+          ],
+          "notes": ""
         }
       },
       {
@@ -19783,8 +20108,8 @@
     "deferred_power_count": 47,
     "review_summary": {
       "buff_targets": {
-        "approved": 186,
-        "pending_review": 52
+        "approved": 189,
+        "pending_review": 54
       },
       "powers": {
         "candidate": 52,

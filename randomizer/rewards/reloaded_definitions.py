@@ -594,8 +594,18 @@ STANDALONE_WEAPON_TEMPLATES = {}
 STANDALONE_UNIT_RULE_TEMPLATES = {}
 LINKED_ACCESS_VARIANTS = {}
 LINKED_BUFF_VARIANTS = {}
-LIMITED_HERO_BUILD_LIMITS = {}
-LIMITED_HERO_UNIT_IDS = frozenset()
+# Only reviewed, trainable mobile units with a positive simultaneous-unit cap
+# qualify. Script-only units, mobile factories, and capped structures keep
+# their native limits. Player clones use this list for the Unlimited option.
+LIMITED_HERO_BUILD_LIMITS = {
+    unit_id: target['build_limit']
+    for unit_id, target in BUFF_TARGETS.items()
+    if target.get('category') in {'infantry', 'units', 'aircraft'}
+    and target.get('trainable')
+    and isinstance(target.get('build_limit'), int)
+    and target['build_limit'] > 0
+}
+LIMITED_HERO_UNIT_IDS = frozenset(LIMITED_HERO_BUILD_LIMITS)
 EXISTING_OPEN_TOPPED_IDS = frozenset()
 TRANSPORT_GUNNER_IDS = frozenset()
 TRANSPORT_OPEN_TOPPED_BLOCKED_IDS = frozenset()

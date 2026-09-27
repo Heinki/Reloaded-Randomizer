@@ -72,7 +72,7 @@ the Shop run alive after a failed mission by repeating the same stage with new
 mission choices.
 
 Shop Mode uses all 108 reviewed Reloaded missions and its complete approved
-catalogue: 166 unit access rewards, 1,885 unit buffs, 18 powers, and 44 power
+catalogue: 157 unit access rewards, 1,837 unit buffs, 18 powers, and 44 power
 buffs. Temporary mission cards can add one of 12 Reloaded player boons or 7
 Reloaded AI challenges; active power boons are not offered twice.
 
@@ -94,7 +94,7 @@ preserving the reward. Expanding the launcher log exposes a developer-only
 mission-choice picker for recovery and test completion through normal Shop
 transitions.
 
-The Reloaded APWorld contains 2,161 items, 108 missions, and reserved locations
+The Reloaded APWorld contains 2,104 items, 108 missions, and reserved locations
 for objectives, victories, and Shop Mode. Each Shop seed has 120 shuffled item
 locations. Mission victories release up to 12 unchecked locations across failed
 and restarted runs. Completing the run releases every remaining location before

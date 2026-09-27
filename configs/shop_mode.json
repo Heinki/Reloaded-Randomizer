@@ -538,6 +538,12 @@
         "permanent_access": null,
         "permanent_buff": 5
       },
+      "HCLEG": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
       "HTK": {
         "run_access": 6,
         "run_buff": 4,
@@ -621,6 +627,12 @@
         "run_buff": 2,
         "permanent_access": 10,
         "permanent_buff": 5
+      },
+      "MGTK": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
       },
       "MIND": {
         "run_access": 10,
@@ -1196,6 +1208,12 @@
         "run_access": null,
         "run_buff": 2,
         "permanent_access": null,
+        "permanent_buff": 5
+      },
+      "YMINISUB": {
+        "run_access": 3,
+        "run_buff": 2,
+        "permanent_access": 10,
         "permanent_buff": 5
       },
       "YTNK": {
