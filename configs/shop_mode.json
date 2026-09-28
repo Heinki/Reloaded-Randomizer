@@ -1535,8 +1535,7 @@
           110
         ],
         "effects": {
-          "ore_per_gem": 5,
-          "maximum_gems_per_level": 1
+          "ore_per_gem": 5
         }
       },
       "premium_supplier": {

@@ -353,7 +353,7 @@ def _current_shop_feature_checks():
             and len(locked) == 2 and len(premium) == 2
         ),
         'command_coin_dividend_valid': bool(
-            dividend.reward.gem_dividend_meta_coins == 3
+            dividend.reward.gem_dividend_meta_coins == 18
             and dividend.profile.meta_coins == dividend.reward.meta_coins
         ),
         'run_completion_modifier_bonus_valid': bool(

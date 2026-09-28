@@ -1602,9 +1602,16 @@ class ShopPolishController(ShopArchipelagoController):
                 'as Veterans.'
             ),
             'gem_dividend': (
-                f'On run victory, gain 1 Gem per '
-                f'{effects.get("ore_per_gem", 0)} remaining Ore, capped at '
-                f'{effects.get("maximum_gems_per_level", 0)} per level.'
+                f'Each full {effects.get("ore_per_gem", 0)} Ore pays 1 Gem '
+                'per upgrade level. At level 3, each group pays 3 Gems. '
+                'No cap.\n'
+                'Normal run: paid once on final mission victory or a defeat '
+                'that ends the run. Final victory includes its Ore reward; '
+                'defeat uses Ore held when you lose.\n'
+                'Endless run: paid after every mission victory and on a '
+                'run-ending defeat.\n'
+                'Emergency Revival and Give Up pay nothing. Dividend does '
+                'not deduct Ore.'
             ),
             'premium_supplier': (
                 f'From stage {effects.get("minimum_stage", 0)}, guarantee '
@@ -1774,6 +1781,11 @@ class ShopPolishController(ShopArchipelagoController):
                 f'+{gem_text(modifier_completion_gems)}'
                 if modifier_completion_gems else ''
             )
+            + (
+                f' | Gem Dividend: +'
+                f'{gem_text(transition.reward.gem_dividend_meta_coins)}'
+                if transition.reward.gem_dividend_meta_coins else ''
+            )
         )
         if transition.run.status is RunStatus.COMPLETED:
             self.shop_panels.select(self.shop_summary_panel)
@@ -1789,6 +1801,11 @@ class ShopPolishController(ShopArchipelagoController):
         self._set_shop_message(
             f'{source}: {code} failed at stage '
             f'{transition.run.failed_stage}. Shop run ended.'
+            + (
+                f' Gem Dividend: +'
+                f'{gem_text(transition.gem_dividend_meta_coins)}.'
+                if transition.gem_dividend_meta_coins else ''
+            )
             + (
                 f' Recovery Salvage saved {transition.salvaged_run_coins} Ore '
                 'for the next run.'

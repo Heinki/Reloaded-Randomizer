@@ -1596,6 +1596,8 @@ class ShopController(ShopPolishController):
         if not transition.changed:
             return False
         self._shop_launch_run = transition.run
+        if transition.profile is not None:
+            self.shop_profile = transition.profile
         self.shop_run = transition.run
         self.show_shop_failure_result(source, code, transition)
         self.refresh_shop_mode()
