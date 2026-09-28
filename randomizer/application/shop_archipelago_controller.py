@@ -65,7 +65,7 @@ class ShopArchipelagoController:
         variable = self.__dict__.get('progression_mode_var')
         if variable is None or variable.get() != 'Shop Mode':
             return super().filtered_missions_for_seed()
-        return self._shop_campaign_missions(CAMPAIGN_FILTERS[0])
+        return self._shop_run_mission_pool()
 
     def archipelago_shop_context(self):
         """Return last validated AP identity and Shop-compatible rewards."""
@@ -184,8 +184,10 @@ class ShopArchipelagoController:
         self._archipelago_allowed_locations = frozenset(allowed)
 
     def _shop_run_mission_pool(self, run=None):
+        fresh = run is None
         run = self.shop_run if run is None else run
-        if run is not None and run.eligible_mission_codes:
+        if (run is not None and run.eligible_mission_codes
+                and (not fresh or run.status is RunStatus.ACTIVE)):
             codes = run.eligible_mission_codes
         else:
             shop = self.archipelago_shop_slot_settings()
@@ -201,7 +203,14 @@ class ShopArchipelagoController:
             if run is not None
             else CAMPAIGN_FILTERS[0]
         )
-        return self._shop_campaign_missions(campaign)
+        missions = self._shop_campaign_missions(campaign)
+        if fresh and self.archipelago_shop_slot_settings() is None:
+            excluded = self.excluded_mission_codes
+            missions = [
+                mission for mission in missions
+                if str(mission.get('code') or '').upper() not in excluded
+            ]
+        return missions
 
     @staticmethod
     def _shop_location_group(check_id, locations, event_stem):

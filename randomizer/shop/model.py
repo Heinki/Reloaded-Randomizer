@@ -214,6 +214,8 @@ class ShopRun:
     reward_mode: str = 'Standard'
     reward_settings: Mapping[str, Any] = field(default_factory=dict)
     eligible_mission_codes: tuple[str, ...] = ()
+    allow_repeats: bool = False
+    endless: bool = False
     rerolls_used: int = 0
     difficulty_assists_used: int = 0
     assisted_mission_code: str | None = None
@@ -256,6 +258,8 @@ class ShopRun:
             'reward_mode': self.reward_mode,
             'reward_settings': deepcopy(dict(self.reward_settings)),
             'eligible_mission_codes': list(self.eligible_mission_codes),
+            'allow_repeats': self.allow_repeats,
+            'endless': self.endless,
             'rerolls_used': self.rerolls_used,
             'difficulty_assists_used': self.difficulty_assists_used,
             'assisted_mission_code': self.assisted_mission_code,
