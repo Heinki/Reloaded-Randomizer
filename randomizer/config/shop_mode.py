@@ -208,6 +208,7 @@ def validate_shop_mode_config(sections, path, invalid):
         'random_tier_1_unlock': ('unlocks_per_level', 'tier'),
         'random_tier_2_unlock': ('unlocks_per_level', 'tier'),
         'random_tier_3_unlock': ('unlocks_per_level', 'tier'),
+        'global_production_speed': ('speed_percent_per_level',),
     }
     upgrades = sections['permanent_upgrades']
     if not set(required_upgrades).issubset(upgrades):
@@ -353,6 +354,7 @@ def validate_shop_mode_config(sections, path, invalid):
         'force_hardest_difficulty',
         'force_enemy_challenge',
         'rotate_shop_faction',
+        'production_roulette',
     }
     for modifier_id, definition in sections['modifiers'].items():
         effects = definition.get('effects') if isinstance(definition, dict) else None
