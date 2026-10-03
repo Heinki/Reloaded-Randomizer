@@ -1,6 +1,7 @@
 """Standalone Shop Mode UI coordination."""
 
 from collections import Counter
+from randomizer.shop.text import gem_text
 from dataclasses import replace
 from hashlib import sha256
 import uuid
@@ -197,6 +198,7 @@ class ShopController(ShopPolishController):
         self._shop_permanent_buff_target_ids = {}
         self._shop_permanent_power_buff_rows = {}
         self._shop_permanent_power_buff_buyable = {}
+        self._shop_permanent_power_buff_refundable = {}
         self._shop_permanent_power_buff_target_ids = {}
         self._shop_loadout_rows = {}
         self._shop_pending_loadout_selection = set()
@@ -2823,9 +2825,17 @@ class ShopController(ShopPolishController):
 
     def _refresh_permanent_power_buffs(self, active_run):
         tree = self.shop_permanent_power_buff_tree
+        previous_selection = tree.selection()
+        selected_reward_id = self.__dict__.pop(
+            '_shop_permanent_power_buff_focus_reward_id', ''
+        ) or (
+            self._shop_permanent_power_buff_rows.get(previous_selection[0], '')
+            if previous_selection else ''
+        )
         tree.delete(*tree.get_children())
         self._shop_permanent_power_buff_rows = {}
         self._shop_permanent_power_buff_buyable = {}
+        self._shop_permanent_power_buff_refundable = {}
         owned = set(self.shop_profile.permanent_power_unlocks)
         owned_entries = sorted(
             (
@@ -2870,6 +2880,7 @@ class ShopController(ShopPolishController):
         cameo_images = self._prepare_shop_unit_cameos(
             entry.reward_id for entry in entries
         )
+        restore_iid = ''
         for index, entry in enumerate(entries):
             stacks = stacks_by_reward.get(entry.reward_id, 0)
             maximum = entry.stack_limit or 1
@@ -2895,7 +2906,9 @@ class ShopController(ShopPolishController):
                     self._shop_catalogue_display_name(
                         entry, effect_state, stacks
                     ),
+                    '◀' if stacks and not active_run else '',
                     f'{stacks} / {maximum}',
+                    '▶' if buyable else '',
                     state,
                     'Max' if maxed else f'{price} Gems',
                 ),
@@ -2906,6 +2919,14 @@ class ShopController(ShopPolishController):
             tree.insert('', 'end', **options)
             self._shop_permanent_power_buff_rows[iid] = entry.reward_id
             self._shop_permanent_power_buff_buyable[iid] = buyable
+            self._shop_permanent_power_buff_refundable[iid] = bool(
+                stacks and not active_run
+            )
+            if entry.reward_id == selected_reward_id:
+                restore_iid = iid
+        if restore_iid:
+            tree.selection_set(restore_iid)
+            tree.see(restore_iid)
         self.refresh_permanent_power_buff_button()
 
     def refresh_permanent_power_button(self, _event=None):
@@ -3127,6 +3148,50 @@ class ShopController(ShopPolishController):
             self._report_profile_purchase(outcome, reward_id)
         self.refresh_shop_mode()
 
+    def on_shop_permanent_power_buff_tree_click(self, event):
+        tree = self.shop_permanent_power_buff_tree
+        row_id = tree.identify_row(event.y)
+        column = tree.identify_column(event.x)
+        if not row_id or column not in {'#2', '#4'}:
+            return None
+        tree.selection_set(row_id)
+        tree.focus(row_id)
+        if column == '#2' and self._shop_permanent_power_buff_refundable.get(
+            row_id, False
+        ):
+            self.refund_selected_permanent_power_buff()
+        elif column == '#4' and self._shop_permanent_power_buff_buyable.get(
+            row_id, False
+        ):
+            self.buy_selected_permanent_power_buff()
+        return 'break'
+
+    def refund_selected_permanent_power_buff(self):
+        selected = self.shop_permanent_power_buff_tree.selection()
+        if not selected:
+            return
+        reward_id = self._shop_permanent_power_buff_rows.get(selected[0])
+        if not reward_id:
+            return
+        self._shop_permanent_power_buff_focus_reward_id = reward_id
+        try:
+            outcome = self.shop_service.refund_permanent_power_buff(reward_id)
+        except ShopTransitionError as exc:
+            self._set_shop_message(exc, error=True)
+        else:
+            if outcome.validation.allowed:
+                self._set_shop_message(
+                    f'Removed one {reward_id} stack. Refunded '
+                    f'{gem_text(outcome.validation.cost)}.'
+                )
+            else:
+                self._set_shop_message(
+                    'Buff adjustment failed: '
+                    f'{outcome.validation.result.value.replace("_", " ")}.',
+                    error=True,
+                )
+        self.refresh_shop_mode()
+
     def buy_selected_permanent_power_buff(self):
         selected = self.shop_permanent_power_buff_tree.selection()
         if not selected:
@@ -3134,6 +3199,7 @@ class ShopController(ShopPolishController):
         reward_id = self._shop_permanent_power_buff_rows.get(selected[0])
         if not reward_id:
             return
+        self._shop_permanent_power_buff_focus_reward_id = reward_id
         try:
             outcome = self.shop_service.purchase_permanent_buff(reward_id)
         except ShopTransitionError as exc:
