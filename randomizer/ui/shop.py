@@ -649,7 +649,7 @@ def build_shop_tab(self, workspace_tabs):
         permanent_buffs,
         text=(
             'Spend Gems on lasting unit buff stacks. Buffs apply in '
-            'future runs whenever that permanently unlocked unit is used. '
+            'future runs whenever that unit is available, including core units. '
             'Between runs, use arrows to buy or refund one stack for its '
             'full Gem price.'
         ),

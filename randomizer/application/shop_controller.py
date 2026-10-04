@@ -46,6 +46,7 @@ from randomizer.shop.catalogue import (
     canonical_reward_for_id,
     catalogue_entry,
     shop_catalogue,
+    shop_always_available_unit_ids,
     shop_entry_available,
 )
 from randomizer.shop.config import SHOP_CONFIG
@@ -2130,6 +2131,8 @@ class ShopController(ShopPolishController):
             add_access('Tier 1 Starter', unit_id, raw_unit=True)
         for unit_id in active_shop_starter_defense_ids(run):
             add_access('Tier 1 Defense', unit_id, raw_unit=True)
+        for unit_id in sorted(shop_always_available_unit_ids()):
+            add_access('Always Available', unit_id, raw_unit=True)
         ap_units = set(ap_unit_entitlement_ids(run.ap_entitlements_snapshot))
         local_units = set(self.shop_profile.permanent_unit_unlocks)
         for reward_id in run.selected_permanent_units:
@@ -2710,6 +2713,10 @@ class ShopController(ShopPolishController):
         self._shop_permanent_buff_target_ids = {
             entry.reward_id: entry.target_id for entry in owned_entries
         }
+        for target_id in sorted(shop_always_available_unit_ids()):
+            label = unit_display_label(target_id)
+            labels.append(label)
+            self._shop_permanent_buff_target_ids[label] = target_id
         selected_label = self.shop_permanent_buff_target_var.get()
         if selected_label not in self._shop_permanent_buff_target_ids:
             selected_label = labels[0] if labels else ''
