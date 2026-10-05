@@ -5,9 +5,18 @@ import unittest
 from dataclasses import replace
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from Archipelago.bundle_generation import _checked_in_generation_rules
+
+# CI has no game installation. Use the reviewed rules snapshot before imports
+# build the reward catalogue, and retain it for lazy clone-template reads.
+unittest.enterModuleContext(patch(
+    'randomizer.content.inventory.read_rules_sections',
+    return_value=(_checked_in_generation_rules(), 'checked-in-apworld-rules'),
+))
 
 from randomizer.application.shop_controller import ShopController
 from randomizer.shop.catalogue import shop_catalogue, shop_entry_available
