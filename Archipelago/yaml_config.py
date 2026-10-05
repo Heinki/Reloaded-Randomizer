@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from randomizer.core.version import ARCHIPELAGO_VERSION
 from Archipelago.player_settings import gameplay_config_snapshot
 from randomizer.config.player import parse_simple_yaml_text
 
@@ -31,7 +32,7 @@ def serialize_player_yaml(settings, slot_name):
         f"game: {GAME_NAME}\n"
         f"description: {GAME_NAME} Randomizer player settings\n"
         "requires:\n"
-        "  version: 0.6.7\n\n"
+        f"  version: {ARCHIPELAGO_VERSION}\n\n"
         f"{GAME_NAME}:\n"
         "  # Reuse this file for every new Archipelago seed.\n"
         "  # Archipelago generates missions, Grid, starters and rewards.\n"

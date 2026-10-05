@@ -18,7 +18,7 @@
 [![Security checks](https://github.com/Heinki/Reloaded-Randomizer/actions/workflows/security.yml/badge.svg)](https://github.com/Heinki/Reloaded-Randomizer/actions/workflows/security.yml)
 
 A Windows campaign randomizer for C&C Reloaded 2.7.0 with standalone and
-Archipelago 0.6.7 play. It creates deterministic mission and reward plans,
+Archipelago 0.6.8 play. It creates deterministic mission and reward plans,
 launches generated copies of campaign maps, tracks objectives and victories,
 and applies earned unit access, buffs, powers, and enemy rewards.
 

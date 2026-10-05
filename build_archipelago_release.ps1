@@ -29,9 +29,14 @@ $launcherVersion = (& python -c (
 $apworldVersion = (& python -c (
     "from randomizer.core.version import APWORLD_VERSION; print(APWORLD_VERSION)"
 )).Trim()
+$apworldVersion = ((@($apworldVersion.Split('.')) + @('0', '0'))[0..2] -join '.')
 $worldSourceManifest = Get-Content -LiteralPath (
     Join-Path $PSScriptRoot "Archipelago\APWorld\cnc_reloaded\archipelago.json.in"
 ) -Raw | ConvertFrom-Json
+
+$archipelagoVersion = (& python -c (
+    "from randomizer.core.version import ARCHIPELAGO_VERSION; print(ARCHIPELAGO_VERSION)"
+)).Trim()
 
 $payloadFiles = @(
     "CnCReloadedRandomizer.exe",
@@ -48,7 +53,7 @@ foreach ($name in $payloadFiles) {
 $releaseManifest = [ordered]@{
     format = 1
     launcher_version = $launcherVersion
-    archipelago_version = "0.6.7"
+    archipelago_version = $archipelagoVersion
     apworld_game = $worldSourceManifest.game
     apworld_version = $apworldVersion
     files = $payloadHashes

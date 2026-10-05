@@ -89,7 +89,7 @@ def build(
 
     manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
     manifest.update({
-        'world_version': APWORLD_VERSION,
+        'world_version': '.'.join((APWORLD_VERSION.split('.') + ['0', '0'])[:3]),
         # Format 8 output only uses container features readable since format 7.
         'compatible_version': 7,
         'version': 8,

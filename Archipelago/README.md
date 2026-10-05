@@ -23,7 +23,7 @@ multiworld game.
 
 - C&C Reloaded 2.7.0 in a separate, unmodified game installation
 - C&C Reloaded Randomizer Launcher and matching APWorld release
-- Archipelago 0.6.7 or newer
+- Archipelago 0.6.8 or newer
 - `cnc_reloaded.apworld` from the same Randomizer release as the launcher
 
 Launcher, APWorld, and Player YAML catalogues must be compatible. Mental Omega
@@ -207,6 +207,6 @@ becoming ordinary Shop rewards. Only a completed run belonging to the current AP
 can report its goal.
 
 Run `tools/check_archipelago_integration.py --archipelago-root /path/to/Archipelago`
-with Archipelago 0.6.7's Python environment to verify YAML, generation, item fill,
+with Archipelago 0.6.8's Python environment to verify YAML, generation, item fill,
 beatability, handshake, and Shop controls. Add `--apworld /path/to/game.apworld`
 to test the packaged world.

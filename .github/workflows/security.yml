@@ -65,10 +65,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - label: '0.6.7'
-            commit: debe4cf035c7c15efe6fb95f72343af0d420c68c
-          - label: '0.6.8-dev'
-            commit: 1e1efa3f5c8fd0a63df0d0f95ec6c824e413318a
+          - label: '0.6.8'
+            commit: 54803be064fc7e80c4628777ed0b46a9390f255f
     steps:
       - name: Check out source
         uses: actions/checkout@v7
@@ -83,7 +81,7 @@ jobs:
           python -m pip install --disable-pip-version-check
           -r requirements-runtime.txt
           schema==0.7.8 PyYAML==6.0.3 jellyfish==1.2.1
-          jinja2==3.1.6 platformdirs==4.9.4 typing_extensions==4.15.0
+          jinja2==3.1.6 platformdirs==4.10.1 typing_extensions==4.15.0
           pathspec==1.0.4 bsdiff4==1.2.6
       - name: Build maximum-capacity fixture
         run: |
