@@ -235,7 +235,11 @@ def shop_catalogue_by_reward_id():
 def shop_entry_available(
     entry, *, campaign_filter, reward_mode, strict_faction=False
 ):
-    """Return whether current mode can use entry's canonical faction scope."""
+    """Filter access stock by faction; upgrades depend on owned access instead."""
+    # Starters and other active access can fall outside the stock faction pool.
+    # The catalogue UI and purchase validator check ownership for these buffs.
+    if entry.reward_type in {ShopRewardType.UNIT_BUFF, ShopRewardType.POWER_BUFF}:
+        return True
     filter_value = str(campaign_filter)
     selected_faction = CAMPAIGN_FILTER_BY_LABEL.get(
         filter_value, {}

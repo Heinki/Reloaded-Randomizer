@@ -35,6 +35,8 @@ jobs:
         run: >-
           python -c "from randomizer.config.static import REQUIRED_STATIC_CONFIGS,
           validate_static_configs; validate_static_configs(REQUIRED_STATIC_CONFIGS)"
+      - name: Check Shop faction upgrade regressions
+        run: python tools/check_shop_faction_upgrades.py
       - name: Build launcher and APWorld
         shell: powershell
         run: .\build_exe.ps1 -Output 'release\CnCReloadedRandomizer.exe'
