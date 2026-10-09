@@ -257,6 +257,14 @@ def _active_direct_buff_counts(
         active_rewards,
         enabled=share_basic_equivalent_buffs,
     )
+    # A shared entitlement does not unlock every peer. Once materialized,
+    # each variant must independently be available in this mission.
+    role_rewards = buffs_with_unlocked_access(
+        role_rewards,
+        require_unlocked_access=require_unlocked_access,
+        additional_unlocked_tech_ids=additional_unlocked_tech_ids,
+        share_basic_equivalent_buffs=share_basic_equivalent_buffs,
+    )
     global_production_count = 0
     global_production_limit = None
     identity_rewards = []

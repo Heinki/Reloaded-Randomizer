@@ -594,6 +594,42 @@ STANDALONE_WEAPON_TEMPLATES = {}
 STANDALONE_UNIT_RULE_TEMPLATES = {}
 LINKED_ACCESS_VARIANTS = {}
 LINKED_BUFF_VARIANTS = {}
+# Economy units share upgrades across factions, independently of Chaos role
+# sharing. Keep their native identities and stats separate from linked forms.
+SHARED_UNIT_BUFF_GROUPS = {
+    'AMCV': ('MCVs', tuple(str(unit).upper() for unit in _FACTIONS['conyard_by_mcv'])),
+    'HARV': (
+        'Harvesters',
+        (*tuple(str(values[0]).upper() for values in _FACTIONS['miners'].values()), 'SHARV'),
+    ),
+}
+_SHARED_UNIT_BUFF_ROOTS = {
+    unit_id: root_id
+    for root_id, (_label, unit_ids) in SHARED_UNIT_BUFF_GROUPS.items()
+    for unit_id in unit_ids
+}
+
+
+def shared_unit_buff_target_id(unit_id):
+    unit_id = str(unit_id or '').upper()
+    return _SHARED_UNIT_BUFF_ROOTS.get(unit_id, unit_id)
+
+
+def shared_unit_buff_ids(unit_id, buff_type=None):
+    unit_id = str(unit_id or '').upper()
+    group = SHARED_UNIT_BUFF_GROUPS.get(shared_unit_buff_target_id(unit_id))
+    unit_ids = group[1] if group else (unit_id,) if unit_id else ()
+    return frozenset(
+        peer for peer in unit_ids
+        if not group or buff_type is None
+        or buff_type in BUFF_TARGETS.get(peer, {}).get('allowed_buff_types', ())
+    )
+
+
+def unit_buff_target_label(unit_id):
+    group = SHARED_UNIT_BUFF_GROUPS.get(shared_unit_buff_target_id(unit_id))
+    return group[0] + ' (shared buffs)' if group else unit_display_label(unit_id)
+
 # Only reviewed, trainable mobile units with a positive simultaneous-unit cap
 # qualify. Script-only units, mobile factories, and capped structures keep
 # their native limits. Player clones use this list for the Unlimited option.
@@ -760,3 +796,27 @@ REWARD_BY_BUFF_KEY = {
     (reward['unit'], reward['buff_type']): reward
     for reward in UNIT_BUFF_REWARDS
 }
+
+# Preserve published reward names in REWARD_POOL for AP item IDs. Canonicalize
+# old per-faction rewards to one stack account per shared effect instead.
+for _reward in UNIT_BUFF_REWARDS:
+    _root_id = shared_unit_buff_target_id(_reward['unit'])
+    if _root_id not in SHARED_UNIT_BUFF_GROUPS:
+        continue
+    _shared_reward = REWARD_BY_BUFF_KEY.get((_root_id, _reward['buff_type']))
+    if _shared_reward is None:
+        continue
+    _shared_reward['shared_buff_label'] = SHARED_UNIT_BUFF_GROUPS[_root_id][0]
+    _shared_reward['shared_buff_units'] = sorted(shared_unit_buff_ids(
+        _root_id, _reward['buff_type'],
+    ))
+    _shared_reward['factions'] = sorted({
+        faction for peer in _shared_reward['shared_buff_units']
+        for faction in BUFF_TARGETS[peer]['factions']
+    })
+    _shared_reward['description'] = (
+        f'{_shared_reward["shared_buff_label"]} share this upgrade across factions. '
+        'Each compatible variant uses its own base stats.'
+    )
+    if _reward['name'] != _shared_reward['name']:
+        REWARD_ALIASES[_reward['name']] = _shared_reward['name']

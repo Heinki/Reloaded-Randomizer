@@ -1,6 +1,7 @@
 """Unlock display models, labels, sources, and tooltips."""
 
 from randomizer.rewards.display import inherited_unit_buff_rewards
+from randomizer.rewards.reloaded_definitions import shared_unit_buff_ids
 from randomizer.config.tuning import mission_assistance_stack_count
 from randomizer.rewards.power_buff_definitions import (
     power_payload_buff_unit_ids,
@@ -112,8 +113,11 @@ class UnlockDataController:
             if reward.get('kind') == 'buff' and reward.get('unit'):
                 source_unit = reward['unit']
                 equivalent_units = unit_role_equivalents(source_unit)
+                shared_units = shared_unit_buff_ids(source_unit, reward.get('buff_type'))
+                if len(shared_units) > 1:
+                    equivalent_units = shared_units
                 if (
-                    share_chaos_role_buffs
+                    (share_chaos_role_buffs or len(shared_units) > 1)
                     and not reward.get('global_buff')
                     and len(equivalent_units) > 1
                 ):
@@ -445,7 +449,9 @@ class UnlockDataController:
                         equivalents = unit_role_equivalents(reward['unit'])
                         unit_ids.update(equivalents)
                     else:
-                        unit_ids.add(reward['unit'])
+                        unit_ids.update(shared_unit_buff_ids(
+                            reward['unit'], reward.get('buff_type'),
+                        ))
                 continue
             unit_ids.update(tech_ids_for_rewards([reward]))
         return sorted(unit_ids, key=self.unit_faction_sort_key)
@@ -485,6 +491,11 @@ class UnlockDataController:
         unit_id = str(reward.get('unit') or '').upper()
         if reward.get('kind') == 'buff' and unit_id:
             keys.add(f'unit:{unit_id}')
+            keys.update(
+                f'unit:{peer}' for peer in shared_unit_buff_ids(
+                    unit_id, reward.get('buff_type'),
+                )
+            )
             if (
                 not reward.get('global_buff')
                 and share_role_buffs
@@ -1173,6 +1184,9 @@ class UnlockDataController:
                     display_reward = dict(reward)
                     if entry.get('kind') == 'unit':
                         display_reward['unit'] = entry['id']
+                        display_reward.pop('shared_buff_units', None)
+                        display_reward.pop('shared_buff_label', None)
+                        display_reward['_runtime_canonical'] = True
                     buffs.setdefault(
                         key, {'reward': display_reward, 'count': 0}
                     )['count'] += 1

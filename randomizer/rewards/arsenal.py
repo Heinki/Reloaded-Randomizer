@@ -10,6 +10,7 @@ from randomizer.rewards.catalogue import (
     REWARD_POOL,
     canonical_reward,
     linked_buff_variant_ids,
+    shared_unit_buff_ids,
     unit_display_label,
     unit_role_equivalents,
 )
@@ -360,7 +361,9 @@ def reward_matches_arsenal(reward, arsenal):
     power_id = str(reward.get('superweapon') or '').upper()
     if unit_id:
         selected = arsenal_unit_ids(arsenal)
-        return bool(set(linked_buff_variant_ids(unit_id)).intersection(selected))
+        peers = set(linked_buff_variant_ids(unit_id))
+        peers.update(shared_unit_buff_ids(unit_id, reward.get('buff_type')))
+        return bool(peers.intersection(selected))
     if power_id:
         return power_id in arsenal_power_ids(arsenal)
     return bool(reward.get('global_buff') and arsenal_unit_ids(arsenal))

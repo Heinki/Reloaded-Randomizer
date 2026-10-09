@@ -3,7 +3,10 @@
 from collections import Counter
 from tkinter import ttk
 
-from randomizer.rewards.reloaded_definitions import unit_display_label
+from randomizer.rewards.reloaded_definitions import (
+    SHARED_UNIT_BUFF_GROUPS, shared_unit_buff_target_id,
+    unit_buff_target_label, unit_display_label,
+)
 from randomizer.rewards.display import (
     buff_effect_comparison_lines, buff_effect_lines, reward_display_name,
     unit_buff_counts,
@@ -734,12 +737,17 @@ class ShopPolishController(ShopArchipelagoController):
         labels = []
         mapping = {}
         for target_id in target_ids:
-            name = unit_display_label(target_id) if is_unit else target_id
-            label = f'{name} [{target_id}]'
+            name = unit_buff_target_label(target_id) if is_unit else target_id
+            label = (
+                name if is_unit and target_id in SHARED_UNIT_BUFF_GROUPS
+                else f'{name} [{target_id}]'
+            )
             labels.append(label)
             mapping[label] = target_id
         self._shop_buff_target_ids = mapping
         requested = self.__dict__.pop('_shop_requested_buff_target_id', '')
+        if is_unit:
+            requested = shared_unit_buff_target_id(requested)
         current = self.shop_buff_target_var.get()
         if requested:
             current = next(
@@ -1139,9 +1147,9 @@ class ShopPolishController(ShopArchipelagoController):
                 if locked else state
             )
             self._shop_catalogue_details[iid] = (
-                f'{entry.reward_id}\nType: '
+                f'{reward_display_name(canonical_reward_for_id(entry.reward_id))}\nType: '
                 f'{entry.reward_type.value.replace("_", " ").title()}\n'
-                f'Target: {entry.target_id or "—"}\n'
+                f'Target: {unit_buff_target_label(entry.target_id) if entry.reward_type is ShopRewardType.UNIT_BUFF else entry.target_id or "—"}\n'
                 f'Price: {self._entry_price_text(entry, price, stacks)}\n'
                 f'State: {reason}'
                 + (

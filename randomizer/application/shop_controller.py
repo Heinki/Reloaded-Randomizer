@@ -22,7 +22,12 @@ from ._dependencies import (
     ensure_unit_cameos,
 )
 
-from randomizer.rewards.reloaded_definitions import unit_display_label
+from randomizer.rewards.reloaded_definitions import (
+    SHARED_UNIT_BUFF_GROUPS,
+    shared_unit_buff_target_id,
+    unit_buff_target_label,
+    unit_display_label,
+)
 from randomizer.rewards.rules import tech_ids_for_rewards
 from randomizer.rewards.display import (
     buff_effect_lines, reward_display_name, unit_buff_counts, inherited_unit_buff_rewards,
@@ -2073,10 +2078,11 @@ class ShopController(ShopPolishController):
         else:
             if validation.allowed:
                 self._shop_focus_reward_id = reward_id
+                display_name = reward_display_name(canonical_reward_for_id(reward_id))
                 self._set_shop_message(
-                    f'Purchased {reward_id} with a Free Buff Token.'
+                    f'Purchased {display_name} with a Free Buff Token.'
                     if validation.cost == 0 else
-                    f'Purchased {reward_id} for {validation.cost} Ore.'
+                    f'Purchased {display_name} for {validation.cost} Ore.'
                 )
             else:
                 self._set_shop_message(
@@ -2115,6 +2121,9 @@ class ShopController(ShopPolishController):
             )
             if not target_id:
                 return
+            unit_id = target_id
+            if not is_power:
+                target_id = shared_unit_buff_target_id(target_id)
             key = (is_power, target_id)
             record = records.setdefault(key, {
                 'sources': [],
@@ -2123,7 +2132,10 @@ class ShopController(ShopPolishController):
                 'is_power': is_power,
                 'buffs': [],
                 'archipelago_item': False,
+                'unit_ids': [],
             })
+            if unit_id not in record['unit_ids']:
+                record['unit_ids'].append(unit_id)
             if source not in record['sources']:
                 record['sources'].append(source)
             record['archipelago_item'] |= bool(archipelago)
@@ -2194,6 +2206,7 @@ class ShopController(ShopPolishController):
                     'is_power': is_power,
                     'buffs': [],
                     'archipelago_item': False,
+                    'unit_ids': [],
                 })
             record['buffs'].append((source, reward_id, int(stacks)))
             if source == 'AP Received':
@@ -2242,6 +2255,8 @@ class ShopController(ShopPolishController):
                 *record['sources'],
                 str(record['item']),
                 record['target_id'],
+                *(f'{unit_display_label(unit)} {unit}' for unit in record['unit_ids']),
+                unit_buff_target_label(record['target_id']) if not record['is_power'] else '',
                 *buff_lines,
             )).casefold()
             if not term or term in haystack:
@@ -2271,6 +2286,8 @@ class ShopController(ShopPolishController):
                 if is_power or item in self._shop_entry_by_reward_id
                 else f'{unit_display_label(target_id)} [{target_id}]'
             )
+            if not is_power and target_id in SHARED_UNIT_BUFF_GROUPS:
+                item_label = unit_buff_target_label(target_id)
             total_stacks = sum(
                 stacks for _source, _reward, stacks in record['buffs']
             )
@@ -2302,6 +2319,14 @@ class ShopController(ShopPolishController):
                 '',
                 'Attached buffs:',
             ]
+            if not is_power and target_id in SHARED_UNIT_BUFF_GROUPS:
+                members = SHARED_UNIT_BUFF_GROUPS[target_id][1]
+                details[3:3] = [
+                    'Shared across: ' + ', '.join(
+                        f'{unit_display_label(unit)} [{unit}]' for unit in members
+                    ),
+                    'Each compatible variant receives the same stacks when available.',
+                ]
             details.extend(record['buff_lines'] or ('None',))
             self._shop_loadout_details[iid] = '\n'.join(details)
         self._rebuild_shop_loadout_upgrade_buttons()
@@ -2710,13 +2735,25 @@ class ShopController(ShopPolishController):
             ),
             key=lambda entry: entry.reward_id.casefold(),
         )
-        labels = [entry.reward_id for entry in owned_entries]
+        labels = list(dict.fromkeys(
+            unit_buff_target_label(entry.target_id)
+            if shared_unit_buff_target_id(entry.target_id) in SHARED_UNIT_BUFF_GROUPS
+            else entry.reward_id
+            for entry in owned_entries
+        ))
         self._shop_permanent_buff_target_ids = {
-            entry.reward_id: entry.target_id for entry in owned_entries
+            (
+                unit_buff_target_label(entry.target_id)
+                if shared_unit_buff_target_id(entry.target_id) in SHARED_UNIT_BUFF_GROUPS
+                else entry.reward_id
+            ): shared_unit_buff_target_id(entry.target_id)
+            for entry in owned_entries
         }
         for target_id in sorted(shop_always_available_unit_ids()):
-            label = unit_display_label(target_id)
-            labels.append(label)
+            target_id = shared_unit_buff_target_id(target_id)
+            label = unit_buff_target_label(target_id)
+            if label not in labels:
+                labels.append(label)
             self._shop_permanent_buff_target_ids[label] = target_id
         selected_label = self.shop_permanent_buff_target_var.get()
         if selected_label not in self._shop_permanent_buff_target_ids:

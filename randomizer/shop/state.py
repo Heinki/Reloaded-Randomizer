@@ -246,6 +246,9 @@ def _purchase_records(value, field, quantity_field, record_type):
             f'{field}[{index}].{quantity_field}',
             1,
         )
+        if record_type is BuffPurchase:
+            from randomizer.rewards.reloaded_definitions import REWARD_ALIASES
+            reward_id = REWARD_ALIASES.get(reward_id, reward_id)
         combined[reward_id] = combined.get(reward_id, 0) + quantity
     return tuple(
         record_type(reward_id, quantity)

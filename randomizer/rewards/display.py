@@ -15,6 +15,7 @@ from .reloaded_definitions import (
     capped_movement_speed,
     movement_speed_ceiling,
     unit_display_label,
+    shared_unit_buff_ids,
 )
 from randomizer.config.tuning import (
     REWARD_PLANNING,
@@ -182,6 +183,9 @@ def reward_display_name(reward):
     if reward.get('enemy_reward'):
         return enemy_reward_display_name(reward)
     name = reward.get('name', 'Unknown reward')
+    if reward.get('shared_buff_label'):
+        effect = name.removeprefix(unit_display_label(reward['unit']) + ' ')
+        return f'{reward["shared_buff_label"]} {effect.removesuffix(" I")} (shared)'
     if reward.get('kind') == 'buff' and (
         reward.get('buff_type') or reward.get('power_buff_type')
     ):
@@ -438,10 +442,20 @@ def unit_buff_counts(rewards, unit_id):
     inherited = inherited_unit_buff_rewards(rewards, unit_id)
     counts = {}
     for reward in [*rewards, *inherited]:
-        if reward.get('kind') != 'buff' or reward.get('unit') != unit_id:
+        if (
+            reward.get('kind') != 'buff'
+            or (
+                reward.get('_shared_buff_expanded')
+                and reward.get('unit') != unit_id
+            )
+            or unit_id not in shared_unit_buff_ids(
+                reward.get('unit'), reward.get('buff_type'),
+            )
+        ):
             continue
         kind = reward.get('buff_type')
-        counts[kind] = effective_buff_count(reward, counts.get(kind, 0) + 1)
+        variant = dict(reward, unit=unit_id, _runtime_canonical=True)
+        counts[kind] = effective_buff_count(variant, counts.get(kind, 0) + 1)
     return counts
 
 
@@ -452,6 +466,21 @@ def buff_effect_lines(
     reward = canonical_reward(reward)
     if reward.get('kind') != 'buff':
         return []
+
+    if reward.get('shared_buff_units'):
+        lines = []
+        for unit_id in reward['shared_buff_units']:
+            variant = dict(reward)
+            variant['unit'] = unit_id
+            variant.pop('shared_buff_units', None)
+            variant.pop('shared_buff_label', None)
+            variant['_runtime_canonical'] = True
+            lines.extend(buff_effect_lines(
+                variant, count=count, include_label=True,
+                include_stack=include_stack, buff_counts=buff_counts,
+                multiline=multiline, show_base_values=show_base_values,
+            ))
+        return lines
 
     if reward.get('enemy_reward'):
         count = effective_buff_count(reward, count)

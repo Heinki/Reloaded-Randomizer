@@ -1493,9 +1493,9 @@ def validate_shop_domain():
           if modifier.enemy_reward_id),
     }
     catalogue_valid = bool(
-        len(catalogue) == 2056
+        len(catalogue) == 1981
         and len(access_entries) == 157
-        and len(buff_entries) == 1837
+        and len(buff_entries) == 1762
         and len(power_entries) == 18
         and len(power_buff_entries) == 44
         and len(SHOP_CONFIG.unit_target_prices) == 177

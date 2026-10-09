@@ -33,6 +33,7 @@ from ._shared import (
     unsafe_country_houses,
 )
 from randomizer.config.tuning import mission_assistance_stack_count
+from randomizer.rewards.reloaded_definitions import shared_unit_buff_ids
 
 from .base import (
     format_multiplier,
@@ -122,6 +123,7 @@ def stacked_house_buff_values(
             # of one reward target. They always share veterancy; curated role
             # peers (such as faction transports) remain opt-in.
             units = set(linked_buff_variant_ids(reward['unit']))
+            units.update(shared_unit_buff_ids(reward['unit'], buff_type))
             if share_basic_equivalent_buffs:
                 for equivalent in unit_role_equivalents(reward['unit']):
                     units.update(linked_buff_variant_ids(equivalent))

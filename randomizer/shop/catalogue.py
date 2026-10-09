@@ -11,6 +11,7 @@ from randomizer.rewards.catalogue import (
     REWARD_POOL,
     buff_stack_limit,
     canonical_reward,
+    shared_unit_buff_ids,
 )
 from randomizer.rewards.reloaded_roster import randomizer_unit_template_values
 from randomizer.rewards.rules import tech_ids_for_rewards
@@ -116,8 +117,9 @@ def _validate_unit_target_prices(entries):
         if entry.reward_type is ShopRewardType.UNIT_ACCESS
     }
     buff_targets = {
-        entry.target_id for entry in entries
+        unit_id for entry in entries
         if entry.reward_type is ShopRewardType.UNIT_BUFF
+        for unit_id in shared_unit_buff_ids(entry.target_id)
     }
     expected_targets = access_targets | buff_targets
     configured_targets = set(SHOP_CONFIG.unit_target_prices)
@@ -271,11 +273,12 @@ def shop_always_available_unit_ids():
         if entry.reward_type is ShopRewardType.UNIT_ACCESS
     }
     return frozenset(
-        entry.target_id for entry in entries
+        unit_id for entry in entries
         if entry.reward_type is ShopRewardType.UNIT_BUFF
-        and entry.target_id in ALWAYS_AVAILABLE_TECH_IDS
-        and entry.target_id not in access_targets
-        and BUFF_TARGETS[entry.target_id].get('category') in {
+        for unit_id in shared_unit_buff_ids(entry.target_id)
+        if unit_id in ALWAYS_AVAILABLE_TECH_IDS
+        and unit_id not in access_targets
+        and BUFF_TARGETS[unit_id].get('category') in {
             'infantry', 'units', 'aircraft',
         }
     )
