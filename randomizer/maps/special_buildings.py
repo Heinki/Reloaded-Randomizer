@@ -15,8 +15,8 @@ ORE_PURIFIER_SOURCE_ID = 'GAOREP'
 DEFAULT_REFINERY_MINER_IDS = {
     'GAREFN': 'CMIN',
     'NAREFN': 'HARV',
-    'YARIREFN': 'YMIN',
-    'FAREFN': 'NMIN',
+    'TSPROC': 'TSHARV',
+    'TSPROC2': 'TSNHARV',
 }
 
 
@@ -39,6 +39,39 @@ def _effective_section_values(map_sections, installed_sections, section):
     values = _section_values(installed_sections, section)
     values.update(_section_values(map_sections, section))
     return values
+
+
+def refinery_free_unit_pairs(map_sections, installed_sections):
+    """Resolve actual refinery spawn types, including map-local overrides.
+
+    Refinery=yes alone also identifies economic support buildings. Only
+    refineries with a FreeUnit participate in the native miner contract.
+    Reviewed faction pairs provide fallbacks for incomplete rules registries;
+    explicit map overrides such as FreeUnit=none still take precedence.
+    """
+    building_ids = set(DEFAULT_REFINERY_MINER_IDS)
+    for sections in (installed_sections, map_sections):
+        building_ids.update(
+            str(value).strip().upper()
+            for value in _section_values(sections, 'BuildingTypes').values()
+            if str(value).strip()
+        )
+    pairs = {}
+    for building_id in sorted(building_ids):
+        values = _effective_section_values(
+            map_sections, installed_sections, building_id
+        )
+        fallback = DEFAULT_REFINERY_MINER_IDS.get(building_id, '')
+        if values.get('refinery', 'yes' if fallback else '').strip().lower() != 'yes':
+            continue
+        free_units = [
+            item.upper()
+            for item in comma_items(values.get('freeunit', fallback))
+            if item.lower() not in {'none', '<none>'}
+        ]
+        if free_units:
+            pairs[building_id] = free_units[0]
+    return pairs
 
 
 def validate_original_refinery_contract():

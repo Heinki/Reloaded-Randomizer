@@ -1969,7 +1969,7 @@
       },
       "blockbuster_special": {
         "display_name": "Blockbuster Special",
-        "description": "Current-run Shop purchases last only for the current stage. Each victory gives 10 extra Ore.",
+        "description": "Unit and power access purchased this run lasts only for the current stage. Purchased buffs persist for the entire run. Each victory gives 10 extra Ore.",
         "effects": {
           "run_reward_flat": 10,
           "reset_run_purchases_after_victory": 1

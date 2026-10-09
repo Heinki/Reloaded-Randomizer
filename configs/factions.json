@@ -26,6 +26,9 @@
       "GDIMCV": "TSGACNST",
       "NODMCV": "TSNACNST"
     },
+    "mobile_factory_by_unit": {
+      "MOBWARN": "DNWEAP"
+    },
     "amphibious_transports": {
       "allies": ["LCRF", "GAYARD"],
       "soviets": ["SAPC", "NAYARD"],
@@ -45,7 +48,7 @@
       "soviets": {"base": ["NACNST"], "infantry": ["NAHAND", "SOVHAND"], "vehicles": ["NAWEAP", "SOVWEAP"], "air": ["NAHELIPAD", "SOVHPAD"], "naval": ["NAYARD", "SOVYARD"]},
       "yuri": {"base": ["YACNST"], "infantry": ["YABRCK"], "vehicles": ["YAWEAP", "YURWEAP"], "air": ["GENHPAD"], "naval": ["YAYARD", "YURYARD"]},
       "gdi": {"base": ["TSGACNST"], "infantry": ["TSGAPILE"], "vehicles": ["TSGAWEAP", "GDIWEAP"], "air": ["TSGAHPAD", "GDIHPAD"], "naval": ["TSGAYARD", "GDIYARD"]},
-      "nod": {"base": ["TSNACNST"], "infantry": ["TSNAHAND"], "vehicles": ["TSNAWEAP", "TSNAMECHFACT", "NODWEAP"], "air": ["TSNAHPAD", "NODHPAD"], "naval": ["TSNAYARD", "NODYARD"]}
+      "nod": {"base": ["TSNACNST"], "infantry": ["TSNAHAND"], "vehicles": ["TSNAWEAP", "TSNAMECHFACT", "NODWEAP", "DNWEAP"], "air": ["TSNAHPAD", "NODHPAD"], "naval": ["TSNAYARD", "NODYARD"]}
     },
     "chaos_primary_production": {
       "allies": {"base": "GACNST", "infantry": "GAPILE", "vehicles": "GAWEAP", "air": "GAAIRC", "naval": "GAYARD"},

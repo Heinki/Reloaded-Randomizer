@@ -82,6 +82,7 @@ REQUIRED_SECTIONS = {
         'engineer_by_family': dict,
         'engineer_installed_forbidden_houses': dict,
         'conyard_by_mcv': dict,
+        'mobile_factory_by_unit': dict,
         'amphibious_transports': dict,
         'miners': dict,
         'production_buildings': dict,

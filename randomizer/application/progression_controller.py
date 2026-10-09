@@ -1,5 +1,7 @@
 """Mission visibility, Grid state, selection, and launch validation."""
 
+from randomizer.missions.catalogue import mission_build_label
+
 from ._dependencies import (
     DEFAULT_PROGRESSION_MODE,
     FACTION_TILE_COLORS,
@@ -259,7 +261,10 @@ class ProgressionController:
                 widgets['banner'].grid()
                 widgets['body'].grid_configure(pady=(0, 4))
             widgets['body'].configure(
-                text=mission_display_title(mission),
+                text=(
+                    f"{mission_display_title(mission)}\n"
+                    f'Mission type: {mission_build_label(mission)}'
+                ),
                 background=background,
                 foreground=foreground,
             )
@@ -572,6 +577,7 @@ class ProgressionController:
             )
         if len(lines) == 1:
             lines.extend(('', 'No briefing available.'))
+        lines.insert(1, f'Mission type: {mission_build_label(mission)}')
         return '\n'.join(lines)
 
     def mission_check_reward_name(self, check, reward):

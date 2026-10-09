@@ -37,6 +37,24 @@ from randomizer.config.game_profile import OBJECTIVE_REWARDS_READY
 
 class AdvancedSettingsController:
 
+    def advanced_mission_pool(self):
+        """Show the same campaign and build scope used for the next Shop run."""
+        campaign = (
+            CAMPAIGN_FILTERS[0] if self.shop_mode_selected()
+            else self.campaign_var.get()
+        )
+        return filter_missions_by_build_settings(
+            [
+                mission for mission in self.missions
+                if mission_matches_campaign_filter(mission, campaign)
+            ],
+            include_true_no_build=self.include_no_build_missions_var.get(),
+            include_no_build_production=(
+                self.include_no_build_production_missions_var.get()
+            ),
+            include_operation_missions=self.include_operation_missions_var.get(),
+        )
+
     ADVANCED_VIEW_KEYS = (
         'missions',
         'units',
@@ -654,7 +672,8 @@ class AdvancedSettingsController:
             ),
         )
         status = 'Excluded from next seeds' if excluded else 'Included in next seeds'
-        WidgetTooltip(card, f'{entry["label"]} ({entry["id"]})\n{status}')
+        campaign = f'\nCampaign: {entry["campaign"]}' if entry.get('campaign') else ''
+        WidgetTooltip(card, f'{entry["label"]} ({entry["id"]}){campaign}\n{status}')
 
     def refresh_advanced_pool_views(self, pool_key=None):
         if not hasattr(self, 'advanced_pool_frames'):
@@ -698,24 +717,14 @@ class AdvancedSettingsController:
                 ))
             )
 
-        campaign_missions = [
-            mission for mission in self.missions
-            if mission_matches_campaign_filter(mission, selected_campaign)
-        ]
-        visible_missions = filter_missions_by_build_settings(
-            campaign_missions,
-            include_true_no_build=self.include_no_build_missions_var.get(),
-            include_no_build_production=(
-                self.include_no_build_production_missions_var.get()
-            ),
-            include_operation_missions=self.include_operation_missions_var.get(),
-        )
+        visible_missions = self.advanced_mission_pool()
         displayed_missions = [
             mission for mission in visible_missions
             if self.advanced_search_matches(
                 'missions',
                 mission.get('code'),
                 mission.get('title'),
+                mission.get('campaign'),
                 mission.get('side'),
                 mission.get('operation'),
                 mission.get('scenario'),
@@ -740,6 +749,7 @@ class AdvancedSettingsController:
                         'id': mission['code'].upper(),
                         'label': mission.get('title') or mission['code'],
                         'faction': faction,
+                        'campaign': mission.get('campaign', ''),
                     },
                     'missions',
                     mission_icons.get(faction),
@@ -895,7 +905,8 @@ class AdvancedSettingsController:
         self.advanced_pool_status_label.configure(
             text=(
                 f'{ARSENAL_MODE if arsenal_mode else selected_campaign}: '
-                f'missions {included_missions}/{len(visible_missions)}, '
+                f'{"Shop missions" if self.shop_mode_selected() else "missions"} '
+                f'{included_missions}/{len(visible_missions)}, '
                 f'units/buildings {included_units}/{len(visible_unit_ids)}, '
                 f'superpowers {included_powers}/{len(visible_power_ids)} included'
                 + (
@@ -950,17 +961,9 @@ class AdvancedSettingsController:
                     'id': mission['code'].upper(),
                     'faction': normalize_faction(mission.get('side', '')),
                     'special': bool(mission.get('operation')),
+                    'mission': mission,
                 }
-                for mission in filter_missions_by_build_settings(
-                    self.missions,
-                    include_true_no_build=self.include_no_build_missions_var.get(),
-                    include_no_build_production=(
-                        self.include_no_build_production_missions_var.get()
-                    ),
-                    include_operation_missions=(
-                        self.include_operation_missions_var.get()
-                    ),
-                )
+                for mission in self.advanced_mission_pool()
             ]
             return entries, self.excluded_mission_codes
         if pool_key == 'units':
@@ -1041,6 +1044,10 @@ class AdvancedSettingsController:
 
     def advanced_pool_entry_is_visible(self, entry):
         """Match the campaign/Arsenal scope already used by Advanced cards."""
+        if 'mission' in entry:
+            return self.shop_mode_selected() or mission_matches_campaign_filter(
+                entry['mission'], self.campaign_var.get()
+            )
         selected_campaign = self.campaign_var.get()
         entry_factions = set(
             entry.get('factions')

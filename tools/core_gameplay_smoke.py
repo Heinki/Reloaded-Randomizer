@@ -12,6 +12,8 @@ if str(PROJECT_ROOT) not in sys.path:
 from randomizer.application.launch_controller import LaunchController
 from randomizer.content.inventory import read_rules_sections
 from randomizer.core.paths import BATTLE_INI
+from randomizer.core.csf import read_csf
+from randomizer.maps.tooltips import MARKER, installed_string_tables
 from randomizer.maps.generated import file_sha256, generated_map_name
 from randomizer.maps.houses import player_country_from_map
 from randomizer.maps.ini import IniLines, all_section_value_maps, read_text
@@ -262,11 +264,15 @@ def run(
                 generated_sections, clone_id, 'UIDescription'
             )
             if native_ui_description:
-                if clone_ui_description != native_ui_description:
+                labels = read_csf(Path(hook['tooltip_asset']).read_bytes())
+                description = labels.get(clone_ui_description.casefold(), '')
+                native_text = installed_string_tables()[0].get(
+                    native_ui_description.casefold(), ''
+                )
+                if MARKER not in description or (native_text and native_text not in description):
                     raise ValueError(
-                        f'Generated clone lost native tooltip for {tech_id}: '
-                        f'expected {native_ui_description!r}, found '
-                        f'{clone_ui_description!r}'
+                        f'Generated clone tooltip lost description or '
+                        f'Randomizer marker for {tech_id}'
                     )
             elif not clone_ui_description:
                 raise ValueError(

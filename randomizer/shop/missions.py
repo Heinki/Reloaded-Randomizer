@@ -112,6 +112,19 @@ def _unique_missions(missions, completed_codes):
     return list(unique.values())
 
 
+def mission_pool_requires_repeats(
+    missions, run_length, offer_count=None, config: ShopModeConfig = SHOP_CONFIG
+):
+    """Only repeat completed maps when a small pool cannot fill the last stage."""
+    offer_count = config.mission_offer_count if offer_count is None else int(offer_count)
+    return len(_unique_missions(missions, ())) < int(run_length) + offer_count - 1
+
+
+def unrestricted_shop_missions(run):
+    """Keep custom-pool opening rules independent from completed-map repeats."""
+    return run.allow_repeats or bool(run.reward_settings.get('shop_unrestricted_missions'))
+
+
 def generate_mission_offers(
     missions,
     *,
@@ -156,6 +169,14 @@ def generate_mission_offers(
     )
     if not eligible_candidates:
         return ()
+    previous = {str(code).upper() for code in previous_offer_codes or ()}
+    fresh_candidates = [
+        mission for mission in eligible_candidates
+        if mission['code'] not in previous
+    ]
+    # Prefer unseen suggestions, but never shrink a narrow pool's choice count.
+    if len(fresh_candidates) >= min(offer_count, len(eligible_candidates)):
+        eligible_candidates = fresh_candidates
     selected = []
     selected_codes = set()
     # Early fixed-unit/hero missions provide one approachable option without
@@ -188,7 +209,6 @@ def generate_mission_offers(
         )
     )
 
-    previous = {str(code).upper() for code in previous_offer_codes or ()}
     selected_set = {offer.mission_code for offer in selected}
     alternatives = [
         mission for mission in eligible_candidates

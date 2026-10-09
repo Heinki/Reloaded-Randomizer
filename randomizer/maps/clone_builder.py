@@ -153,6 +153,8 @@ def build_player_clone_sections(
     context: PlayerCloneContext,
 ) -> PlayerCloneBuildResult:
     """Build owned clone sections while preserving native AI identities."""
+    from randomizer.missions.access import MOBILE_FACTORY_BY_UNIT
+
     allowed_houses = context.allowed_houses
     buffed_helper_names = context.buffed_helper_names
     build_only_excluded_unit_ids = context.build_only_excluded_unit_ids
@@ -1632,6 +1634,48 @@ def build_player_clone_sections(
             # veterancy to the exact delivered clone just like production.
             player_veterancy_replacements[unit_id] = clone_id
 
+    # Mobile factories are infrastructure, not separate access rewards. Their
+    # deployed form still needs an isolated clone when the vehicle is cloned;
+    # otherwise Chaos ownership and undeployment revert to native Nod rules.
+    for mobile_source, factory_source in MOBILE_FACTORY_BY_UNIT.items():
+        mobile_clone_id = clone_id_by_source.get(mobile_source)
+        if not mobile_clone_id or factory_source in clone_id_by_source:
+            continue
+        factory_values = _standalone_clone_values_from_maps(
+            installed_sections.get(
+                installed_name_by_lower.get(factory_source.lower()), {}
+            ),
+            native_map_sections.get(
+                native_map_name_by_lower.get(factory_source.lower()), {}
+            ),
+        )
+        if not factory_values:
+            continue
+        factory_clone_id = _collision_safe_type_id(
+            f'{CLONE_POLICY["unit_id_prefix"]}{factory_source}',
+            f'player-unit:{factory_source}',
+            reserved_ids,
+        )
+        factory_values.setdefault('Image', factory_source)
+        factory_values['TechLevel'] = LOCKED_TECH_LEVEL
+        mobile_values = section_rules[mobile_clone_id]
+        for key in ('Owner', 'RequiredHouses'):
+            value = _value_case_insensitive(mobile_values, key)
+            _remove_case_insensitive(factory_values, key)
+            if value is not None:
+                factory_values[key] = value
+        _remove_case_insensitive(
+            factory_values, 'ForbiddenHouses', 'FactoryOwners',
+            'FactoryOwners.Forbidden', 'Prerequisite.Negative',
+            'Prerequisite.StolenTechs',
+        )
+        _register_map_type(
+            section_rules, lines, installed_sections, 'BuildingTypes',
+            factory_clone_id,
+        )
+        section_rules[factory_clone_id] = factory_values
+        clone_id_by_source[factory_source] = factory_clone_id
+
     # Static owned templates keep deploy/convert/payload links on their stable
     # generated IDs. Veteran-list compaction can assign a shorter runtime clone ID
     # to a trainable root, so resolve every link after all related clone IDs
@@ -1706,6 +1750,8 @@ def build_player_clone_sections(
                     target_source, {}
                 ).get('category')
                 list_section = TECHNO_TYPE_LISTS.get(target_category)
+                if target_source in MOBILE_FACTORY_BY_UNIT.values():
+                    list_section = 'BuildingTypes'
                 if list_section:
                     _register_map_type(
                         section_rules,

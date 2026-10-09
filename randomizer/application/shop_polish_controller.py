@@ -3,6 +3,8 @@
 from collections import Counter
 from tkinter import ttk
 
+from randomizer.missions.catalogue import mission_build_label
+
 from randomizer.rewards.reloaded_definitions import (
     SHARED_UNIT_BUFF_GROUPS, shared_unit_buff_target_id,
     unit_buff_target_label, unit_display_label,
@@ -498,6 +500,7 @@ class ShopPolishController(ShopArchipelagoController):
             card['name'].set(f'{title} ({offer.mission_code})')
             card['detail'].set(
                 f'Faction: {faction}\n'
+                f'Mission type: {mission_build_label(mission)}\n'
                 f'Mission class: {definition.display_name}\n'
                 f'Reward tier: {definition.difficulty}\n'
                 f'Run difficulty: +{modifier_difficulty(run.modifiers)}\n'
@@ -707,6 +710,7 @@ class ShopPolishController(ShopArchipelagoController):
 
     def _selected_shop_catalogue_entries(self):
         return {
+            'Offers': (*self._shop_unit_entries, *self._shop_power_entries),
             'Units': self._shop_unit_entries,
             'Unit Buffs': self._shop_buff_entries,
             'Powers': self._shop_power_entries,
@@ -870,7 +874,7 @@ class ShopPolishController(ShopArchipelagoController):
         active_powers = set(active_shop_power_ids(run))
         visible = []
         category = self.shop_category_var.get()
-        access_category = category in {'Units', 'Powers'}
+        access_category = category in {'Offers', 'Units', 'Powers'}
         buff_category = category in {'Unit Buffs', 'Power Buffs'}
         tree.column(
             'upgrades',
@@ -908,10 +912,12 @@ class ShopPolishController(ShopArchipelagoController):
             category, candidates, active_tech, active_powers
         )
         access_candidates = candidates
-        if category == 'Units':
-            candidates = (
+        stocked = []
+        if category in {'Offers', 'Units'}:
+            stocked.extend(
                 rotating_unit_inventory(
-                    candidates,
+                    tuple(entry for entry in access_candidates
+                          if entry.reward_type is ShopRewardType.UNIT_ACCESS),
                     run_seed=run.seed,
                     stage=run.stage,
                     offer_count=(
@@ -926,7 +932,7 @@ class ShopPolishController(ShopArchipelagoController):
                 )
                 if run is not None else ()
             )
-        elif category == 'Powers':
+        if category in {'Offers', 'Powers'}:
             base_power_offer_count = self.shop_config.power_inventory_size
             if (
                 run is not None
@@ -950,9 +956,10 @@ class ShopPolishController(ShopArchipelagoController):
                         for entry in self._shop_power_entries
                     ),
                 )
-            candidates = (
+            stocked.extend(
                 rotating_power_inventory(
-                    candidates,
+                    tuple(entry for entry in access_candidates
+                          if entry.reward_type is ShopRewardType.POWER_ACCESS),
                     run_seed=run.seed,
                     stage=run.stage,
                     offer_count=(
@@ -967,6 +974,8 @@ class ShopPolishController(ShopArchipelagoController):
                 )
                 if run is not None else ()
             )
+        if access_category:
+            candidates = tuple(stocked)
         elif buff_category:
             candidates = tuple(
                 entry for entry in candidates
@@ -1052,6 +1061,14 @@ class ShopPolishController(ShopArchipelagoController):
                 'Buy a buff repeatedly to add stacks up to its listed limit.'
                 if visible else
                 'Select an owned power above. No unavailable-power buffs are shown.'
+            )
+        elif category == 'Offers':
+            self.shop_catalogue_help_var.set(
+                f'{len(candidates)} unit and power offers stocked for stage '
+                f'{run.stage if run is not None else "—"}. '
+                f'{rotation_note}'
+                'Stock changes after each mission victory. '
+                'Buy access, then use Open Upgrades.'
             )
         elif category == 'Units':
             self.shop_catalogue_help_var.set(
@@ -1345,10 +1362,7 @@ class ShopPolishController(ShopArchipelagoController):
         self.shop_panels.select(self.shop_run_panel)
 
     def leave_shop_upgrades(self):
-        category = self.shop_category_var.get()
-        self.shop_category_var.set(
-            'Powers' if category == 'Power Buffs' else 'Units'
-        )
+        self.shop_category_var.set('Offers')
         self.shop_search_var.set('')
         self.refresh_shop_catalogue()
         self.shop_panels.select(self.shop_run_panel)
@@ -1457,8 +1471,11 @@ class ShopPolishController(ShopArchipelagoController):
                 ShopRewardType.POWER_ACCESS,
             }
         )
-        if category in {'Units', 'Powers'}:
-            is_power = category == 'Powers'
+        if category in {'Offers', 'Units', 'Powers'}:
+            is_power = bool(
+                entry is not None
+                and entry.reward_type is ShopRewardType.POWER_ACCESS
+            ) or category == 'Powers'
             owned_targets = (
                 set(active_shop_power_ids(self.shop_run))
                 if is_power and self.shop_run is not None

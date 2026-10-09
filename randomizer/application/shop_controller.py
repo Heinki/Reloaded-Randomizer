@@ -7,6 +7,7 @@ from hashlib import sha256
 import uuid
 import tkinter as tk
 from tkinter import messagebox
+from randomizer.config.player import save_config
 
 from ._dependencies import (
     BUFF_TARGETS,
@@ -20,6 +21,7 @@ from ._dependencies import (
     custom_sidebar_preview,
     ensure_superweapon_cameos,
     ensure_unit_cameos,
+    log_event,
 )
 
 from randomizer.rewards.reloaded_definitions import (
@@ -66,6 +68,8 @@ from randomizer.shop.missions import (
     generate_mission_offers,
     mission_difficulty,
     mission_classes_for_stage,
+    mission_pool_requires_repeats,
+    unrestricted_shop_missions,
 )
 from randomizer.shop.mission_modifiers import (
     active_mission_modifier,
@@ -145,7 +149,7 @@ class ShopController(ShopPolishController):
             value=saved_specialization
         )
         self.shop_loadout_help_var = tk.StringVar(value='')
-        self.shop_category_var = tk.StringVar(value='Units')
+        self.shop_category_var = tk.StringVar(value='Offers')
         self.shop_buff_target_var = tk.StringVar(value='')
         self.shop_permanent_buff_target_var = tk.StringVar(value='')
         self.shop_permanent_power_buff_target_var = tk.StringVar(value='')
@@ -1281,7 +1285,7 @@ class ShopController(ShopPolishController):
             return run
         allowed = (
             {offer.economy_class for offer in run.mission_offers}
-            if run.allow_repeats else
+            if unrestricted_shop_missions(run) else
             mission_classes_for_stage(run.stage, run.run_length)
         )
         offers_valid = bool(
@@ -1300,7 +1304,7 @@ class ShopController(ShopPolishController):
             run_length=run.run_length,
             completed_codes=run.completed_missions,
             repeat_completed=run.allow_repeats,
-            unrestricted=run.allow_repeats,
+            unrestricted=unrestricted_shop_missions(run),
             reroll_count=run.rerolls_used,
             offer_count=modifier_mission_offer_count(run.modifiers),
         )
@@ -1340,7 +1344,7 @@ class ShopController(ShopPolishController):
                 stage=run.stage,
                 run_length=run.run_length,
                 completed_codes=kept_codes if run.allow_repeats else run.completed_missions + kept_codes,
-                unrestricted=run.allow_repeats,
+                unrestricted=unrestricted_shop_missions(run),
                 reroll_count=run.rerolls_used + 1,
                 previous_offer_codes=(replaced.mission_code,),
                 offer_count=1,
@@ -1536,7 +1540,7 @@ class ShopController(ShopPolishController):
                     run_length=run.run_length + (1 if run.endless else 0),
                     completed_codes=run.completed_missions + (code,),
                     repeat_completed=run.allow_repeats,
-                    unrestricted=run.allow_repeats,
+                    unrestricted=unrestricted_shop_missions(run),
                     offer_count=modifier_mission_offer_count(run.modifiers),
                 )
             transition = self.shop_service.record_victory(
@@ -1587,7 +1591,7 @@ class ShopController(ShopPolishController):
                     run_length=run.run_length,
                     completed_codes=run.completed_missions + (code,),
                     repeat_completed=run.allow_repeats,
-                    unrestricted=run.allow_repeats,
+                    unrestricted=unrestricted_shop_missions(run),
                     reroll_count=(
                         run.rerolls_used + run.emergency_revivals_used + 101
                     ),
@@ -1827,7 +1831,7 @@ class ShopController(ShopPolishController):
                 parent=self,
             )
             return
-        if not messagebox.askokcancel(
+        if not self.config.get('shop_mode_rules_acknowledged', False) and not messagebox.askokcancel(
             'Shop Mode Rules',
             f'One Shop run contains {self.shop_config.run_length} stages. '
             'At each stage, choose one mission. That selected mission gets '
@@ -1841,7 +1845,9 @@ class ShopController(ShopPolishController):
             parent=self,
         ):
             return
-        seed = self.seed_var.get().strip() or uuid.uuid4().hex[:16].upper()
+        self.config['shop_mode_rules_acknowledged'] = True
+        save_config(self.config)
+        seed = uuid.uuid4().hex[:16].upper()
         salvaged_ore = self.shop_profile.salvaged_run_coins
         self.seed_var.set(seed)
         settings = self.shop_reward_settings_for_new_run()
@@ -1993,24 +1999,48 @@ class ShopController(ShopPolishController):
                     f'Shop Mode needs at least {self.shop_config.run_length} '
                     'eligible missions under current filters'
                 )
+            expected_offer_count = modifier_mission_offer_count(modifiers)
             repeat_missions = bool(
-                self.excluded_mission_codes
-                and self.archipelago_shop_slot_settings() is None
+                self.archipelago_shop_slot_settings() is None
+                and mission_pool_requires_repeats(
+                    mission_pool, self.shop_config.run_length,
+                    expected_offer_count,
+                )
             )
+            settings['shop_unrestricted_missions'] = bool(
+                repeat_missions or (
+                    self.excluded_mission_codes
+                    and self.archipelago_shop_slot_settings() is None
+                )
+            )
+            recent_offers = ()
+            if (
+                self.archipelago_shop_slot_settings() is None
+                and self.shop_run is not None
+                and not self.shop_run.ap_identity
+            ):
+                recent_offers = tuple(self.shop_run.reward_settings.get(
+                    'shop_recent_opening_mission_codes',
+                    tuple(offer.mission_code for offer in self.shop_run.mission_offers),
+                ))
             offers = generate_mission_offers(
                 mission_pool,
                 run_seed=seed,
                 stage=1,
-                unrestricted=repeat_missions,
-                offer_count=modifier_mission_offer_count(modifiers),
+                unrestricted=settings['shop_unrestricted_missions'],
+                previous_offer_codes=recent_offers,
+                offer_count=expected_offer_count,
             )
-            expected_offer_count = modifier_mission_offer_count(modifiers)
             if len(offers) != expected_offer_count:
                 raise ShopTransitionError(
                     'Shop Mode needs at least '
                     f'{expected_offer_count} eligible '
                     'standard missions for its protected opening'
                 )
+            settings['shop_recent_opening_mission_codes'] = list((
+                *recent_offers,
+                *(offer.mission_code for offer in offers),
+            )[-4 * self.shop_config.mission_offer_count:])
             self.shop_service.start_run(
                 run_id=uuid.uuid4().hex,
                 seed=seed,
@@ -2045,6 +2075,14 @@ class ShopController(ShopPolishController):
             self._set_shop_message(exc, error=True)
             messagebox.showerror('Shop Run Failed', str(exc), parent=self)
         else:
+            log_event(
+                'shop_run_started',
+                seed=seed,
+                mission_pool_count=len(mission_pool),
+                mission_offers=[offer.mission_code for offer in offers],
+                repeat_completed=repeat_missions,
+                unrestricted=settings['shop_unrestricted_missions'],
+            )
             self._set_shop_message(
                 f'Started Shop run with seed {seed}. '
                 f'Starting draft: {len(starting_draft_buffs)} buff(s).'

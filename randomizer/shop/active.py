@@ -101,9 +101,15 @@ def active_shop_starter_unit_ids(run):
 def active_shop_starter_defense_ids(run):
     if run is None:
         return ()
+    # Older runs incorrectly used the ground-only GDI RPG tower for the AA
+    # starter role. Repair starter access without changing purchased unlocks.
+    starting_defenses = tuple(
+        'GACSAM' if str(unit_id).upper() == 'GAROCK' else unit_id
+        for unit_id in run.starting_defense_ids
+    )
     return shop_starter_defense_ids(
         seed=run.seed,
-        starting_defense_ids=run.starting_defense_ids,
+        starting_defense_ids=starting_defenses,
         faction_filter=(
             run.reward_settings.get('shop_faction_filter')
             or run.campaign_filter

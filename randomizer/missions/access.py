@@ -45,6 +45,7 @@ ACTIVE_PRODUCTION_FAMILIES = tuple(_FACTION_CONFIG['active_families'])
 ENGINEER_BY_FAMILY = dict(_FACTION_CONFIG['engineer_by_family'])
 ENGINEER_INSTALLED_FORBIDDEN_HOUSES = dict(_FACTION_CONFIG['engineer_installed_forbidden_houses'])
 CONYARD_BY_MCV = dict(_FACTION_CONFIG['conyard_by_mcv'])
+MOBILE_FACTORY_BY_UNIT = dict(_FACTION_CONFIG['mobile_factory_by_unit'])
 
 # Five guaranteed combat roles for the optional seed-start roster. Standard
 # translates each role to the physical production families present in a map.
@@ -277,10 +278,13 @@ def _mission_production_buildings(
     eligible_houses.discard('')
 
     # Base-build missions often begin with an MCV rather than a deployed
-    # Construction Yard. Player/scripted TaskForce ownership proves that this
-    # production family can become available later in the mission.
+    # Construction Yard. The Fist of Nod likewise starts as a vehicle and
+    # deploys into a war factory. Player/scripted TaskForce ownership proves
+    # that these production buildings can become available later.
     usage_index = build_unit_usage_index(lines)
-    for mcv_id, conyard_id in CONYARD_BY_MCV.items():
+    for mcv_id, conyard_id in (
+        CONYARD_BY_MCV | MOBILE_FACTORY_BY_UNIT
+    ).items():
         mcv_houses = unit_usage_houses(lines, mcv_id, usage_index)
         usage_aliases = set()
         for house in mcv_houses:
@@ -871,6 +875,22 @@ def chaos_cameo_priority_rules(player_family):
 
 def _alternative_prerequisite_rules(alternatives):
     alternatives = _merged_items(alternatives)
+    # Earned ground-unit access replaces the native tech tree, including its
+    # mobile-factory overrides. Keep the deployed Fist equivalent to a Nod
+    # war factory even when it is built later rather than placed on this map.
+    production_categories = {
+        PRODUCTION_LOOKUP[building_id.upper()]
+        for building_id in alternatives
+        if building_id.upper() in PRODUCTION_LOOKUP
+    }
+    alternatives = _merged_items(
+        alternatives,
+        (
+            factory_id
+            for factory_id in MOBILE_FACTORY_BY_UNIT.values()
+            if PRODUCTION_LOOKUP.get(factory_id) in production_categories
+        ),
+    )
     if not alternatives:
         return {}
     if len(alternatives) == 1:

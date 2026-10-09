@@ -97,6 +97,7 @@ from randomizer.maps.houses import (
     player_controlled_houses,
     player_country_from_map,
     player_house_from_map,
+    production_owner_countries,
     resolve_configured_helper_houses,
 )
 from randomizer.maps.settings import (
@@ -109,7 +110,7 @@ from randomizer.maps.shop_modifiers import (
     apply_shop_clone_restrictions,
 )
 from randomizer.maps.special_buildings import (
-    DEFAULT_REFINERY_MINER_IDS,
+    refinery_free_unit_pairs,
     ore_purifier_miner_dock_rules,
     reprocessor_bounty_rules,
 )
@@ -175,6 +176,7 @@ from randomizer.ui.config import (
     RAINBOWIZER_COLORS,
 )
 from randomizer.rewards.reloaded_roster import randomizer_unit_roster
+from randomizer.maps.tooltips import stage_randomizer_tooltips
 from randomizer.rewards.arsenal import ARSENAL_MODE
 
 
@@ -391,49 +393,11 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         ).values()
         if str(building_id).strip()
     }
-    refinery_building_ids = set()
-    refinery_free_unit_ids = set()
-    refinery_free_unit_by_building = {}
-    native_map_names = {
-        str(section).lower(): section for section in native_map_sections
-    }
-    # `Refinery=yes` also appears on economic support structures such as the
-    # Ore Purifier. Only the reviewed four faction refineries own a native
-    # miner/FreeUnit contract; support structures remain ordinary reward
-    # clone candidates.
-    for building_id in DEFAULT_REFINERY_MINER_IDS:
-        building_values = dict(installed_rule_sections.get(building_id, {}))
-        building_values.update(native_map_sections.get(
-            native_map_names.get(str(building_id).lower()), {}
-        ))
-        if str(next(
-            (
-                value for key, value in building_values.items()
-                if str(key).lower() == 'refinery'
-            ),
-            '',
-        )).lower() != 'yes':
-            continue
-        refinery_building_ids.add(str(building_id).upper())
-        for key, value in building_values.items():
-            if str(key).lower() != 'freeunit':
-                continue
-            free_units = [
-                unit_id.strip().upper()
-                for unit_id in str(value or '').split(',')
-                if unit_id.strip()
-            ]
-            if free_units:
-                refinery_free_unit_by_building[
-                    str(building_id).upper()
-                ] = free_units[0]
-                refinery_free_unit_ids.update(free_units)
-    # Keep the reviewed four-faction contract available if an editable or
-    # preserved installed registry omits one of the source sections.
-    refinery_building_ids.update(DEFAULT_REFINERY_MINER_IDS)
-    refinery_free_unit_ids.update(DEFAULT_REFINERY_MINER_IDS.values())
-    for refinery_id, miner_id in DEFAULT_REFINERY_MINER_IDS.items():
-        refinery_free_unit_by_building.setdefault(refinery_id, miner_id)
+    refinery_free_unit_by_building = refinery_free_unit_pairs(
+        native_map_sections, installed_rule_sections
+    )
+    refinery_building_ids = set(refinery_free_unit_by_building)
+    refinery_free_unit_ids = set(refinery_free_unit_by_building.values())
     veteran_health_rules = veteran_armor_safety_rules(
         lines,
         installed_rule_sections,
@@ -1053,6 +1017,12 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             for house_name in mission_player_production_houses(code)
             if str(records.get(house_name, {}).get('country') or '').strip()
         ]
+    )
+    # Ares evaluates factory ancestry as well as the concrete campaign
+    # country. Transferred barracks/yards can otherwise bypass the native
+    # filter (ALL06_RA2's Americans house inherits from Germans).
+    player_factory_exclusions = production_owner_countries(
+        lines, player_factory_exclusions
     )
     isolated_native_ids = set(owned_clone_rule_overlays)
     isolated_native_ids.update(
@@ -1815,6 +1785,9 @@ def prepare_hooked_map(self, mission, extra_rules=None):
                 direct_only_country_buff_types
             ),
         )
+        # Preserve deployed infrastructure registrations before independently
+        # allocated production-gate keys are merged into the clone registry.
+        remember_generated_techno_types(clone_rule_sections)
         mission_unlock_clone_replacements = {
             source_id: str(clone_handled.get(source_id, {}).get('clone_id') or '')
             for source_id in MISSION_NATIVE_TECH_UNLOCK_IDS.get(code, ())
@@ -1938,7 +1911,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         # Include reviewed transferred-factory owners as well as the player's
         # initial country; otherwise both native and generated Engineer cameos
         # can appear after a campaign barracks handover.
-        for source_id in selected_engineer_ids:
+        for source_id in set(ENGINEER_UNIT_IDS):
             source_rules = production_gate_rules.setdefault(source_id, {})
             existing_factory_forbidden = native_value(
                 source_rules,
@@ -2115,6 +2088,30 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             }
             restored_values.update(original_values)
             clone_rule_sections[source_id] = restored_values
+        # AI ignores FactoryOwners filters on buildings. Suppress every
+        # native randomized defense/support cameo even after capturing a
+        # foreign yard, without restricting authored placements or AI bases.
+        # Runtime-preserved defenses cannot use ForbiddenHouses because that
+        # can make already placed player structures uncontrollable.
+        all_factory_countries = unique_in_order(
+            [str(value).split(';', 1)[0].strip()
+             for key, value in installed_rule_sections.get('Countries', {}).items()
+             if str(key).isdigit()]
+            + [str(value).split(';', 1)[0].strip()
+               for key, value in section_value_map_preserve(lines, 'Countries').items()
+               if str(key).isdigit()]
+            + [record.get('country', '') for record in records.values()]
+            + [record.get('parent_country', '') for record in records.values()]
+            + list(player_factory_exclusions)
+        )
+        native_building_factory_locks = {
+            source_id: {'FactoryOwners.Forbidden': ','.join(all_factory_countries)}
+            for source_id in production_gate_source_ids
+            if registered_techno_categories.get(source_id) == 'defenses'
+            or registered_techno_categories.get(source_id) == 'special_buildings'
+        }
+        for source_id, values in native_building_factory_locks.items():
+            clone_rule_sections.setdefault(source_id, {}).update(values)
         for source_id, details in clone_handled.items():
             clone_id = str((details or {}).get('clone_id') or '').strip()
             list_section = TECHNO_TYPE_LISTS.get(
@@ -2228,10 +2225,9 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         if production_gate_source_ids:
             expected_gate_count = len(unique_in_order(production_gate_houses))
             if len(placed_production_gates) != expected_gate_count:
-                self.append_log(
+                raise ValueError(
                     'Could not place every exact-House original-production gate; '
-                    f'placed {len(placed_production_gates)} of {expected_gate_count}.',
-                    error=True,
+                    f'placed {len(placed_production_gates)} of {expected_gate_count}.'
                 )
             else:
                 self.append_log(
@@ -2789,6 +2785,11 @@ def prepare_hooked_map(self, mission, extra_rules=None):
                 raise ValueError(
                     f'Native Engineer {source_id} lost redundant TechLevel lock.'
                 )
+
+    if launch_active and native_building_factory_locks:
+        # Runtime restoration runs after clone production isolation; retain
+        # the production-only building filters in the final map as well.
+        merge_ini_section_values(lines, native_building_factory_locks)
 
     native_production_hard_locks = (
         MISSION_NATIVE_PRODUCTION_HARD_LOCKS.get(code, ())
@@ -3380,6 +3381,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
     )
     assert_file_hash(integrity_path, authored_source_hash)
 
+    tooltip_asset = stage_randomizer_tooltips(lines, clone_handled) if launch_active else None
     GENERATED_MAP_DIR.mkdir(parents=True, exist_ok=True)
     launch_scenario = generated_map_name(
         code, scenario, authored_source_hash
@@ -3419,4 +3421,5 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         'objective_events_seen': 0,
         'offset': DEBUG_LOG.stat().st_size if DEBUG_LOG.exists() else 0,
         'root_map': root_map,
+        'tooltip_asset': tooltip_asset,
     }

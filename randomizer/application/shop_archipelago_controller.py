@@ -59,6 +59,7 @@ class ShopArchipelagoController:
             include_no_build_production=(
                 self.include_no_build_production_missions_var.get()
             ),
+            include_operation_missions=self.include_operation_missions_var.get(),
         )
 
     def filtered_missions_for_seed(self):
@@ -199,8 +200,7 @@ class ShopArchipelagoController:
                 if code in self._mission_by_code
             ]
         campaign = (
-            run.campaign_filter
-            if run is not None
+            run.campaign_filter if run is not None and not fresh
             else CAMPAIGN_FILTERS[0]
         )
         missions = self._shop_campaign_missions(campaign)

@@ -345,19 +345,9 @@ def build_shop_tab(self, workspace_tabs):
     filters.grid(row=0, column=0, sticky='ew', pady=(0, 6))
     self.shop_catalogue_back_button = ttk.Button(
         filters,
-        text='Back to Current Run Shop',
+        text='Back to All Offers',
         command=self.leave_shop_upgrades,
     )
-    ttk.Label(filters, text='Category:').pack(side='left')
-    category = ttk.Combobox(
-        filters,
-        textvariable=self.shop_category_var,
-        values=('Units', 'Unit Buffs', 'Powers', 'Power Buffs'),
-        state='readonly',
-        width=14,
-    )
-    category.pack(side='left', padx=(5, 10))
-    category.bind('<<ComboboxSelected>>', self.refresh_shop_catalogue)
     self.shop_buff_target_frame = ttk.Frame(filters)
     ttk.Label(
         self.shop_buff_target_frame, text='Upgrade unit:'

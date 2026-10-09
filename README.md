@@ -76,6 +76,20 @@ catalogue: 157 unit access rewards, 1,690 unit buffs, 18 powers, and 44 power
 buffs. Temporary mission cards can add one of 12 Reloaded player boons or 7
 Reloaded AI challenges; active power boons are not offered twice.
 
+Current Run Shop shows unit and power offers together. Start New Run always
+generates a fresh seed, and the rules dialog stays dismissed after confirmation.
+Purchased buff stacks persist through mission victories and launcher reloads.
+Blockbuster Special expires only purchased unit/power access at stage end;
+its buffs remain available when the corresponding access is owned again.
+
+Starter defenses cover ground and air targets; GDI uses Vulcan Cannon and SAM
+Upgrade. Existing Shop runs with the old RPG Launcher AA starter are repaired
+when resolving their loadout. Generated player units and defenses append
+“Granted by Randomizer” to their native description through
+[Phobos extended tooltips](https://phobos.readthedocs.io/en/stable/User-Interface.html#tooltips).
+Private string-table labels are deployed only for the mission and cleaned up
+with the launcher's other runtime assets.
+
 Permanent Shop progression spends Gems on unit access, unit buffs, all 18
 reviewed superweapons and support powers, plus their 44 power buffs. Purchased
 permanent powers activate automatically in future Shop runs; unit buffs follow
@@ -95,8 +109,14 @@ Harvester still requires its own access unlock.
 The first two Shop stages offer Standard mission choices, including a fixed-unit
 or hero mission when available. From stage 3 onward, every remaining eligible
 mission has equal selection probability, regardless of class or run length.
-All three choices can be finales. Completed missions cannot repeat, and the
-configured mission pool still applies.
+All three choices can be finales. Advanced mission exclusions apply to the
+mixed-campaign Shop pool; excluding Resurgence leaves all 95 missions from the
+other four campaigns available. Custom pools keep their unrestricted opening
+choices. Completed missions only repeat when the selected pool is too small to
+fill every stage's choices, or in Endless Mode. New standalone runs avoid up to
+12 recent opening suggestions when enough alternatives are available. Advanced
+and Shop use the same build and operation filters, and mission tooltips identify
+the original campaign.
 
 Each Shop mission card shows a deterministic difficulty for that choice. Early
 stages favor Casual, middle stages favor Normal, and late stages can select

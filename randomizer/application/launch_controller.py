@@ -1112,6 +1112,10 @@ class LaunchController:
                 raise RuntimeError(
                     'Randomizer map generation produced no isolated launch map.'
                 )
+            if hook and hook.get('tooltip_asset'):
+                from randomizer.maps.tooltips import deploy_randomizer_tooltips
+
+                deploy_randomizer_tooltips(hook['tooltip_asset'])
             if hook and hook.get('root_map'):
                 try:
                     art_path, art_aliases = deploy_generated_unit_art(
