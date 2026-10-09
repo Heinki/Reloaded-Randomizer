@@ -12,8 +12,10 @@ deferred and must not be added through inferred ownership.
 `rewards/enemy_scaling.json` defines the single-stack `powerhouse` reward and
 editable `powerhouse_rosters` for all five factions. The `heroes` and `specials`
 pools include combat units only; hidden prototypes are enemy-only and do not
-change player reward eligibility. `shop_mode.json` exposes the effect as the
-**Enemy Powerhouses** run modifier. The map planner selects at most two heroes
+change player reward eligibility. **Enemy Powerhouses** participates in normal
+Shop stage scaling and the standalone/Archipelago enemy reward pool, controlled
+by enemy-buff eligibility and its single-stack cap. Saved runs drop the retired run-modifier ID.
+The map planner selects at most two heroes
 and fills the remaining slots from specialists, up to four teams per enemy
 house, using the launch seed, mission identity, and Shop stage. Each generated
 type has `BuildLimit=1`; each attack team has `Max=1`. Existing factories and

@@ -166,6 +166,15 @@ def _shop_balance_port_checks():
         'reward_mode': 'Chaos',
     }
     random_run = start_new_run(profile, **options).run
+    # Loading the retired toggle keeps the run usable; the normal stage pool
+    # supplies Powerhouses, subject to enemy-buff settings and a single stack.
+    powerhouse_restored = normalize_shop_run(replace(
+        random_run, modifiers=('enemy_powerhouses',),
+    ).to_dict())
+    powerhouse_staged = replace(powerhouse_restored, stage=SHOP_CONFIG.run_length)
+    powerhouse_entries = shop_enemy_scaling_entries(
+        powerhouse_staged, offer, {'build_classification': 'base_build'},
+    )
     random_entries = tuple(
         next(entry for entry in access_entries if entry.reward_id == reward_id)
         for reward_id in random_run.random_starting_unit_unlocks
@@ -205,6 +214,47 @@ def _shop_balance_port_checks():
             == start_new_run(profile, **options).run.random_starting_unit_unlocks
         ),
         'shop_enemy_scaling_curve_valid': stage_counts == [0, 0, 1, 9],
+        'shop_enemy_powerhouses_buff_valid': bool(
+            'enemy_powerhouses' not in SHOP_CONFIG.modifiers
+            and not powerhouse_restored.modifiers
+            and len([
+                entry for entry in powerhouse_entries
+                if entry['reward'].get('enemy_effect_id') == 'powerhouse'
+                and entry['source'] == 'Shop stage scaling'
+            ]) == 1
+            and powerhouse_entries == shop_enemy_scaling_entries(
+                powerhouse_staged, offer, {'build_classification': 'base_build'},
+            )
+            and not shop_enemy_scaling_entries(
+                powerhouse_staged, offer, {'no_build': True},
+            )
+            and all(
+                not any(
+                    entry['reward'].get('enemy_effect_id') == 'powerhouse'
+                    for entry in shop_enemy_scaling_entries(
+                        replace(powerhouse_staged, reward_settings={
+                            'enemy_scaling': settings,
+                        }),
+                        offer, {'build_classification': 'base_build'},
+                    )
+                )
+                for settings in (
+                    {'caps': {'powerhouse': 0}},
+                    {'allowed_buff_ids': ['infantry_armor']},
+                )
+            )
+            and len([
+                entry for entry in shop_enemy_scaling_entries(
+                    replace(powerhouse_staged, endless=True, stage=100,
+                            reward_settings={'enemy_scaling': {
+                                'allowed_buff_ids': ['powerhouse'],
+                                'caps': {'powerhouse': 100},
+                            }}),
+                    offer, {'build_classification': 'base_build'},
+                )
+                if entry['reward'].get('enemy_effect_id') == 'powerhouse'
+            ]) == 1
+        ),
         'shop_no_build_enemy_protection_valid': bool(
             mission_blocks_shop_enemy_buffs({'no_build': True})
             and not shop_enemy_scaling_entries(

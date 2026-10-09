@@ -1943,13 +1943,6 @@
           "enemy_armor_stacks": 1
         }
       },
-      "enemy_powerhouses": {
-        "display_name": "Enemy Powerhouses",
-        "description": "Hostile AI bases build faction heroes and special combat units, including hidden prototypes. Each enemy house gains up to four seeded attack teams with one living unit of each selected type. Fixed-force and protected scripted missions are excluded.",
-        "effects": {
-          "enemy_powerhouse_stacks": 1
-        }
-      },
       "you_shall_not_build": {
         "display_name": "You Shall Not Build!",
         "description": "Each stage forbids one production category: aircraft, vehicles, infantry, or naval. Hardcore forbids two. Each victory gives 2 extra Ore.",

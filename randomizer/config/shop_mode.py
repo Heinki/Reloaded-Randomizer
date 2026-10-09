@@ -351,7 +351,6 @@ def validate_shop_mode_config(sections, path, invalid):
         'exclude_power_offers',
         'cross_faction_power_offers',
         'enemy_armor_stacks',
-        'enemy_powerhouse_stacks',
         'force_hardest_difficulty',
         'force_enemy_challenge',
         'rotate_shop_faction',
