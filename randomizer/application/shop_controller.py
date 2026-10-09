@@ -2093,6 +2093,12 @@ class ShopController(ShopPolishController):
 
     def _refresh_shop_loadout(self):
         tree = self.shop_loadout_tree
+        selected = tree.selection()
+        previous_target = self.__dict__.get('_shop_current_loadout_targets', {}).get(
+            selected[0],
+        ) if selected else None
+        if previous_target and not previous_target[1]:
+            previous_target = (shared_unit_buff_target_id(previous_target[0]), False)
         self._clear_shop_tree_buttons('_shop_loadout_upgrade_buttons')
         tree.delete(*tree.get_children())
         self._shop_current_loadout_targets = {}
@@ -2230,6 +2236,11 @@ class ShopController(ShopPolishController):
             records.values(),
             key=lambda item: (
                 item['is_power'],
+                (
+                    tuple(SHARED_UNIT_BUFF_GROUPS).index(item['target_id'])
+                    if not item['is_power'] and item['target_id'] in SHARED_UNIT_BUFF_GROUPS
+                    else len(SHARED_UNIT_BUFF_GROUPS)
+                ),
                 str(item['item']).casefold(),
             ),
         )
@@ -2269,6 +2280,7 @@ class ShopController(ShopPolishController):
         power_buff_targets = {
             entry.target_id for entry in self._shop_power_buff_entries
         }
+        restore_iid = ''
         for index, record in enumerate(visible):
             iid = f'current-loadout-{index}'
             target_id = record['target_id']
@@ -2312,6 +2324,8 @@ class ShopController(ShopPolishController):
             if cameo is not None:
                 options['image'] = cameo
             tree.insert('', 'end', **options)
+            if (target_id, is_power) == previous_target:
+                restore_iid = iid
             details = [
                 item_label,
                 'Source: ' + ' + '.join(record['sources']),
@@ -2329,6 +2343,14 @@ class ShopController(ShopPolishController):
                 ]
             details.extend(record['buff_lines'] or ('None',))
             self._shop_loadout_details[iid] = '\n'.join(details)
+        if restore_iid:
+            tree.selection_set(restore_iid)
+            tree.focus(restore_iid)
+            tree.see(restore_iid)
+        else:
+            # Deleting and reinserting rows can retain the old scroll offset,
+            # leaving the core groups above the visible portion of the tree.
+            tree.yview_moveto(0)
         self._rebuild_shop_loadout_upgrade_buttons()
         unit_upgrade_count = len({
             target for target, is_power

@@ -273,12 +273,10 @@ def shop_always_available_unit_ids():
         if entry.reward_type is ShopRewardType.UNIT_ACCESS
     }
     return frozenset(
-        unit_id for entry in entries
-        if entry.reward_type is ShopRewardType.UNIT_BUFF
-        for unit_id in shared_unit_buff_ids(entry.target_id)
+        unit_id for unit_id, target in BUFF_TARGETS.items()
         if unit_id in ALWAYS_AVAILABLE_TECH_IDS
         and unit_id not in access_targets
-        and BUFF_TARGETS[unit_id].get('category') in {
+        and target.get('category') in {
             'infantry', 'units', 'aircraft',
         }
     )

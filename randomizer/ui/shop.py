@@ -469,9 +469,9 @@ def build_shop_tab(self, workspace_tabs):
     ttk.Label(
         loadout_help,
         text=(
-            'Every owned unit can be upgraded. MCVs share buffs across factions; '
-            'harvesters (including the Slave Miner) share a separate set. '
-            'Use Open Upgrades.'
+            'MCVs, harvesters and transporters are always available for upgrades. '
+            'Each group shares buffs across factions. Use Open Upgrades, '
+            'including when the group has no buffs yet.'
         ),
         style='Shop.Help.TLabel',
     ).grid(row=0, column=0, sticky='w')
@@ -654,6 +654,7 @@ def build_shop_tab(self, workspace_tabs):
             'future runs whenever that unit is available, including core units. '
             'MCV buffs are shared across factions. Harvester buffs are shared '
             'across miners, including the Slave Miner. '
+            'Amphibious transporters share a separate set of buffs. '
             'Between runs, use arrows to buy or refund one stack for its '
             'full Gem price.'
         ),

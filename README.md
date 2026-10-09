@@ -72,7 +72,7 @@ the Shop run alive after a failed mission by repeating the same stage with new
 mission choices.
 
 Shop Mode uses all 108 reviewed Reloaded missions and its complete approved
-catalogue: 157 unit access rewards, 1,762 unit buffs, 18 powers, and 44 power
+catalogue: 157 unit access rewards, 1,726 unit buffs, 18 powers, and 44 power
 buffs. Temporary mission cards can add one of 12 Reloaded player boons or 7
 Reloaded AI challenges; active power boons are not offered twice.
 
@@ -82,8 +82,11 @@ permanent powers activate automatically in future Shop runs; unit buffs follow
 selected starting-loadout access.
 
 MCVs share one set of buff stacks across factions. Harvesters share a separate
-set, including the Slave Miner and Stealth Harvester. Current Loadout and the
-upgrade selectors show these groups once. Each compatible variant keeps its
+set, including the Slave Miner and Stealth Harvester. Amphibious transporters
+share a third set, including the Landing Craft, Armored Transport and all three
+Hover Transports. Current Loadout lists the three groups first with Open
+Upgrades buttons, even before any buffs are owned. Both current and permanent
+upgrade selectors show each group once. Each compatible variant keeps its
 own base stats; weapon upgrades apply only to armed miners. Existing per-unit
 Shop buff stacks are combined when saved profiles and runs load. The Stealth
 Harvester still requires its own access unlock.

@@ -1,4 +1,4 @@
-"""Regressions for shared MCV and harvester loadouts and upgrade stacks."""
+"""Regressions for shared MCV, harvester and transporter upgrades."""
 
 import sys
 import unittest
@@ -25,8 +25,8 @@ from randomizer.rewards.catalogue import (
 from randomizer.rewards.reloaded_definitions import SHARED_UNIT_BUFF_GROUPS
 from randomizer.rewards.arsenal import reward_matches_arsenal
 from randomizer.rewards.rules import expand_equivalent_role_buffs, tech_ids_for_rewards
-from randomizer.shop.active import active_shop_rewards, permanent_buff_snapshot
-from randomizer.shop.catalogue import shop_catalogue
+from randomizer.shop.active import active_shop_rewards, active_shop_tech_ids, permanent_buff_snapshot
+from randomizer.shop.catalogue import shop_always_available_unit_ids, shop_catalogue
 from randomizer.shop.config import SHOP_CONFIG
 from randomizer.shop.model import (
     BuffPurchase, PurchaseResult, RunStatus, ShopProfile, ShopRewardType, ShopRun,
@@ -34,6 +34,7 @@ from randomizer.shop.model import (
 from randomizer.shop.persistence import ShopPersistencePaths, ShopRepository
 from randomizer.shop.service import ShopProgressionService
 from randomizer.shop.state import normalize_shop_profile, normalize_shop_run
+from tools.check_shop_faction_upgrades import UpgradeController
 
 
 class Variable:
@@ -57,6 +58,7 @@ class LoadoutController(ShopController):
         self.shop_profile = ShopProfile()
         self.shop_config = SHOP_CONFIG
         self.shop_loadout_tree = Mock()
+        self.shop_loadout_tree.selection.return_value = ()
         self.shop_loadout_tree.get_children.return_value = ()
         self.shop_loadout_search_var = Variable(search)
         self.shop_loadout_upgrade_button = Mock()
@@ -94,11 +96,12 @@ class SharedUnitBuffChecks(unittest.TestCase):
     def test_old_profile_and_run_stacks_merge_without_loss(self):
         old = [
             {'reward_id': REWARD_BY_BUFF_KEY[unit, 'health']['name'], 'stacks': index + 1}
-            for index, unit in enumerate(('AMCV', 'PCV', 'CMIN', 'TSHARV'))
+            for index, unit in enumerate(('AMCV', 'PCV', 'CMIN', 'TSHARV', 'SAPC', 'LCRF', 'YHVR'))
         ]
         profile = normalize_shop_profile({'permanent_buffs': old})
         self.assertEqual({item.reward_id: item.stacks for item in profile.permanent_buffs}, {
             reward('AMCV')['name']: 3, reward('HARV')['name']: 7,
+            reward('SAPC')['name']: 18,
         })
         self.assertEqual(normalize_shop_profile(profile.to_dict()), profile)
         document = self.run_state().to_dict()
@@ -185,6 +188,7 @@ class SharedUnitBuffChecks(unittest.TestCase):
         labels = controller.shop_permanent_buff_target_combo.configure.call_args.kwargs['values']
         self.assertEqual(labels.count('MCVs (shared buffs)'), 1)
         self.assertEqual(labels.count('Harvesters (shared buffs)'), 1)
+        self.assertEqual(labels.count('Transporters (shared buffs)'), 1)
         self.assertNotIn('Stealth Harvester Access', labels)
         self.assertEqual(len(controller._shop_permanent_buff_rows), 12)
 
@@ -239,18 +243,87 @@ Country=SovietCountry
         calls = controller.shop_loadout_tree.insert.call_args_list
         groups = {call.kwargs['values'][1]: call for call in calls
                   if '(shared buffs)' in call.kwargs['values'][1]}
-        self.assertEqual(set(groups), {'MCVs (shared buffs)', 'Harvesters (shared buffs)'})
+        self.assertEqual(set(groups), {
+            'MCVs (shared buffs)', 'Harvesters (shared buffs)', 'Transporters (shared buffs)',
+        })
         for label, root, stacks in (('MCVs (shared buffs)', 'AMCV', 2),
                                     ('Harvesters (shared buffs)', 'HARV', 3)):
             call = groups[label]
             self.assertEqual(controller._shop_current_loadout_targets[call.kwargs['iid']],
                              (root, False))
             self.assertIn(f'/ {stacks} stacks', call.kwargs['values'][2])
-        for search, target in (('Yuri MCV', 'AMCV'), ('TSNHARV', 'HARV'), ('Slave Miner', 'HARV')):
+        for search, target in (
+            ('Yuri MCV', 'AMCV'), ('TSNHARV', 'HARV'), ('Slave Miner', 'HARV'),
+            ('Landing Craft', 'SAPC'), ('NODHVR', 'SAPC'),
+        ):
             filtered = LoadoutController(run, search)
             filtered._refresh_shop_loadout()
             self.assertEqual(filtered.shop_loadout_tree.insert.call_count, 1)
             self.assertEqual(list(filtered._shop_current_loadout_targets.values()), [(target, False)])
+
+    def test_empty_core_groups_stay_visible_and_upgradeable_for_every_faction(self):
+        for faction in ('Allies', 'Soviets', 'Yuri', 'GDI', 'Nod'):
+            with self.subTest(faction=faction):
+                run = self.run_state(reward_settings={'shop_faction_filter': faction})
+                controller = LoadoutController(run)
+                controller._refresh_shop_loadout()
+                calls = controller.shop_loadout_tree.insert.call_args_list
+                self.assertEqual([call.kwargs['values'][1] for call in calls[:3]], [
+                    'MCVs (shared buffs)', 'Harvesters (shared buffs)', 'Transporters (shared buffs)',
+                ])
+                for call, root in zip(calls[:3], SHARED_UNIT_BUFF_GROUPS):
+                    self.assertEqual(call.kwargs['values'][0], 'Always Available')
+                    self.assertEqual(call.kwargs['values'][2], 'No buffs')
+                    self.assertEqual(controller._shop_current_loadout_targets[call.kwargs['iid']],
+                                     (root, False))
+                    self.assertIn(root, active_shop_tech_ids(run))
+                controller.shop_loadout_tree.yview_moveto.assert_called_once_with(0)
+
+    def test_core_availability_does_not_depend_on_buff_offers(self):
+        access = tuple(entry for entry in shop_catalogue()
+                       if entry.reward_type is ShopRewardType.UNIT_ACCESS)
+        with patch('randomizer.shop.catalogue.shop_catalogue', return_value=access):
+            core = shop_always_available_unit_ids.__wrapped__()
+        self.assertTrue({'AMCV', 'HARV', 'SAPC', 'PCV', 'TSNHARV', 'LCRF', 'NODHVR'} <= core)
+        self.assertNotIn('SHARV', core)
+
+    def test_current_upgrade_screen_has_buyable_rows_for_every_core_group(self):
+        for native, root in (('PCV', 'AMCV'), ('TSHARV', 'HARV'), ('NODHVR', 'SAPC')):
+            with self.subTest(native=native):
+                controller = UpgradeController(self.run_state())
+                controller._shop_requested_buff_target_id = native
+                controller.refresh_shop_catalogue()
+                self.assertEqual(controller._shop_buff_target_ids[controller.shop_buff_target_var.get()], root)
+                expected = {entry.reward_id for entry in shop_catalogue()
+                            if entry.target_id == root and entry.reward_type is ShopRewardType.UNIT_BUFF}
+                self.assertEqual(set(controller._shop_catalogue_rows.values()), expected)
+                self.assertTrue(all(controller._shop_catalogue_buyable.values()))
+
+    def test_refresh_keeps_selected_transporter_group_visible(self):
+        controller = LoadoutController(self.run_state())
+        controller._shop_current_loadout_targets = {'old-row': ('NODHVR', False)}
+        controller.shop_loadout_tree.selection.return_value = ('old-row',)
+        controller._refresh_shop_loadout()
+        selected = controller.shop_loadout_tree.selection_set.call_args.args[0]
+        self.assertEqual(controller._shop_current_loadout_targets[selected], ('SAPC', False))
+        controller.shop_loadout_tree.see.assert_called_once_with(selected)
+
+    def test_transporter_run_purchases_share_stacks_and_passenger_upgrades(self):
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            repository = ShopRepository(ShopPersistencePaths(
+                profile=root / 'profile.json', run=root / 'run.json',
+                transaction=root / 'transaction.json', backup_dir=root / 'backups',
+            ))
+            repository.save_run(self.run_state())
+            service = ShopProgressionService(repository)
+            for member in SHARED_UNIT_BUFF_GROUPS['SAPC'][1]:
+                bought = service.purchase_run_reward(REWARD_BY_BUFF_KEY[member, 'passenger_capacity']['name'])
+                self.assertEqual(bought.result, PurchaseResult.OK)
+            run = repository.load_run()
+            self.assertEqual(run.run_buffs, (BuffPurchase(reward('SAPC', 'passenger_capacity')['name'], 5),))
+            for member in SHARED_UNIT_BUFF_GROUPS['SAPC'][1]:
+                self.assertEqual(unit_buff_counts(active_shop_rewards(run), member)['passenger_capacity'], 5)
 
 
 if __name__ == '__main__':

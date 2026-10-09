@@ -594,13 +594,17 @@ STANDALONE_WEAPON_TEMPLATES = {}
 STANDALONE_UNIT_RULE_TEMPLATES = {}
 LINKED_ACCESS_VARIANTS = {}
 LINKED_BUFF_VARIANTS = {}
-# Economy units share upgrades across factions, independently of Chaos role
+# Core utility units share upgrades across factions, independently of Chaos role
 # sharing. Keep their native identities and stats separate from linked forms.
 SHARED_UNIT_BUFF_GROUPS = {
     'AMCV': ('MCVs', tuple(str(unit).upper() for unit in _FACTIONS['conyard_by_mcv'])),
     'HARV': (
         'Harvesters',
         (*tuple(str(values[0]).upper() for values in _FACTIONS['miners'].values()), 'SHARV'),
+    ),
+    'SAPC': (
+        'Transporters',
+        tuple(str(values[0]).upper() for values in _FACTIONS['amphibious_transports'].values()),
     ),
 }
 _SHARED_UNIT_BUFF_ROOTS = {
