@@ -606,6 +606,10 @@ SHARED_UNIT_BUFF_GROUPS = {
         'Transporters',
         tuple(str(values[0]).upper() for values in _FACTIONS['amphibious_transports'].values()),
     ),
+    'ENGINEER': (
+        'Engineers',
+        tuple(str(unit).upper() for unit in _FACTIONS['engineer_by_family'].values()),
+    ),
 }
 _SHARED_UNIT_BUFF_ROOTS = {
     unit_id: root_id

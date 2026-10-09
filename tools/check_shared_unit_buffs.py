@@ -1,4 +1,4 @@
-"""Regressions for shared MCV, harvester and transporter upgrades."""
+"""Regressions for shared MCV, harvester, transporter and engineer upgrades."""
 
 import sys
 import unittest
@@ -96,12 +96,15 @@ class SharedUnitBuffChecks(unittest.TestCase):
     def test_old_profile_and_run_stacks_merge_without_loss(self):
         old = [
             {'reward_id': REWARD_BY_BUFF_KEY[unit, 'health']['name'], 'stacks': index + 1}
-            for index, unit in enumerate(('AMCV', 'PCV', 'CMIN', 'TSHARV', 'SAPC', 'LCRF', 'YHVR'))
+            for index, unit in enumerate((
+                'AMCV', 'PCV', 'CMIN', 'TSHARV', 'SAPC', 'LCRF', 'YHVR', 'SENGINEER', 'NENGINEER',
+            ))
         ]
         profile = normalize_shop_profile({'permanent_buffs': old})
         self.assertEqual({item.reward_id: item.stacks for item in profile.permanent_buffs}, {
             reward('AMCV')['name']: 3, reward('HARV')['name']: 7,
             reward('SAPC')['name']: 18,
+            reward('ENGINEER')['name']: 17,
         })
         self.assertEqual(normalize_shop_profile(profile.to_dict()), profile)
         document = self.run_state().to_dict()
@@ -132,6 +135,11 @@ class SharedUnitBuffChecks(unittest.TestCase):
                              (BuffPurchase(reward('AMCV')['name'], 2),))
             refund = service.refund_permanent_unit_buff(REWARD_BY_BUFF_KEY['NODMCV', 'health']['name'])
             self.assertEqual(refund.profile.meta_coins, first.profile.meta_coins)
+            for member in SHARED_UNIT_BUFF_GROUPS['ENGINEER'][1]:
+                bought = service.purchase_permanent_buff(REWARD_BY_BUFF_KEY[member, 'health']['name'])
+                self.assertTrue(bought.validation.allowed)
+            profile = repository.load_profile()
+            self.assertIn(BuffPurchase(reward('ENGINEER')['name'], 5), profile.permanent_buffs)
             repository.save_run(self.run_state(permanent_buffs_snapshot=(
                 BuffPurchase(reward('HARV')['name'], 17),
             )))
@@ -189,6 +197,7 @@ class SharedUnitBuffChecks(unittest.TestCase):
         self.assertEqual(labels.count('MCVs (shared buffs)'), 1)
         self.assertEqual(labels.count('Harvesters (shared buffs)'), 1)
         self.assertEqual(labels.count('Transporters (shared buffs)'), 1)
+        self.assertEqual(labels.count('Engineers (shared buffs)'), 1)
         self.assertNotIn('Stealth Harvester Access', labels)
         self.assertEqual(len(controller._shop_permanent_buff_rows), 12)
 
@@ -229,6 +238,8 @@ Country=SovietCountry
                         clone = sections[handled[member]['clone_id']]
                         self.assertEqual(int(clone['Strength']),
                                          round(BUFF_TARGETS[member]['strength'] * 1.15))
+                        if root == 'ENGINEER':
+                            self.assertEqual(clone['Engineer'].lower(), 'yes')
                 self.assertEqual(installed, before)
                 self.assertEqual(lines[-1].split('=')[1].split(',')[1], 'HARV')
 
@@ -245,6 +256,7 @@ Country=SovietCountry
                   if '(shared buffs)' in call.kwargs['values'][1]}
         self.assertEqual(set(groups), {
             'MCVs (shared buffs)', 'Harvesters (shared buffs)', 'Transporters (shared buffs)',
+            'Engineers (shared buffs)',
         })
         for label, root, stacks in (('MCVs (shared buffs)', 'AMCV', 2),
                                     ('Harvesters (shared buffs)', 'HARV', 3)):
@@ -255,6 +267,7 @@ Country=SovietCountry
         for search, target in (
             ('Yuri MCV', 'AMCV'), ('TSNHARV', 'HARV'), ('Slave Miner', 'HARV'),
             ('Landing Craft', 'SAPC'), ('NODHVR', 'SAPC'),
+            ('Soviet Engineer', 'ENGINEER'), ('NENGINEER', 'ENGINEER'),
         ):
             filtered = LoadoutController(run, search)
             filtered._refresh_shop_loadout()
@@ -268,10 +281,11 @@ Country=SovietCountry
                 controller = LoadoutController(run)
                 controller._refresh_shop_loadout()
                 calls = controller.shop_loadout_tree.insert.call_args_list
-                self.assertEqual([call.kwargs['values'][1] for call in calls[:3]], [
+                self.assertEqual([call.kwargs['values'][1] for call in calls[:4]], [
                     'MCVs (shared buffs)', 'Harvesters (shared buffs)', 'Transporters (shared buffs)',
+                    'Engineers (shared buffs)',
                 ])
-                for call, root in zip(calls[:3], SHARED_UNIT_BUFF_GROUPS):
+                for call, root in zip(calls[:4], SHARED_UNIT_BUFF_GROUPS):
                     self.assertEqual(call.kwargs['values'][0], 'Always Available')
                     self.assertEqual(call.kwargs['values'][2], 'No buffs')
                     self.assertEqual(controller._shop_current_loadout_targets[call.kwargs['iid']],
@@ -284,11 +298,15 @@ Country=SovietCountry
                        if entry.reward_type is ShopRewardType.UNIT_ACCESS)
         with patch('randomizer.shop.catalogue.shop_catalogue', return_value=access):
             core = shop_always_available_unit_ids.__wrapped__()
-        self.assertTrue({'AMCV', 'HARV', 'SAPC', 'PCV', 'TSNHARV', 'LCRF', 'NODHVR'} <= core)
+        self.assertTrue({
+            'AMCV', 'HARV', 'SAPC', 'PCV', 'TSNHARV', 'LCRF', 'NODHVR', 'ENGINEER', 'NENGINEER',
+        } <= core)
         self.assertNotIn('SHARV', core)
 
     def test_current_upgrade_screen_has_buyable_rows_for_every_core_group(self):
-        for native, root in (('PCV', 'AMCV'), ('TSHARV', 'HARV'), ('NODHVR', 'SAPC')):
+        for native, root in (
+            ('PCV', 'AMCV'), ('TSHARV', 'HARV'), ('NODHVR', 'SAPC'), ('NENGINEER', 'ENGINEER'),
+        ):
             with self.subTest(native=native):
                 controller = UpgradeController(self.run_state())
                 controller._shop_requested_buff_target_id = native
