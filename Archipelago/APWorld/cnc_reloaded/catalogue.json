@@ -54,6 +54,13 @@
       "id": 86296688
     },
     {
+      "name": "AI Enemy Powerhouses",
+      "classification": "trap",
+      "category": "enemy_buffs",
+      "repeatable": true,
+      "id": 86296792
+    },
+    {
       "name": "AI GDI Ion Cannon",
       "classification": "trap",
       "category": "enemy_buffs",
@@ -17023,7 +17030,7 @@
       ]
     }
   ],
-  "catalogue_checksum": "c22c0edd9e21f65e652d6040ba1cda66786473b56e5cf51c5651ebeea7caee56",
+  "catalogue_checksum": "b15e27981ff1164d7e0dae66d7126abb78417c12e2b391e0b40372225bb23887",
   "compatible_catalogue_checksums": [
     "0053e46817c9e2f6d952b803d9cb9784da2bb2fde3f9e72a211a057b20ad827d"
   ],
@@ -61276,7 +61283,7 @@
     "generated_world": "mapping"
   },
   "review": {
-    "standalone_reward_items": 2104,
+    "standalone_reward_items": 2105,
     "victory_missions_verified": 108,
     "objective_runtime_enabled": true,
     "cabal_deferred": true

@@ -38,7 +38,7 @@ ENEMY_BUFF_BY_ID = {
 SUPPORTED_AI_REWARD_IDS = frozenset(
     definition['id']
     for definition in ENEMY_BUFF_DEFINITIONS
-    if definition.get('effect') in {'armor', 'production', 'unit', 'power'}
+    if definition.get('effect') in {'armor', 'production', 'unit', 'power', 'powerhouse'}
 )
 
 
@@ -92,6 +92,11 @@ ENEMY_BUFF_GROUP_DEFINITIONS = (
             if definition.get('effect') == 'power'
             and definition.get('category') != 'Superweapons'
         ),
+    },
+    {
+        'id': 'powerhouses',
+        'label': 'AI special unit production',
+        'effect_ids': _enemy_group_ids(effects={'powerhouse'}),
     },
     {
         'id': 'superweapons',
@@ -420,6 +425,8 @@ def enemy_effect_text(reward, count=1, base_engine_value=1.0):
         return f'{category} {detail}'
     if effect == 'power':
         return f'{definition.get("name", "AI power")} unlocked for hostile AI'
+    if effect == 'powerhouse':
+        return 'Faction heroes and special combat units unlocked for hostile AI factories'
     return definition.get('name', 'Hostile AI strengthened')
 
 

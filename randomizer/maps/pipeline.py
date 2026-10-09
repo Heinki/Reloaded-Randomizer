@@ -20,6 +20,7 @@ from randomizer.maps.identity_safety import (
     validate_authored_identity_contract,
 )
 from randomizer.maps.starting_units import starting_unit_buff_plan
+from randomizer.maps.enemy_powerhouses import enemy_powerhouse_rules
 from randomizer.maps.ownership import (
     build_unit_usage_index,
     script_referenced_taskforce_unit_ids,
@@ -2880,6 +2881,37 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             )),
             **application,
         })
+    # Add private enemy production after player access/buff isolation. Native
+    # source identities and authored teams are never replaced by this effect.
+    powerhouse_rules, powerhouse_applications, powerhouse_skips = enemy_powerhouse_rules(
+        lines, scaled_enemy_houses, enemy_scaling_rewards, installed_rule_sections,
+        seed=self.active_launch_seed(), stage=reward_settings.get('shop_stage', 1),
+        difficulty=(self.get_selected_difficulty_value()
+                    if hasattr(self, 'difficulty_var') else 1),
+        protected_mission=(
+            code in MISSION_NATIVE_RUNTIME_PRESERVE_ACTION_TEAMS
+            or mission.get('no_build') or mission.get('true_no_build')
+            or mission.get('build_classification') in {'true_no_build', 'no_build_production'}
+        ),
+        excluded_unit_ids=runtime_identity_preserve_ids,
+    )
+    if powerhouse_rules:
+        merge_ini_section_values(lines, powerhouse_rules)
+        entries = [entry for entry in enemy_scaling_entries
+                   if entry['reward'].get('enemy_effect') == 'powerhouse']
+        for application in powerhouse_applications:
+            ai_reward_applications.append({
+                'mission': code, 'reward_name': entries[0]['reward']['name'],
+                'source': ' + '.join(unique_in_order(entry['source'] for entry in entries)),
+                'earned_from': '; '.join(unique_in_order(entry['earned_from'] for entry in entries)),
+                **application,
+            })
+        self.append_log(
+            f'Enemy Powerhouses configured {len(powerhouse_applications)} '
+            'hostile special-unit factory attack teams.'
+        )
+    if powerhouse_skips:
+        self.append_log('Skipped Enemy Powerhouses: ' + '; '.join(powerhouse_skips) + '.')
     native_team_validation_ids = (
         non_player_taskforce_unit_ids - set(ENGINEER_UNIT_IDS)
     )
@@ -3141,6 +3173,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         and not rule_sections
         and not enemy_country_rules
         and not enemy_unit_rules
+        and not powerhouse_rules
         and not superweapon_trigger
         and not enemy_superweapon_trigger
     ):

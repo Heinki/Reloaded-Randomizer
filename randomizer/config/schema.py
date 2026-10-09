@@ -202,6 +202,7 @@ REQUIRED_SECTIONS = {
         'defaults': dict,
         'buffs': list,
         'tier_unit_buff_templates': list,
+        'powerhouse_rosters': dict,
     },
 }
 
@@ -1401,6 +1402,9 @@ def _validate_enemy_scaling(sections, path):
                 )
             ):
                 _invalid(f'Invalid enemy AI power {effect_id!r}', path)
+        elif definition['effect'] == 'powerhouse':
+            if maximum != 1:
+                _invalid(f'Enemy Powerhouses must be single-stack: {effect_id!r}', path)
         elif definition['effect'] == 'unit':
             _invalid(
                 f'Unit effects belong in tier_unit_buff_templates: '
@@ -1422,6 +1426,19 @@ def _validate_enemy_scaling(sections, path):
                 _invalid(
                     f'Invalid enemy production clamp {effect_id!r}', path
                 )
+    rosters = sections['powerhouse_rosters']
+    if set(rosters) != {'allies', 'soviets', 'yuri', 'gdi', 'nod'}:
+        _invalid('Enemy Powerhouses requires all five active factions', path)
+    for family, roster in rosters.items():
+        if not isinstance(roster, dict) or set(roster) != {'heroes', 'specials'}:
+            _invalid(f'Invalid Enemy Powerhouses roster {family!r}', path)
+        members = []
+        for pool in roster.values():
+            if not isinstance(pool, list) or not pool or not all(_is_nonempty_string(unit) for unit in pool):
+                _invalid(f'Invalid Enemy Powerhouses unit pool {family!r}', path)
+            members.extend(pool)
+        if len(members) != len(set(members)):
+            _invalid(f'Duplicate Enemy Powerhouses units {family!r}', path)
     templates = sections['tier_unit_buff_templates']
     template_ids = set()
     valid_unit_buff_types = {

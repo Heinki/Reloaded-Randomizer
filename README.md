@@ -94,7 +94,19 @@ preserving the reward. Expanding the launcher log exposes a developer-only
 mission-choice picker for recovery and test completion through normal Shop
 transitions.
 
-The Reloaded APWorld contains 2,104 items, 108 missions, and reserved locations
+Enable **Enemy Powerhouses** under Shop Mode's optional run modifiers to let
+hostile AI bases build faction heroes and special combat units. The full
+five-faction pool includes Tanya, Boris, Chitzkoi, Yuri Prime, Ghost Stalker,
+Umagon, both Nod commandos, the Mammoth Mk.II Prototype, Lunar Infantry,
+evolved Brutes, and advanced faction infantry, vehicles, aircraft, and ships.
+Each enemy house receives up to four seeded attack teams, with at most two
+heroes and one living unit of each selected type. Selections vary by mission,
+seed, and Shop stage. Units require a matching factory and existing active AI
+production; fixed-force missions, protected scripted missions, and countries
+shared with friendly actors are skipped. Enemy Powerhouses is also available
+as a single-stack enemy reward. Source maps and authored teams stay intact.
+
+The Reloaded APWorld contains 2,105 items, 108 missions, and reserved locations
 for objectives, victories, and Shop Mode. Each Shop seed has 120 shuffled item
 locations. Mission victories release up to 12 unchecked locations across failed
 and restarted runs. Completing the run releases every remaining location before

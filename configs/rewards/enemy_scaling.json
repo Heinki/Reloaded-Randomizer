@@ -2,6 +2,28 @@
   "schema_version": 1,
   "description": "Reviewed AI-only Archipelago Trap bonuses for native units, country production, and support powers.",
   "sections": {
+    "powerhouse_rosters": {
+      "allies": {
+        "heroes": ["TANY"],
+        "specials": ["CLEG", "HCLEG", "SNIPE", "TNKD", "AHOWI", "SREF", "MGTK", "BFRT", "BEAG", "ORCA2", "CARRIER", "AEGIS"]
+      },
+      "soviets": {
+        "heroes": ["BORIS", "CHITZ"],
+        "specials": ["LUNR", "DESO", "FTHROW", "ADVSHK", "WRMN", "RA3APOC", "RA1TTNK", "TTNK", "DTRUCK", "SMIG", "DRED", "SQD"]
+      },
+      "yuri": {
+        "heroes": ["YURIPR"],
+        "specials": ["YURIE", "EBRUTE", "GBRUTE", "BIO", "OVERLORD", "MIND", "TELE", "CMISS", "BSUB"]
+      },
+      "gdi": {
+        "heroes": ["TSGHOST", "TSUMAGON"],
+        "specials": ["MMKIIPROTO", "MM2MEC", "TWMAMU", "MAMU", "PREDATOR", "PITBULL", "SENTINEL", "SLINGSHOT", "SHATTERER", "TSSONIC", "JUGG", "MOBILEMP", "TSORCAB", "GDICRUISER", "ADVDEST"]
+      },
+      "nod": {
+        "heroes": ["TSCYC2", "NODCOMMANDO"],
+        "specials": ["ELCAD", "REAPER", "SCORP", "BEAMARTILLERY", "FLAMETANK", "SUBTANK", "TSSTNK", "ART2", "TSSCRIN", "MSUB", "JFISH", "HYDRASUB"]
+      }
+    },
     "defaults": {
       "stack_model_version": 6,
       "maximum_total_buffs": 40,
@@ -9,6 +31,15 @@
       "caps": {}
     },
     "buffs": [
+      {
+        "id": "powerhouse",
+        "name": "AI Enemy Powerhouses",
+        "type": "Special Units",
+        "category": "Special unit production",
+        "effect": "powerhouse",
+        "per_stack_percent": 100,
+        "maximum_stacks": 1
+      },
       {
         "id": "infantry_armor",
         "name": "AI Infantry Armor",

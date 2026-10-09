@@ -9,6 +9,18 @@ deferred and must not be added through inferred ownership.
 
 ## Main configuration
 
+`rewards/enemy_scaling.json` defines the single-stack `powerhouse` reward and
+editable `powerhouse_rosters` for all five factions. The `heroes` and `specials`
+pools include combat units only; hidden prototypes are enemy-only and do not
+change player reward eligibility. `shop_mode.json` exposes the effect as the
+**Enemy Powerhouses** run modifier. The map planner selects at most two heroes
+and fills the remaining slots from specialists, up to four teams per enemy
+house, using the launch seed, mission identity, and Shop stage. Each generated
+type has `BuildLimit=1`; each attack team has `Max=1`. Existing factories and
+active production templates are required. Shared friendly countries and
+protected missions are skipped. Run `python3 tools/audit_enemy_powerhouses.py`
+to audit installed campaign production and generated-map isolation.
+
 - `ui.json`: campaign labels, progression/reward modes, faction colors, themes
 - `default_player_config.json`: initial launcher choices
 - `missions.json`: progression policy, finale multipliers, victory hooks,
