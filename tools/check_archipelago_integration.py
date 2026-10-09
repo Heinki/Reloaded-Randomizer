@@ -1,4 +1,4 @@
-"""Exercise launcher YAML, AP 0.6.7 generation, handshake, and Shop controls.
+"""Exercise APWorld loading, launcher YAML, generation, and Shop controls.
 
 Run with Archipelago's Python environment and --archipelago-root pointing to
 its source checkout. --apworld optionally verifies the distributable archive.
@@ -15,6 +15,7 @@ from pathlib import Path
 import sys
 from types import ModuleType, SimpleNamespace
 import unittest
+from zipfile import ZipFile
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--archipelago-root', type=Path, required=True)
@@ -37,6 +38,8 @@ data = importlib.import_module(module + '.data')
 from BaseClasses import CollectionState, MultiWorld
 from Fill import distribute_items_restrictive
 from worlds.AutoWorld import World
+from worlds.Files import APWorldContainer
+from Utils import Version, version_tuple
 import yaml
 from Archipelago.catalogue_contract import build_catalogue_projection
 from Archipelago.run_manifest import gameplay_config_snapshot
@@ -125,6 +128,19 @@ class Widget:
 
 
 class IntegrationTests(unittest.TestCase):
+    def test_packaged_manifest_loads_with_archipelago(self):
+        archive_path = args.apworld or ROOT / 'Archipelago' / (module + '.apworld')
+        container = APWorldContainer(str(archive_path))
+        # Importing the world directly bypasses the launcher's manifest parser.
+        # A two-part release label such as "1.5" imports but crashes this loader.
+        with ZipFile(archive_path) as archive:
+            manifest = container.read_contents(archive)
+        self.assertEqual(container.game, WorldType.game)
+        self.assertIsInstance(container.world_version, Version)
+        self.assertIsInstance(container.minimum_ap_version, Version)
+        self.assertLessEqual(container.minimum_ap_version, version_tuple)
+        self.assertLessEqual(manifest['compatible_version'], container.version)
+
     def test_option_creator_fields_generate_a_run(self):
         from Options import (
             Choice, FreeText, NamedRange, OptionCounter, OptionList, OptionSet,

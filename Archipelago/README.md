@@ -129,6 +129,19 @@ multiworld progression. Synchronization does not grant rewards twice.
 
 ## Troubleshooting
 
+### Archipelago crashes while loading worlds
+
+`TypeError: Version.__new__() missing 1 required positional argument: 'build'`
+means an installed APWorld manifest contains a version with only two numeric
+parts, such as `1.5`. Archipelago requires three parts, such as `1.5.0`.
+The current Reloaded builder already writes this three-part world version.
+
+Close Archipelago, replace the installed `cnc_reloaded.apworld` with the current
+build, and restart. Updating the Randomizer executable alone does not replace
+the APWorld in `custom_worlds`. Remove older duplicate Reloaded APWorld files
+from that folder. If the error remains, check the other installed APWorlds for
+two-part `world_version`, `minimum_ap_version`, or `maximum_ap_version` values.
+
 ### The launcher cannot connect
 
 - Use `archipelago.gg`, not the browser room URL.
