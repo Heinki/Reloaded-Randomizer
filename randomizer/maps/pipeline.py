@@ -20,6 +20,7 @@ from randomizer.maps.identity_safety import (
     validate_authored_identity_contract,
 )
 from randomizer.maps.starting_units import starting_unit_buff_plan
+from randomizer.missions.required_access import mission_required_access_rules
 from randomizer.maps.enemy_powerhouses import enemy_powerhouse_rules
 from randomizer.maps.ownership import (
     build_unit_usage_index,
@@ -282,12 +283,20 @@ def prepare_hooked_map(self, mission, extra_rules=None):
     identity_contract = capture_authored_identity_contract(
         lines, installed_rule_sections
     )
+    required_access_rules = (
+        mission_required_access_rules(mission, lines, installed_rule_sections)
+        if launch_active else {}
+    )
+    native_required_access_ids.update(required_access_rules)
+    fallback_tech_ids.update(required_access_rules)
+    native_techno_exclusions.update(native_required_access_ids)
     native_techno_exclusions.update(
         identity_contract.protected_type_ids
     )
     native_build_only_clone_ids.update(
         identity_contract.protected_type_ids
     )
+    native_build_only_clone_ids.difference_update(native_required_access_ids)
     self.append_log(
         f'Protected {len(identity_contract.protected_type_ids)} authored '
         'TechnoType identities from placement, TaskForce, trigger, event, '
@@ -508,7 +517,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
     reward_settings = self.active_reward_settings()
     suppressed_power_buildings = suppressed_superweapon_building_ids(
         reward_settings
-    )
+    ) - native_required_access_ids
     for building_id in suppressed_power_buildings:
         rule_sections.setdefault(building_id, {})['TechLevel'] = LOCKED_TECH_LEVEL
 
@@ -1004,7 +1013,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             values['ForbiddenHouses'] = denied_owners
     # Generic randomized ownership must not erase mission-authored recovery
     # access such as Power Hunger's native Burillo.
-    for section, values in MISSION_REQUIRED_ACCESS_RULES.get(code, {}).items():
+    for section, values in required_access_rules.items():
         if (
             section.upper() in owned_clone_ids
             and section.upper() not in native_techno_exclusions
@@ -1844,6 +1853,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         ) - (
             set(MISSION_NATIVE_PRODUCTION_GATE_EXCLUSIONS.get(code, ()))
             | refinery_building_ids
+            | native_required_access_ids
         )
         factory_owner_only_source_ids = (
             (
@@ -2806,6 +2816,15 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             source_id: {'TechLevel': LOCKED_TECH_LEVEL}
             for source_id in native_production_hard_locks
         })
+
+    if required_access_rules:
+        # Runtime restoration and production isolation run after launch rules.
+        # Mission construction checks must still see the native building.
+        merge_ini_section_values(lines, required_access_rules)
+        self.append_log(
+            'Kept mission construction types available on native identities: '
+            + ', '.join(sorted(required_access_rules)) + '.'
+        )
 
     runtime_weapon_restore_ids = (
         MISSION_NATIVE_RUNTIME_WEAPON_PRESERVE_IDS.get(code, ())

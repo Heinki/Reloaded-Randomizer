@@ -21,7 +21,6 @@ from ._dependencies import (
     MISSIONS_WITH_ALL_CONYARD_DEFENSE_ACCESS,
     MISSION_NATIVE_TECH_UNLOCK_IDS,
     MISSION_ORIGINAL_MCV_ACCESS_IDS,
-    MISSION_REQUIRED_ACCESS_RULES,
     MISSION_SPECIAL_INFANTRY_FACTORY_EXCLUSIONS,
     NEXT_OBJECTIVE_CHECK_ID,
     NO_BUILD_MISSION_CODES,
@@ -73,6 +72,9 @@ from ._dependencies import (
     time,
     traceback,
 )
+from randomizer.missions.required_access import mission_required_access_rules
+from randomizer.ui.cameos import installed_rules_registry
+from randomizer.maps.sidebar_assets import deploy_campaign_sidebar_backgrounds
 from randomizer.config.game_profile import (
     GAME_INJECTED_DLL_NAMES,
     GAME_RUNTIME_ARGUMENTS,
@@ -139,9 +141,9 @@ class LaunchController:
         production_houses = mission_player_production_houses(
             mission.get('code')
         )
-        mission_required_rules = MISSION_REQUIRED_ACCESS_RULES.get(
-            str(mission.get('code') or '').upper(),
-            {},
+        _superweapons, installed_sections = installed_rules_registry()
+        mission_required_rules = mission_required_access_rules(
+            mission, lines, installed_sections,
         )
         mission_code = str(mission.get('code') or '').upper()
         excluded_special_infantry_factories = (
@@ -1117,6 +1119,12 @@ class LaunchController:
 
                 deploy_randomizer_tooltips(hook['tooltip_asset'])
             if hook and hook.get('root_map'):
+                backgrounds = deploy_campaign_sidebar_backgrounds(hook['root_map'])
+                if backgrounds:
+                    self.append_log(
+                        'Prepared native campaign sidebar backgrounds: '
+                        + ', '.join(path.name for path in backgrounds) + '.'
+                    )
                 try:
                     art_path, art_aliases = deploy_generated_unit_art(
                         hook['root_map']

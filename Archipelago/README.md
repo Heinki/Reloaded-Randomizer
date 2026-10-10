@@ -218,8 +218,3 @@ remain locked while connected. AP purchases are scouted; stage victories are
 sent as checks, and stage-victory marker receipts are acknowledged without
 becoming ordinary Shop rewards. Only a completed run belonging to the current AP slot
 can report its goal.
-
-Run `tools/check_archipelago_integration.py --archipelago-root /path/to/Archipelago`
-with Archipelago 0.6.8's Python environment to verify YAML, generation, item fill,
-beatability, handshake, and Shop controls. Add `--apworld /path/to/game.apworld`
-to test the packaged world.
