@@ -245,6 +245,8 @@ def run(
         generated_sections = all_section_value_maps(
             IniLines(generated_text.splitlines())
         )
+        if _section_field(generated_sections, 'Basic', 'EndOfGame') != 'yes':
+            raise ValueError('Generated mission can continue an authored campaign.')
         clone_id = 'RLRP' + reward_tech_id.upper()
         if buff_type == 'veteran':
             clone_id = 'compact veteran clone (validated)'
@@ -334,12 +336,20 @@ def run(
                     raise ValueError(
                         f'Earned {tech_id} did not unlock {factory_id}.'
                     )
+                authored_prerequisite = _section_field(
+                    source_sections, factory_id, 'Prerequisite'
+                )
+                expected_prerequisite = (
+                    conyard_id
+                    if authored_prerequisite is None
+                    else authored_prerequisite
+                )
                 if _section_field(
                     generated_sections, factory_id, 'Prerequisite'
-                ) != conyard_id:
+                ) != expected_prerequisite:
                     raise ValueError(
-                        f'{factory_id} is not available directly behind '
-                        f'{conyard_id}.'
+                        f'{factory_id} has an unexpected prerequisite; '
+                        f'expected {expected_prerequisite!r}.'
                     )
             elif target_category == 'defenses':
                 building_prerequisites = {

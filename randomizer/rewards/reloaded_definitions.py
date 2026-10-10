@@ -318,6 +318,10 @@ def _power_reward(power_id, label, category, factions):
     }
     if power_id == 'TiberiumShowerSpecial':
         reward['cameo_superweapon'] = 'TSSuperChemicalSpecial'
+        reward['superweapon_rules'] = {
+            'SidebarPCX': 'chemicon.pcx',
+            'SidebarImage': '',
+        }
     if power_id == 'ParaDropSpecial':
         # Reloaded's normal Allied paradrop payload lives in hardcoded
         # [General] defaults. Materialize it on the private power clone so the
@@ -336,7 +340,11 @@ def _power_reward(power_id, label, category, factions):
                 'clone': 'RLRPTIBBOMB',
                 'list': 'InfantryTypes',
                 'reference_keys': ('ParaDrop.Types',),
-                'values': {},
+                # Native TIBBOMB emits 185-205 bouncing, damaging crystal
+                # animations per payload. Keep the chemical explosion and
+                # crystal mix, but bound this cost on the private player copy,
+                # including when Reinforced Payload delivers multiple bombs.
+                'values': {'MinDebris': '8', 'MaxDebris': '12'},
             },
         }
     if power_id == 'HuntSeekSpecial':

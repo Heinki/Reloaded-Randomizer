@@ -90,6 +90,11 @@ when resolving their loadout. Generated player units and defenses append
 Private string-table labels are deployed only for the mission and cleaned up
 with the launcher's other runtime assets.
 
+Chemical Bomb (Tiberium Shower) uses the chemical cameo for both access and
+upgrade cards. Its private payload emits 8–12 crystal debris animations per
+bomb to reduce slowdown, including with payload upgrades; the native chemical
+explosion remains active.
+
 Permanent Shop progression spends Gems on unit access, unit buffs, all 18
 reviewed superweapons and support powers, plus their 44 power buffs. Purchased
 permanent powers activate automatically in future Shop runs; unit buffs follow
@@ -157,6 +162,10 @@ game's MIX archives. It creates marker-owned `RLR_*.MAP` copies in the game
 folder and verifies original map hashes before and after play. Persistent
 settings, saves, logs, and caches are stored in `ReloadedRandomizerData`.
 
+Generated Randomizer missions end after victory and return control to the
+launcher. Authored campaign successors such as the second part of Vega's Dam
+are selected and prepared separately instead of loading automatically.
+
 Map-authored units, TaskForces, triggers, events, and actions keep their native
 identities. Player production uses isolated Randomizer clones where necessary
 to avoid changing enemy or scripted units that share the original type.
@@ -210,6 +219,8 @@ python -c "from randomizer.config.static import REQUIRED_STATIC_CONFIGS, validat
 python -m randomizer.audit
 python -m Archipelago.audit
 python tools\all_mission_generation_smoke.py
+python tools\reported_mission_smoke.py
+python tools\power_clone_smoke.py
 ```
 
 Build the launcher and matching APWorld on Windows:

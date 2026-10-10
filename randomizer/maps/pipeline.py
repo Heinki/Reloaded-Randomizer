@@ -433,6 +433,13 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         extra_rules,
         allowed_unlocked_tech_ids=mission_effective_tech_ids,
     )
+    if launch_active:
+        # The launcher selects and prepares each mission separately. TS maps
+        # such as Vega's Dam otherwise try to load their authored successor
+        # after victory, bypassing generation and the launcher's asset lifecycle.
+        rule_sections.setdefault('Basic', {}).update({
+            'EndOfGame': 'yes',
+        })
     iron_guard_clone = owned_clone_ids.get('NAIRDM')
     if iron_guard_clone and 'NAIRDM' in {
         str(tech_id).upper() for tech_id in mission_effective_tech_ids

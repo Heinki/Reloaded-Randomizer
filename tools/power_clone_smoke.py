@@ -10,6 +10,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from randomizer.core.paths import BATTLE_INI
+from randomizer.application.shop_controller import ShopController
 from randomizer.maps.base import randomizer_clone_type_id
 from randomizer.maps.ini import (
     IniLines,
@@ -22,6 +23,7 @@ from randomizer.maps.pipeline import prepare_hooked_map
 from randomizer.maps.rules import is_generated_hooked_map
 from randomizer.missions.catalogue import parse_missions
 from randomizer.rewards.catalogue import REWARD_POOL
+from randomizer.ui.cameos import ensure_superweapon_cameos, installed_rules_registry
 from tools.core_gameplay_smoke import _Harness
 
 
@@ -62,6 +64,23 @@ def main():
     )
     hook = None
     failures = []
+    cameo_specs = [
+        ShopController._shop_power_cameo_for_item(None, reward['name'])
+        for reward in power_rewards + power_buff_rewards
+    ]
+    power_cameos = ensure_superweapon_cameos(
+        [power_id for power_id, _asset, _sidebar in cameo_specs],
+        {
+            power_id: sidebar for power_id, _asset, sidebar in cameo_specs
+            if sidebar
+        },
+        synchronous=True,
+    )
+    for reward, (power_id, _asset, _sidebar) in zip(
+        power_rewards + power_buff_rewards, cameo_specs
+    ):
+        if power_id not in power_cameos:
+            failures.append(f'{reward["name"]}: Shop cameo is missing.')
     try:
         hook = prepare_hooked_map(harness, mission)
         lines = IniLines(
@@ -122,6 +141,20 @@ def main():
             failures.append('Chemical Bomb payload was not isolated to its clone.')
         elif value(sections.get(chemical_payload, {}), 'Strength') != '5750':
             failures.append('Chemical Bomb cloned payload health was not increased.')
+        chemical_payload_values = sections.get(chemical_payload, {})
+        minimum_debris = int(value(chemical_payload_values, 'MinDebris') or 0)
+        maximum_debris = int(value(chemical_payload_values, 'MaxDebris') or 0)
+        if not 0 < minimum_debris <= maximum_debris <= 12:
+            failures.append('Chemical Bomb crystal debris exceeds its effect budget.')
+        if value(chemical_payload_values, 'DeathWeapon') != 'SuperTiberiumExplosion':
+            failures.append('Chemical Bomb lost its native chemical explosion.')
+        _power_ids, installed_sections = installed_rules_registry()
+        for field in ('MinDebris', 'MaxDebris', 'DebrisAnims', 'DeathWeapon'):
+            native = section_value_map_preserve(lines, 'TIBBOMB')
+            if field in native and native[field] != installed_sections['TIBBOMB'][field]:
+                failures.append(f'Chemical Bomb changed native TIBBOMB.{field}.')
+        if value(chemical, 'SidebarPCX') != 'chemicon.pcx':
+            failures.append('Chemical Bomb generated sidebar PCX is missing.')
 
         hunter = sections.get(clones['HuntSeekSpecial'], {})
         hunter_payload = value(hunter, 'HunterSeeker.Type')
@@ -230,6 +263,40 @@ def main():
             _remove_generated(hook['root_map'])
             _remove_generated(hook['generated_map'])
 
+    chemical_reward = next(
+        reward for reward in power_rewards
+        if reward.get('superweapon') == 'TiberiumShowerSpecial'
+    )
+    chemical_payload_buff = next(
+        reward for reward in power_buff_rewards
+        if reward.get('superweapon') == 'TiberiumShowerSpecial'
+        and reward.get('power_buff_type') == 'payload'
+    )
+    maximum_payload_harness = _Harness(
+        [chemical_reward] + [chemical_payload_buff] * 20,
+        mission['side'],
+        mission['campaign'],
+        seed='RLR-CHEMICAL-PAYLOAD-SMOKE',
+    )
+    maximum_payload_hook = None
+    try:
+        maximum_payload_hook = prepare_hooked_map(maximum_payload_harness, mission)
+        maximum_lines = IniLines(read_text(
+            Path(maximum_payload_hook['generated_map'])
+        ).splitlines())
+        maximum_sections = all_section_value_maps(maximum_lines)
+        maximum_power = maximum_sections[clones['TiberiumShowerSpecial']]
+        maximum_count = int(value(maximum_power, 'ParaDrop.Num'))
+        maximum_payload = maximum_sections[value(maximum_power, 'ParaDrop.Types')]
+        if maximum_count != 21:
+            failures.append('Chemical Bomb maximum payload stacks were not applied.')
+        if maximum_count * int(value(maximum_payload, 'MaxDebris')) > 252:
+            failures.append('Chemical Bomb maximum payload exceeds its debris budget.')
+    finally:
+        if maximum_payload_hook:
+            _remove_generated(maximum_payload_hook['root_map'])
+            _remove_generated(maximum_payload_hook['generated_map'])
+
     psychic_reward = next(
         reward for reward in power_rewards
         if reward.get('superweapon') == 'PsychicDominatorSpecial'
@@ -285,6 +352,7 @@ def main():
         'power_reward_count': len(power_rewards),
         'power_buff_reward_count': len(power_buff_rewards),
         'isolated_clone_count': len(power_rewards),
+        'shop_power_cameo_count': len(cameo_specs),
         'failures': failures,
     }
     if failures:

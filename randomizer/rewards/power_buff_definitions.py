@@ -104,7 +104,7 @@ def build_power_buff_rewards(power_rewards):
             continue
         for buff_id in power_buff_type_ids(power_id):
             definition = POWER_BUFF_TYPE_BY_ID[buff_id]
-            rewards.append({
+            reward = {
                 'name': (
                     f'{power_reward["name"]} {definition["name"]} I'
                 ),
@@ -121,7 +121,19 @@ def build_power_buff_rewards(power_rewards):
                 ),
                 'superweapon': power_id,
                 'special_reward': bool(power_reward.get('special_reward')),
-            })
+            }
+            # Buff cards use the same visual identity as their access card.
+            # Tiberium Shower has no native PCX, so losing its alias leaves
+            # upgrade offers blank in the current and permanent shops.
+            for key in ('cameo_superweapon', 'superweapon_sidebar_image'):
+                if power_reward.get(key):
+                    reward[key] = power_reward[key]
+            sidebar_pcx = (power_reward.get('superweapon_rules') or {}).get(
+                'SidebarPCX'
+            )
+            if sidebar_pcx:
+                reward['superweapon_rules'] = {'SidebarPCX': sidebar_pcx}
+            rewards.append(reward)
     return rewards
 
 

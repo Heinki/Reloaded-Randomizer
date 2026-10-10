@@ -250,7 +250,27 @@ def _standard_tier_one_entry(role, family, player_countries):
             return entry
     return TIER_ONE_ROLE_UNITS.get(role, {}).get(family)
 
+def _factory_prerequisite_rules(lines, building_id, conyard):
+    """Simplify installed factory gates only when the map has no authored gate."""
+    sections = all_section_value_maps(lines)
+    authored = next((
+        values for section, values in sections.items()
+        if str(section).upper() == str(building_id).upper()
+    ), {})
+    if any(
+        str(key).lower() in {'prerequisite', 'prerequisiteoverride'}
+        or str(key).lower().startswith('prerequisite.list')
+        for key in authored
+    ):
+        # Factories keep their native identity. Moonbase Assault deliberately
+        # requires YABRCK before YAWEAP; replacing that gate breaks the authored
+        # identity contract and can change the mission's production sequence.
+        return {}
+    return _alternative_prerequisite_rules((conyard,))
+
+
 def _tier_one_airfield_rules(
+    lines,
     base_families,
     aircraft_families,
     _owners,
@@ -281,14 +301,14 @@ def _tier_one_airfield_rules(
             'TechLevel': '1',
             'BuildLimit': None,
         }
-        values.update(_alternative_prerequisite_rules((
-            CHAOS_PRIMARY_PRODUCTION[family]['base'],
-        )))
+        values.update(_factory_prerequisite_rules(
+            lines, airfield, CHAOS_PRIMARY_PRODUCTION[family]['base'],
+        ))
         rules[airfield] = values
     return rules
 
 
-def _tier_one_factory_rules(base_families, selected_categories):
+def _tier_one_factory_rules(lines, base_families, selected_categories):
     """Expose required factories at low campaign tech levels."""
     rules = {}
     for family in sorted(set(base_families)):
@@ -308,7 +328,9 @@ def _tier_one_factory_rules(base_families, selected_categories):
                 }
                 conyard = production.get('base')
                 if conyard:
-                    values.update(_alternative_prerequisite_rules((conyard,)))
+                    values.update(_factory_prerequisite_rules(
+                        lines, building_id, conyard,
+                    ))
                 rules[building_id] = values
     return rules
 
@@ -547,6 +569,7 @@ def starting_tier_one_rules(
                     ))
                     rules[tech_id] = values
         rules.update(_tier_one_airfield_rules(
+            lines,
             base_families,
             selected_aircraft_families,
             owners,
@@ -554,6 +577,7 @@ def starting_tier_one_rules(
             chaos_mode=True,
         ))
         rules.update(_tier_one_factory_rules(
+            lines,
             base_families,
             selected_factory_categories,
         ))
@@ -617,6 +641,7 @@ def starting_tier_one_rules(
             values.update(_alternative_prerequisite_rules((prerequisite,)))
             rules[tech_id] = values
     rules.update(_tier_one_airfield_rules(
+        lines,
         base_families.intersection(allowed_families),
         (
             TIER_ONE_ROLE_UNITS['basic_aircraft']
@@ -627,6 +652,7 @@ def starting_tier_one_rules(
         required_houses,
     ))
     rules.update(_tier_one_factory_rules(
+        lines,
         base_families.intersection(allowed_families),
         selected_factory_categories,
     ))
@@ -726,6 +752,7 @@ def chaos_earned_access_rules(
     if not base_families and player_family:
         base_families.add(player_family)
     rules.update(_tier_one_factory_rules(
+        lines,
         base_families,
         required_production_categories,
     ))
