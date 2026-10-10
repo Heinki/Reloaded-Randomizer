@@ -1,6 +1,7 @@
 """Generate one access-reward map without Tk or launching the game."""
 
 import argparse
+import re
 import sys
 from pathlib import Path
 
@@ -409,9 +410,17 @@ def run(
                     'Validated generated unit buffs:'
                 )
             ]
-            if not validation_lines or '1/1 effects' not in validation_lines[-1]:
+            validation = re.search(
+                r'(\d+)/(\d+) effects',
+                validation_lines[-1] if validation_lines else '',
+            )
+            if (
+                validation is None
+                or int(validation[1]) < 1
+                or validation[1] != validation[2]
+            ):
                 raise ValueError(
-                    'Generated buff validation did not confirm one effect: '
+                    'Generated buff validation did not confirm every effect: '
                     + '; '.join(validation_lines)
                 )
         native_field = {

@@ -5,6 +5,7 @@ from functools import lru_cache
 from randomizer.config.game_profile import GENERATED_TYPE_PREFIX
 from randomizer.config.static import load_static_config
 from randomizer.content.inventory import read_rules_sections
+from randomizer.content.transforms import linked_transform_families
 
 
 _CONTENT = load_static_config('rewards/reloaded_content_catalogue.json')[
@@ -65,7 +66,10 @@ def randomizer_unit_template_values():
     names = {str(name).upper(): name for name in sections}
     templates = {}
     missing = []
-    for source_id in sorted(APPROVED_CLONE_SOURCE_IDS):
+    source_ids = set(APPROVED_CLONE_SOURCE_IDS)
+    for family in linked_transform_families(sections, source_ids).values():
+        source_ids.update(family)
+    for source_id in sorted(source_ids):
         actual = names.get(source_id)
         values = dict(sections.get(actual, {})) if actual else {}
         if not values:

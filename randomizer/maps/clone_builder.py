@@ -3,6 +3,8 @@
 from dataclasses import dataclass
 from typing import Any
 
+from randomizer.content.transforms import TRANSFORM_REFERENCE_KEYS
+
 from ._shared import (
     BUFF_TARGETS,
     CLONE_POLICY,
@@ -53,14 +55,7 @@ from .base import (
     parse_float,
 )
 
-LINKED_CLONE_REFERENCE_KEYS = {
-    'convert.deploy',
-    'convert.deploy.reversedas',
-    'convert.land',
-    'convert.water',
-    'reversedas',
-    'deploysinto',
-    'undeploysinto',
+LINKED_CLONE_REFERENCE_KEYS = TRANSFORM_REFERENCE_KEYS | {
     'passengers.allowed',
     'initialpayload.types',
 }
@@ -1697,29 +1692,37 @@ def build_player_clone_sections(
                 for item in comma_items(value)
             )
 
-    # A mission-placement reference clone (MORR*) deliberately differs from
+    # A mission-placement reference clone (RLRR*) deliberately differs from
     # its production clone, usually by suppressing unsafe live cloak. Give it
     # its own paired transform form. Sharing the production target would make
     # undeploy return a different clone identity and change its buff state.
-    for source_id, reference_clone_id in list(
-        reference_clone_id_by_source.items()
-    ):
+    source_by_linked_id = {
+        str(identifier).upper(): source_id
+        for source_id, clone_id in clone_id_by_source.items()
+        for identifier in (source_id, clone_id, owned_clone_ids.get(source_id, ''))
+        if identifier
+    }
+    pending_reference_sources = list(reference_clone_id_by_source)
+    visited_reference_sources = set()
+    while pending_reference_sources:
+        source_id = pending_reference_sources.pop()
+        if source_id in visited_reference_sources:
+            continue
+        visited_reference_sources.add(source_id)
+        reference_clone_id = reference_clone_id_by_source[source_id]
         reference_values = section_rules.get(reference_clone_id, {})
         for key, value in list(reference_values.items()):
             lowered_key = str(key).lower()
-            if lowered_key not in {'deploysinto', 'undeploysinto'}:
+            if lowered_key not in LINKED_CLONE_REFERENCE_KEYS:
+                continue
+            if lowered_key not in TRANSFORM_REFERENCE_KEYS:
+                reference_values[key] = ','.join(
+                    linked_clone_replacements.get(item.upper(), item)
+                    for item in comma_items(value)
+                )
                 continue
             target_token = next(iter(comma_items(value)), '')
-            target_source = ''
-            for candidate_source, candidate_clone in clone_id_by_source.items():
-                stable_clone = owned_clone_ids.get(candidate_source, '')
-                if target_token.upper() in {
-                    candidate_source.upper(),
-                    candidate_clone.upper(),
-                    stable_clone.upper(),
-                }:
-                    target_source = candidate_source
-                    break
+            target_source = source_by_linked_id.get(target_token.upper())
             if not target_source:
                 continue
             paired_reference_id = reference_clone_id_by_source.get(
@@ -1731,7 +1734,7 @@ def build_player_clone_sections(
                 if not main_target_id or not main_target_values:
                     continue
                 paired_reference_id = _collision_safe_type_id(
-                    f'MORR{target_source}',
+                    f'RLRR{target_source}',
                     f'player-reference:{target_source}',
                     reserved_ids,
                 )
@@ -1764,15 +1767,9 @@ def build_player_clone_sections(
                 reference_clone_id_by_source[
                     target_source
                 ] = paired_reference_id
+            pending_reference_sources.append(target_source)
             paired_values = section_rules[paired_reference_id]
             reference_values[key] = paired_reference_id
-            reverse_key = (
-                'UndeploysInto'
-                if lowered_key == 'deploysinto'
-                else 'DeploysInto'
-            )
-            _remove_case_insensitive(paired_values, reverse_key)
-            paired_values[reverse_key] = reference_clone_id
             for owner_key in ('Owner', 'RequiredHouses'):
                 owner_value = _value_case_insensitive(
                     reference_values, owner_key
@@ -1791,7 +1788,7 @@ def build_player_clone_sections(
 
     # Production prerequisites must follow cloned deploy targets too.  A
     # placed mobile factory can use a reference clone (for example
-    # MORRMWF -> MORRNAFIST when cloak is suppressed on mission placements),
+    # RLRRWRMN -> RLRRNAFIST when cloak is suppressed on mission placements),
     # while unlocked vehicles still name the authored NAFIST prerequisite.
     # The engine compares exact BuildingType identities, so that mismatch
     # leaves the cloned factory's production sidebar empty.  Retain the native

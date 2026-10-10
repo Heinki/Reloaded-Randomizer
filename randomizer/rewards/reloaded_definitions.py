@@ -9,6 +9,10 @@ part of the runtime catalogue.
 from randomizer.config.static import load_static_config
 from randomizer.config.tuning import BUFF_EFFECTS, REWARD_PLANNING
 from randomizer.content.inventory import FACTION_HOUSE_VARIANTS, read_rules_sections
+from randomizer.content.transforms import (
+    linked_transform_families,
+    techno_type_categories,
+)
 from randomizer.rewards.enemy_scaling import build_enemy_reward_pool
 from randomizer.rewards.power_buff_definitions import build_power_buff_rewards
 
@@ -194,6 +198,50 @@ for _category, _record in _records():
     )
     _target['allowed_buff_types'] = sorted(_approved_types)
     BUFF_TARGETS[_unit_id] = _target
+
+
+# Mode/deploy targets are implementation identities, not separate rewards.
+# Give them their own stats and registry category while sharing the root's
+# earned upgrades. This also lets the clone builder close links both ways.
+LINKED_BUFF_VARIANTS = linked_transform_families(_RULES, BUFF_TARGETS)
+_TRANSFORM_CATEGORIES = techno_type_categories(_RULES)
+for _root_id, _family in LINKED_BUFF_VARIANTS.items():
+    for _variant_id in sorted(_family - {_root_id}):
+        if _variant_id in BUFF_TARGETS:
+            continue
+        _native = _RULES[_RULE_NAMES[_variant_id]]
+        _target = dict(BUFF_TARGETS[_root_id])
+        _target.update({
+            'category': _TRANSFORM_CATEGORIES[_variant_id],
+            'linked_buff_source': _root_id,
+            'runtime_transform': True,
+            'trainable': str(_native.get('Trainable', 'yes')).lower() == 'yes',
+        })
+        for _stat, _field in (
+            ('strength', 'Strength'), ('cost', 'Cost'), ('sight', 'Sight'),
+            ('guard_range', 'GuardRange'), ('speed', 'Speed'), ('ammo', 'Ammo'),
+            ('passengers', 'Passengers'),
+        ):
+            _value = _number(_native, _field)
+            if _value is None:
+                _target.pop(_stat, None)
+            else:
+                _target[_stat] = _value
+        _target['weapons'] = {}
+        for _key, _weapon_id in _native.items():
+            if str(_key).lower() not in {
+                'primary', 'secondary', 'eliteprimary', 'elitesecondary',
+            }:
+                continue
+            _weapon_values = _RULES.get(_RULE_NAMES.get(str(_weapon_id).upper()), {})
+            if _weapon_values:
+                _target['weapons'][str(_weapon_id).upper()] = {
+                    _stat: _number(_weapon_values, _field, 0)
+                    for _stat, _field in (
+                        ('damage', 'Damage'), ('rof', 'ROF'), ('range', 'Range'),
+                    )
+                }
+        BUFF_TARGETS[_variant_id] = _target
 
 
 ENGINEER_UNIT_IDS = frozenset(
@@ -601,7 +649,6 @@ UNIT_SIDEBAR_IMAGES = {
 STANDALONE_WEAPON_TEMPLATES = {}
 STANDALONE_UNIT_RULE_TEMPLATES = {}
 LINKED_ACCESS_VARIANTS = {}
-LINKED_BUFF_VARIANTS = {}
 # Core utility units share upgrades across factions, independently of Chaos role
 # sharing. Keep their native identities and stats separate from linked forms.
 SHARED_UNIT_BUFF_GROUPS = {
@@ -653,6 +700,7 @@ LIMITED_HERO_BUILD_LIMITS = {
     unit_id: target['build_limit']
     for unit_id, target in BUFF_TARGETS.items()
     if target.get('category') in {'infantry', 'units', 'aircraft'}
+    and not target.get('linked_buff_source')
     and target.get('trainable')
     and isinstance(target.get('build_limit'), int)
     and target['build_limit'] > 0
@@ -669,6 +717,8 @@ _UNIT_POLICY_CONFIG = {'ammo_display_labels': {}}
 def build_buff_rewards():
     rewards = []
     for unit_id, target in BUFF_TARGETS.items():
+        if target.get('linked_buff_source'):
+            continue
         allowed_types = set(target.get('allowed_buff_types') or ())
         for buff_type in BUFF_TYPES:
             buff_type_id = buff_type['id']
@@ -754,7 +804,10 @@ REWARD_ALIASES = {}
 
 def linked_buff_variant_ids(unit_id):
     unit_id = str(unit_id or '').upper()
-    return frozenset((unit_id,)) if unit_id else frozenset()
+    root_id = str(BUFF_TARGETS.get(unit_id, {}).get('linked_buff_source') or unit_id)
+    return LINKED_BUFF_VARIANTS.get(
+        root_id, frozenset((unit_id,)) if unit_id else frozenset()
+    )
 
 
 def unit_role_equivalents(unit_id):
