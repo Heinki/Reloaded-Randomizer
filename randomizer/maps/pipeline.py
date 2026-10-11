@@ -111,6 +111,7 @@ from randomizer.maps.shop_modifiers import (
     apply_shop_clone_restrictions,
 )
 from randomizer.maps.special_buildings import (
+    building_upgrade_clone_rules,
     refinery_free_unit_pairs,
     ore_purifier_miner_dock_rules,
     reprocessor_bounty_rules,
@@ -3254,6 +3255,19 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         )
 
     if launch_active:
+        # Resolve attachments after registry reconciliation: earlier batch
+        # merges can temporarily omit a host clone's BuildingTypes entry.
+        upgrade_clone_rules = building_upgrade_clone_rules(
+            lines,
+            installed_rule_sections,
+            clone_handled,
+        )
+        if upgrade_clone_rules:
+            merge_ini_section_values(lines, upgrade_clone_rules)
+            self.append_log(
+                'Resolved building upgrades to native and current player '
+                'host identities: ' + ', '.join(upgrade_clone_rules) + '.'
+            )
         pad_aircraft_validation = validate_player_clone_pad_aircraft(
             lines, clone_handled
         )

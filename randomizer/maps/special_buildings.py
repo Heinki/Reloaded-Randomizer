@@ -41,6 +41,86 @@ def _effective_section_values(map_sections, installed_sections, section):
     return values
 
 
+def building_upgrade_clone_rules(lines, installed_sections, clone_handled):
+    """Let native and cloned attachments upgrade every actual host identity.
+
+    PowersUpBuilding compares exact BuildingTypes, so copying it unchanged
+    leaves an attachment unable to upgrade a cloned host. Phobos supports
+    multiple hosts through PowersUp.Buildings. Keep the native host available
+    and add only registered production/reference clones from this launch.
+    A cloned attachment uses its production host as PowersUpBuilding too,
+    retaining Ares prerequisite counting on the normal player build path.
+    """
+    map_sections = all_section_value_maps(lines)
+    registered = {
+        str(identifier).upper(): str(identifier)
+        for identifier in _effective_section_values(
+            map_sections, installed_sections, 'BuildingTypes'
+        ).values()
+        if str(identifier).strip()
+    }
+    families = {}
+    source_by_clone = {}
+    primary_host_by_source = {}
+    for source_id, details in (clone_handled or {}).items():
+        source_id = str(source_id).upper()
+        clone_ids = unique_in_order(
+            str(details.get(key) or '').strip()
+            for key in ('clone_id', 'reference_clone_id')
+            if str(details.get(key) or '').upper() in registered
+        )
+        if not clone_ids:
+            continue
+        families[source_id] = clone_ids
+        for clone_id in clone_ids:
+            source_by_clone[clone_id.upper()] = source_id
+        primary_id = str(details.get('clone_id') or '')
+        if primary_id.upper() in registered:
+            primary_host_by_source[source_id] = primary_id
+
+    rules = {}
+    for building_upper, building_id in registered.items():
+        values = _effective_section_values(
+            map_sections, installed_sections, building_id
+        )
+        primary_host = values.get('powersupbuilding', '').strip()
+        authored_hosts = comma_items(values.get('powersup.buildings', ''))
+        hosts = unique_in_order([
+            host for host in [primary_host, *authored_hosts]
+            if host and host.lower() not in {'none', '<none>'}
+        ])
+        expanded_hosts = list(hosts)
+        for host in hosts:
+            host_source = source_by_clone.get(host.upper(), host.upper())
+            if host_source not in families:
+                continue
+            if host_source in registered:
+                expanded_hosts.append(registered[host_source])
+            expanded_hosts.extend(families[host_source])
+        seen = set()
+        unique_hosts = []
+        for host in expanded_hosts:
+            if host.upper() not in seen:
+                seen.add(host.upper())
+                unique_hosts.append(host)
+        expanded_hosts = unique_hosts
+        changes = {}
+        if {host.upper() for host in expanded_hosts} != {
+            host.upper() for host in hosts
+        }:
+            changes['PowersUp.Buildings'] = ','.join(expanded_hosts)
+        if building_upper in source_by_clone and primary_host:
+            host_source = source_by_clone.get(
+                primary_host.upper(), primary_host.upper()
+            )
+            runtime_host = primary_host_by_source.get(host_source)
+            if runtime_host and runtime_host.upper() != primary_host.upper():
+                changes['PowersUpBuilding'] = runtime_host
+        if changes:
+            rules[building_id] = changes
+    return rules
+
+
 def refinery_free_unit_pairs(map_sections, installed_sections):
     """Resolve actual refinery spawn types, including map-local overrides.
 

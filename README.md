@@ -221,6 +221,7 @@ python -m Archipelago.audit
 python tools\all_mission_generation_smoke.py
 python tools\reported_mission_smoke.py
 python tools\power_clone_smoke.py
+python tools\building_upgrade_smoke.py
 ```
 
 Build the launcher and matching APWorld on Windows:
