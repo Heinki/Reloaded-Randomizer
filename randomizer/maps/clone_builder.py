@@ -1890,6 +1890,53 @@ def build_player_clone_sections(
             'Prerequisite.Negative',
             'Prerequisite.StolenTechs',
         )
+    # Slave workers are spawned support units, not deploy forms or independent
+    # rewards. Give cloaked player miners private workers in both modes; never
+    # change SLAV globally or copy the miner's health/weapon buffs onto workers.
+    slave_clone_ids = {}
+    for clone_id in unique_in_order(
+        list(clone_id_by_source.values())
+        + list(reference_clone_id_by_source.values())
+    ):
+        miner_values = section_rules.get(clone_id, {})
+        if str(_value_case_insensitive(
+            miner_values, 'Cloakable', 'no'
+        )).lower() != 'yes':
+            continue
+        slave_source = str(_value_case_insensitive(
+            miner_values, 'Enslaves', ''
+        )).strip().upper()
+        installed_slave = installed_name_by_lower.get(slave_source.lower())
+        if not installed_slave:
+            continue
+        slave_clone_id = slave_clone_ids.get(slave_source)
+        if not slave_clone_id:
+            slave_clone_id = _collision_safe_type_id(
+                f'RLRP{slave_source}', f'player-cloaked-slave:{slave_source}',
+                reserved_ids,
+            )
+            slave_values = _standalone_clone_values(
+                lines, installed_sections, installed_slave,
+                map_name_by_lower.get(slave_source.lower()),
+            )
+            slave_values.setdefault('Image', slave_source)
+            _remove_case_insensitive(
+                slave_values, 'TechLevel', 'RequiredHouses', 'ForbiddenHouses',
+                'FactoryOwners', 'FactoryOwners.Forbidden',
+                'Prerequisite.Negative',
+            )
+            slave_values['TechLevel'] = '-1'
+            slave_values['Owner'] = _value_case_insensitive(miner_values, 'Owner')
+            apply_unit_buff_value(slave_values, {}, 'cloak', 1)
+            _register_map_type(
+                section_rules, lines, installed_sections, 'InfantryTypes',
+                slave_clone_id,
+            )
+            section_rules[slave_clone_id] = slave_values
+            slave_clone_ids[slave_source] = slave_clone_id
+        _remove_case_insensitive(miner_values, 'Enslaves')
+        miner_values['Enslaves'] = slave_clone_id
+
     return PlayerCloneBuildResult(
         section_rules=section_rules,
         replacements=replacements,

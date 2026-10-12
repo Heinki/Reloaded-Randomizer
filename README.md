@@ -109,7 +109,10 @@ Upgrades buttons, even before any buffs are owned. Both current and permanent
 upgrade selectors show each group once. Each compatible variant keeps its
 own base stats; weapon upgrades apply only to armed miners. Existing per-unit
 Shop buff stacks are combined when saved profiles and runs load. The Stealth
-Harvester still requires its own access unlock.
+Harvester still requires its own access unlock. The cloak upgrade also covers
+the deployed Slave Miner and its workers. Worker stats remain native, and AI
+miners keep their original workers. Earned cloak overrides a unit or building's
+native cloak prohibition, including the multiplayer Stealth Generator.
 
 The first two Shop stages offer Standard mission choices, including a fixed-unit
 or hero mission when available. From stage 3 onward, every remaining eligible
@@ -220,6 +223,7 @@ python -m randomizer.audit
 python -m Archipelago.audit
 python tools\all_mission_generation_smoke.py
 python tools\reported_mission_smoke.py
+python tools\cloak_deploy_smoke.py
 python tools\power_clone_smoke.py
 python tools\building_upgrade_smoke.py
 ```

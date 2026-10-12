@@ -21,7 +21,7 @@ _UNIT_BUFF_FIELDS = {
     'passenger_capacity': ('Passengers',),
     'open_topped': ('OpenTopped',),
     'self_healing': ('SelfHealing', 'SelfHealing.Amount'),
-    'cloak': ('Cloakable', 'Cloakable.Stages', 'CloakingSpeed'),
+    'cloak': ('Cloakable', 'Cloakable.Stages', 'CloakingSpeed', 'Cloakable.Allowed'),
     'sensors': ('Sensors', 'SensorsSight'),
     'production': ('BuildTimeMultiplier',),
     'cost': ('Cost',),
@@ -61,6 +61,10 @@ def _unit_fields_are_effective(
     base_values = _lower_values(base_values)
     required = _UNIT_BUFF_FIELDS.get(buff_type, ())
     if not required or any(key.lower() not in lowered for key in required):
+        return False
+    if buff_type == 'cloak' and str(
+        lowered['cloakable.allowed']
+    ).strip().lower() not in {'yes', 'true', '1'}:
         return False
     if buff_type in {'open_topped', 'self_healing', 'cloak', 'sensors'}:
         base_enabled = (

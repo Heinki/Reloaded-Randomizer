@@ -25,6 +25,7 @@ from ._shared import (
     unique_in_order,
 )
 from .base import (
+    _remove_case_insensitive,
     _next_reserved_type_key,
     format_multiplier,
     parse_float,
@@ -188,6 +189,10 @@ def apply_unit_buff_value(values, target, buff_type, count):
             stacked_self_heal_amount(current_strength, count)
         )
     elif buff_type == 'cloak':
+        # Ares' explicit denial overrides Cloakable, including on Reloaded's
+        # multiplayer stealth generator. Earned cloak must lift that denial.
+        _remove_case_insensitive(values, 'Cloakable.Allowed')
+        values['Cloakable.Allowed'] = 'yes'
         values['Cloakable'] = 'yes'
         values['Cloakable.Stages'] = '1'
         values['CloakingSpeed'] = '1'
