@@ -12499,14 +12499,12 @@
           "cost",
           "production",
           "veteran",
-          "ammo",
           "sensors",
           "cloak"
         ],
         "review": {
           "status": "approved",
           "approved_buff_types": [
-            "ammo",
             "armor",
             "cloak",
             "cost",
@@ -12522,7 +12520,7 @@
           ],
           "excluded_buff_types": [],
           "flags": [],
-          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks. Ammo upgrades are excluded because native Ammo=2147483645 is effectively unlimited."
         }
       },
       {

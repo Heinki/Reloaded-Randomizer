@@ -6284,13 +6284,6 @@
       "id": 86295343
     },
     {
-      "name": "Harpy Ammo Reserves I",
-      "classification": "useful",
-      "category": "unit_buffs",
-      "repeatable": true,
-      "id": 86295344
-    },
-    {
       "name": "Harpy Armor Plating I",
       "classification": "useful",
       "category": "unit_buffs",
@@ -17030,7 +17023,7 @@
       ]
     }
   ],
-  "catalogue_checksum": "b15e27981ff1164d7e0dae66d7126abb78417c12e2b391e0b40372225bb23887",
+  "catalogue_checksum": "d473b7b2b2e58703ec366e96562546809ded9aa20e94c85623f4187390361f5b",
   "compatible_catalogue_checksums": [
     "0053e46817c9e2f6d952b803d9cb9784da2bb2fde3f9e72a211a057b20ad827d"
   ],
@@ -61283,7 +61276,7 @@
     "generated_world": "mapping"
   },
   "review": {
-    "standalone_reward_items": 2105,
+    "standalone_reward_items": 2104,
     "victory_missions_verified": 108,
     "objective_runtime_enabled": true,
     "cabal_deferred": true

@@ -17,6 +17,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from randomizer.config.static import load_static_config
+from randomizer.content.ammo import has_upgradeable_ammo
 
 
 CATALOGUE_PATH = (
@@ -72,6 +73,8 @@ def review_document(document):
         candidates = set(target.get('candidate_buff_types') or ())
         approved = candidates.intersection(ACTIVE_BUFF_TYPES)
         stats = target.get('stats') or {}
+        if not has_upgradeable_ammo(stats.get('ammo')):
+            approved.discard('ammo')
         if stats.get('cloakable'):
             approved.discard('cloak')
         if stats.get('sensors'):

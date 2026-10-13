@@ -72,7 +72,7 @@ the Shop run alive after a failed mission by repeating the same stage with new
 mission choices.
 
 Shop Mode uses all 108 reviewed Reloaded missions and its complete approved
-catalogue: 157 unit access rewards, 1,690 unit buffs, 18 powers, and 44 power
+catalogue: 157 unit access rewards, 1,689 unit buffs, 18 powers, and 44 power
 buffs. Temporary mission cards can add one of 12 Reloaded player boons or 7
 Reloaded AI challenges; active power boons are not offered twice.
 
@@ -117,10 +117,17 @@ native cloak prohibition, including the multiplayer Stealth Generator and the
 Mobile Stealth Generator's deployed form. Its deploy and undeploy links stay
 within the upgraded player clone family.
 
-MCVs are available without buying an upgrade, subject to their faction's
-factory and support-building prerequisites. Their construction yards remain
-deploy targets. Player-built refineries use private types that supply upgraded
-miners; native enemy refineries keep their original miners. Safe player miners
+Ammo upgrades apply only to finite ammunition. The Nod Harpy's effectively
+unlimited ammo is excluded from upgrade offers; saved copies of its old ammo
+reward are retired.
+
+MCVs are available without buying an upgrade and require only a compatible war
+factory, with no service depot or other support-tech prerequisites. Standard
+uses each faction's factory; Chaos and Randomizer Arsenal share compatible
+factories. MCV access also makes war factories available without other vehicle
+unlocks. Their construction yards remain deploy targets. Player-built refineries
+use private types that supply upgraded miners; native enemy refineries keep
+their original miners. Safe player miners
 already placed in a mission receive the same upgrades, including ALL07_RA2's
 starting Chrono Miners. Miners named by exact scripted type checks retain their
 native identity to preserve those mission conditions. Relaunch a mission to
@@ -160,7 +167,7 @@ eligibility and cap.
 Saved runs discard the retired Powerhouses run modifier when loaded.
 Source maps and authored teams stay intact.
 
-The Reloaded APWorld contains 2,105 items, 108 missions, and reserved locations
+The Reloaded APWorld contains 2,104 items, 108 missions, and reserved locations
 for objectives, victories, and Shop Mode. Each Shop seed has 120 shuffled item
 locations. Mission victories release up to 12 unchecked locations across failed
 and restarted runs. Completing the run releases every remaining location before
@@ -239,6 +246,7 @@ python tools\cloak_deploy_smoke.py
 python tools\power_clone_smoke.py
 python tools\building_upgrade_smoke.py
 python tools\economy_isolation_smoke.py
+python tools\ammo_upgrade_smoke.py
 ```
 
 Build the launcher and matching APWorld on Windows:

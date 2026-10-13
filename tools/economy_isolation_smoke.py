@@ -16,7 +16,12 @@ from randomizer.maps.houses import map_house_records, player_controlled_houses
 from randomizer.maps.identity_safety import capture_authored_identity_contract, validate_authored_identity_contract
 from randomizer.maps.ini import IniLines, all_section_value_maps, read_text
 from randomizer.maps.miner_buffs import upgrade_starting_player_miners, validate_refinery_miner_isolation
-from randomizer.missions.access import CONYARD_BY_MCV
+from randomizer.missions.access import (
+    CHAOS_PRIMARY_PRODUCTION,
+    CONYARD_BY_MCV,
+    PRODUCTION_LOOKUP,
+    always_available_mcv_rules,
+)
 from randomizer.missions.catalogue import parse_missions
 from randomizer.missions.installation import resolve_installed_scenario
 from randomizer.rewards.catalogue import REWARD_BY_NAME
@@ -25,6 +30,48 @@ from tools.reported_mission_smoke import _MissionHarness
 
 def values(sections, name):
     return next((v for k, v in sections.items() if k.casefold() == name.casefold()), {})
+
+
+def check_mcv_production(sections, mode, context):
+    for source in CONYARD_BY_MCV:
+        clone = sections['RLRP' + source]
+        paths = [clone['prerequisite']]
+        count = int(clone.get('prerequisite.lists', '0'))
+        paths.extend(clone[f'prerequisite.list{index}'] for index in range(1, count + 1))
+        assert all(len(path.split(',')) == 1 for path in paths), (context, source, paths)
+        assert all(PRODUCTION_LOOKUP.get(path.upper(), (None, None))[1] == 'vehicles' for path in paths), (context, source, paths)
+        family = PRODUCTION_LOOKUP[CONYARD_BY_MCV[source]][0]
+        factory = CHAOS_PRIMARY_PRODUCTION[family]['vehicles']
+        assert factory in paths, (context, source, paths)
+        if mode in {'Chaos', 'Randomizer Arsenal'}:
+            assert all(production['vehicles'] in paths for production in CHAOS_PRIMARY_PRODUCTION.values()), (context, source, paths)
+        assert not any(clone.get(key) for key in (
+            'prerequisite.negative', 'prerequisite.stolentechs',
+            'prerequisite.requiredtheaters', 'builtat', 'buildlimit',
+            'factoryowners', 'factoryowners.forbidden',
+        )), (context, source, clone)
+    for production in CHAOS_PRIMARY_PRODUCTION.values():
+        factory = sections[production['vehicles']]
+        assert factory['techlevel'] == '1', (context, production, factory)
+        assert factory.get('buildlimit') in {None, ''}, (context, production, factory)
+
+
+def check_mcv_map_overrides():
+    lines = IniLines([
+        '[Basic]', 'Player=Player House', '[Houses]', '0=Player House',
+        '[Player House]', 'Country=AlliesCountry', 'PlayerControl=yes',
+        '[AMCV]', 'Prerequisite=GAWEAP,GADEPT,GATECH',
+        'PrerequisiteOverride=GADEPT', 'Prerequisite.Lists=1',
+        'Prerequisite.List1=GATECH,GADEPT', 'BuildLimit=0',
+        '[GAWEAP]', 'Prerequisite=GAPILE',
+    ])
+    for chaos in (False, True):
+        rules = always_available_mcv_rules(lines, chaos_mode=chaos)
+        assert rules['AMCV']['Prerequisite'] == 'GAWEAP'
+        assert rules['AMCV']['PrerequisiteOverride'] is None
+        assert rules['AMCV']['BuildLimit'] is None
+        assert rules['GAWEAP']['TechLevel'] == '1'
+        assert 'Prerequisite' not in rules['GAWEAP'], 'Authored factory gate changed'
 
 
 def check_scripted_miner_guard(installed):
@@ -51,6 +98,7 @@ def check_scripted_miner_guard(installed):
 def main():
     installed, _source = read_rules_sections()
     installed_lower = {name: {key.lower(): value for key, value in fields.items()} for name, fields in installed.items()}
+    check_mcv_map_overrides()
     check_scripted_miner_guard(installed)
     missions = {m['code']: m for m in parse_missions(BATTLE_INI)}
     passed = []
@@ -71,6 +119,7 @@ def main():
                         harness = _MissionHarness(rewards, mission['side'], mission['campaign'], seed='RLR-ECONOMY-ISOLATION', reward_mode=mode, progression_mode='Shop Mode')
                         hook = pipeline.prepare_hooked_map(harness, mission, extra_rules=harness.mission_required_launch_rules(mission))
                         result = all_section_value_maps(IniLines(read_text(Path(hook['generated_map'])).splitlines()))
+                        check_mcv_production(result, mode, (code, mode, cloaked))
                         for source, yard in CONYARD_BY_MCV.items():
                             clone = result['RLRP' + source]
                             assert clone['techlevel'] == '1', (code, mode, source, clone['techlevel'])

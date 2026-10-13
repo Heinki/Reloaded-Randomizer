@@ -12,6 +12,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from randomizer.config.game_profile import CONTENT_FACTIONS, SUPPORTED_GAME_VERSION
+from randomizer.content.ammo import has_upgradeable_ammo
 from randomizer.content.inventory import (
     FACTION_HOUSES,
     read_rules_sections,
@@ -123,7 +124,7 @@ def _candidate_buff_types(category, values, weapons):
         candidates.extend(('cost', 'production'))
     if str(values.get('Trainable', '')).strip().lower() != 'no':
         candidates.append('veteran')
-    if ammo is not None and ammo > 0:
+    if has_upgradeable_ammo(ammo):
         candidates.append('ammo')
     if passengers is not None and passengers > 0:
         candidates.append('passenger_capacity')
@@ -344,12 +345,20 @@ def _preserve_reviews(document):
         previous = old_targets.get(record['id'], {})
         if previous.get('status') not in {'approved', 'excluded'}:
             continue
+        candidates = set(record.get('candidate_buff_types') or ())
         record['review'].update({
             'status': previous['status'],
-            'approved_buff_types': list(previous.get('approved_buff_types', ())),
-            'excluded_buff_types': list(previous.get('excluded_buff_types', ())),
+            'approved_buff_types': sorted(candidates.intersection(previous.get('approved_buff_types', ()))),
+            'excluded_buff_types': sorted(candidates.intersection(previous.get('excluded_buff_types', ()))),
             'notes': str(previous.get('notes') or ''),
         })
+        if not has_upgradeable_ammo(record.get('stats', {}).get('ammo')):
+            approved = record['review']['approved_buff_types']
+            if 'ammo' in approved:
+                approved.remove('ammo')
+                record['review']['excluded_buff_types'] = sorted(set(
+                    record['review']['excluded_buff_types'] + ['ammo']
+                ))
     old_powers = {record['id']: record['review'] for record in old.get('powers', [])}
     for record in new['powers']:
         previous = old_powers.get(record['id'], {})

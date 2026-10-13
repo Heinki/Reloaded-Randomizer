@@ -1032,26 +1032,43 @@ def always_available_miner_rules(lines, additional_build_houses=()):
     return rules
 
 
-def always_available_mcv_rules(lines, additional_build_houses=()):
-    """Prepare core MCV access independently of purchased unit buffs.
+def always_available_mcv_rules(
+    lines, additional_build_houses=(), chaos_mode=False,
+):
+    """Expose MCVs and their factories without native support-tech gates.
 
-    Keep each MCV's native factory and support-building prerequisites, including
-    map overrides. Foreign MCVs still require their physical production tech.
+    MCVs are core access, including without purchased buffs or other vehicle
+    rewards. Their only production requirement is a compatible war factory,
+    following the same Standard/Chaos factory policy as other ground units.
     """
-    from randomizer.content.inventory import read_rules_sections
+    from randomizer.missions.tier_one import _tier_one_factory_rules
 
-    installed, _source = read_rules_sections()
-    sections = all_section_value_maps(lines)
+    alternatives = chaos_production_alternatives(lines) if chaos_mode else {}
     rules = original_mcv_access_rules(
         lines, CONYARD_BY_MCV, additional_build_houses=additional_build_houses,
     )
     for mcv_id, values in rules.items():
-        native = {
-            str(key).lower(): value
-            for key, value in installed.get(mcv_id, {}).items()
-        }
-        native.update(sections.get(mcv_id, {}))
-        values.update(_standard_prerequisite_rules(native.get('prerequisite', '')))
+        family, _category = PRODUCTION_LOOKUP[CONYARD_BY_MCV[mcv_id]]
+        factory_id = CHAOS_PRIMARY_PRODUCTION[family]['vehicles']
+        values.update({
+            'BuildLimit': None,
+            'Prerequisite.Negative': None,
+            'Prerequisite.StolenTechs': None,
+            'Prerequisite.RequiredTheaters': None,
+            'BuiltAt': None,
+        })
+        if chaos_mode:
+            values.update(_chaos_prerequisite_rules(
+                'vehicles', factory_id, production_alternatives=alternatives,
+            ))
+        else:
+            values.update(_standard_prerequisite_rules(factory_id))
+    # Core MCV access must also unlock vehicle production when the player has
+    # no vehicle rewards or starting units. Foreign factories still require
+    # their own physical yard; authored campaign factory gates remain intact.
+    rules.update(_tier_one_factory_rules(
+        lines, ACTIVE_PRODUCTION_FAMILIES, ('vehicles',),
+    ))
     return rules
 
 

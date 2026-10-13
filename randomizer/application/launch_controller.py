@@ -154,7 +154,10 @@ class LaunchController:
         )
 
         def merge_required_rules(rules):
-            for section, values in always_available_mcv_rules(lines).items():
+            for section, values in always_available_mcv_rules(
+                lines,
+                chaos_mode=self.active_reward_mode() in {'Chaos', ARSENAL_MODE},
+            ).items():
                 rules.setdefault(section, {}).update(values)
             miner_rules = always_available_miner_rules(
                 lines,

@@ -8,6 +8,7 @@ part of the runtime catalogue.
 
 from randomizer.config.static import load_static_config
 from randomizer.config.tuning import BUFF_EFFECTS, REWARD_PLANNING
+from randomizer.content.ammo import UNLIMITED_AMMO_THRESHOLD, has_upgradeable_ammo
 from randomizer.content.inventory import FACTION_HOUSE_VARIANTS, read_rules_sections
 from randomizer.content.transforms import (
     linked_transform_families,
@@ -196,6 +197,8 @@ for _category, _record in _records():
         if _review.get('status') == 'approved'
         else set()
     )
+    if not has_upgradeable_ammo(_target.get('ammo')):
+        _approved_types.discard('ammo')
     _target['allowed_buff_types'] = sorted(_approved_types)
     BUFF_TARGETS[_unit_id] = _target
 
@@ -724,6 +727,8 @@ def build_buff_rewards():
             buff_type_id = buff_type['id']
             if buff_type_id not in allowed_types:
                 continue
+            if buff_type_id == 'ammo' and not has_upgradeable_ammo(target.get('ammo')):
+                continue
             if buff_type_id == 'veteran' and not target.get('trainable', True):
                 continue
             if (
@@ -800,6 +805,19 @@ for _provider_label, _provider_faction, _replacement_power in (
             'retired_reward': True,
         }
 REWARD_ALIASES = {}
+
+for _target in BUFF_TARGETS.values():
+    if _target.get('linked_buff_source') or _target.get('ammo', 0) < UNLIMITED_AMMO_THRESHOLD:
+        continue
+    _retired_name = f'{_target["label"]} Ammo Reserves I'
+    RETIRED_REWARD_BY_NAME[_retired_name] = {
+        'name': f'{_retired_name} (retired: effectively unlimited ammo)',
+        'description': 'Disabled because this unit already has effectively unlimited ammo.',
+        'rules': {},
+        'factions': list(_target['factions']),
+        'kind': 'retired',
+        'retired_reward': True,
+    }
 
 
 def linked_buff_variant_ids(unit_id):
