@@ -998,11 +998,8 @@ def always_available_transport_rules(
 def always_available_miner_rules(lines, additional_build_houses=()):
     """Prepare one player-owned clone for every faction miner.
 
-    Original refinery identities remain in use, but their ``FreeUnit`` field
-    is retargeted to the matching player clone at final map generation.  The
-    native miner can therefore be hidden with the same production gate as every
-    other cloned unit without suppressing the refinery spawn or exposing two
-    equivalent factory cameos.
+    Private player refineries supply these clones. Native refineries keep
+    their authored FreeUnit, preserving AI refinery spawns.
     """
     sections = all_section_value_maps(lines)
     records = map_house_records(lines, sections=sections)
@@ -1032,6 +1029,29 @@ def always_available_miner_rules(lines, additional_build_houses=()):
             'Prerequisite.List0': None,
             'Prerequisite.StolenTechs': None,
         }
+    return rules
+
+
+def always_available_mcv_rules(lines, additional_build_houses=()):
+    """Prepare core MCV access independently of purchased unit buffs.
+
+    Keep each MCV's native factory and support-building prerequisites, including
+    map overrides. Foreign MCVs still require their physical production tech.
+    """
+    from randomizer.content.inventory import read_rules_sections
+
+    installed, _source = read_rules_sections()
+    sections = all_section_value_maps(lines)
+    rules = original_mcv_access_rules(
+        lines, CONYARD_BY_MCV, additional_build_houses=additional_build_houses,
+    )
+    for mcv_id, values in rules.items():
+        native = {
+            str(key).lower(): value
+            for key, value in installed.get(mcv_id, {}).items()
+        }
+        native.update(sections.get(mcv_id, {}))
+        values.update(_standard_prerequisite_rules(native.get('prerequisite', '')))
     return rules
 
 

@@ -20,6 +20,9 @@ from randomizer.maps.identity_safety import (
     validate_authored_identity_contract,
 )
 from randomizer.maps.starting_units import starting_unit_buff_plan
+from randomizer.maps.miner_buffs import (
+    player_refinery_rules, upgrade_starting_player_miners, validate_refinery_miner_isolation,
+)
 from randomizer.missions.required_access import mission_required_access_rules
 from randomizer.maps.enemy_powerhouses import enemy_powerhouse_rules
 from randomizer.maps.ownership import (
@@ -2075,21 +2078,9 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             production_gate_rules.setdefault(source_id, {})[
                 'ForbiddenHouses'
             ] = ','.join(remaining_forbidden) or 'none'
-        # Keep each refinery's native BuildingType identity. Only retarget its
-        # one authored FreeUnit to the matching final player clone. The clone's
-        # Owner/RequiredHouses now match the refinery owner, while the native
-        # miner can be hidden like every other cloned production identity.
-        for refinery_id, miner_id in sorted(
-            refinery_free_unit_by_building.items()
-        ):
-            clone_id = str(
-                clone_handled.get(miner_id, {}).get('clone_id') or ''
-            ).strip()
-            if not clone_id or clone_id not in clone_rule_sections:
-                continue
-            production_gate_rules.setdefault(refinery_id, {})[
-                'FreeUnit'
-            ] = clone_id
+        # FreeUnit belongs to a shared native refinery type. Retargeting it
+        # here also gives enemy refineries the player's upgraded miner.
+        # Keep the native spawn and prepare private player refinery types.
         remember_generated_techno_types(production_gate_rules)
         for section, values in production_gate_rules.items():
             clone_rule_sections.setdefault(section, {}).update(values)
@@ -3254,7 +3245,27 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             'batch merging: ' + ', '.join(repaired_registrations) + '.'
         )
 
+    starting_miner_replacements = {}
     if launch_active:
+        refinery_rules, player_refineries = player_refinery_rules(
+            lines, installed_rule_sections, native_map_sections, clone_handled,
+        )
+        merge_ini_section_values(lines, refinery_rules)
+        starting_miner_replacements = upgrade_starting_player_miners(
+            lines, installed_rule_sections, native_map_sections, clone_handled,
+        )
+        if player_refineries:
+            self.append_log(
+                f'Prepared {len(player_refineries)} private player refineries; '
+                f'upgraded {len(starting_miner_replacements)} safe starting miners. '
+                'Native refinery spawns remain unchanged.'
+            )
+        refinery_failures = validate_refinery_miner_isolation(
+            lines, installed_rule_sections, native_map_sections, clone_handled,
+        )
+        if refinery_failures:
+            raise ValueError('Player miner upgrades leaked through shared refineries: '
+                             + '; '.join(refinery_failures))
         # Resolve attachments after registry reconciliation: earlier batch
         # merges can temporarily omit a host clone's BuildingTypes entry.
         upgrade_clone_rules = building_upgrade_clone_rules(
@@ -3410,7 +3421,8 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         )
 
     identity_validation = validate_authored_identity_contract(
-        identity_contract, lines
+        identity_contract, lines,
+        allowed_positioned_replacements=starting_miner_replacements,
     )
     self.append_log(
         'Validated authored identity preservation: '

@@ -117,6 +117,15 @@ native cloak prohibition, including the multiplayer Stealth Generator and the
 Mobile Stealth Generator's deployed form. Its deploy and undeploy links stay
 within the upgraded player clone family.
 
+MCVs are available without buying an upgrade, subject to their faction's
+factory and support-building prerequisites. Their construction yards remain
+deploy targets. Player-built refineries use private types that supply upgraded
+miners; native enemy refineries keep their original miners. Safe player miners
+already placed in a mission receive the same upgrades, including ALL07_RA2's
+starting Chrono Miners. Miners named by exact scripted type checks retain their
+native identity to preserve those mission conditions. Relaunch a mission to
+regenerate these rules; existing saves retain their previous map rules.
+
 The first two Shop stages offer Standard mission choices, including a fixed-unit
 or hero mission when available. From stage 3 onward, every remaining eligible
 mission has equal selection probability, regardless of class or run length.
@@ -229,6 +238,7 @@ python tools\reported_mission_smoke.py
 python tools\cloak_deploy_smoke.py
 python tools\power_clone_smoke.py
 python tools\building_upgrade_smoke.py
+python tools\economy_isolation_smoke.py
 ```
 
 Build the launcher and matching APWorld on Windows:

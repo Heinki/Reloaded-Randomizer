@@ -43,7 +43,7 @@ REWARD_NAMES = (
     'Yuri Boomer Mobility I',
     'GDI MCV Mobility I',
     'Disc Thrower Logistics I',
-    'Soviet Iron Curtain Device Access',
+    'Iron Curtain Power',
     'Stealth Harvester Reinforced Frames I',
     'Subterranean APC Reinforced Frames I',
     'Shock Trooper Recon Package I',

@@ -148,7 +148,7 @@ def build_player_clone_sections(
     context: PlayerCloneContext,
 ) -> PlayerCloneBuildResult:
     """Build owned clone sections while preserving native AI identities."""
-    from randomizer.missions.access import MOBILE_FACTORY_BY_UNIT
+    from randomizer.missions.access import CONYARD_BY_MCV, MOBILE_FACTORY_BY_UNIT
 
     allowed_houses = context.allowed_houses
     buffed_helper_names = context.buffed_helper_names
@@ -1475,9 +1475,14 @@ def build_player_clone_sections(
                         'Prerequisite.StolenTechs',
                     )
 
-        if linked_excluded_reference_clone:
+        if linked_excluded_reference_clone and unit_id not in buildable_ids:
             # This identity exists only as the other half of a cloned deploy
-            # pair. It must never become a second factory/sidebar entry.
+            # pair. A source with explicit production access still needs its
+            # build-only clone even when authored MCV teams stay native.
+            clone_values['TechLevel'] = LOCKED_TECH_LEVEL
+        if unit_id in CONYARD_BY_MCV.values():
+            # Construction yards are MCV deploy targets, not factory products.
+            # Mission infrastructure access can still name a native yard.
             clone_values['TechLevel'] = LOCKED_TECH_LEVEL
 
         _register_map_type(

@@ -1,9 +1,9 @@
 """Fail-closed preservation of map-authored TechnoType identities.
 
 Reloaded campaign scripts frequently compare exact type IDs.  Generated maps
-may add player-production clones and alter stats, but they must not replace an
-identity already present in a placement, TaskForce, trigger, event, action, or
-other authored map record.
+may add player-production clones and alter stats. Authored TaskForces, triggers,
+events and actions remain intact. The final audit permits only explicitly
+reviewed player-miner placement replacements with no exact scripted type checks.
 """
 
 import re
@@ -132,8 +132,9 @@ def capture_authored_identity_contract(lines, installed_sections):
     )
 
 
-def validate_authored_identity_contract(contract, lines):
+def validate_authored_identity_contract(contract, lines, allowed_positioned_replacements=None):
     """Raise when generated output removes or renames an authored identity."""
+    allowed_positioned_replacements = allowed_positioned_replacements or {}
     failures = []
     for reference in contract.positioned:
         values = section_value_map_preserve(lines, reference.section)
@@ -148,7 +149,10 @@ def validate_authored_identity_contract(contract, lines):
             item.strip() for item in str(current).split(',')
         ]
         current_type = tokens[1].upper() if len(tokens) > 1 else ''
-        if current_type != reference.type_id:
+        expected_type = str(allowed_positioned_replacements.get(
+            (reference.section, reference.key.lower()), reference.type_id,
+        )).upper()
+        if current_type != expected_type:
             failures.append(
                 f'[{reference.section}] {reference.key}: '
                 f'{reference.type_id} became {current_type or "<missing>"}'
@@ -167,6 +171,17 @@ def validate_authored_identity_contract(contract, lines):
         current_counts = Counter(
             _identity_tokens(current or '', techno_ids)
         )
+        replacement = allowed_positioned_replacements.get(
+            (reference.section, reference.key.lower())
+        )
+        if replacement:
+            # Only the exact placement's type token is allowlisted above;
+            # every other authored type reference still has to be present.
+            original = next(
+                item.type_id for item in contract.positioned
+                if item.section == reference.section and item.key.lower() == reference.key.lower()
+            )
+            current_counts[original] += 1
         for type_id, expected_count in reference.type_counts:
             if current_counts[type_id] < expected_count:
                 failures.append(

@@ -73,6 +73,7 @@ from ._dependencies import (
     traceback,
 )
 from randomizer.missions.required_access import mission_required_access_rules
+from randomizer.missions.access import always_available_mcv_rules
 from randomizer.ui.cameos import installed_rules_registry
 from randomizer.maps.sidebar_assets import deploy_campaign_sidebar_backgrounds
 from randomizer.config.game_profile import (
@@ -153,6 +154,8 @@ class LaunchController:
         )
 
         def merge_required_rules(rules):
+            for section, values in always_available_mcv_rules(lines).items():
+                rules.setdefault(section, {}).update(values)
             miner_rules = always_available_miner_rules(
                 lines,
                 additional_build_houses=(),
