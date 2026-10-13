@@ -1,7 +1,8 @@
-"""Regress the NOD03A grid report's cloak and deployed-miner failures."""
+"""Regress cloak retention across miner, MCV, and stealth-generator forms."""
 
 import json
 import sys
+from itertools import product
 from pathlib import Path
 
 
@@ -64,17 +65,19 @@ def main():
     cases = []
     try:
         for mode in ('Standard', 'Chaos', 'Randomizer Arsenal'):
-            for cloaked in (False, True):
+            for progression, cloaked in product(
+                ('Mission List', 'Grid Mode', 'Shop Mode'), (False, True),
+            ):
                 rewards = [r for r in REWARD_POOL if r.get('kind') == 'access']
                 if cloaked:
                     rewards += [r for r in REWARD_POOL
                                 if r.get('kind') == 'buff'
                                 and r.get('buff_type') in {'cloak', 'health'}
-                                and r.get('unit') in {'SMIN', 'NODSTLH_MP', 'NODMCV'}]
+                                and r.get('unit') in {'SMIN', 'NODSTLH_MP', 'NODMCV', 'SGEN'}]
                 harness = _MissionHarness(
                     rewards, mission['side'], mission['campaign'],
                     seed='RLR-CLOAK-DEPLOY-SMOKE', reward_mode=mode,
-                    progression_mode='Grid Mode',
+                    progression_mode=progression,
                 )
                 hook = prepare_hooked_map(
                     harness, mission,
@@ -88,6 +91,7 @@ def main():
                 }
                 for mobile, deployed in (
                     ('SMIN', 'YAREFN'), ('NODMCV', 'TSNACNST'),
+                    ('SGEN', 'MSTL'),
                 ):
                     mobile_id, deployed_id = 'RLRP' + mobile, 'RLRP' + deployed
                     if mobile_id not in registered['VehicleTypes'] and not cloaked:
@@ -103,6 +107,16 @@ def main():
                         for identifier in (mobile_id, deployed_id):
                             assert sections[identifier]['cloakable'] == 'yes'
                             assert sections[identifier]['cloakable.allowed'] == 'yes'
+                deployed_generator = sections['RLRPMSTL']
+                assert deployed_generator['ismobilestealth'] == 'yes'
+                assert deployed_generator['cloakgenerator'] == 'yes'
+                assert deployed_generator['cloakradiusincells'] == installed['MSTL']['cloakradiusincells']
+                if not cloaked:
+                    assert deployed_generator['cloakable.allowed'] == 'no'
+                    assert deployed_generator.get('cloakable', 'no') == 'no'
+                for native_id in ('SGEN', 'MSTL'):
+                    for key in ('cloakable', 'cloakable.allowed', 'deploysinto', 'undeploysinto'):
+                        assert sections.get(native_id, {}).get(key) == original.get(native_id, {}).get(key)
                 if cloaked:
                     generator = sections['RLRPNODSTLH_MP']
                     assert generator['cloakable.allowed'] == 'yes'
@@ -124,7 +138,7 @@ def main():
                 for key, value in original.get('TaskForces', {}).items():
                     assert sections['TaskForces'][key] == value
                 assert file_sha256(source) == source_hash
-                cases.append(f'{mode}/Grid Mode/cloak={cloaked}')
+                cases.append(f'{mode}/{progression}/cloak={cloaked}')
     finally:
         for path, data in backups.items():
             if data is not None:

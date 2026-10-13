@@ -198,6 +198,12 @@ def _shop_balance_port_checks():
         ))
 
     return {
+        'shop_chemical_bomb_pricing_valid': bool(
+            canonical_reward_for_id('Chemical Bomb Power')['power_category']
+            == 'offensive'
+            and SHOP_CONFIG.power_target_prices['TIBERIUMSHOWERSPECIAL']
+            == SHOP_CONFIG.power_target_prices['NUKESPECIAL']
+        ),
         'shop_repeat_buff_pricing_valid': tier_price_deltas == {
             'tier_1': (1, 2, 3),
             'tier_2': (0, 1, 1),

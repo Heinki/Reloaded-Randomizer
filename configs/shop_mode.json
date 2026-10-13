@@ -159,10 +159,10 @@
         "permanent_buff": 5
       },
       "TIBERIUMSHOWERSPECIAL": {
-        "run_access": 5,
-        "run_buff": 3,
-        "permanent_access": 25,
-        "permanent_buff": 5
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
       },
       "TSIONCANNONSPECIAL": {
         "run_access": 10,

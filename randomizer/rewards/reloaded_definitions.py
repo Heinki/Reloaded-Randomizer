@@ -342,7 +342,7 @@ _POWER_DEFINITIONS = (
     ('SonarPulseSpecial', 'Sonar Pulse', 'aid', (
         'Allies', 'Soviets', 'Yuri', 'GDI', 'Nod',
     )),
-    ('TiberiumShowerSpecial', 'Chemical Bomb', 'aid', ('Nod',)),
+    ('TiberiumShowerSpecial', 'Chemical Bomb', 'offensive', ('Nod',)),
     ('DropPodSpecial', 'Drop Pods', 'aid', ('GDI',)),
     ('HuntSeekSpecial', 'Hunter Seeker', 'aid', ('GDI', 'Nod')),
     ('SpawnCarryallFromAirSW', 'Carryall', 'aid', ('GDI',)),

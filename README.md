@@ -90,10 +90,11 @@ when resolving their loadout. Generated player units and defenses append
 Private string-table labels are deployed only for the mission and cleaned up
 with the launcher's other runtime assets.
 
-Chemical Bomb (Tiberium Shower) uses the chemical cameo for both access and
-upgrade cards. Its private payload emits 8–12 crystal debris animations per
-bomb to reduce slowdown, including with payload upgrades; the native chemical
-explosion remains active.
+Chemical Bomb (Tiberium Shower) is an offensive power. Shop access costs 10 Ore
+or 50 Gems; upgrades start at 6 Ore or 12 Gems, matching other offensive powers.
+It uses the chemical cameo for both access and upgrade cards. Its private payload
+emits 8–12 crystal debris animations per bomb to reduce slowdown, including with
+payload upgrades; the native chemical explosion remains active.
 
 Permanent Shop progression spends Gems on unit access, unit buffs, all 18
 reviewed superweapons and support powers, plus their 44 power buffs. Purchased
@@ -112,7 +113,9 @@ Shop buff stacks are combined when saved profiles and runs load. The Stealth
 Harvester still requires its own access unlock. The cloak upgrade also covers
 the deployed Slave Miner and its workers. Worker stats remain native, and AI
 miners keep their original workers. Earned cloak overrides a unit or building's
-native cloak prohibition, including the multiplayer Stealth Generator.
+native cloak prohibition, including the multiplayer Stealth Generator and the
+Mobile Stealth Generator's deployed form. Its deploy and undeploy links stay
+within the upgraded player clone family.
 
 The first two Shop stages offer Standard mission choices, including a fixed-unit
 or hero mission when available. From stage 3 onward, every remaining eligible
