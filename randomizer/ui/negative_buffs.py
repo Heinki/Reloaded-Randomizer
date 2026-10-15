@@ -83,7 +83,7 @@ def build_negative_buffs_tab(self, advanced_notebook):
         entry.columnconfigure(0, weight=1)
         check = ttk.Checkbutton(
             entry,
-            text=definition['name'],
+            text=definition.get('display_name', definition['name']),
             variable=self.enemy_buff_enabled_vars[effect_id],
             command=lambda item=effect_id: (
                 self.on_advanced_enemy_buff_changed(item)
@@ -130,7 +130,7 @@ def build_negative_buffs_tab(self, advanced_notebook):
         ).grid(row=1, column=0, columnspan=4, sticky='w', padx=(20, 0))
         WidgetTooltip(
             check,
-            f'{definition["name"]}\n{effect}\nOnly verified hostile AI Houses receive this buff.',
+            f'{definition.get("display_name", definition["name"])}\n{effect}\nOnly verified hostile AI Houses receive this buff.',
         )
         self.advanced_enemy_buff_controls.append((check, cap))
 

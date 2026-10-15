@@ -31,6 +31,7 @@ def spawn_ini_text(
     difficulty_value,
     game_speed_value,
     extra_options=None,
+    mission_settings=None,
 ):
     """Serialize complete spawn.ini Settings section using CRLF."""
     content = [
@@ -49,6 +50,11 @@ def spawn_ini_text(
     ]
     for key, value in sorted((extra_options or {}).items()):
         content.append(f'{key}={value}')
+    if mission_settings:
+        content.extend(['ReadMissionSection=Yes', '', f'[{scenario}]'])
+        content.extend(
+            f'{key}={value}' for key, value in mission_settings.items()
+        )
     return '\r\n'.join(content) + '\r\n'
 
 

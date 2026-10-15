@@ -3029,23 +3029,13 @@ def prepare_hooked_map(self, mission, extra_rules=None):
     enemy_power_recipients_by_effect = {}
     for grant in enemy_power_grants:
         reward = grant.get('reward') or {}
-        allowed_families = {
-            str(family).strip().lower()
-            for family in reward.get('enemy_faction_families', ())
-            if str(family).strip()
-        }
-        recipient = next((
-            house for house in scaled_enemy_houses
-            if country_family(records.get(house, {})) in allowed_families
-        ), '')
-        if not recipient:
-            continue
-        enemy_power_grants_by_house.setdefault(recipient, []).append(grant)
         effect_id = str(reward.get('enemy_effect_id') or '')
-        if effect_id:
-            enemy_power_recipients_by_effect.setdefault(
-                effect_id, []
-            ).append(recipient)
+        for recipient in scaled_enemy_houses:
+            enemy_power_grants_by_house.setdefault(recipient, []).append(grant)
+            if effect_id:
+                enemy_power_recipients_by_effect.setdefault(
+                    effect_id, []
+                ).append(recipient)
 
     enemy_superweapon_trigger = ''
     for house, grants in enemy_power_grants_by_house.items():
@@ -3067,7 +3057,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             for grant in grants
         ]
         self.append_log(
-            'Prepared faction-matched hostile AI power grants: '
+            'Prepared hostile AI power grants: '
             + ', '.join(grant_summary)
             + '.'
         )

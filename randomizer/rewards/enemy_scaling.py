@@ -264,6 +264,16 @@ def build_enemy_reward_pool(power_rewards):
             reward['enemy_use_existing_power'] = bool(
                 definition.get('use_existing_power', False)
             )
+            reward['enemy_recharge_multiplier'] = definition.get(
+                'recharge_multiplier', 2
+            )
+            reward['enemy_initial_ready'] = bool(
+                definition.get('initial_ready', True)
+            )
+            reward['superweapon_rules'] = {
+                **(reward.get('superweapon_rules') or {}),
+                **definition.get('power_rules', {}),
+            }
             reward['enemy_superweapon_clone'] = _enemy_power_clone_id(
                 definition['superweapon']
             )
@@ -424,7 +434,8 @@ def enemy_effect_text(reward, count=1, base_engine_value=1.0):
             detail = definition.get('name', 'Unit bonus')
         return f'{category} {detail}'
     if effect == 'power':
-        return f'{definition.get("name", "AI power")} unlocked for hostile AI'
+        label = definition.get('display_name', definition.get('name', 'AI power'))
+        return f'{label} unlocked for hostile AI'
     if effect == 'powerhouse':
         return 'Faction heroes and special combat units unlocked for hostile AI factories'
     return definition.get('name', 'Hostile AI strengthened')

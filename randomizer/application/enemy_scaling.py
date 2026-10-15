@@ -39,7 +39,7 @@ class EnemyScalingController:
                 else definition.get('maximum_stacks', 1)
             )
             lines.append(
-                f'- {definition["name"]}: '
+                f'- {definition.get("display_name", definition["name"])}: '
                 f'{enemy_effect_text(definition, 1)} per stack; cap {cap}'
             )
         lines.extend((

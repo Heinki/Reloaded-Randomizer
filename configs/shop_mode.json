@@ -1778,35 +1778,35 @@
       },
       "weather_storm_threat": {
         "title": "AI Weather Storm",
-        "description": "Hostile Allied AI receives its Weather Storm power.",
+        "description": "Hostile AI receives Weather Storm, regardless of faction.",
         "bonus_run_coins": 3,
         "bonus_meta_coins": 2,
         "enemy_reward_id": "AI Allied Lightning Storm"
       },
       "nuclear_missile_threat": {
         "title": "AI Nuclear Missile",
-        "description": "Hostile Soviet AI receives its Nuclear Missile power.",
+        "description": "Hostile AI receives Nuclear Missile, regardless of faction.",
         "bonus_run_coins": 3,
         "bonus_meta_coins": 2,
         "enemy_reward_id": "AI Soviet Nuclear Missile"
       },
       "psychic_dominator_threat": {
         "title": "AI Psychic Dominator",
-        "description": "Hostile Yuri AI receives its Psychic Dominator power.",
+        "description": "Hostile AI receives Psychic Dominator, regardless of faction.",
         "bonus_run_coins": 3,
         "bonus_meta_coins": 2,
         "enemy_reward_id": "AI Yuri Psychic Dominator"
       },
       "ion_cannon_threat": {
         "title": "AI Ion Cannon",
-        "description": "Hostile GDI AI receives its Ion Cannon power.",
+        "description": "Hostile AI receives Ion Cannon, regardless of faction.",
         "bonus_run_coins": 3,
         "bonus_meta_coins": 2,
         "enemy_reward_id": "AI GDI Ion Cannon"
       },
       "multi_missile_threat": {
         "title": "AI Multi-Missile",
-        "description": "Hostile Nod AI receives its Multi-Missile power.",
+        "description": "Hostile AI receives Multi-Missile, regardless of faction.",
         "bonus_run_coins": 3,
         "bonus_meta_coins": 2,
         "enemy_reward_id": "AI Nod Multi-Missile"

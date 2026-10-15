@@ -706,12 +706,19 @@ def enemy_power_launch_rewards(rewards):
         # cloned_superweapon_plan silently ignores the power.
         converted['enemy_reward'] = False
         converted['superweapon_clone'] = reward['enemy_superweapon_clone']
-        converted['superweapon_recharge_multiplier'] = 2
+        converted['superweapon_recharge_multiplier'] = reward.get(
+            'enemy_recharge_multiplier', 2
+        )
         values = dict(reward.get('superweapon_rules') or {})
         values.update({
             'IsPowered': 'false',
+            'DisableableFromShell': 'no',
+            'AuxBuilding': 'none',
+            'Nuke.SiloLaunch': 'no',
             'Money.Amount': '0',
-            'SW.InitialReady': 'yes',
+            'SW.InitialReady': (
+                'yes' if reward.get('enemy_initial_ready', True) else 'no'
+            ),
             'SW.AllowAI': 'yes',
             'SW.AllowPlayer': 'no',
             'SW.AITargeting': reward['enemy_ai_targeting'],

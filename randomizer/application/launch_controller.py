@@ -76,6 +76,7 @@ from randomizer.missions.required_access import mission_required_access_rules
 from randomizer.missions.access import always_available_mcv_rules
 from randomizer.ui.cameos import installed_rules_registry
 from randomizer.maps.sidebar_assets import deploy_campaign_sidebar_backgrounds
+from randomizer.maps.ini import section_value_map_preserve
 from randomizer.config.game_profile import (
     GAME_INJECTED_DLL_NAMES,
     GAME_RUNTIME_ARGUMENTS,
@@ -574,16 +575,28 @@ class LaunchController:
     def prepare_hooked_map(self, mission, extra_rules=None):
         return prepare_hooked_mission_map(self, mission, extra_rules=extra_rules)
 
-    def write_spawn_ini(self, scenario, difficulty_value, game_speed_value):
+    def write_spawn_ini(
+        self, scenario, difficulty_value, game_speed_value, original_scenario=None,
+    ):
         try:
-            SPAWN_INI.write_text(
+            mission_settings = {}
+            if original_scenario:
+                metadata_path = GAME_ROOT / 'missionmd.ini'
+                if not metadata_path.is_file():
+                    metadata_path = EXTRACTED_MAP_DIR / 'missionmd.ini'
+                    extract_mix_files_sync((('missionmd.ini', metadata_path),))
+                if metadata_path.is_file():
+                    mission_settings = section_value_map_preserve(
+                        read_text(metadata_path).splitlines(), original_scenario,
+                    )
+            SPAWN_INI.write_bytes(
                 spawn_ini_text(
                     scenario,
                     difficulty_value,
                     game_speed_value,
                     self.spawn_reward_options(),
-                ),
-                encoding='utf-8',
+                    mission_settings=mission_settings,
+                ).encode('utf-8'),
             )
             self.append_log(
                 f'Written spawn.ini: Scenario={scenario}, DifficultyModeHuman={difficulty_value}, '
@@ -1155,6 +1168,7 @@ class LaunchController:
                 launch_scenario,
                 difficulty_value,
                 game_speed_value,
+                original_scenario=scenario,
             )
             self.write_launch_options(difficulty_value, game_speed_value)
         except Exception:
