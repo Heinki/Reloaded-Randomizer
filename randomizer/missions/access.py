@@ -960,15 +960,7 @@ def always_available_transport_rules(
         production_owner_countries(lines, player_countries, sections=sections)
     )
     required_houses = ','.join(player_countries)
-    allowed_families = (
-        set(AMPHIBIOUS_TRANSPORTS)
-        if chaos_mode
-        else mission_production_families(
-            lines,
-            house_records=records,
-            include_capturable=True,
-        )
-    )
+    allowed_families = {_player_family(lines, records)}
     chaos_alternatives = (
         chaos_production_alternatives(lines, house_records=records)
         if chaos_mode else {}
@@ -1043,9 +1035,16 @@ def always_available_mcv_rules(
     """
     from randomizer.missions.tier_one import _tier_one_factory_rules
 
+    records = map_house_records(lines)
+    player_family = _player_family(lines, records)
     alternatives = chaos_production_alternatives(lines) if chaos_mode else {}
     rules = original_mcv_access_rules(
-        lines, CONYARD_BY_MCV, additional_build_houses=additional_build_houses,
+        lines,
+        (
+            mcv_id for mcv_id, conyard_id in CONYARD_BY_MCV.items()
+            if PRODUCTION_LOOKUP[conyard_id][0] == player_family
+        ),
+        additional_build_houses=additional_build_houses,
     )
     for mcv_id, values in rules.items():
         family, _category = PRODUCTION_LOOKUP[CONYARD_BY_MCV[mcv_id]]

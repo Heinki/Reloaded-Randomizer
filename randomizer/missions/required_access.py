@@ -70,6 +70,10 @@ def mission_required_access_rules(mission, lines, installed_sections):
     for source_id in sorted(required):
         installed = {k.lower(): v for k, v in installed_sections.get(source_id, {}).items()}
         authored = sections.get(source_id, {})
+        if str(authored.get(
+            'constructionyard', installed.get('constructionyard', 'no')
+        )).lower() == 'yes':
+            continue
         # Keep faction production and authored prerequisite chains intact.
         values = {'TechLevel': '1'}
         for key in ('Prerequisite', 'PrerequisiteOverride', 'Prerequisite.Negative',

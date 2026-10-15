@@ -4,6 +4,9 @@ from copy import deepcopy
 from datetime import datetime
 from urllib.parse import urlsplit, urlunsplit
 
+from randomizer.core.paths import BACKUP_DIR
+from randomizer.core.storage import atomic_write_json, read_json_object
+
 from .archipelago_yaml_controller import ArchipelagoYamlController
 
 from ._dependencies import (
@@ -18,6 +21,9 @@ from ._dependencies import (
     threading,
     time,
 )
+
+
+ARCHIPELAGO_RESUME_PATH = BACKUP_DIR / 'archipelago_resume.json'
 
 
 class ArchipelagoController(ArchipelagoYamlController):
@@ -387,6 +393,7 @@ class ArchipelagoController(ArchipelagoYamlController):
             return loaded_state, False
 
         self._archipelago_cached_state = deepcopy(loaded_state)
+        atomic_write_json(ARCHIPELAGO_RESUME_PATH, loaded_state, indent=None)
         self._archipelago_standalone_state = deepcopy(standalone_state)
         self._archipelago_standalone_config = self._standalone_archipelago_config(
             self.config, standalone_config
@@ -428,6 +435,9 @@ class ArchipelagoController(ArchipelagoYamlController):
             return False
 
         self._archipelago_cached_state = deepcopy(self.state)
+        atomic_write_json(
+            ARCHIPELAGO_RESUME_PATH, self._archipelago_cached_state, indent=None
+        )
         restored_config = self._standalone_archipelago_config(
             self.config, standalone_config
         )
@@ -482,6 +492,7 @@ class ArchipelagoController(ArchipelagoYamlController):
         self._archipelago_standalone_state = None
         self._archipelago_standalone_config = None
         self._archipelago_cached_state = None
+        ARCHIPELAGO_RESUME_PATH.unlink(missing_ok=True)
         self._set_archipelago_chat_enabled(False)
         self.archipelago_status_var.set('Disconnected')
         self.archipelago_yaml_status_var.set(
@@ -566,6 +577,19 @@ class ArchipelagoController(ArchipelagoYamlController):
     def _archipelago_saved_checkpoint(self, endpoint, slot_name):
         ap_state = self.state.get('archipelago', {}) if self.state else {}
         cached_state = getattr(self, '_archipelago_cached_state', None)
+        if cached_state is None:
+            try:
+                cached_state = read_json_object(ARCHIPELAGO_RESUME_PATH)
+            except FileNotFoundError:
+                pass
+            except (OSError, ValueError) as exc:
+                log_event(
+                    'archipelago_resume_load_failed',
+                    level=logging.WARNING,
+                    error=str(exc),
+                )
+            else:
+                self._archipelago_cached_state = cached_state
         cached_ap = (
             cached_state.get('archipelago', {})
             if isinstance(cached_state, dict) else {}

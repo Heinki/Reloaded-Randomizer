@@ -8,6 +8,7 @@ from randomizer.missions.safety import expanded_tier_one_defense_ids, expanded_t
 from randomizer.rewards.enemy_scaling import normalize_enemy_scaling_settings
 from randomizer.rewards.weights import normalize_reward_weights
 from randomizer.rewards.starting import normalize_starting_reward_count, normalize_starting_reward_types, normalize_starting_unlock_reward_names
+from randomizer.missions.tier_one import normalize_tier_one_unit_ids
 import random
 
 
@@ -253,11 +254,9 @@ class GenerationSettings:
         if override is not None:
             return list(override)
         if self.state:
-            return [
-                str(unit_id).upper()
-                for unit_id in self.state.get('starting_unit_ids', [])
-                if unit_id
-            ]
+            return list(normalize_tier_one_unit_ids(
+                self.state.get('starting_unit_ids', [])
+            ))
         return self.starting_tier_one_unit_ids_for_seed(
             self.seed_var.get() if hasattr(self, 'seed_var') else '',
         )

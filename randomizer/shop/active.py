@@ -9,6 +9,7 @@ from randomizer.missions.tier_one import (
     TIER_ONE_NAVAL_ROLES,
     TIER_ONE_ROLE_MARKERS,
     TIER_ONE_ROLE_UNITS,
+    normalize_tier_one_unit_ids,
     select_tier_one_defense_variants,
     select_tier_one_unit_variants,
 )
@@ -45,9 +46,7 @@ def shop_starter_unit_ids(
     if not starting_unit_ids:
         return ()
     families = _starter_families(faction_filter)
-    requested_ids = tuple(dict.fromkeys(
-        str(item).upper() for item in starting_unit_ids if str(item)
-    ))
+    requested_ids = normalize_tier_one_unit_ids(starting_unit_ids)
     if not set(requested_ids).intersection(TIER_ONE_ROLE_MARKERS.values()):
         return requested_ids
     ground_units = select_tier_one_unit_variants(

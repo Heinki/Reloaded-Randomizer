@@ -46,6 +46,14 @@ def tier_one_role_label(unit_or_marker):
         return ''
     return role.replace('_', ' ').title().replace('Anti Air', 'Anti-Air')
 
+def normalize_tier_one_unit_ids(unit_ids):
+    return tuple(dict.fromkeys(
+        TIER_ONE_ROLE_UNITS['anti_air_vehicle']['gdi'][0]
+        if str(unit_id).upper() == 'SMECH' else str(unit_id).upper()
+        for unit_id in unit_ids or ()
+        if unit_id
+    ))
+
 def _tier_one_variant_entries(role, family=None):
     entries = []
     default = TIER_ONE_ROLE_UNITS.get(role, {}).get(family) if family else None
@@ -597,23 +605,23 @@ def starting_tier_one_rules(
             for house in player_controlled_houses(lines, records=records)
         }
         for family in player_families.intersection(allowed_families):
-                production_categories.update({
-                    (family, 'base'),
-                    (family, 'infantry'),
-                    (family, 'vehicles'),
-                    (family, 'air'),
-                    (family, 'naval'),
-                })
+            production_categories.update({
+                (family, 'base'),
+                (family, 'infantry'),
+                (family, 'vehicles'),
+                (family, 'air'),
+                (family, 'naval'),
+            })
     available_categories = set()
     for family, category in production_categories:
         if family not in allowed_families:
             continue
-            available_categories.add((family, category))
-            if category == 'base':
-                available_categories.add((family, 'infantry'))
-                available_categories.add((family, 'vehicles'))
-                available_categories.add((family, 'air'))
-                available_categories.add((family, 'naval'))
+        available_categories.add((family, category))
+        if category == 'base':
+            available_categories.add((family, 'infantry'))
+            available_categories.add((family, 'vehicles'))
+            available_categories.add((family, 'air'))
+            available_categories.add((family, 'naval'))
 
     selected_factory_categories = set()
     for role in TIER_ONE_ROLE_UNITS:

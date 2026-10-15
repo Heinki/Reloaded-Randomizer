@@ -162,7 +162,7 @@ from randomizer.missions.overrides import (
     MISSION_VICTORY_HOOK_ACTION_IDS,
 )
 from randomizer.missions.safety import safe_build_countries
-from randomizer.missions.access import PRODUCTION_BUILDINGS, PRODUCTION_LOOKUP
+from randomizer.missions.access import CONYARD_BY_MCV, PRODUCTION_BUILDINGS, PRODUCTION_LOOKUP
 from randomizer.missions.catalogue import normalize_faction
 from randomizer.missions.installation import resolve_installed_scenario
 from randomizer.core.paths import DEBUG_LOG, GAME_ROOT, GENERATED_MAP_DIR
@@ -1731,6 +1731,14 @@ def prepare_hooked_map(self, mission, extra_rules=None):
                 }
                 and not target.get('power_payload_only')
             )
+        buildable_clone_ids.difference_update(
+            unit_id
+            for unit_id in AMPHIBIOUS_TRANSPORT_UNIT_IDS | set(CONYARD_BY_MCV)
+            if current_player_family not in {
+                str(faction).lower()
+                for faction in BUFF_TARGETS.get(unit_id, {}).get('factions', ())
+            }
+        )
         helper_autobuild = (
             helper_ai_autobuild_plan(
                 lines,

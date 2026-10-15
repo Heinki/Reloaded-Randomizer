@@ -6,7 +6,7 @@
       "ground_infantry": {"allies": ["E1", "infantry"], "soviets": ["E2", "infantry"], "yuri": ["INIT", "infantry"], "gdi": ["TSE1", "infantry"], "nod": ["TSNE1", "infantry"]},
       "anti_air_infantry": {"allies": ["GGI", "infantry"], "soviets": ["FLAKT", "infantry"], "yuri": ["INIT", "infantry"], "gdi": ["TSJUMPJET", "infantry"], "nod": ["TSE3", "infantry"]},
       "ground_vehicle": {"allies": ["MTNK", "vehicles"], "soviets": ["HTNK", "vehicles"], "yuri": ["LTNK", "vehicles"], "gdi": ["MMCH", "vehicles"], "nod": ["TICKT", "vehicles"]},
-      "anti_air_vehicle": {"allies": ["FV", "vehicles"], "soviets": ["HTK", "vehicles"], "yuri": ["YTNK", "vehicles"], "gdi": ["SMECH", "vehicles"], "nod": ["TSBIKE", "vehicles"]},
+      "anti_air_vehicle": {"allies": ["FV", "vehicles"], "soviets": ["HTK", "vehicles"], "yuri": ["YTNK", "vehicles"], "gdi": ["PITBULL", "vehicles"], "nod": ["TSBIKE", "vehicles"]},
       "basic_aircraft": {"allies": ["ORCA", "air"], "soviets": ["SMIG", "air"], "gdi": ["TSORCA", "air"], "nod": ["APACHE", "air"]},
       "naval_attack": {"allies": ["DEST", "naval"], "soviets": ["SUB", "naval"], "yuri": ["YHVR", "naval"], "gdi": ["GDIDEST", "naval"], "nod": ["NODHVR", "naval"]},
       "anti_air_ship": {"allies": ["AEGIS", "naval"], "soviets": ["SQD", "naval"], "yuri": ["BSUB", "naval"], "gdi": ["GDIHVR", "naval"], "nod": ["HYDRASUB", "naval"]}
