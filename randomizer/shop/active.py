@@ -6,6 +6,7 @@ from randomizer.config.game_profile import CAMPAIGN_FILTER_BY_LABEL
 from randomizer.missions.tier_one import (
     STANDARD_TIER_ONE_FAMILIES,
     TIER_ONE_GROUND_ROLES,
+    TIER_ONE_NAVAL_ROLES,
     TIER_ONE_ROLE_MARKERS,
     TIER_ONE_ROLE_UNITS,
     select_tier_one_defense_variants,
@@ -67,7 +68,14 @@ def shop_starter_unit_ids(
         allowed_roles=('basic_aircraft',),
         excluded_unit_ids=excluded_unit_ids,
     )
-    return tuple((*ground_units, *aircraft_units))
+    naval_units = select_tier_one_unit_variants(
+        random.Random(f'{seed}:shop-tier-one-naval'),
+        requested_ids,
+        families=families,
+        allowed_roles=TIER_ONE_NAVAL_ROLES,
+        excluded_unit_ids=excluded_unit_ids,
+    )
+    return tuple(dict.fromkeys((*ground_units, *aircraft_units, *naval_units)))
 
 
 def shop_starter_defense_ids(

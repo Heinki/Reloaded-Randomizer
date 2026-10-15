@@ -1606,8 +1606,9 @@ class ShopPolishController(ShopArchipelagoController):
                 'Tier 1 buff selected automatically at run start.'
             ),
             'discount_specialization': (
-                f'Each level reduces all current-run Shop prices '
-                f'by {effects.get("ore_per_level", 0)} Ore, minimum price 1 Ore.'
+                f'Adds an extra {effects.get("ore_per_level", 0)} Ore discount '
+                'per level to all current-run Shop prices. Stacks with Shop '
+                'Discount; minimum price 1 Ore before buff stack surcharges.'
             ),
             'permanent_challenge_slots': (
                 f'Each level guarantees +{effects.get("slots_per_level", 0)} '

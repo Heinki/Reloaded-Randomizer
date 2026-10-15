@@ -2312,7 +2312,7 @@ class ShopController(ShopPolishController):
                 visible.append(record)
         cameo_images = self._prepare_shop_unit_cameos(
             record['item'] for record in visible
-            if not record['is_power'] and not record['archipelago_item']
+            if not record['archipelago_item']
         )
         unit_buff_targets = {entry.target_id for entry in self._shop_buff_entries}
         power_buff_targets = {

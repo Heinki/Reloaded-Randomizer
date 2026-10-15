@@ -35,7 +35,9 @@ for _registry in TYPE_SECTIONS.values():
         _type_id = str(_type_id).strip().upper()
         if not _type_id:
             continue
-        _values = _SECTIONS.get(_SECTION_NAMES.get(_type_id), {})
+        _values = _SECTIONS.get(
+            _type_id, _SECTIONS.get(_SECTION_NAMES.get(_type_id), {})
+        )
         _weapons = _weapon_ids(_values)
         if _weapons:
             _direct[_type_id] = _weapons

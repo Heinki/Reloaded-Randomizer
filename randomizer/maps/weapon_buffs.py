@@ -211,6 +211,7 @@ def unit_weapon_buff_rules(
         direct_types = (
             set(counts) - WEAPON_STAT_BUFF_TYPES - handled_unit_types
         )
+        direct_types.discard('cloak')
         if unsafe_unit_houses and direct_types:
             skipped_units.append(
                 f'{target.get("label", unit_id)} ({", ".join(unsafe_unit_houses)})'

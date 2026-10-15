@@ -2193,11 +2193,24 @@
           "cloak"
         ],
         "review": {
-          "status": "pending_review",
-          "approved_buff_types": [],
+          "status": "approved",
+          "approved_buff_types": [
+            "health",
+            "armor",
+            "damage",
+            "reload",
+            "range",
+            "speed",
+            "sight",
+            "cost",
+            "production",
+            "veteran",
+            "sensors",
+            "cloak"
+          ],
           "excluded_buff_types": [],
           "flags": [],
-          "notes": ""
+          "notes": "Reviewed native stats and isolated player clone application."
         }
       },
       {
@@ -16790,6 +16803,56 @@
           ],
           "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
         }
+      },
+      {
+        "id": "NODAPWR",
+        "category": "defenses",
+        "name": "Nod Advanced Power Plant",
+        "eligible_factions": [
+          "Nod"
+        ],
+        "stats": {
+          "strength": 750,
+          "armor": "wood",
+          "cost": 900,
+          "speed": null,
+          "sight": 6,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "health",
+            "armor",
+            "sight",
+            "cost",
+            "production",
+            "veteran",
+            "sensors",
+            "cloak"
+          ],
+          "excluded_buff_types": [],
+          "flags": [
+            "no_direct_weapon"
+          ],
+          "notes": "Reviewed native stats and isolated player clone application."
+        }
       }
     ],
     "powers": [
@@ -20106,8 +20169,8 @@
     "deferred_power_count": 47,
     "review_summary": {
       "buff_targets": {
-        "approved": 189,
-        "pending_review": 54
+        "approved": 191,
+        "pending_review": 53
       },
       "powers": {
         "candidate": 52,

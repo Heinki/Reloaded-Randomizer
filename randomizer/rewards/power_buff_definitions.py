@@ -133,6 +133,11 @@ def build_power_buff_rewards(power_rewards):
             )
             if sidebar_pcx:
                 reward['superweapon_rules'] = {'SidebarPCX': sidebar_pcx}
+            if power_id == 'DropPodSpecial' and buff_id == 'payload':
+                reward['description'] = (
+                    f'{power_reward["name"]}: Minimum and maximum infantry '
+                    'counts each increase by one per stack.'
+                )
             rewards.append(reward)
     return rewards
 

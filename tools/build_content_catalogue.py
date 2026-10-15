@@ -256,6 +256,7 @@ def _building_records(sections):
         is_defense = (
             str(values.get('BuildCat') or '').strip().lower() == 'combat'
             or _bool(values, 'IsBaseDefense')
+            or type_id == 'NODAPWR'
         )
         if is_defense:
             record = _base_record(type_id, values, eligible)

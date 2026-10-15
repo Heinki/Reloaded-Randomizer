@@ -628,6 +628,12 @@
         "permanent_access": 10,
         "permanent_buff": 5
       },
+      "LUNR": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
       "MGTK": {
         "run_access": 10,
         "run_buff": 6,
@@ -749,6 +755,12 @@
         "permanent_buff": 8
       },
       "NLPST": {
+        "run_access": 6,
+        "run_buff": 4,
+        "permanent_access": 25,
+        "permanent_buff": 8
+      },
+      "NODAPWR": {
         "run_access": 6,
         "run_buff": 4,
         "permanent_access": 25,

@@ -2,9 +2,9 @@
   "schema_version": 1,
   "game": "C&C Reloaded",
   "package_namespace": "cnc_reloaded",
-  "world_version": "1.6",
+  "world_version": "1.7",
   "minimum_ap_version": "0.6.7",
-  "randomizer_version": "1.6",
+  "randomizer_version": "1.7",
   "supported_game_version": "2.7.0",
   "active_factions": [
     "Allies",
@@ -3160,6 +3160,90 @@
       "category": "unit_buffs",
       "repeatable": true,
       "id": 86294902
+    },
+    {
+      "name": "Cosmonaut Access",
+      "classification": "progression",
+      "category": "unit_unlocks",
+      "repeatable": false,
+      "id": 86296793
+    },
+    {
+      "name": "Cosmonaut Armor Plating I",
+      "classification": "useful",
+      "category": "unit_buffs",
+      "repeatable": true,
+      "id": 86296794
+    },
+    {
+      "name": "Cosmonaut Drill I",
+      "classification": "useful",
+      "category": "unit_buffs",
+      "repeatable": true,
+      "id": 86296795
+    },
+    {
+      "name": "Cosmonaut Firepower I",
+      "classification": "useful",
+      "category": "unit_buffs",
+      "repeatable": true,
+      "id": 86296796
+    },
+    {
+      "name": "Cosmonaut Logistics I",
+      "classification": "useful",
+      "category": "unit_buffs",
+      "repeatable": true,
+      "id": 86296797
+    },
+    {
+      "name": "Cosmonaut Optics I",
+      "classification": "useful",
+      "category": "unit_buffs",
+      "repeatable": true,
+      "id": 86296798
+    },
+    {
+      "name": "Cosmonaut Recon Package I",
+      "classification": "useful",
+      "category": "unit_buffs",
+      "repeatable": true,
+      "id": 86296799
+    },
+    {
+      "name": "Cosmonaut Reinforced Frames I",
+      "classification": "useful",
+      "category": "unit_buffs",
+      "repeatable": true,
+      "id": 86296800
+    },
+    {
+      "name": "Cosmonaut Sensor Suite I",
+      "classification": "useful",
+      "category": "unit_buffs",
+      "repeatable": true,
+      "id": 86296801
+    },
+    {
+      "name": "Cosmonaut Stealth Systems I",
+      "classification": "useful",
+      "category": "unit_buffs",
+      "repeatable": true,
+      "id": 86296802
+    },
+    {
+      "name": "Cosmonaut Veteran Training I",
+      "classification": "useful",
+      "category": "unit_buffs",
+      "repeatable": true,
+      "id": 86296803
+    },
+    {
+      "name": "Cosmonaut Weapon Tuning I",
+      "classification": "useful",
+      "category": "unit_buffs",
+      "repeatable": true,
+      "id": 86296804
     },
     {
       "name": "Crazy Ivan Access",
@@ -8543,6 +8627,69 @@
       "category": "unit_buffs",
       "repeatable": true,
       "id": 86295629
+    },
+    {
+      "name": "Nod Advanced Power Plant Access",
+      "classification": "progression",
+      "category": "unit_unlocks",
+      "repeatable": false,
+      "id": 86296805
+    },
+    {
+      "name": "Nod Advanced Power Plant Armor Plating I",
+      "classification": "useful",
+      "category": "unit_buffs",
+      "repeatable": true,
+      "id": 86296806
+    },
+    {
+      "name": "Nod Advanced Power Plant Drill I",
+      "classification": "useful",
+      "category": "unit_buffs",
+      "repeatable": true,
+      "id": 86296807
+    },
+    {
+      "name": "Nod Advanced Power Plant Logistics I",
+      "classification": "useful",
+      "category": "unit_buffs",
+      "repeatable": true,
+      "id": 86296808
+    },
+    {
+      "name": "Nod Advanced Power Plant Recon Package I",
+      "classification": "useful",
+      "category": "unit_buffs",
+      "repeatable": true,
+      "id": 86296809
+    },
+    {
+      "name": "Nod Advanced Power Plant Reinforced Frames I",
+      "classification": "useful",
+      "category": "unit_buffs",
+      "repeatable": true,
+      "id": 86296810
+    },
+    {
+      "name": "Nod Advanced Power Plant Sensor Suite I",
+      "classification": "useful",
+      "category": "unit_buffs",
+      "repeatable": true,
+      "id": 86296811
+    },
+    {
+      "name": "Nod Advanced Power Plant Stealth Systems I",
+      "classification": "useful",
+      "category": "unit_buffs",
+      "repeatable": true,
+      "id": 86296812
+    },
+    {
+      "name": "Nod Advanced Power Plant Veteran Training I",
+      "classification": "useful",
+      "category": "unit_buffs",
+      "repeatable": true,
+      "id": 86296813
     },
     {
       "name": "Nod Commando Access",
@@ -17023,7 +17170,7 @@
       ]
     }
   ],
-  "catalogue_checksum": "d473b7b2b2e58703ec366e96562546809ded9aa20e94c85623f4187390361f5b",
+  "catalogue_checksum": "c3206b980a0d5120d59271fb2cb07a4f0916cf40f836729afa03c2361e3baffd",
   "compatible_catalogue_checksums": [
     "0053e46817c9e2f6d952b803d9cb9784da2bb2fde3f9e72a211a057b20ad827d"
   ],
@@ -61276,7 +61423,7 @@
     "generated_world": "mapping"
   },
   "review": {
-    "standalone_reward_items": 2104,
+    "standalone_reward_items": 2125,
     "victory_missions_verified": 108,
     "objective_runtime_enabled": true,
     "cabal_deferred": true

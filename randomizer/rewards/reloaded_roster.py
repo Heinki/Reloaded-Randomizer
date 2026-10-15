@@ -70,7 +70,7 @@ def randomizer_unit_template_values():
     for family in linked_transform_families(sections, source_ids).values():
         source_ids.update(family)
     for source_id in sorted(source_ids):
-        actual = names.get(source_id)
+        actual = source_id if source_id in sections else names.get(source_id)
         values = dict(sections.get(actual, {})) if actual else {}
         if not values:
             missing.append(source_id)

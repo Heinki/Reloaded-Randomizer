@@ -215,7 +215,10 @@ def build_player_clone_sections(
         if unit_upper in possible_house_cache:
             return possible_house_cache[unit_upper]
         if effective_values is None:
-            installed_name = installed_name_by_lower.get(unit_upper.lower())
+            installed_name = (
+                unit_upper if unit_upper in installed_sections
+                else installed_name_by_lower.get(unit_upper.lower())
+            )
             native_name = native_map_name_by_lower.get(unit_upper.lower())
             effective_values = _standalone_clone_values_from_maps(
                 installed_sections.get(installed_name, {})
@@ -365,7 +368,10 @@ def build_player_clone_sections(
         for ancestor in ancestry
     }
     for unit_id in sorted(buildable_ids):
-        installed_unit = installed_name_by_lower.get(unit_id.lower())
+        installed_unit = (
+            unit_id if unit_id in installed_sections
+            else installed_name_by_lower.get(unit_id.lower())
+        )
         native_unit = native_map_name_by_lower.get(unit_id.lower())
         native_values = _standalone_clone_values_from_maps(
             installed_sections.get(installed_unit, {}) if installed_unit else {},
@@ -435,7 +441,10 @@ def build_player_clone_sections(
             ):
                 continue
             native_helper_source_ids.add(unit_id)
-            installed_unit = installed_name_by_lower.get(unit_id.lower())
+            installed_unit = (
+                unit_id if unit_id in installed_sections
+                else installed_name_by_lower.get(unit_id.lower())
+            )
             native_unit = native_map_name_by_lower.get(unit_id.lower())
             native_values = _standalone_clone_values_from_maps(
                 installed_sections.get(installed_unit, {}) if installed_unit else {},
@@ -590,7 +599,7 @@ def build_player_clone_sections(
 
     def preserve_native_effects(unit_id, counts, extra_types=()):
         """Keep unsafe effects off native mission units; allow guarded peers."""
-        handled_types = {'speed'}.intersection(counts)
+        handled_types = {'speed', 'cloak'}.intersection(counts)
         handled_types.update(
             buff_type for buff_type in extra_types if buff_type in counts
         )
@@ -742,9 +751,13 @@ def build_player_clone_sections(
         if not list_section:
             continue
         owned_template = owned_clone_templates.get(unit_id)
+        installed_unit = (
+            unit_id if unit_id in installed_sections
+            else installed_name_by_lower.get(unit_id.lower())
+        )
         source_unit = (
             map_name_by_lower.get(unit_id.lower())
-            or installed_name_by_lower.get(unit_id.lower())
+            or installed_unit
         )
         if not source_unit:
             if owned_template:
@@ -759,7 +772,6 @@ def build_player_clone_sections(
         unit_usage = unit_usage_houses(lines, unit_id, usage_index)
         direct_types = set(counts) - WEAPON_STAT_BUFF_TYPES
         weapon_buff_types = WEAPON_STAT_BUFF_TYPES.intersection(counts)
-        installed_unit = installed_name_by_lower.get(unit_id.lower())
         map_unit = map_name_by_lower.get(unit_id.lower())
         effective_unit_values = _standalone_clone_values(
             lines,
@@ -1058,7 +1070,7 @@ def build_player_clone_sections(
             or bool({
                 'build_limit', 'building_limit', 'storage', 'income',
             }.intersection(direct_types))
-            or 'speed' in direct_types
+            or bool({'speed', 'cloak'}.intersection(direct_types))
         )
         variant_has_effect = bool(direct_types) or any(
             direct_weapon_keys.get(weapon.upper())

@@ -78,6 +78,8 @@ def _records():
 
 
 def _raw_label(record):
+    if str(record['id']).upper() == 'LUNR':
+        return 'Cosmonaut'
     return str(record.get('name') or record.get('ui_name') or record['id'])
 
 
@@ -156,7 +158,7 @@ for _category, _record in _records():
 
     _balance = _BALANCE_BY_ID.get(_unit_id, {})
     _stats = _balance.get('stats', {})
-    _native = _RULES.get(_RULE_NAMES.get(_unit_id), {})
+    _native = _RULES.get(_unit_id, _RULES.get(_RULE_NAMES.get(_unit_id), {}))
     _weapons = {}
     for _weapon in _balance.get('weapons', ()):
         if not _weapon.get('source_present'):
@@ -368,6 +370,10 @@ def _power_reward(power_id, label, category, factions):
         'special_reward': False,
     }
     if power_id == 'TiberiumShowerSpecial':
+        reward['description'] = (
+            'Calls a bomber to drop a chemical bomb, causing a chemical '
+            'explosion and scattering damaging Tiberium crystals.'
+        )
         reward['cameo_superweapon'] = 'TSSuperChemicalSpecial'
         reward['superweapon_rules'] = {
             'SidebarPCX': 'chemicon.pcx',
@@ -804,7 +810,7 @@ for _provider_label, _provider_faction, _replacement_power in (
             'kind': 'retired',
             'retired_reward': True,
         }
-REWARD_ALIASES = {}
+REWARD_ALIASES = {'Lunar Infantry Access': 'Cosmonaut Access'}
 
 for _target in BUFF_TARGETS.values():
     if _target.get('linked_buff_source') or _target.get('ammo', 0) < UNLIMITED_AMMO_THRESHOLD:

@@ -1614,12 +1614,12 @@
                 "notes": "Excluded from Allies: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=SOVHAND,RADAR) resolves to Soviets, so this faction cannot build or provide the entry through that path."
               },
               "Soviets": {
-                "status": "pending_review",
+                "status": "approved",
                 "flags": [
                   "broad_owner_list",
                   "hidden_tech_level"
                 ],
-                "notes": ""
+                "notes": "Reviewed native Soviet barracks and radar production path; hidden campaign TechLevel is replaced only on player production clones."
               },
               "Yuri": {
                 "status": "excluded",
@@ -19166,6 +19166,45 @@
           },
           "category": "defense",
           "powered": true
+        },
+        {
+          "id": "NODAPWR",
+          "name": "Nod Advanced Power Plant",
+          "ui_name": "Name:NAAPWR",
+          "image": "NODAPWR",
+          "tech_level": 5,
+          "cost": 900,
+          "build_limit": null,
+          "owner": [
+            "NodCountry",
+            "NodCountry2"
+          ],
+          "required_houses": [],
+          "forbidden_houses": [],
+          "prerequisite": [
+            "NODWEAP",
+            "TSNACNST"
+          ],
+          "built_at": [],
+          "eligible_factions": [
+            "Nod"
+          ],
+          "primary": "",
+          "secondary": "",
+          "cameo": {
+            "sidebar_pcx": "",
+            "art_image": "NODAPWR",
+            "status": "pending_review"
+          },
+          "reviews": {
+            "Nod": {
+              "status": "approved",
+              "flags": [],
+              "notes": "Reviewed advanced power access alongside GDI Power Turbine; native AI and mission instances retain authored rules."
+            }
+          },
+          "category": "defense",
+          "powered": false
         }
       ],
       "powers": [
@@ -23617,7 +23656,8 @@
           "GAPAVE",
           "NABNKR_AI",
           "TEST_BUILDING",
-          "NODSTLH_MP"
+          "NODSTLH_MP",
+          "NODAPWR"
         ],
         "powers": [
           "GAWEAT:LightningStormSpecial",
@@ -23681,9 +23721,9 @@
       }
     },
     "review_summary": {
-      "approved": 260,
+      "approved": 262,
       "excluded": 445,
-      "pending_review": 251
+      "pending_review": 250
     },
     "review_complete": false
   }
