@@ -19,7 +19,9 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from randomizer.config.static import validate_sections
 from randomizer.content.faction_paths import content_record_faction_path
-from randomizer.content.inventory import read_rules_sections, rules_fingerprint
+from randomizer.content.inventory import (
+    read_rules_sections, rules_fingerprint, secret_lab_factions,
+)
 
 
 CATALOGUE_PATH = (
@@ -105,11 +107,32 @@ def review_catalogue(document):
     path_promoted = Counter()
     path_excluded = Counter()
     deferred = Counter()
+    lab_factions = secret_lab_factions(installed_sections)
     for section, category, faction, record, review in _iter_reviews(document):
-        if review['status'] not in {'candidate', 'pending_review'}:
+        if (
+            review['status'] not in {'candidate', 'pending_review'}
+            and not record.get('secret_lab')
+        ):
             continue
         key = f'{section}/{category}'
         flags = set(review['flags'])
+        if (
+            record.get('secret_lab')
+            and faction in lab_factions.get(record['id'], ())
+            and not flags.intersection({
+                'unbuildable', 'spawned_or_virtual_payload', 'dummy',
+                'missing_ui_name', 'no_production_path',
+            })
+        ):
+            review['status'] = 'approved'
+            review['notes'] = (
+                'Approved player technology explicitly listed in installed '
+                'SecretLab.PossibleBoons and allowed by SecretLab house gates. '
+                'Hidden native TechLevel is intentional; Randomizer unlocks '
+                'an isolated production clone.'
+            )
+            promoted[(faction, key)] += 1
+            continue
         exact_faction = record['eligible_factions'] == [faction]
         path = content_record_faction_path(record, section)
         if path['complete'] and path.get('specific'):

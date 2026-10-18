@@ -768,7 +768,10 @@ class LaunchController:
             return
 
         code = self.active_hook['mission_code']
-        markers = self.active_hook.get('markers', {})
+        markers = {
+            **self.active_hook.get('markers', {}),
+            **self.active_hook.get('trigger_markers', {}),
+        }
         seen = self.active_hook.setdefault('seen', set())
         # A normal game startup emits more than one Init_Clear message before
         # the scenario becomes interactive. Only an Init_Clear that occurs
@@ -776,8 +779,9 @@ class LaunchController:
         # in order so startup messages in the same polling chunk are not
         # mistaken for failed attempts.
         for line in text.splitlines():
+            folded_line = line.casefold()
             for marker, check_id in markers.items():
-                if marker in seen or marker not in line:
+                if marker in seen or marker.casefold() not in folded_line:
                     continue
                 seen.add(marker)
                 if check_id == NEXT_OBJECTIVE_CHECK_ID:
@@ -911,7 +915,10 @@ class LaunchController:
         if self.active_hook:
             scenario = self.active_hook.get('scenario', 'mission')
             seen_count = len(self.active_hook.get('seen', set()))
-            marker_count = len(self.active_hook.get('markers', {}))
+            marker_count = len({
+                **self.active_hook.get('markers', {}),
+                **self.active_hook.get('trigger_markers', {}),
+            })
             self.append_log(f'Hook watcher stopped for {scenario}. Seen {seen_count}/{marker_count} marker(s).')
             log_event(
                 'mission_process_finished',

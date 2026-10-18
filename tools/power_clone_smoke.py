@@ -172,10 +172,12 @@ def main():
             failures.append('EM Pulse status effect was not increased.')
         if value(emp_values, 'Versus.super_heavy_armor') != '100%':
             failures.append('EM Pulse all-vehicle targeting was not generated.')
-        emp_cannon = value(emp, 'EMPulse.Cannons')
-        emp_cannon_values = sections.get(emp_cannon, {})
-        if not emp_cannon or emp_cannon == 'GAPULS' or emp_cannon == 'NAPULS':
-            failures.append('EM Pulse did not use a private portable cannon.')
+        if value(emp, 'Type') != 'GenericWarhead':
+            failures.append('EM Pulse does not detonate its warhead directly.')
+        if value(emp, 'SW.Damage') != '1':
+            failures.append('EM Pulse lost its native impact damage.')
+        if value(emp, 'EMPulse.Cannons'):
+            failures.append('EM Pulse still requires a placed cannon.')
         if value(emp, 'SW.RangeMinimum') != '-1':
             failures.append('EM Pulse minimum targeting range was not removed.')
         if value(emp, 'SW.RangeMaximum') != '-1':
@@ -186,15 +188,14 @@ def main():
             failures.append('EM Pulse foreign-tech gate was not removed.')
         if value(emp, 'SW.FireIntoShroud').lower() != 'yes':
             failures.append('EM Pulse cannot target shrouded cells.')
-        if value(emp_cannon_values, 'Primary') != 'RLRPEMPWEAPON':
-            failures.append('EM Pulse portable cannon lacks its private weapon.')
-        if value(emp_cannon_values, 'InvisibleInGame').lower() != 'yes':
-            failures.append('EM Pulse portable cannon is not hidden.')
-        emp_weapon = sections.get('RLRPEMPWEAPON', {})
-        if value(emp_weapon, 'Range') != '384':
-            failures.append('EM Pulse private cannon range was not unrestricted.')
-        if value(emp_weapon, 'Warhead') != emp_warhead:
-            failures.append('EM Pulse private weapon does not use buffed warhead.')
+        if 'RLRPEMPCANNON' in {
+            str(type_id).upper()
+            for type_id in sections.get('BuildingTypes', {}).values()
+        } or any(
+            ',RLRPEMPCANNON,' in str(placement).upper()
+            for placement in sections.get('Structures', {}).values()
+        ):
+            failures.append('EM Pulse still inserts its old cannon provider.')
 
         paradrop_types = str(
             value(

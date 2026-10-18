@@ -16,7 +16,9 @@ SHOP_CONFIG_PATH = PROJECT_ROOT / 'configs' / 'shop_mode.json'
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from randomizer.rewards.catalogue import REWARD_POOL
+from randomizer.rewards.catalogue import REWARD_POOL, shared_unit_buff_ids
+from randomizer.rewards.arsenal import arsenal_tier_for_tech_level
+from randomizer.rewards.reloaded_roster import randomizer_unit_template_values
 from randomizer.shop.catalogue import canonical_reward_for_id, catalogue_entry
 from randomizer.shop.config import SHOP_CONFIG
 from randomizer.shop.model import ShopRewardType
@@ -51,19 +53,23 @@ def _entries():
 
 
 def _unit_prices(entries):
+    templates = randomizer_unit_template_values()
     access = {
         entry.target_id: entry for entry in entries
         if entry.reward_type is ShopRewardType.UNIT_ACCESS
     }
     buffs = {
-        entry.target_id: entry for entry in entries
+        target_id: entry for entry in entries
         if entry.reward_type is ShopRewardType.UNIT_BUFF
+        for target_id in shared_unit_buff_ids(entry.target_id)
     }
     prices = {}
     for target_id in sorted(set(access) | set(buffs)):
-        entry = access.get(target_id) or buffs[target_id]
+        tier = arsenal_tier_for_tech_level(
+            templates.get(target_id, {}).get('TechLevel', 1)
+        )
         run_access, run_buff, permanent_access, permanent_buff = (
-            UNIT_PRICES[entry.tier]
+            UNIT_PRICES[tier]
         )
         prices[target_id] = {
             'run_access': run_access if target_id in access else None,

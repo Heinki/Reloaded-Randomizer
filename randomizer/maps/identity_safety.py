@@ -116,6 +116,13 @@ def capture_authored_identity_contract(lines, installed_sections):
         if str(section).lower() in PACKED_SECTIONS:
             continue
         for key, value in section_value_map_preserve(lines, section).items():
+            # Scenario paths are launcher lifecycle data, not TechnoType
+            # references. "Yuri's Revenge" otherwise protects a spurious YURI
+            # token and prevents clearing native campaign continuation links.
+            if str(section).casefold() == 'basic' and str(key).casefold() in {
+                'nextscenario', 'altnextscenario',
+            }:
+                continue
             counts = Counter(_identity_tokens(value, techno_ids))
             if not counts:
                 continue

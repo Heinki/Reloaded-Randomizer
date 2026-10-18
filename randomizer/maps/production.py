@@ -258,15 +258,17 @@ def original_player_production_gate_rules(
 
     existing_rule_sections = existing_rule_sections or {}
     for source_id in sorted(native_source_ids):
-        negatives = []
-        for values in (
-            installed_by_lower.get(source_id.lower(), {}),
-            section_value_map_preserve(lines, source_id),
-            existing_rule_sections.get(source_id, {}),
-        ):
-            negatives.extend(comma_items(
-                _value_case_insensitive(values, 'Prerequisite.Negative', '')
-            ))
+        # Map-local `none` deliberately clears installed restrictions. Do
+        # not resurrect them from intermediate clone overlays: SOV11 clears
+        # TESLA's negative prerequisite to let its campaign AI build it.
+        negatives = comma_items(_value_case_insensitive(
+            native_by_lower.get(source_id.lower(), {}),
+            'Prerequisite.Negative',
+            _value_case_insensitive(
+                installed_by_lower.get(source_id.lower(), {}),
+                'Prerequisite.Negative', '',
+            ),
+        ))
         source_rules = rules.setdefault(source_id, {})
         negatives = [
             prerequisite

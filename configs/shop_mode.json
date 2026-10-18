@@ -304,11 +304,35 @@
         "permanent_access": 50,
         "permanent_buff": 12
       },
+      "CCOMAND": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
       "CHAMSPY": {
         "run_access": 6,
         "run_buff": 4,
         "permanent_access": 25,
         "permanent_buff": 8
+      },
+      "CHITZ_ST": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
+      "CHRP": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
+      "CIVAN": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
       },
       "CLEG": {
         "run_access": 10,
@@ -333,6 +357,12 @@
         "run_buff": 6,
         "permanent_access": 50,
         "permanent_buff": 12
+      },
+      "DESO_ST": {
+        "run_access": 6,
+        "run_buff": 4,
+        "permanent_access": 25,
+        "permanent_buff": 8
       },
       "DEST": {
         "run_access": 6,
@@ -406,6 +436,12 @@
         "permanent_access": 25,
         "permanent_buff": 8
       },
+      "FORTRESS": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
       "FTHROW": {
         "run_access": 10,
         "run_buff": 6,
@@ -413,6 +449,12 @@
         "permanent_buff": 12
       },
       "FV": {
+        "run_access": 6,
+        "run_buff": 4,
+        "permanent_access": 25,
+        "permanent_buff": 8
+      },
+      "GACPILL": {
         "run_access": 6,
         "run_buff": 4,
         "permanent_access": 25,
@@ -435,6 +477,12 @@
         "run_buff": 6,
         "permanent_access": 50,
         "permanent_buff": 12
+      },
+      "GAGUARDT_ST": {
+        "run_access": 6,
+        "run_buff": 4,
+        "permanent_access": 25,
+        "permanent_buff": 8
       },
       "GAPILL": {
         "run_access": 3,
@@ -532,6 +580,18 @@
         "permanent_access": 50,
         "permanent_buff": 12
       },
+      "GTGCAN": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
+      "GUARDIAN": {
+        "run_access": 6,
+        "run_buff": 4,
+        "permanent_access": 25,
+        "permanent_buff": 8
+      },
       "HARV": {
         "run_access": null,
         "run_buff": 2,
@@ -567,6 +627,12 @@
         "run_buff": 6,
         "permanent_access": 50,
         "permanent_buff": 12
+      },
+      "ICARUS": {
+        "run_access": 6,
+        "run_buff": 4,
+        "permanent_access": 25,
+        "permanent_buff": 8
       },
       "INIT": {
         "run_access": 3,
@@ -634,6 +700,18 @@
         "permanent_access": 50,
         "permanent_buff": 12
       },
+      "MAMU_ST": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
+      "MDISK_ST": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
       "MGTK": {
         "run_access": 10,
         "run_buff": 6,
@@ -641,6 +719,12 @@
         "permanent_buff": 12
       },
       "MIND": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
+      "MIST2": {
         "run_access": 10,
         "run_buff": 6,
         "permanent_access": 50,
@@ -724,6 +808,12 @@
         "permanent_access": 25,
         "permanent_buff": 8
       },
+      "NAFLAMETOWER": {
+        "run_access": 6,
+        "run_buff": 4,
+        "permanent_access": 25,
+        "permanent_buff": 8
+      },
       "NALASR": {
         "run_access": 3,
         "run_buff": 2,
@@ -796,6 +886,12 @@
         "permanent_access": 50,
         "permanent_buff": 12
       },
+      "OLDORCA": {
+        "run_access": 6,
+        "run_buff": 4,
+        "permanent_access": 25,
+        "permanent_buff": 8
+      },
       "ORCA": {
         "run_access": 6,
         "run_buff": 4,
@@ -832,6 +928,18 @@
         "permanent_access": 10,
         "permanent_buff": 5
       },
+      "PTROOP": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
+      "RA1MAMU_ST": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
       "RA1TTNK": {
         "run_access": 10,
         "run_buff": 6,
@@ -862,6 +970,18 @@
         "permanent_access": 50,
         "permanent_buff": 12
       },
+      "ROBOTSTNK": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
+      "ROCKETANGEL": {
+        "run_access": 6,
+        "run_buff": 4,
+        "permanent_access": 25,
+        "permanent_buff": 8
+      },
       "SAPC": {
         "run_access": null,
         "run_buff": 2,
@@ -873,6 +993,12 @@
         "run_buff": 2,
         "permanent_access": 10,
         "permanent_buff": 5
+      },
+      "SCORP4": {
+        "run_access": 6,
+        "run_buff": 4,
+        "permanent_access": 25,
+        "permanent_buff": 8
       },
       "SENGINEER": {
         "run_access": null,
@@ -994,6 +1120,12 @@
         "permanent_access": 25,
         "permanent_buff": 8
       },
+      "TERROR_ST": {
+        "run_access": 6,
+        "run_buff": 4,
+        "permanent_access": 25,
+        "permanent_buff": 8
+      },
       "TESLA": {
         "run_access": 6,
         "run_buff": 4,
@@ -1025,6 +1157,12 @@
         "permanent_buff": 8
       },
       "TSCYBORG": {
+        "run_access": 6,
+        "run_buff": 4,
+        "permanent_access": 25,
+        "permanent_buff": 8
+      },
+      "TSCYBORG_ST": {
         "run_access": 6,
         "run_buff": 4,
         "permanent_access": 25,
@@ -1174,6 +1312,12 @@
         "permanent_access": 50,
         "permanent_buff": 12
       },
+      "TTNK_ST": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
       "TWMAMU": {
         "run_access": 10,
         "run_buff": 6,
@@ -1251,6 +1395,12 @@
         "run_buff": 6,
         "permanent_access": 50,
         "permanent_buff": 12
+      },
+      "YURI_ST": {
+        "run_access": 6,
+        "run_buff": 4,
+        "permanent_access": 25,
+        "permanent_buff": 8
       }
     },
     "permanent_upgrades": {

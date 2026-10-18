@@ -4132,6 +4132,11 @@
     "required_access_rules": {},
     "techno_base_rules": {},
     "map_section_rules": {
+      "YUR04": {
+        "Actions": {
+          "01000096": "2,99,7,_Amb_CricketDesert,0,0,0,0,W,99,7,_Amb_CricketDesert,0,0,0,0,X"
+        }
+      },
       "SOV11_RA2": {
         "Actions": {
           "089FDF3C": "3,53,2,092D6E5C,0,0,0,0,A,53,2,0CEDB2BC,0,0,0,0,A,1,0,1,0,0,0,0,A"

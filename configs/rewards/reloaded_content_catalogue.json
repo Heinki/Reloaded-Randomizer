@@ -3184,6 +3184,841 @@
             "engineer": false,
             "trainable": false,
             "deploys_into": ""
+          },
+          {
+            "id": "CCOMAND",
+            "name": "Chrono Commando",
+            "ui_name": "Name:CCOMAND",
+            "image": "CCOMAND",
+            "tech_level": -1,
+            "cost": 2000,
+            "build_limit": null,
+            "owner": [
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "BARRACKS",
+              "TECH"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Allies",
+              "Soviets",
+              "Yuri",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "ChronoMP5",
+            "secondary": "FakeC4",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "CCOMAND",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Soviets": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Yuri": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Nod": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 9,
+            "category": "infantry",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "PTROOP",
+            "name": "Psi-Commando (Psi-Corp Trooper)",
+            "ui_name": "Name:PCOMMANDO",
+            "image": "PTROOP",
+            "tech_level": -1,
+            "cost": 1000,
+            "build_limit": null,
+            "owner": [
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "BARRACKS",
+              "TECH"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Allies",
+              "Soviets",
+              "Yuri",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "MindControl",
+            "secondary": "Sapper",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "PTROOP",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Soviets": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Yuri": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Nod": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 9,
+            "category": "infantry",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "CIVAN",
+            "name": "Chrono Ivan",
+            "ui_name": "Name:CIVAN",
+            "image": "CIVAN",
+            "tech_level": -1,
+            "cost": 1750,
+            "build_limit": null,
+            "owner": [
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "BARRACKS",
+              "TECH"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Allies",
+              "Soviets",
+              "Yuri",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "IvanBomber",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "CIVAN",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Soviets": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Yuri": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Nod": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 9,
+            "category": "infantry",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "TSCYBORG_ST",
+            "name": "Cyborg",
+            "ui_name": "name:TSCYBORG",
+            "image": "TSCYBORG",
+            "tech_level": -1,
+            "cost": 600,
+            "build_limit": null,
+            "owner": [
+              "RobotCountry",
+              "RobotCountry2",
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "BARRACKS"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Allies",
+              "Soviets",
+              "Yuri",
+              "GDI"
+            ],
+            "primary": "TSVulcan3",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "TSCYBORG",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Soviets": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Yuri": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 3,
+            "category": "infantry",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": false,
+            "deploys_into": ""
+          },
+          {
+            "id": "CHITZ_ST",
+            "name": "Chitzkoi",
+            "ui_name": "Name:CHITZKOI",
+            "image": "CHITZ",
+            "tech_level": -1,
+            "cost": 300,
+            "build_limit": 1,
+            "owner": [
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "BARRACKS",
+              "TECH"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Allies",
+              "Yuri",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "ChitzkoiBadTeeth",
+            "secondary": "ChitzkoiVirtualScanner",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "CHITZ",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list",
+                  "civilian_or_natural"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Yuri": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list",
+                  "civilian_or_natural"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list",
+                  "civilian_or_natural"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Nod": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list",
+                  "civilian_or_natural"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 9,
+            "category": "infantry",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "TERROR_ST",
+            "name": "Terrorist",
+            "ui_name": "Name:TERROR",
+            "image": "TRST",
+            "tech_level": -1,
+            "cost": 150,
+            "build_limit": null,
+            "owner": [
+              "RobotCountry",
+              "RobotCountry2",
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "BARRACKS",
+              "RADAR"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Allies",
+              "Yuri",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "TerrorSuicideManual",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "TRST",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Yuri": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Nod": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 6,
+            "category": "infantry",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": false,
+            "deploys_into": ""
+          },
+          {
+            "id": "YURI_ST",
+            "name": "Yuri Clone",
+            "ui_name": "Name:YuriClone",
+            "image": "YURI",
+            "tech_level": -1,
+            "cost": 800,
+            "build_limit": null,
+            "owner": [
+              "RobotCountry",
+              "RobotCountry2",
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "BARRACKS",
+              "RADAR"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Allies",
+              "Soviets",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "MindControl",
+            "secondary": "PsiWave",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "YURI",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Soviets": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Nod": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 6,
+            "category": "infantry",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "DESO_ST",
+            "name": "Desolator",
+            "ui_name": "Name:DESO",
+            "image": "DESO",
+            "tech_level": -1,
+            "cost": 850,
+            "build_limit": null,
+            "owner": [
+              "RobotCountry",
+              "RobotCountry2",
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Africans",
+              "Confederation",
+              "Alliance",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "BARRACKS",
+              "RADAR"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Allies",
+              "Yuri",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "RadBeamWeapon",
+            "secondary": "RadEruptionWeapon",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "DESO",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Yuri": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Nod": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 6,
+            "category": "infantry",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "ROCKETANGEL",
+            "name": "Rocket Angel",
+            "ui_name": "Name:ROCKETANGEL",
+            "image": "ROCKETANGEL",
+            "tech_level": -1,
+            "cost": 1000,
+            "build_limit": null,
+            "owner": [
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "BARRACKS",
+              "RADAR"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Allies",
+              "Soviets",
+              "Yuri",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "PhotonRocketSwarmPod",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "ROCKETANGEL",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Soviets": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Yuri": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Nod": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 6,
+            "category": "infantry",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
           }
         ],
         "vehicles": [
@@ -9130,6 +9965,878 @@
             "engineer": false,
             "trainable": false,
             "deploys_into": "DNLIMPET"
+          },
+          {
+            "id": "MIST2",
+            "name": "Double V3 Launcher",
+            "ui_name": "Name:MIST2",
+            "image": "MIST2",
+            "tech_level": -1,
+            "cost": 1450,
+            "build_limit": null,
+            "owner": [
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2",
+              "RobotCountry",
+              "RobotCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "TECH"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Allies",
+              "Soviets",
+              "Yuri",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "DredLauncher",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "MIST2",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Soviets": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Yuri": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Nod": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 9,
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "CHRP",
+            "name": "Chrono Prison",
+            "ui_name": "Name:CHRP",
+            "image": "CHRP",
+            "tech_level": -1,
+            "cost": 2200,
+            "build_limit": null,
+            "owner": [
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2",
+              "RobotCountry",
+              "RobotCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "TECH"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Allies",
+              "Soviets",
+              "Yuri",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "NeutronCannon",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "CHRP",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Soviets": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Yuri": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Nod": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 9,
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "MAMU_ST",
+            "name": "Mammoth Tank (TD)",
+            "ui_name": "Name:MAMU",
+            "image": "MAMU",
+            "tech_level": -1,
+            "cost": 1750,
+            "build_limit": null,
+            "owner": [
+              "RobotCountry",
+              "RobotCountry2",
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "FACTORY",
+              "TECH"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Allies",
+              "Soviets",
+              "Yuri",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "120mmxOLD",
+            "secondary": "TSMammothTusk",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "MAMU",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Soviets": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Yuri": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Nod": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 9,
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "TTNK_ST",
+            "name": "Tesla Tank",
+            "ui_name": "Name:TTNK",
+            "image": "TTNK",
+            "tech_level": -1,
+            "cost": 1200,
+            "build_limit": null,
+            "owner": [
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2",
+              "RobotCountry",
+              "RobotCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "TECH"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Allies",
+              "Yuri",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "TankBolt",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "TTNK",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Yuri": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Nod": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 9,
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "RA1MAMU_ST",
+            "name": "Mammoth Tank (RA1)",
+            "ui_name": "Name:MAMU",
+            "image": "RA1MAMU",
+            "tech_level": -1,
+            "cost": 1750,
+            "build_limit": null,
+            "owner": [
+              "RobotCountry",
+              "RobotCountry2",
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "FACTORY",
+              "TECH"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Allies",
+              "Soviets",
+              "Yuri",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "120mmxOLD",
+            "secondary": "TSMammothTusk",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "RA1MAMU",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Soviets": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Yuri": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Nod": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 9,
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "MDISK_ST",
+            "name": "Repair Disk",
+            "ui_name": "Name:MDISK",
+            "image": "MDISK",
+            "tech_level": -1,
+            "cost": 1500,
+            "build_limit": null,
+            "owner": [
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2",
+              "RobotCountry",
+              "RobotCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "FACTORY",
+              "TECH"
+            ],
+            "built_at": [
+              "NAWEAP",
+              "GAWEAP",
+              "YAWEAP",
+              "NAWEAP2",
+              "NAWEAP3",
+              "GAWEAP2",
+              "GAWEAP3",
+              "YAWEAP2",
+              "YAWEAP3",
+              "TSNAMECHFACT",
+              "ROBOTWEAP",
+              "NAFIST"
+            ],
+            "eligible_factions": [
+              "Allies",
+              "Soviets",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "DiskHeal",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "MDISK",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Soviets": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Nod": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 9,
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": false,
+            "deploys_into": ""
+          },
+          {
+            "id": "SCORP4",
+            "name": "Laser Scorpion Tank",
+            "ui_name": "Name:SCORP4",
+            "image": "SCORP4",
+            "tech_level": -1,
+            "cost": 950,
+            "build_limit": null,
+            "owner": [
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "FACTORY"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Allies",
+              "Soviets",
+              "Yuri",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "ScorpLaser",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "SCORP4",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Soviets": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Yuri": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Nod": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 3,
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "GUARDIAN",
+            "name": "Guardian Tank (RA3)",
+            "ui_name": "Name:GUARDIAN",
+            "image": "GUARDIAN",
+            "tech_level": -1,
+            "cost": 750,
+            "build_limit": null,
+            "owner": [
+              "RobotCountry",
+              "RobotCountry2",
+              "AlliesCountry",
+              "AlliesCountry2",
+              "SovietCountry",
+              "SovietCountry2",
+              "YuriCountry",
+              "YuriCountry2",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "FACTORY"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Allies",
+              "Soviets",
+              "Yuri",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "RA3105mm",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "GUARDIAN",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Soviets": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Yuri": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Nod": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 3,
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "ROBOTSTNK",
+            "name": "Stealth MLRS",
+            "ui_name": "Name:ROBOTSTNK",
+            "image": "ROBOTSTNK",
+            "tech_level": -1,
+            "cost": 1400,
+            "build_limit": null,
+            "owner": [
+              "RobotCountry",
+              "RobotCountry2",
+              "AlliesCountry",
+              "AlliesCountry2",
+              "SovietCountry",
+              "SovietCountry2",
+              "YuriCountry",
+              "YuriCountry2",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "FACTORY",
+              "TECH"
+            ],
+            "built_at": [],
+            "eligible_factions": [
+              "Allies",
+              "Soviets",
+              "Yuri",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "MLRSDragon",
+            "secondary": "MLRSDragonAA",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "ROBOTSTNK",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Soviets": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Yuri": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Nod": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 9,
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": false,
+            "deploys_into": ""
           }
         ],
         "aircraft": [
@@ -10813,6 +12520,406 @@
                 "notes": ""
               }
             },
+            "category": "aircraft",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "OLDORCA",
+            "name": "Orca",
+            "ui_name": "Name:OLDORCA",
+            "image": "OLDORCA",
+            "tech_level": -1,
+            "cost": 1100,
+            "build_limit": null,
+            "owner": [
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2",
+              "RobotCountry",
+              "RobotCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [],
+            "built_at": [
+              "GAAIRC",
+              "AMRADR",
+              "TSGAHPAD",
+              "TSNAHPAD",
+              "NAHELIPAD",
+              "GAAIRC2",
+              "GAAIRC3",
+              "GAAIRC4",
+              "TSGAHPAD2",
+              "TSGAHPAD3",
+              "TSGAHPAD4",
+              "TSGAHPAD5",
+              "TSGAHPAD6",
+              "TSGAHPAD7",
+              "TSGAHPAD8",
+              "TSGAHPAD9",
+              "TSGAHPAD10",
+              "TSGAHPAD11",
+              "TSGAHPAD12",
+              "TSNAHPAD2",
+              "TSNAHPAD3",
+              "TSNAHPAD4",
+              "TSNAHPAD5",
+              "TSNAHPAD6",
+              "TSNAHPAD7",
+              "TSNAHPAD8",
+              "TSNAHPAD9",
+              "TSNAHPAD10",
+              "NAHELIPAD2",
+              "NAHELIPAD3",
+              "GAAIRC2",
+              "GAAIRC3",
+              "GAAIRC4",
+              "NAHELIPAD2",
+              "NAHELIPAD3",
+              "CAAIRP"
+            ],
+            "eligible_factions": [
+              "Allies",
+              "Soviets",
+              "Yuri",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "TSHellfire",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "OLDORCA",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Soviets": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Yuri": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Nod": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 6,
+            "category": "aircraft",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "FORTRESS",
+            "name": "Stealth Bomber",
+            "ui_name": "name:FORTRESSB",
+            "image": "FORTRESS",
+            "tech_level": -1,
+            "cost": 1800,
+            "build_limit": null,
+            "owner": [
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2",
+              "RobotCountry",
+              "RobotCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "TECH"
+            ],
+            "built_at": [
+              "GAAIRC",
+              "AMRADR",
+              "TSGAHPAD",
+              "TSNAHPAD",
+              "NAHELIPAD",
+              "GAAIRC2",
+              "GAAIRC3",
+              "GAAIRC4",
+              "TSGAHPAD2",
+              "TSGAHPAD3",
+              "TSGAHPAD4",
+              "TSGAHPAD5",
+              "TSGAHPAD6",
+              "TSGAHPAD7",
+              "TSGAHPAD8",
+              "TSGAHPAD9",
+              "TSGAHPAD10",
+              "TSGAHPAD11",
+              "TSGAHPAD12",
+              "TSNAHPAD2",
+              "TSNAHPAD3",
+              "TSNAHPAD4",
+              "TSNAHPAD5",
+              "TSNAHPAD6",
+              "TSNAHPAD7",
+              "TSNAHPAD8",
+              "TSNAHPAD9",
+              "TSNAHPAD10",
+              "NAHELIPAD2",
+              "NAHELIPAD3",
+              "GAAIRC2",
+              "GAAIRC3",
+              "GAAIRC4",
+              "NAHELIPAD2",
+              "NAHELIPAD3",
+              "CAAIRP"
+            ],
+            "eligible_factions": [
+              "Allies",
+              "Soviets",
+              "Yuri",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "TSBomb",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "FORTRESS",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Soviets": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Yuri": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Nod": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 9,
+            "category": "aircraft",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "ICARUS",
+            "name": "Icarus Fighter",
+            "ui_name": "Name:ICARUS",
+            "image": "PROTOX",
+            "tech_level": -1,
+            "cost": 1800,
+            "build_limit": null,
+            "owner": [
+              "RobotCountry",
+              "RobotCountry2",
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "GENHPAD"
+            ],
+            "built_at": [
+              "GAAIRC",
+              "AMRADR",
+              "TSGAHPAD",
+              "TSNAHPAD",
+              "NAHELIPAD",
+              "GAAIRC2",
+              "GAAIRC3",
+              "GAAIRC4",
+              "TSGAHPAD2",
+              "TSGAHPAD3",
+              "TSGAHPAD4",
+              "TSGAHPAD5",
+              "TSGAHPAD6",
+              "TSGAHPAD7",
+              "TSGAHPAD8",
+              "TSGAHPAD9",
+              "TSGAHPAD10",
+              "TSGAHPAD11",
+              "TSGAHPAD12",
+              "TSNAHPAD2",
+              "TSNAHPAD3",
+              "TSNAHPAD4",
+              "TSNAHPAD5",
+              "TSNAHPAD6",
+              "TSNAHPAD7",
+              "TSNAHPAD8",
+              "TSNAHPAD9",
+              "TSNAHPAD10",
+              "NAHELIPAD2",
+              "NAHELIPAD3",
+              "GAAIRC2",
+              "GAAIRC3",
+              "GAAIRC4",
+              "NAHELIPAD2",
+              "NAHELIPAD3",
+              "CAAIRP"
+            ],
+            "eligible_factions": [
+              "Allies",
+              "Soviets",
+              "Yuri",
+              "GDI",
+              "Nod"
+            ],
+            "primary": "IkarosAGLaserFire",
+            "secondary": "IkarosAALaserFire",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "PROTOX",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Soviets": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Yuri": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "GDI": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              },
+              "Nod": {
+                "status": "approved",
+                "flags": [
+                  "broad_owner_list"
+                ],
+                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+              }
+            },
+            "secret_lab": true,
+            "unlock_tech_level": 3,
             "category": "aircraft",
             "naval": false,
             "harvester": false,
@@ -18661,46 +20768,48 @@
           },
           "reviews": {
             "Allies": {
-              "status": "pending_review",
+              "status": "approved",
               "flags": [
                 "broad_owner_list",
                 "hidden_tech_level"
               ],
-              "notes": ""
+              "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
             },
             "Soviets": {
-              "status": "pending_review",
+              "status": "approved",
               "flags": [
                 "broad_owner_list",
                 "hidden_tech_level"
               ],
-              "notes": ""
+              "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
             },
             "Yuri": {
-              "status": "pending_review",
+              "status": "approved",
               "flags": [
                 "broad_owner_list",
                 "hidden_tech_level"
               ],
-              "notes": ""
+              "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
             },
             "GDI": {
-              "status": "pending_review",
+              "status": "approved",
               "flags": [
                 "broad_owner_list",
                 "hidden_tech_level"
               ],
-              "notes": ""
+              "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
             },
             "Nod": {
-              "status": "pending_review",
+              "status": "approved",
               "flags": [
                 "broad_owner_list",
                 "hidden_tech_level"
               ],
-              "notes": ""
+              "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
             }
           },
+          "secret_lab": true,
+          "unlock_tech_level": 6,
           "category": "defense",
           "powered": true
         },
@@ -19203,6 +21312,280 @@
               "notes": "Reviewed advanced power access alongside GDI Power Turbine; native AI and mission instances retain authored rules."
             }
           },
+          "category": "defense",
+          "powered": false
+        },
+        {
+          "id": "GTGCAN",
+          "name": "Allied Grand Cannon",
+          "ui_name": "Name:GTGCAN",
+          "image": "GTGCAN",
+          "tech_level": -1,
+          "cost": 2000,
+          "build_limit": null,
+          "owner": [
+            "SovietCountry",
+            "SovietCountry2",
+            "Russians",
+            "Confederation",
+            "Africans",
+            "Arabs",
+            "YuriCountry",
+            "YuriCountry2",
+            "AlliesCountry",
+            "AlliesCountry2",
+            "British",
+            "French",
+            "Germans",
+            "Americans",
+            "Alliance",
+            "GDICountry",
+            "GDICountry2",
+            "NodCountry",
+            "NodCountry2"
+          ],
+          "required_houses": [],
+          "forbidden_houses": [],
+          "prerequisite": [
+            "RADAR",
+            "TECH"
+          ],
+          "built_at": [],
+          "eligible_factions": [
+            "Allies",
+            "Soviets",
+            "Yuri",
+            "GDI",
+            "Nod"
+          ],
+          "primary": "GrandCannonWeapon",
+          "secondary": "",
+          "cameo": {
+            "sidebar_pcx": "",
+            "art_image": "GTGCAN",
+            "status": "pending_review"
+          },
+          "reviews": {
+            "Allies": {
+              "status": "approved",
+              "flags": [
+                "broad_owner_list"
+              ],
+              "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+            },
+            "Soviets": {
+              "status": "approved",
+              "flags": [
+                "broad_owner_list"
+              ],
+              "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+            },
+            "Yuri": {
+              "status": "approved",
+              "flags": [
+                "broad_owner_list"
+              ],
+              "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+            },
+            "GDI": {
+              "status": "approved",
+              "flags": [
+                "broad_owner_list"
+              ],
+              "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+            },
+            "Nod": {
+              "status": "approved",
+              "flags": [
+                "broad_owner_list"
+              ],
+              "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+            }
+          },
+          "secret_lab": true,
+          "unlock_tech_level": 9,
+          "category": "defense",
+          "powered": true
+        },
+        {
+          "id": "GAGUARDT_ST",
+          "name": "Guard Tower",
+          "ui_name": "Name:GAGUARDT",
+          "image": "GAGUARDT",
+          "tech_level": -1,
+          "cost": 500,
+          "build_limit": null,
+          "owner": [
+            "SovietCountry",
+            "SovietCountry2",
+            "Russians",
+            "Confederation",
+            "Africans",
+            "Arabs",
+            "YuriCountry",
+            "YuriCountry2",
+            "AlliesCountry",
+            "AlliesCountry2",
+            "British",
+            "French",
+            "Germans",
+            "Americans",
+            "Alliance",
+            "GDICountry",
+            "GDICountry2",
+            "NodCountry",
+            "NodCountry2"
+          ],
+          "required_houses": [],
+          "forbidden_houses": [],
+          "prerequisite": [
+            "BARRACKS"
+          ],
+          "built_at": [],
+          "eligible_factions": [
+            "Allies",
+            "Soviets",
+            "Yuri",
+            "GDI",
+            "Nod"
+          ],
+          "primary": "TDVulcanTower",
+          "secondary": "",
+          "cameo": {
+            "sidebar_pcx": "",
+            "art_image": "GAGUARDT",
+            "status": "pending_review"
+          },
+          "reviews": {
+            "Allies": {
+              "status": "approved",
+              "flags": [
+                "broad_owner_list"
+              ],
+              "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+            },
+            "Soviets": {
+              "status": "approved",
+              "flags": [
+                "broad_owner_list"
+              ],
+              "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+            },
+            "Yuri": {
+              "status": "approved",
+              "flags": [
+                "broad_owner_list"
+              ],
+              "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+            },
+            "GDI": {
+              "status": "approved",
+              "flags": [
+                "broad_owner_list"
+              ],
+              "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+            },
+            "Nod": {
+              "status": "approved",
+              "flags": [
+                "broad_owner_list"
+              ],
+              "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+            }
+          },
+          "secret_lab": true,
+          "unlock_tech_level": 3,
+          "category": "defense",
+          "powered": false
+        },
+        {
+          "id": "GACPILL",
+          "name": "Cammo Pill Box",
+          "ui_name": "Name:GACPILL",
+          "image": "GACPILL",
+          "tech_level": -1,
+          "cost": 650,
+          "build_limit": null,
+          "owner": [
+            "AlliesCountry",
+            "AlliesCountry2",
+            "British",
+            "French",
+            "Germans",
+            "Americans",
+            "Alliance",
+            "SovietCountry",
+            "SovietCountry2",
+            "Russians",
+            "Confederation",
+            "Africans",
+            "Arabs",
+            "YuriCountry",
+            "YuriCountry2",
+            "GDICountry",
+            "GDICountry2",
+            "NodCountry",
+            "NodCountry2"
+          ],
+          "required_houses": [],
+          "forbidden_houses": [],
+          "prerequisite": [
+            "BARRACKS"
+          ],
+          "built_at": [],
+          "eligible_factions": [
+            "Allies",
+            "Soviets",
+            "Yuri",
+            "GDI",
+            "Nod"
+          ],
+          "primary": "RA1Vulcan2",
+          "secondary": "",
+          "cameo": {
+            "sidebar_pcx": "",
+            "art_image": "GACPILL",
+            "status": "pending_review"
+          },
+          "reviews": {
+            "Allies": {
+              "status": "approved",
+              "flags": [
+                "broad_owner_list"
+              ],
+              "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+            },
+            "Soviets": {
+              "status": "approved",
+              "flags": [
+                "broad_owner_list"
+              ],
+              "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+            },
+            "Yuri": {
+              "status": "approved",
+              "flags": [
+                "broad_owner_list"
+              ],
+              "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+            },
+            "GDI": {
+              "status": "approved",
+              "flags": [
+                "broad_owner_list"
+              ],
+              "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+            },
+            "Nod": {
+              "status": "approved",
+              "flags": [
+                "broad_owner_list"
+              ],
+              "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+            }
+          },
+          "secret_lab": true,
+          "unlock_tech_level": 3,
           "category": "defense",
           "powered": false
         }
@@ -22699,7 +25082,16 @@
             "CHITZ",
             "YURIE",
             "HCLEG",
-            "HUEY"
+            "HUEY",
+            "CCOMAND",
+            "PTROOP",
+            "CIVAN",
+            "TSCYBORG_ST",
+            "CHITZ_ST",
+            "TERROR_ST",
+            "YURI_ST",
+            "DESO_ST",
+            "ROCKETANGEL"
           ],
           "vehicles": [
             "AMCV",
@@ -22732,7 +25124,16 @@
             "LIMPET",
             "CMOBILEMP",
             "FLMTNK",
-            "TDFLMTNK"
+            "TDFLMTNK",
+            "MIST2",
+            "CHRP",
+            "MAMU_ST",
+            "TTNK_ST",
+            "RA1MAMU_ST",
+            "MDISK_ST",
+            "SCORP4",
+            "GUARDIAN",
+            "ROBOTSTNK"
           ],
           "aircraft": [
             "APACHE",
@@ -22748,7 +25149,10 @@
             "TSCARRYALL",
             "SMIG",
             "ORCA2",
-            "YHORNET"
+            "YHORNET",
+            "OLDORCA",
+            "FORTRESS",
+            "ICARUS"
           ]
         },
         "production": [
@@ -22817,7 +25221,10 @@
           "YAHIVE",
           "GAPAVE",
           "NABNKR_AI",
-          "TEST_BUILDING"
+          "TEST_BUILDING",
+          "GTGCAN",
+          "GAGUARDT_ST",
+          "GACPILL"
         ],
         "powers": [
           "GAWEAT:LightningStormSpecial",
@@ -22892,7 +25299,13 @@
             "YURIE",
             "FTHROW",
             "ADVSHK",
-            "HUEY"
+            "HUEY",
+            "CCOMAND",
+            "PTROOP",
+            "CIVAN",
+            "TSCYBORG_ST",
+            "YURI_ST",
+            "ROCKETANGEL"
           ],
           "vehicles": [
             "HARV",
@@ -22925,7 +25338,15 @@
             "CMOBILEMP",
             "FLMTNK",
             "TDFLMTNK",
-            "NLIMPET"
+            "NLIMPET",
+            "MIST2",
+            "CHRP",
+            "MAMU_ST",
+            "RA1MAMU_ST",
+            "MDISK_ST",
+            "SCORP4",
+            "GUARDIAN",
+            "ROBOTSTNK"
           ],
           "aircraft": [
             "APACHE",
@@ -22940,7 +25361,10 @@
             "CMISS",
             "TSCARRYALL",
             "SMIG",
-            "ORCA2"
+            "ORCA2",
+            "OLDORCA",
+            "FORTRESS",
+            "ICARUS"
           ]
         },
         "production": [
@@ -23015,7 +25439,10 @@
           "YAHIVE",
           "GAPAVE",
           "NABNKR_AI",
-          "TEST_BUILDING"
+          "TEST_BUILDING",
+          "GTGCAN",
+          "GAGUARDT_ST",
+          "GACPILL"
         ],
         "powers": [
           "GAWEAT:LightningStormSpecial",
@@ -23092,7 +25519,15 @@
             "EBRUTE",
             "BIO",
             "GBRUTE",
-            "HUEY"
+            "HUEY",
+            "CCOMAND",
+            "PTROOP",
+            "CIVAN",
+            "TSCYBORG_ST",
+            "CHITZ_ST",
+            "TERROR_ST",
+            "DESO_ST",
+            "ROCKETANGEL"
           ],
           "vehicles": [
             "TNKD",
@@ -23122,7 +25557,15 @@
             "CMOBILEMP",
             "FLMTNK",
             "TDFLMTNK",
-            "NLIMPET"
+            "NLIMPET",
+            "MIST2",
+            "CHRP",
+            "MAMU_ST",
+            "TTNK_ST",
+            "RA1MAMU_ST",
+            "SCORP4",
+            "GUARDIAN",
+            "ROBOTSTNK"
           ],
           "aircraft": [
             "APACHE",
@@ -23136,7 +25579,10 @@
             "CMISS",
             "TSCARRYALL",
             "SMIG",
-            "ORCA2"
+            "ORCA2",
+            "OLDORCA",
+            "FORTRESS",
+            "ICARUS"
           ]
         },
         "production": [
@@ -23204,7 +25650,10 @@
           "YAHIVE",
           "GAPAVE",
           "NABNKR_AI",
-          "TEST_BUILDING"
+          "TEST_BUILDING",
+          "GTGCAN",
+          "GAGUARDT_ST",
+          "GACPILL"
         ],
         "powers": [
           "GAWEAT:LightningStormSpecial",
@@ -23279,7 +25728,16 @@
             "GENGINEER",
             "CHITZ",
             "YURIE",
-            "HUEY"
+            "HUEY",
+            "CCOMAND",
+            "PTROOP",
+            "CIVAN",
+            "TSCYBORG_ST",
+            "CHITZ_ST",
+            "TERROR_ST",
+            "YURI_ST",
+            "DESO_ST",
+            "ROCKETANGEL"
           ],
           "vehicles": [
             "GDICRUISER",
@@ -23320,7 +25778,16 @@
             "MOBWARG",
             "CMOBILEMP",
             "FLMTNK",
-            "TDFLMTNK"
+            "TDFLMTNK",
+            "MIST2",
+            "CHRP",
+            "MAMU_ST",
+            "TTNK_ST",
+            "RA1MAMU_ST",
+            "MDISK_ST",
+            "SCORP4",
+            "GUARDIAN",
+            "ROBOTSTNK"
           ],
           "aircraft": [
             "APACHE",
@@ -23333,7 +25800,10 @@
             "CMISS",
             "TSCARRYALL",
             "SMIG",
-            "ORCA2"
+            "ORCA2",
+            "OLDORCA",
+            "FORTRESS",
+            "ICARUS"
           ]
         },
         "production": [
@@ -23419,7 +25889,10 @@
           "YAHIVE",
           "GAPAVE",
           "NABNKR_AI",
-          "TEST_BUILDING"
+          "TEST_BUILDING",
+          "GTGCAN",
+          "GAGUARDT_ST",
+          "GACPILL"
         ],
         "powers": [
           "GAWEAT:LightningStormSpecial",
@@ -23512,7 +25985,15 @@
             "TSMHIJACK_MP",
             "VENOM_LASER_SOLDIER",
             "AVATAR_FLAME_SOLDIER",
-            "HUEY"
+            "HUEY",
+            "CCOMAND",
+            "PTROOP",
+            "CIVAN",
+            "CHITZ_ST",
+            "TERROR_ST",
+            "YURI_ST",
+            "DESO_ST",
+            "ROCKETANGEL"
           ],
           "vehicles": [
             "TSSAPC",
@@ -23556,7 +26037,16 @@
             "CMOBILEMP",
             "FLMTNK",
             "TDFLMTNK",
-            "NLIMPET"
+            "NLIMPET",
+            "MIST2",
+            "CHRP",
+            "MAMU_ST",
+            "TTNK_ST",
+            "RA1MAMU_ST",
+            "MDISK_ST",
+            "SCORP4",
+            "GUARDIAN",
+            "ROBOTSTNK"
           ],
           "aircraft": [
             "APACHE",
@@ -23569,7 +26059,10 @@
             "CMISS",
             "TSCARRYALL",
             "SMIG",
-            "ORCA2"
+            "ORCA2",
+            "OLDORCA",
+            "FORTRESS",
+            "ICARUS"
           ]
         },
         "production": [
@@ -23657,7 +26150,10 @@
           "NABNKR_AI",
           "TEST_BUILDING",
           "NODSTLH_MP",
-          "NODAPWR"
+          "NODAPWR",
+          "GTGCAN",
+          "GAGUARDT_ST",
+          "GACPILL"
         ],
         "powers": [
           "GAWEAT:LightningStormSpecial",
@@ -23721,9 +26217,9 @@
       }
     },
     "review_summary": {
-      "approved": 262,
+      "approved": 380,
       "excluded": 445,
-      "pending_review": 250
+      "pending_review": 245
     },
     "review_complete": false
   }

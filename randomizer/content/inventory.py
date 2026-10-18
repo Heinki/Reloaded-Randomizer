@@ -177,6 +177,49 @@ def _is_build_candidate(entry, house):
         return False
 
 
+def secret_lab_factions(sections):
+    """Find player technology explicitly offered by installed Secret Labs.
+
+    These types intentionally use TechLevel=-1 (or 11): capturing a lab
+    unlocks them in Reloaded. They are player units, not script-only types.
+    """
+    boon_ids = set()
+    for building_id in sections.get('BuildingTypes', {}).values():
+        values = sections.get(building_id, {})
+        if str(values.get('SecretLab', '')).lower() not in {'yes', 'true', '1'}:
+            continue
+        boon_ids.update(_split_list(values.get('SecretLab.PossibleBoons', '')))
+    result = {}
+    for type_id, values in sections.items():
+        if type_id.lower() not in boon_ids:
+            continue
+        required = _split_list(values.get('SecretLab.RequiredHouses', ''))
+        forbidden = _split_list(values.get('SecretLab.ForbiddenHouses', ''))
+        owners = _split_list(values.get('Owner', ''))
+        factions = tuple(
+            faction for faction in CONTENT_FACTIONS
+            if any(
+                house.lower() in owners
+                and house.lower() not in forbidden
+                and (not required or house.lower() in required)
+                for house in FACTION_HOUSE_VARIANTS[faction]
+            )
+        )
+        if factions:
+            result[type_id] = factions
+    return result
+
+
+def secret_lab_tech_level(values):
+    """Price lab unlocks by their authored production prerequisites."""
+    prerequisites = _split_list(values.get('Prerequisite', ''))
+    if 'tech' in prerequisites:
+        return 9
+    if 'radar' in prerequisites or not prerequisites:
+        return 6
+    return 3
+
+
 def faction_roster_candidates(path=None):
     """Group buildable candidates by canonical Reloaded faction house."""
     registered = registered_techno_types(path)

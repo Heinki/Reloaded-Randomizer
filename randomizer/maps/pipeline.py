@@ -93,15 +93,17 @@ from randomizer.rewards.rules import (
 from randomizer.rewards.enemy_scaling import enemy_effect_text, enemy_effect_values
 from randomizer.maps.progress_hooks import (
     inject_check_markers,
+    native_trigger_check_markers,
     pending_check_hook_plan,
 )
+from randomizer.maps.hooks import validate_action_arguments
 from randomizer.maps.houses import (
     country_family,
     map_house_records,
     player_controlled_houses,
     player_country_from_map,
     player_house_from_map,
-    production_owner_countries,
+    player_factory_owner_countries,
     resolve_configured_helper_houses,
 )
 from randomizer.maps.settings import (
@@ -452,6 +454,8 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         # after victory, bypassing generation and the launcher's asset lifecycle.
         rule_sections.setdefault('Basic', {}).update({
             'EndOfGame': 'yes',
+            'NextScenario': '',
+            'AltNextScenario': '',
         })
     iron_guard_clone = owned_clone_ids.get('NAIRDM')
     if iron_guard_clone and 'NAIRDM' in {
@@ -1041,8 +1045,8 @@ def prepare_hooked_map(self, mission, extra_rules=None):
     # Ares evaluates factory ancestry as well as the concrete campaign
     # country. Transferred barracks/yards can otherwise bypass the native
     # filter (ALL06_RA2's Americans house inherits from Germans).
-    player_factory_exclusions = production_owner_countries(
-        lines, player_factory_exclusions
+    player_factory_exclusions = player_factory_owner_countries(
+        lines, player_factory_exclusions, records
     )
     isolated_native_ids = set(owned_clone_rule_overlays)
     isolated_native_ids.update(
@@ -3203,6 +3207,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         patch_plan,
         hook_house,
     )
+    trigger_markers = native_trigger_check_markers(lines, patch_plan)
     for check, action_id in hook_failures:
         self.append_log(
             f'Skipped automatic {check.get("name", check.get("id", "check"))} hook for '
@@ -3210,7 +3215,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             error=True,
         )
 
-    if patch_plan and not markers:
+    if patch_plan and not (markers or trigger_markers):
         self.append_log(f'Hook map generation found triggers for {scenario}, but patching actions failed.', error=True)
         return None
 
@@ -3394,6 +3399,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
                 error=report_line.startswith('WARNING:'),
             )
 
+    validate_action_arguments(lines)
     packed_sections = {
         'PreviewPack', 'IsoMapPack5', 'OverlayPack', 'OverlayDataPack',
     }
@@ -3466,6 +3472,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         'source_sha256': authored_source_hash,
         'generated_map': str(generated_path),
         'markers': markers,
+        'trigger_markers': trigger_markers,
         'seen': set(),
         'completed_objective_checks': completed_objectives,
         'objective_events_seen': 0,

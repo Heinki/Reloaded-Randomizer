@@ -469,6 +469,7 @@
         "shared_weapon_users": {
           "Sapper": [
             "GHOST",
+            "PTROOP",
             "TANY"
           ]
         },
@@ -561,7 +562,22 @@
             "source_present": true
           }
         ],
-        "shared_weapon_users": {},
+        "shared_weapon_users": {
+          "MindControl": [
+            "PTROOP",
+            "YURI",
+            "YURI_ST"
+          ],
+          "PsiWave": [
+            "YURI",
+            "YURI_ST"
+          ],
+          "MindControlE": [
+            "PTROOP",
+            "YURI",
+            "YURI_ST"
+          ]
+        },
         "candidate_buff_types": [
           "health",
           "armor",
@@ -594,7 +610,9 @@
           "excluded_buff_types": [
             "sensors"
           ],
-          "flags": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
           "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
         }
       },
@@ -639,7 +657,12 @@
             "source_present": true
           }
         ],
-        "shared_weapon_users": {},
+        "shared_weapon_users": {
+          "IvanBomber": [
+            "CIVAN",
+            "IVAN"
+          ]
+        },
         "candidate_buff_types": [
           "health",
           "armor",
@@ -672,7 +695,9 @@
           "excluded_buff_types": [
             "sensors"
           ],
-          "flags": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
           "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
         }
       },
@@ -727,7 +752,20 @@
             "source_present": true
           }
         ],
-        "shared_weapon_users": {},
+        "shared_weapon_users": {
+          "RadBeamWeapon": [
+            "DESO",
+            "DESO_ST"
+          ],
+          "RadEruptionWeapon": [
+            "DESO",
+            "DESO_ST"
+          ],
+          "RadBeamWeaponE": [
+            "DESO",
+            "DESO_ST"
+          ]
+        },
         "candidate_buff_types": [
           "health",
           "armor",
@@ -760,7 +798,9 @@
           "excluded_buff_types": [
             "sensors"
           ],
-          "flags": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
           "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
         }
       },
@@ -1212,6 +1252,7 @@
         "shared_weapon_users": {
           "Sapper": [
             "GHOST",
+            "PTROOP",
             "TANY"
           ]
         },
@@ -1382,7 +1423,12 @@
             "source_present": true
           }
         ],
-        "shared_weapon_users": {},
+        "shared_weapon_users": {
+          "TerrorSuicideManual": [
+            "TERROR",
+            "TERROR_ST"
+          ]
+        },
         "candidate_buff_types": [
           "health",
           "armor",
@@ -1412,6 +1458,7 @@
             "sensors"
           ],
           "flags": [
+            "shared_weapon_requires_clone",
             "nontrainable"
           ],
           "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
@@ -2424,11 +2471,13 @@
         "shared_weapon_users": {
           "TSVulcan3": [
             "HUEY",
-            "TSCYBORG"
+            "TSCYBORG",
+            "TSCYBORG_ST"
           ],
           "TSVulcan3E": [
             "HUEY",
-            "TSCYBORG"
+            "TSCYBORG",
+            "TSCYBORG_ST"
           ]
         },
         "candidate_buff_types": [
@@ -4261,11 +4310,13 @@
         "shared_weapon_users": {
           "TSVulcan3": [
             "HUEY",
-            "TSCYBORG"
+            "TSCYBORG",
+            "TSCYBORG_ST"
           ],
           "TSVulcan3E": [
             "HUEY",
-            "TSCYBORG"
+            "TSCYBORG",
+            "TSCYBORG_ST"
           ]
         },
         "candidate_buff_types": [
@@ -5730,7 +5781,12 @@
             "source_present": true
           }
         ],
-        "shared_weapon_users": {},
+        "shared_weapon_users": {
+          "DredLauncher": [
+            "DRED",
+            "MIST2"
+          ]
+        },
         "candidate_buff_types": [
           "health",
           "armor",
@@ -5762,7 +5818,9 @@
             "veteran"
           ],
           "excluded_buff_types": [],
-          "flags": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
           "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
         }
       },
@@ -6263,7 +6321,16 @@
             "source_present": true
           }
         ],
-        "shared_weapon_users": {},
+        "shared_weapon_users": {
+          "TankBolt": [
+            "TTNK",
+            "TTNK_ST"
+          ],
+          "TankBoltE": [
+            "TTNK",
+            "TTNK_ST"
+          ]
+        },
         "candidate_buff_types": [
           "health",
           "armor",
@@ -6295,7 +6362,9 @@
             "veteran"
           ],
           "excluded_buff_types": [],
-          "flags": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
           "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
         }
       },
@@ -8620,7 +8689,23 @@
             "source_present": true
           }
         ],
-        "shared_weapon_users": {},
+        "shared_weapon_users": {
+          "120mmxOLD": [
+            "MAMU",
+            "MAMU_ST",
+            "RA1MAMU_ST"
+          ],
+          "TSMammothTusk": [
+            "MAMU",
+            "MAMU_ST",
+            "RA1MAMU_ST"
+          ],
+          "120mmxEOLD": [
+            "MAMU",
+            "MAMU_ST",
+            "RA1MAMU_ST"
+          ]
+        },
         "candidate_buff_types": [
           "health",
           "armor",
@@ -8639,7 +8724,9 @@
           "status": "pending_review",
           "approved_buff_types": [],
           "excluded_buff_types": [],
-          "flags": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
           "notes": ""
         }
       },
@@ -12845,7 +12932,16 @@
             "source_present": true
           }
         ],
-        "shared_weapon_users": {},
+        "shared_weapon_users": {
+          "TSBomb": [
+            "FORTRESS",
+            "TSORCAB"
+          ],
+          "TSBombE": [
+            "FORTRESS",
+            "TSORCAB"
+          ]
+        },
         "candidate_buff_types": [
           "health",
           "armor",
@@ -12879,7 +12975,9 @@
             "veteran"
           ],
           "excluded_buff_types": [],
-          "flags": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
           "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
         }
       },
@@ -15175,7 +15273,12 @@
             "source_present": true
           }
         ],
-        "shared_weapon_users": {},
+        "shared_weapon_users": {
+          "TDVulcanTower": [
+            "GAGUARDT",
+            "GAGUARDT_ST"
+          ]
+        },
         "candidate_buff_types": [
           "health",
           "armor",
@@ -15193,7 +15296,9 @@
           "status": "pending_review",
           "approved_buff_types": [],
           "excluded_buff_types": [],
-          "flags": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
           "notes": ""
         }
       },
@@ -16491,11 +16596,23 @@
           "cloak"
         ],
         "review": {
-          "status": "pending_review",
-          "approved_buff_types": [],
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "veteran"
+          ],
           "excluded_buff_types": [],
           "flags": [],
-          "notes": ""
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
         }
       },
       {
@@ -16852,6 +16969,2133 @@
             "no_direct_weapon"
           ],
           "notes": "Reviewed native stats and isolated player clone application."
+        }
+      },
+      {
+        "id": "CCOMAND",
+        "category": "infantry",
+        "name": "Chrono Commando",
+        "eligible_factions": [
+          "Allies",
+          "Soviets",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 100,
+          "armor": "none",
+          "cost": 2000,
+          "speed": 5,
+          "sight": 8,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": true
+        },
+        "weapons": [
+          {
+            "id": "ChronoMP5",
+            "damage": 125,
+            "rof": 10,
+            "range": 6,
+            "burst": null,
+            "projectile": "InvisibleLow",
+            "warhead": "HollowPointNoBuilding",
+            "source_present": true
+          },
+          {
+            "id": "FakeC4",
+            "damage": 5000,
+            "rof": 10,
+            "range": 1.5,
+            "burst": null,
+            "projectile": "InvisibleLow",
+            "warhead": "FakeC4WH",
+            "source_present": true
+          },
+          {
+            "id": "ChronoMP5E",
+            "damage": 125,
+            "rof": 10,
+            "range": 6,
+            "burst": null,
+            "projectile": "InvisibleLow",
+            "warhead": "HollowPointNoBuilding",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [
+            "sensors"
+          ],
+          "flags": [],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "PTROOP",
+        "category": "infantry",
+        "name": "Psi-Commando (Psi-Corp Trooper)",
+        "eligible_factions": [
+          "Allies",
+          "Soviets",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 100,
+          "armor": "none",
+          "cost": 1000,
+          "speed": 5,
+          "sight": 8,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": true
+        },
+        "weapons": [
+          {
+            "id": "MindControl",
+            "damage": 1,
+            "rof": 200,
+            "range": 7,
+            "burst": null,
+            "projectile": "PsychicControl2",
+            "warhead": "Controller",
+            "source_present": true
+          },
+          {
+            "id": "Sapper",
+            "damage": 2500,
+            "rof": 100,
+            "range": 1.5,
+            "burst": null,
+            "projectile": "Invisible",
+            "warhead": "Mechanical2",
+            "source_present": true
+          },
+          {
+            "id": "MindControlE",
+            "damage": 1,
+            "rof": 200,
+            "range": 10,
+            "burst": null,
+            "projectile": "PsychicControl2",
+            "warhead": "Controller",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "MindControl": [
+            "PTROOP",
+            "YURI",
+            "YURI_ST"
+          ],
+          "Sapper": [
+            "GHOST",
+            "PTROOP",
+            "TANY"
+          ],
+          "MindControlE": [
+            "PTROOP",
+            "YURI",
+            "YURI_ST"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [
+            "sensors"
+          ],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "CIVAN",
+        "category": "infantry",
+        "name": "Chrono Ivan",
+        "eligible_factions": [
+          "Allies",
+          "Soviets",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 100,
+          "armor": "none",
+          "cost": 1750,
+          "speed": 6,
+          "sight": 8,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": true
+        },
+        "weapons": [
+          {
+            "id": "IvanBomber",
+            "damage": 400,
+            "rof": 50,
+            "range": 1.5,
+            "burst": null,
+            "projectile": "Invisible",
+            "warhead": "IvanBomb",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "IvanBomber": [
+            "CIVAN",
+            "IVAN"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [
+            "sensors"
+          ],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "TSCYBORG_ST",
+        "category": "infantry",
+        "name": "Cyborg",
+        "eligible_factions": [
+          "Allies",
+          "Soviets",
+          "Yuri",
+          "GDI"
+        ],
+        "stats": {
+          "strength": 354,
+          "armor": "tscyborg_armor",
+          "cost": 600,
+          "speed": 4,
+          "sight": 6,
+          "ammo": null,
+          "passengers": null,
+          "trainable": false,
+          "cloakable": false,
+          "sensors": true
+        },
+        "weapons": [
+          {
+            "id": "TSVulcan3",
+            "damage": 20,
+            "rof": 30,
+            "range": 4,
+            "burst": 3,
+            "projectile": "InvisibleLow",
+            "warhead": "TSSA2",
+            "source_present": true
+          },
+          {
+            "id": "TSVulcan3E",
+            "damage": 22,
+            "rof": 30,
+            "range": 4.5,
+            "burst": 3,
+            "projectile": "InvisibleLow",
+            "warhead": "SSA",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "TSVulcan3": [
+            "HUEY",
+            "TSCYBORG",
+            "TSCYBORG_ST"
+          ],
+          "TSVulcan3E": [
+            "HUEY",
+            "TSCYBORG",
+            "TSCYBORG_ST"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sight",
+            "speed"
+          ],
+          "excluded_buff_types": [
+            "sensors"
+          ],
+          "flags": [
+            "shared_weapon_requires_clone",
+            "nontrainable"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "CHITZ_ST",
+        "category": "infantry",
+        "name": "Chitzkoi",
+        "eligible_factions": [
+          "Allies",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 325,
+          "armor": "uncontrollable_chitzkoi_armor",
+          "cost": 300,
+          "speed": 12,
+          "sight": 9,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": true
+        },
+        "weapons": [
+          {
+            "id": "ChitzkoiBadTeeth",
+            "damage": 30,
+            "rof": 30,
+            "range": 4.5,
+            "burst": null,
+            "projectile": "CHITZJUMP",
+            "warhead": "ParasiteUltraDog",
+            "source_present": true
+          },
+          {
+            "id": "ChitzkoiVirtualScanner",
+            "damage": 1,
+            "rof": null,
+            "range": 5,
+            "burst": null,
+            "projectile": "InvisibleLow",
+            "warhead": "SA",
+            "source_present": true
+          },
+          {
+            "id": "ChitzkoiBadTeethE",
+            "damage": 30,
+            "rof": 30,
+            "range": 4.5,
+            "burst": null,
+            "projectile": "CHITZJUMP",
+            "warhead": "ParasiteUltra",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [
+            "sensors"
+          ],
+          "flags": [],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "TERROR_ST",
+        "category": "infantry",
+        "name": "Terrorist",
+        "eligible_factions": [
+          "Allies",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 75,
+          "armor": "flak",
+          "cost": 150,
+          "speed": 6,
+          "sight": 7,
+          "ammo": null,
+          "passengers": null,
+          "trainable": false,
+          "cloakable": false,
+          "sensors": true
+        },
+        "weapons": [
+          {
+            "id": "TerrorSuicideManual",
+            "damage": 1,
+            "rof": 3210,
+            "range": 1.45,
+            "burst": null,
+            "projectile": "BInvisibleLow",
+            "warhead": "NukeHollowPoint",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "TerrorSuicideManual": [
+            "TERROR",
+            "TERROR_ST"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sight",
+            "speed"
+          ],
+          "excluded_buff_types": [
+            "sensors"
+          ],
+          "flags": [
+            "shared_weapon_requires_clone",
+            "nontrainable"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "YURI_ST",
+        "category": "infantry",
+        "name": "Yuri Clone",
+        "eligible_factions": [
+          "Allies",
+          "Soviets",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 90,
+          "armor": "controller_none_armor",
+          "cost": 800,
+          "speed": 4,
+          "sight": 12,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": true
+        },
+        "weapons": [
+          {
+            "id": "MindControl",
+            "damage": 1,
+            "rof": 200,
+            "range": 7,
+            "burst": null,
+            "projectile": "PsychicControl2",
+            "warhead": "Controller",
+            "source_present": true
+          },
+          {
+            "id": "PsiWave",
+            "damage": 300,
+            "rof": 50,
+            "range": 1,
+            "burst": null,
+            "projectile": "Psychic",
+            "warhead": "PsiPulse",
+            "source_present": true
+          },
+          {
+            "id": "MindControlE",
+            "damage": 1,
+            "rof": 200,
+            "range": 10,
+            "burst": null,
+            "projectile": "PsychicControl2",
+            "warhead": "Controller",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "MindControl": [
+            "PTROOP",
+            "YURI",
+            "YURI_ST"
+          ],
+          "PsiWave": [
+            "YURI",
+            "YURI_ST"
+          ],
+          "MindControlE": [
+            "PTROOP",
+            "YURI",
+            "YURI_ST"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [
+            "sensors"
+          ],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "DESO_ST",
+        "category": "infantry",
+        "name": "Desolator",
+        "eligible_factions": [
+          "Allies",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 150,
+          "armor": "plate",
+          "cost": 850,
+          "speed": 4,
+          "sight": 6,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": true
+        },
+        "weapons": [
+          {
+            "id": "RadBeamWeapon",
+            "damage": 125,
+            "rof": 50,
+            "range": 6,
+            "burst": null,
+            "projectile": "InvisibleLow",
+            "warhead": "RadBeamWarhead",
+            "source_present": true
+          },
+          {
+            "id": "RadEruptionWeapon",
+            "damage": 1,
+            "rof": 90,
+            "range": 4,
+            "burst": null,
+            "projectile": "InvisibleLow",
+            "warhead": "RadEruptionWarhead",
+            "source_present": true
+          },
+          {
+            "id": "RadBeamWeaponE",
+            "damage": 200,
+            "rof": 50,
+            "range": 8,
+            "burst": null,
+            "projectile": "InvisibleLow",
+            "warhead": "RadBeamWarhead",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "RadBeamWeapon": [
+            "DESO",
+            "DESO_ST"
+          ],
+          "RadEruptionWeapon": [
+            "DESO",
+            "DESO_ST"
+          ],
+          "RadBeamWeaponE": [
+            "DESO",
+            "DESO_ST"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [
+            "sensors"
+          ],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "ROCKETANGEL",
+        "category": "infantry",
+        "name": "Rocket Angel",
+        "eligible_factions": [
+          "Allies",
+          "Soviets",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 100,
+          "armor": "jumpjet_flak_armor",
+          "cost": 1000,
+          "speed": 5,
+          "sight": 7,
+          "ammo": 12,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "PhotonRocketSwarmPod",
+            "damage": 30,
+            "rof": 3,
+            "range": 7,
+            "burst": 2,
+            "projectile": "AngelHeatSeeker",
+            "warhead": "AngelAP",
+            "source_present": true
+          },
+          {
+            "id": "PhotonRocketSwarmPodE",
+            "damage": 60,
+            "rof": 3,
+            "range": 8,
+            "burst": 2,
+            "projectile": "AngelHeatSeekerE",
+            "warhead": "AngelAP",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "ammo",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "ammo",
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "MIST2",
+        "category": "vehicles",
+        "name": "Double V3 Launcher",
+        "eligible_factions": [
+          "Allies",
+          "Soviets",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 175,
+          "armor": "light",
+          "cost": 1450,
+          "speed": 4,
+          "sight": 8,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "DredLauncher",
+            "damage": 50,
+            "rof": 50,
+            "range": 25,
+            "burst": 2,
+            "projectile": "InvisibleHigh",
+            "warhead": "Super",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "DredLauncher": [
+            "DRED",
+            "MIST2"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "CHRP",
+        "category": "vehicles",
+        "name": "Chrono Prison",
+        "eligible_factions": [
+          "Allies",
+          "Soviets",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 345,
+          "armor": "light",
+          "cost": 2200,
+          "speed": 3,
+          "sight": 6,
+          "ammo": null,
+          "passengers": 12,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "NeutronCannon",
+            "damage": 50,
+            "rof": 120,
+            "range": 6.5,
+            "burst": null,
+            "projectile": "InvisibleMedium",
+            "warhead": "ChronoWarpWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "passenger_capacity",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "passenger_capacity",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "MAMU_ST",
+        "category": "vehicles",
+        "name": "Mammoth Tank (TD)",
+        "eligible_factions": [
+          "Allies",
+          "Soviets",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 650,
+          "armor": "heavy",
+          "cost": 1750,
+          "speed": 4,
+          "sight": 7,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "120mmxOLD",
+            "damage": 100,
+            "rof": 85,
+            "range": 5.75,
+            "burst": 2,
+            "projectile": "VeryBigLinearCannon",
+            "warhead": "RA1ApocAP",
+            "source_present": true
+          },
+          {
+            "id": "TSMammothTusk",
+            "damage": 55,
+            "rof": 80,
+            "range": 8,
+            "burst": 2,
+            "projectile": "TSAAHeatSeeker",
+            "warhead": "TSHE2",
+            "source_present": true
+          },
+          {
+            "id": "120mmxEOLD",
+            "damage": 140,
+            "rof": 80,
+            "range": 5.75,
+            "burst": 2,
+            "projectile": "VeryBigLinearCannon",
+            "warhead": "RA1ApocAPE",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "120mmxOLD": [
+            "MAMU",
+            "MAMU_ST",
+            "RA1MAMU_ST"
+          ],
+          "TSMammothTusk": [
+            "MAMU",
+            "MAMU_ST",
+            "RA1MAMU_ST"
+          ],
+          "120mmxEOLD": [
+            "MAMU",
+            "MAMU_ST",
+            "RA1MAMU_ST"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "TTNK_ST",
+        "category": "vehicles",
+        "name": "Tesla Tank",
+        "eligible_factions": [
+          "Allies",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 300,
+          "armor": "heavy",
+          "cost": 1200,
+          "speed": 6,
+          "sight": 8,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "TankBolt",
+            "damage": 68,
+            "rof": 85,
+            "range": 5,
+            "burst": 2,
+            "projectile": "InvisibleLow",
+            "warhead": "TTElectric",
+            "source_present": true
+          },
+          {
+            "id": "TankBoltE",
+            "damage": 75,
+            "rof": 70,
+            "range": 6,
+            "burst": 2,
+            "projectile": "Electricbounce",
+            "warhead": "TTElectric",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "TankBolt": [
+            "TTNK",
+            "TTNK_ST"
+          ],
+          "TankBoltE": [
+            "TTNK",
+            "TTNK_ST"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "RA1MAMU_ST",
+        "category": "vehicles",
+        "name": "Mammoth Tank (RA1)",
+        "eligible_factions": [
+          "Allies",
+          "Soviets",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 650,
+          "armor": "heavy",
+          "cost": 1750,
+          "speed": 4,
+          "sight": 7,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "120mmxOLD",
+            "damage": 100,
+            "rof": 85,
+            "range": 5.75,
+            "burst": 2,
+            "projectile": "VeryBigLinearCannon",
+            "warhead": "RA1ApocAP",
+            "source_present": true
+          },
+          {
+            "id": "TSMammothTusk",
+            "damage": 55,
+            "rof": 80,
+            "range": 8,
+            "burst": 2,
+            "projectile": "TSAAHeatSeeker",
+            "warhead": "TSHE2",
+            "source_present": true
+          },
+          {
+            "id": "120mmxEOLD",
+            "damage": 140,
+            "rof": 80,
+            "range": 5.75,
+            "burst": 2,
+            "projectile": "VeryBigLinearCannon",
+            "warhead": "RA1ApocAPE",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "120mmxOLD": [
+            "MAMU",
+            "MAMU_ST",
+            "RA1MAMU_ST"
+          ],
+          "TSMammothTusk": [
+            "MAMU",
+            "MAMU_ST",
+            "RA1MAMU_ST"
+          ],
+          "120mmxEOLD": [
+            "MAMU",
+            "MAMU_ST",
+            "RA1MAMU_ST"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "MDISK_ST",
+        "category": "vehicles",
+        "name": "Repair Disk",
+        "eligible_factions": [
+          "Allies",
+          "Soviets",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 240,
+          "armor": "air_light_armor",
+          "cost": 1500,
+          "speed": 8,
+          "sight": 6,
+          "ammo": null,
+          "passengers": null,
+          "trainable": false,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "DiskHeal",
+            "damage": 100,
+            "rof": 150,
+            "range": 1.25,
+            "burst": null,
+            "projectile": "InvisibleVertical",
+            "warhead": "MDiskWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed"
+          ],
+          "excluded_buff_types": [],
+          "flags": [
+            "nontrainable"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "SCORP4",
+        "category": "vehicles",
+        "name": "Laser Scorpion Tank",
+        "eligible_factions": [
+          "Allies",
+          "Soviets",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 300,
+          "armor": "heavy",
+          "cost": 950,
+          "speed": 6,
+          "sight": 7,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "ScorpLaser",
+            "damage": 65,
+            "rof": 70,
+            "range": 7,
+            "burst": null,
+            "projectile": "InvisibleHigh",
+            "warhead": "TWSuperWH",
+            "source_present": true
+          },
+          {
+            "id": "ScorpLaserE",
+            "damage": 130,
+            "rof": 70,
+            "range": 7,
+            "burst": null,
+            "projectile": "InvisibleHigh",
+            "warhead": "TWSuperWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "GUARDIAN",
+        "category": "vehicles",
+        "name": "Guardian Tank (RA3)",
+        "eligible_factions": [
+          "Allies",
+          "Soviets",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 300,
+          "armor": "heavy",
+          "cost": 750,
+          "speed": 6,
+          "sight": 8,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "RA3105mm",
+            "damage": 60,
+            "rof": 60,
+            "range": 5,
+            "burst": null,
+            "projectile": "SmallLinearCannon",
+            "warhead": "AP",
+            "source_present": true
+          },
+          {
+            "id": "RA3105mmE",
+            "damage": 60,
+            "rof": 50,
+            "range": 5,
+            "burst": 2,
+            "projectile": "MediumLinearCannon",
+            "warhead": "GRIZAPE",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "ROBOTSTNK",
+        "category": "vehicles",
+        "name": "Stealth MLRS",
+        "eligible_factions": [
+          "Allies",
+          "Soviets",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 215,
+          "armor": "robo_armor",
+          "cost": 1400,
+          "speed": 4,
+          "sight": 7,
+          "ammo": null,
+          "passengers": null,
+          "trainable": false,
+          "cloakable": true,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "MLRSDragon",
+            "damage": 45,
+            "rof": 95,
+            "range": 10,
+            "burst": 4,
+            "projectile": "TSHeatSeeker",
+            "warhead": "STNKAGWH",
+            "source_present": true
+          },
+          {
+            "id": "MLRSDragonAA",
+            "damage": 45,
+            "rof": 90,
+            "range": 11,
+            "burst": 4,
+            "projectile": "TSAAHeatSeeker1",
+            "warhead": "TSSuperHE",
+            "source_present": true
+          },
+          {
+            "id": "MLRSDragonE",
+            "damage": 60,
+            "rof": 95,
+            "range": 10,
+            "burst": 4,
+            "projectile": "TSHeatSeeker",
+            "warhead": "STNKAGWH",
+            "source_present": true
+          },
+          {
+            "id": "MLRSDragonAAE",
+            "damage": 60,
+            "rof": 90,
+            "range": 11,
+            "burst": 4,
+            "projectile": "TSAAHeatSeeker1",
+            "warhead": "TSSuperHE",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed"
+          ],
+          "excluded_buff_types": [
+            "cloak"
+          ],
+          "flags": [
+            "nontrainable"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "OLDORCA",
+        "category": "aircraft",
+        "name": "Orca",
+        "eligible_factions": [
+          "Allies",
+          "Soviets",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 135,
+          "armor": "air_light_armor",
+          "cost": 1100,
+          "speed": 14,
+          "sight": 5,
+          "ammo": 5,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "TSHellfire",
+            "damage": 35,
+            "rof": 50,
+            "range": 6,
+            "burst": null,
+            "projectile": "TSAAHeatSeeker3",
+            "warhead": "TSORCAAP",
+            "source_present": true
+          },
+          {
+            "id": "TSHellfireE",
+            "damage": 50,
+            "rof": 50,
+            "range": 6,
+            "burst": 2,
+            "projectile": "TSAAHeatSeeker",
+            "warhead": "TSORCAAP",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "ammo",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "ammo",
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "FORTRESS",
+        "category": "aircraft",
+        "name": "Stealth Bomber",
+        "eligible_factions": [
+          "Allies",
+          "Soviets",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 177,
+          "armor": "air_light_armor",
+          "cost": 1800,
+          "speed": 13,
+          "sight": 8,
+          "ammo": 2,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "TSBomb",
+            "damage": 130,
+            "rof": 10,
+            "range": 5,
+            "burst": null,
+            "projectile": "TSCannon2",
+            "warhead": "ORCAHE",
+            "source_present": true
+          },
+          {
+            "id": "TSBombE",
+            "damage": 140,
+            "rof": 10,
+            "range": 5,
+            "burst": null,
+            "projectile": "TSCannon2",
+            "warhead": "ORCAHE",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "TSBomb": [
+            "FORTRESS",
+            "TSORCAB"
+          ],
+          "TSBombE": [
+            "FORTRESS",
+            "TSORCAB"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "ammo",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "ammo",
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "ICARUS",
+        "category": "aircraft",
+        "name": "Icarus Fighter",
+        "eligible_factions": [
+          "Allies",
+          "Soviets",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 195,
+          "armor": "air_light_armor",
+          "cost": 1800,
+          "speed": 11,
+          "sight": 7,
+          "ammo": 9,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "IkarosAGLaserFire",
+            "damage": 33,
+            "rof": 40,
+            "range": 5,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "TSSuperRedWH",
+            "source_present": true
+          },
+          {
+            "id": "IkarosAALaserFire",
+            "damage": 33,
+            "rof": 40,
+            "range": 5.75,
+            "burst": null,
+            "projectile": "AALLine",
+            "warhead": "TSSuperBlueWH",
+            "source_present": true
+          },
+          {
+            "id": "IkarosAGLaserFireE",
+            "damage": 45,
+            "rof": 40,
+            "range": 5,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "TSSuperRedWH",
+            "source_present": true
+          },
+          {
+            "id": "IkarosAALaserFireE",
+            "damage": 45,
+            "rof": 40,
+            "range": 5.75,
+            "burst": null,
+            "projectile": "AALLine",
+            "warhead": "TSSuperBlueWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "ammo",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "ammo",
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "GTGCAN",
+        "category": "defenses",
+        "name": "Allied Grand Cannon",
+        "eligible_factions": [
+          "Allies",
+          "Soviets",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 900,
+          "armor": "steel",
+          "cost": 2000,
+          "speed": null,
+          "sight": 10,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "GrandCannonWeapon",
+            "damage": 150,
+            "rof": 120,
+            "range": 15,
+            "burst": null,
+            "projectile": "LinearGrandCannon",
+            "warhead": "GrandCannonWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "GAGUARDT_ST",
+        "category": "defenses",
+        "name": "Guard Tower",
+        "eligible_factions": [
+          "Allies",
+          "Soviets",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 300,
+          "armor": "defense_1x1_armor",
+          "cost": 500,
+          "speed": null,
+          "sight": 7,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": true
+        },
+        "weapons": [
+          {
+            "id": "TDVulcanTower",
+            "damage": 50,
+            "rof": 32,
+            "range": 6,
+            "burst": null,
+            "projectile": "InvisibleMedium",
+            "warhead": "SA",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "TDVulcanTower": [
+            "GAGUARDT",
+            "GAGUARDT_ST"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sight",
+            "veteran"
+          ],
+          "excluded_buff_types": [
+            "sensors"
+          ],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "GACPILL",
+        "category": "defenses",
+        "name": "Cammo Pill Box",
+        "eligible_factions": [
+          "Allies",
+          "Soviets",
+          "Yuri",
+          "GDI",
+          "Nod"
+        ],
+        "stats": {
+          "strength": 350,
+          "armor": "defense_1x1_armor",
+          "cost": 650,
+          "speed": null,
+          "sight": 7,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": true,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "RA1Vulcan2",
+            "damage": 90,
+            "rof": 43,
+            "range": 5.5,
+            "burst": null,
+            "projectile": "InvisibleLow",
+            "warhead": "RA1SA",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "veteran"
+          ],
+          "excluded_buff_types": [
+            "cloak"
+          ],
+          "flags": [],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
         }
       }
     ],
@@ -20169,8 +22413,8 @@
     "deferred_power_count": 47,
     "review_summary": {
       "buff_targets": {
-        "approved": 191,
-        "pending_review": 53
+        "approved": 216,
+        "pending_review": 52
       },
       "powers": {
         "candidate": 52,

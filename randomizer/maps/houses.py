@@ -128,6 +128,36 @@ def production_owner_countries(lines, countries, sections=None):
     return result
 
 
+def player_factory_owner_countries(lines, countries, records=None):
+    """Exclude shared AI ancestry from player production restrictions.
+
+    Red Revolution's human SovietCountry inherits Russians, which is also
+    BadGuy1's country. Banning that ancestor on shared native units disables
+    the enemy's factories as well as the player's duplicate cameos.
+    """
+    records = records if records is not None else map_house_records(lines)
+    # Concrete player/transfer owners are reviewed separately. Expand their
+    # ancestry only when the added country cannot also be an AI factory owner.
+    countries = unique_in_order(countries or ())
+    concrete = {country.casefold() for country in countries}
+    controlled = {
+        name.casefold() for name in player_controlled_houses(lines, records)
+    }
+    non_player_countries = {
+        country.casefold()
+        for country in production_owner_countries(
+            lines,
+            [record['country'] for name, record in records.items()
+             if name.casefold() not in controlled],
+        )
+    }
+    return [
+        country for country in production_owner_countries(lines, countries)
+        if country.casefold() in concrete
+        or country.casefold() not in non_player_countries
+    ]
+
+
 def resolve_configured_helper_houses(records, configured_houses, player_houses=()):
     """Resolve reviewed helper names; reject missing/ambiguous entries."""
     player_names = {str(name or '').lower() for name in player_houses}

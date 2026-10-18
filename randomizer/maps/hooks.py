@@ -22,6 +22,33 @@ _ENGINE_LIMITS = static_config_section(
 MAX_MAP_ACTION_LINE_LENGTH = int(_ENGINE_LIMITS['max_map_action_line_length'])
 
 
+def validate_action_arguments(lines):
+    """Reject missing active Action arguments before the engine parses them.
+
+    The engine uses strtok, which skips empty tokens. An empty final waypoint
+    in Recovery's ambient sound list therefore reaches a null argument during
+    map loading, even though the declared action count and byte length fit.
+    Zero-count authored placeholders are never parsed by the engine.
+    """
+    failures = []
+    for action_id, value in section_value_map_preserve(lines, 'Actions').items():
+        tokens = str(value).split(',')
+        try:
+            count = int(tokens[0])
+        except (ValueError, IndexError):
+            failures.append(f'{action_id}: invalid action count')
+            continue
+        if count <= 0:
+            continue
+        expected = 1 + count * 8
+        if len(tokens) < expected or any(
+            not token.strip() for token in tokens[1:expected]
+        ):
+            failures.append(f'{action_id}: missing action argument')
+    if failures:
+        raise ValueError('Unsafe map Actions: ' + '; '.join(failures[:8]))
+
+
 def sanitize_marker_part(value, max_length=12):
     """Return uppercase alphanumeric marker component."""
     cleaned = re.sub(r'[^A-Za-z0-9]', '', value or '').upper()

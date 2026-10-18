@@ -11,6 +11,12 @@ from randomizer.content.transforms import linked_transform_families
 _CONTENT = load_static_config('rewards/reloaded_content_catalogue.json')[
     'content'
 ]
+_LAB_TECH_LEVELS = {
+    record['id'].upper(): str(record['unlock_tech_level'])
+    for records in (*_CONTENT['units'].values(), _CONTENT['defenses'])
+    for record in records
+    if record.get('secret_lab')
+}
 
 # Reloaded writes an inline comment after the TS jumpjet projectile section
 # header.  The catalogue's conservative INI reader consequently folds that
@@ -85,6 +91,8 @@ def randomizer_unit_template_values():
             if str(key).casefold() not in removed_fields
         }
         values.update(_CLONE_TEMPLATE_OVERRIDES.get(source_id, {}))
+        if source_id in _LAB_TECH_LEVELS:
+            values['TechLevel'] = _LAB_TECH_LEVELS[source_id]
         values.setdefault('Image', source_id)
         templates[source_id] = values
     if missing:

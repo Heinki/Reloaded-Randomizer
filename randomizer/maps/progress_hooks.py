@@ -15,6 +15,34 @@ from randomizer.maps.ini import section_value_map_preserve
 NEXT_OBJECTIVE_CHECK_ID = '__next_objective__'
 
 
+def native_trigger_check_markers(lines, plan):
+    """Use Phobos' synchronous trigger log as a completion receipt.
+
+    Phobos logs the trigger ID before running its actions, including immediate
+    victory and mission-transition actions. This provides a receipt independent
+    of the legacy empty team's creation message.
+    """
+    triggers = {
+        str(trigger_id).casefold(): str(trigger_id)
+        for trigger_id in section_value_map_preserve(lines, 'Triggers')
+    }
+    actions = {
+        str(action_id).casefold(): str(action_id)
+        for action_id in section_value_map_preserve(lines, 'Actions')
+    }
+    return {
+        f'[Phobos] Trigger launched: {triggers[str(action_id).casefold()]} (':
+        check['id']
+        for check, action_id in plan
+        if str(action_id).casefold() in triggers
+        # The engine uses these IDs to link the action body to its trigger.
+        # Do not report completion for a trigger with no matching action body.
+        and triggers[str(action_id).casefold()] == actions.get(
+            str(action_id).casefold()
+        )
+    }
+
+
 def _unique_registered_id(lines, registry_section, prefix):
     """Allocate an unused registered type ID and matching map section name."""
     existing = {

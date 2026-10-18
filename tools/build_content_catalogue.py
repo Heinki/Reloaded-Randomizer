@@ -17,6 +17,8 @@ from randomizer.content.inventory import (
     TYPE_SECTIONS,
     read_rules_sections,
     rules_fingerprint,
+    secret_lab_factions,
+    secret_lab_tech_level,
 )
 
 
@@ -207,17 +209,26 @@ def _base_record(type_id, values, eligible_factions):
 
 def _unit_records(sections):
     records = {category: [] for category in UNIT_CATEGORIES}
+    lab_factions = secret_lab_factions(sections)
     for category in UNIT_CATEGORIES:
         registry = TYPE_SECTIONS[category]
         for type_id in _registered_ids(sections, registry):
             values = sections.get(type_id, {})
-            if _is_deferred_cabal_content(type_id, values):
+            is_lab_boon = type_id in lab_factions
+            if not is_lab_boon and _is_deferred_cabal_content(type_id, values):
                 continue
             tech_level = _integer(values.get('TechLevel'))
-            eligible = _eligible_factions(values)
-            if tech_level is None or tech_level < 0 or not eligible:
+            eligible = lab_factions.get(type_id, _eligible_factions(values))
+            if (
+                tech_level is None
+                or (tech_level < 0 and not is_lab_boon)
+                or not eligible
+            ):
                 continue
             record = _base_record(type_id, values, eligible)
+            if is_lab_boon:
+                record['secret_lab'] = True
+                record['unlock_tech_level'] = secret_lab_tech_level(values)
             record['category'] = category
             record['naval'] = _bool(values, 'Naval')
             record['harvester'] = _bool(values, 'Harvester')
@@ -234,16 +245,22 @@ def _building_records(sections):
     production = []
     defenses = []
     powers = []
+    lab_factions = secret_lab_factions(sections)
     registered_powers = set(
         _registered_ids(sections, 'SuperWeaponTypes')
     )
     for type_id in _registered_ids(sections, 'BuildingTypes'):
         values = sections.get(type_id, {})
-        if _is_deferred_cabal_content(type_id, values):
+        is_lab_boon = type_id in lab_factions
+        if not is_lab_boon and _is_deferred_cabal_content(type_id, values):
             continue
         tech_level = _integer(values.get('TechLevel'))
-        eligible = _eligible_factions(values)
-        if tech_level is None or tech_level < 0 or not eligible:
+        eligible = lab_factions.get(type_id, _eligible_factions(values))
+        if (
+            tech_level is None
+            or (tech_level < 0 and not is_lab_boon)
+            or not eligible
+        ):
             continue
         factory = str(values.get('Factory') or '').strip().lower()
         if factory in FACTORY_CATEGORIES:
@@ -260,6 +277,9 @@ def _building_records(sections):
         )
         if is_defense:
             record = _base_record(type_id, values, eligible)
+            if is_lab_boon:
+                record['secret_lab'] = True
+                record['unlock_tech_level'] = secret_lab_tech_level(values)
             record['category'] = 'defense'
             record['powered'] = _bool(values, 'Powered')
             defenses.append(record)

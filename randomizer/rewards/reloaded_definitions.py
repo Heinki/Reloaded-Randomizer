@@ -80,7 +80,16 @@ def _records():
 def _raw_label(record):
     if str(record['id']).upper() == 'LUNR':
         return 'Cosmonaut'
-    return str(record.get('name') or record.get('ui_name') or record['id'])
+    label = str(record.get('name') or record.get('ui_name') or record['id'])
+    # Adding a lab variant must not rename an existing access reward stored
+    # in Shop profiles, runs, or Archipelago catalogues.
+    if record.get('secret_lab') and any(
+        not other.get('secret_lab')
+        and str(other.get('name') or other.get('ui_name') or other['id']) == label
+        for _category, other in _RUNTIME_RECORDS
+    ):
+        return f'Secret Lab {label}'
+    return label
 
 
 _LABEL_COUNTS = {}
@@ -417,11 +426,14 @@ def _power_reward(power_id, label, category, factions):
     if power_id == 'EMPulseSpecial':
         # Reloaded's native EM Pulse only fires through a built GAPULS/NAPULS
         # cannon, within 7-30 cells, and is blocked by several inhibitors.
-        # Match Mental Omega's portable-power policy while retaining the
-        # EMPulse engine path: use one invisible player-owned cannon clone,
-        # its private weapon/projectile/warhead chain, and no map-tech gate.
+        # Detonate the private EMP warhead directly at the selected cell.
+        # The EMPulse engine path requires a physical cannon even when its
+        # building body is hidden, and its turret can still appear on the map.
+        # GenericWarhead preserves the EMP effects without a placed provider.
         reward['superweapon_ignore_foreign_tech_gate'] = True
         reward['superweapon_rules'] = {
+            'Type': 'GenericWarhead',
+            'SW.Damage': '1',
             'IsPowered': 'false',
             'SW.FireIntoShroud': 'yes',
             'SW.AutoFire': 'no',
@@ -438,63 +450,7 @@ def _power_reward(power_id, label, category, factions):
             'SW.AnyInhibitor': 'no',
             'SW.RangeMaximum': '-1',
             'SW.RangeMinimum': '-1',
-            'EMPulse.Cannons': 'RLRPEMPCANNON',
-            'EMPulse.TargetSelf': 'no',
-        }
-        reward['superweapon_techno_clones'] = {
-            'GAPULS': {
-                'source': 'GAPULS',
-                'clone': 'RLRPEMPCANNON',
-                'list': 'BuildingTypes',
-                'reference_keys': ('EMPulse.Cannons',),
-                'startup_count': 1,
-                'static_startup': True,
-                'values': {
-                    'Name': 'Randomizer EM Pulse Provider',
-                    'UIName': 'Name:NAPULS',
-                    'Image': 'GAPULS',
-                    'Primary': 'RLRPEMPWEAPON',
-                    'SuperWeapon': None,
-                    'SuperWeapon2': None,
-                    'SuperWeapons': None,
-                    'EMPulseCannon': 'yes',
-                    'TechLevel': '-1',
-                    'BuildLimit': '0',
-                    'AIBuildThis': 'no',
-                    'Power': '0',
-                    'Powered': 'false',
-                    'Capturable': 'false',
-                    'Selectable': 'no',
-                    'Unsellable': 'yes',
-                    'LegalTarget': 'no',
-                    'Insignificant': 'yes',
-                    'ImmuneToEMP': 'yes',
-                    'DontScore': 'yes',
-                    'KeepAlive': 'no',
-                    'BaseNormal': 'no',
-                    'AIBaseNormal': 'no',
-                    'IsBaseDefense': 'no',
-                    'RadarInvisible': 'yes',
-                    'IsPassable': 'yes',
-                    'Sight': '0',
-                },
-            },
-            'EMPulseWeapon': {
-                'source': 'EMPulseWeapon',
-                'clone': 'RLRPEMPWEAPON',
-                'list': 'WeaponTypes',
-                'values': {
-                    'Range': '384',
-                    'Projectile': 'RLRPEMPPROJECTILE',
-                    'Warhead': 'RLRPEMPULS',
-                },
-            },
-            'PulsPr': {
-                'source': 'PulsPr',
-                'clone': 'RLRPEMPPROJECTILE',
-                'list': 'Projectiles',
-                'values': {},
-            },
+            'EMPulse.Cannons': '',
         }
         reward['superweapon_auxiliary_clones'] = {
             'EMPuls': {
