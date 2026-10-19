@@ -357,6 +357,8 @@ def reward_matches_arsenal(reward, arsenal):
         return True
     if reward.get('kind') != 'buff':
         return False
+    if reward.get('global_buff'):
+        return bool(arsenal_unit_ids(arsenal))
     unit_id = str(reward.get('unit') or '').upper()
     power_id = str(reward.get('superweapon') or '').upper()
     if unit_id:

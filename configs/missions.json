@@ -4141,6 +4141,18 @@
         "Actions": {
           "089FDF3C": "3,53,2,092D6E5C,0,0,0,0,A,53,2,0CEDB2BC,0,0,0,0,A,1,0,1,0,0,0,0,A"
         }
+      },
+      "NOD06A_TS": {
+        "Triggers": {
+          "0A877450": "GDICountry,RLRHQDEST,HQ attacked,0,1,1,1,0",
+          "RLRHQDEST": "GDICountry,<none>,HQ destroyed,0,1,1,1,0"
+        },
+        "Events": {
+          "RLRHQDEST": "1,29,0,0"
+        },
+        "Actions": {
+          "RLRHQDEST": "1,56,0,12,0,0,0,0,A"
+        }
       }
     },
     "native_direct_buff_exclusions": {},

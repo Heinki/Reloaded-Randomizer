@@ -52,6 +52,7 @@ UNIT_BUFF_WEIGHT_TYPES = (
     ('sight', 'Vision'),
     ('ammo', 'Ammo'),
     ('storage', 'Harvester storage'),
+    ('power_output', 'Power plant output'),
     ('passenger_capacity', 'Passenger capacity'),
     ('open_topped', 'Passenger firing'),
     ('cloak', 'Cloaking'),

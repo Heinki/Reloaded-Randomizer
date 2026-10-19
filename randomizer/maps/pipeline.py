@@ -114,9 +114,11 @@ from randomizer.maps.settings import (
 from randomizer.maps.shop_modifiers import (
     apply_shop_clone_modifiers,
     apply_shop_clone_restrictions,
+    shop_building_production_rules,
 )
 from randomizer.maps.special_buildings import (
     building_upgrade_clone_rules,
+    power_plant_bonus_rules,
     refinery_free_unit_pairs,
     ore_purifier_miner_dock_rules,
     reprocessor_bounty_rules,
@@ -2140,10 +2142,25 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             )
             if clone_id and list_section:
                 expected_generated_techno_types[list_section].append(clone_id)
+        shop_building_rules = shop_building_production_rules(
+            lines, installed_rule_sections, self.active_reward_settings(),
+            configured_helper_houses=reward_helpers,
+            excluded_player_houses=excluded_player_houses,
+        )
+        if shop_building_rules:
+            merge_ini_section_values(lines, shop_building_rules)
+        elif float(self.active_reward_settings().get(
+            'shop_production_time_percent', 1.0,
+        )) != 1.0:
+            self.append_log(
+                'Skipped native building production modifiers because '
+                'player/helper countries are shared with unbuffed houses.'
+            )
         shop_modifier_report = apply_shop_clone_modifiers(
             clone_rule_sections,
             clone_handled,
             self.active_reward_settings(),
+            building_production_in_country=bool(shop_building_rules),
         )
         restricted_clones = apply_shop_clone_restrictions(
             clone_rule_sections, clone_handled, installed_rule_sections,
@@ -3281,6 +3298,26 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             self.append_log(
                 'Resolved building upgrades to native and current player '
                 'host identities: ' + ', '.join(upgrade_clone_rules) + '.'
+            )
+        power_bonus_rules, power_bonus_providers, power_bonus_report = power_plant_bonus_rules(
+            lines, earned_rewards, installed_rule_sections,
+        )
+        if power_bonus_rules:
+            merge_ini_section_values(lines, power_bonus_rules)
+            power_bonus_houses = [
+                house for house in player_controlled_houses(lines, records=records)
+                if house not in excluded_player_houses
+            ]
+            power_bonus_houses = unique_in_order([*power_bonus_houses, *reward_helpers])
+            power_bonus_placements = append_static_startup_buildings(
+                lines, power_bonus_houses, power_bonus_providers,
+            )
+            if len(power_bonus_placements) != len(power_bonus_houses) * len(power_bonus_providers):
+                raise ValueError('Could not place every exact-House power output provider')
+            self.append_log(
+                f'Applied +{power_bonus_report["bonus"]} power per plant and '
+                f'turbine across {len(power_bonus_report["targets"])} generator '
+                f'types for {len(power_bonus_houses)} player/helper house(s).'
             )
         pad_aircraft_validation = validate_player_clone_pad_aircraft(
             lines, clone_handled

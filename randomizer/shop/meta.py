@@ -120,6 +120,7 @@ def purchase_permanent_buff(profile, reward, *, price, shop_eligible=True):
     }
     if (
         entry.target_id not in owned_targets
+        and not canonical_reward_for_id(reward_id).get('global_buff')
         and not (
             entry.reward_type is ShopRewardType.UNIT_BUFF
             and entry.target_id in shop_always_available_unit_ids()

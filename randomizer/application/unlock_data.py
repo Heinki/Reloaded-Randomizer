@@ -480,8 +480,8 @@ class UnlockDataController:
         if share_role_buffs is None:
             share_role_buffs = self.share_chaos_role_buffs_enabled()
         keys = set()
-        if reward.get('buff_type') == 'starting_credits':
-            keys.add('global:starting_credits')
+        if reward.get('buff_type') in {'starting_credits', 'power_output'}:
+            keys.add(f'global:{reward["buff_type"]}')
             return keys
         house_scope = self.reward_house_wide_buff_scope(reward)
         if house_scope:
@@ -823,15 +823,20 @@ class UnlockDataController:
                 ),
             })
 
-        starting_credit_reward = next(
-            (
-                reward for reward in REWARD_POOL
-                if reward.get('buff_type') == 'starting_credits'
-            ),
-            None,
-        )
-        if starting_credit_reward:
-            key = 'global:starting_credits'
+        for global_buff_type, global_label in (
+            ('starting_credits', 'Starting Credits'),
+            ('power_output', 'Power Plants (all factions)'),
+        ):
+            global_reward = next(
+                (
+                    reward for reward in REWARD_POOL
+                    if reward.get('buff_type') == global_buff_type
+                ),
+                None,
+            )
+            if global_reward is None:
+                continue
+            key = f'global:{global_buff_type}'
             source_data = sources.get(
                 key, {
                     'assigned': [], 'earned': [], 'earned_unlocks': [],
@@ -851,15 +856,15 @@ class UnlockDataController:
             entries.append({
                 'key': key,
                 'kind': 'global',
-                'id': 'starting_credits',
-                'label': 'Starting Credits',
+                'id': global_buff_type,
+                'label': global_label,
                 'faction': 'Neutral',
                 'category': 'Global Buffs',
                 'status': status,
                 'condition': '',
                 'sources': source_data,
                 'privacy': privacy,
-                'reward': starting_credit_reward,
+                'reward': global_reward,
             })
 
         for unit_id, target in BUFF_TARGETS.items():

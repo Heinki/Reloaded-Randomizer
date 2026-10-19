@@ -55,6 +55,7 @@ from randomizer.shop.catalogue import (
     shop_catalogue,
     shop_always_available_unit_ids,
     shop_entry_available,
+    shop_global_buff_target_ids,
 )
 from randomizer.shop.config import SHOP_CONFIG
 from randomizer.shop.economy import (
@@ -675,7 +676,10 @@ class ShopController(ShopPolishController):
                     for _index in range(item.stacks)
                 ),
                 *(item.reward_id for item in run.run_purchases),
-                *(item.reward_id for item in run.run_buffs),
+                *(
+                    item.reward_id for item in run.run_buffs
+                    for _index in range(item.stacks)
+                ),
                 *(
                     item.reward_id
                     for item in run.starting_draft_buffs
@@ -1058,6 +1062,11 @@ class ShopController(ShopPolishController):
         )
 
     def _shop_unit_id_for_item(self, item_id):
+        if (
+            str(item_id).upper() == 'POWERPLANTS'
+            or canonical_reward_for_id(item_id).get('buff_type') == 'power_output'
+        ):
+            return 'GDIPOWR'
         entry = catalogue_entry(canonical_reward_for_id(item_id))
         if entry is not None and entry.reward_type in {
             ShopRewardType.UNIT_ACCESS,
@@ -2190,6 +2199,8 @@ class ShopController(ShopPolishController):
             add_access('Tier 1 Defense', unit_id, raw_unit=True)
         for unit_id in sorted(shop_always_available_unit_ids()):
             add_access('Always Available', unit_id, raw_unit=True)
+        for target_id in sorted(shop_global_buff_target_ids()):
+            add_access('All Factions', target_id, raw_unit=True)
         ap_units = set(ap_unit_entitlement_ids(run.ap_entitlements_snapshot))
         local_units = set(self.shop_profile.permanent_unit_unlocks)
         for reward_id in run.selected_permanent_units:
@@ -2336,7 +2347,9 @@ class ShopController(ShopPolishController):
                 if is_power or item in self._shop_entry_by_reward_id
                 else f'{unit_display_label(target_id)} [{target_id}]'
             )
-            if not is_power and target_id in SHARED_UNIT_BUFF_GROUPS:
+            if not is_power and target_id in (
+                SHARED_UNIT_BUFF_GROUPS.keys() | shop_global_buff_target_ids()
+            ):
                 item_label = unit_buff_target_label(target_id)
             total_stacks = sum(
                 stacks for _source, _reward, stacks in record['buffs']
@@ -2809,7 +2822,9 @@ class ShopController(ShopPolishController):
             ): shared_unit_buff_target_id(entry.target_id)
             for entry in owned_entries
         }
-        for target_id in sorted(shop_always_available_unit_ids()):
+        for target_id in sorted(
+            shop_always_available_unit_ids() | shop_global_buff_target_ids()
+        ):
             target_id = shared_unit_buff_target_id(target_id)
             label = unit_buff_target_label(target_id)
             if label not in labels:

@@ -11,15 +11,16 @@ LEGACY_CONFIG_PATH = LEGACY_CONFIG_DIR / CONFIG_PATH.name
 DEFAULT_CONFIG = static_config_section(
     'default_player_config.json', 'defaults', dict
 )
-UNIT_BUFF_CATALOGUE_VERSION = 3
+UNIT_BUFF_CATALOGUE_VERSION = 4
 UNIT_BUFF_TYPES_INTRODUCED = {
     1: ('passenger_capacity', 'open_topped'),
     2: ('storage', 'income'),
+    4: ('power_output',),
 }
 RELOADED_UNIT_BUFF_TYPES = [
     'production', 'cost', 'speed', 'armor', 'health', 'sight',
     'damage', 'reload', 'range', 'ammo', 'passenger_capacity',
-    'cloak', 'sensors', 'veteran',
+    'cloak', 'sensors', 'veteran', 'power_output',
 ]
 POWER_BUFF_CATALOGUE_VERSION = 1
 POWER_BUFF_TYPES_INTRODUCED = {

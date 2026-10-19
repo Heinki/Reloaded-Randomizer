@@ -286,7 +286,7 @@ def _uncached_buff_stack_limit(reward):
     buff_type = reward.get('buff_type')
     if buff_type in {
         'production', 'armor', 'health', 'range', 'sight', 'ammo',
-        'storage', 'income',
+        'storage', 'income', 'power_output',
     }:
         return stacking_stack_limit(buff_type)
     if buff_type == 'cost':
@@ -507,6 +507,14 @@ def buff_effect_lines(
         count = effective_buff_count(reward, count)
         amount = count * max(0, int(reward.get('credits_per_stack', 0)))
         text = f'Starting credits +{amount:,} per mission'
+        if include_stack:
+            text = f'{text} ({stack_label(count, limit)})'
+        return [text]
+
+    if reward.get('buff_type') == 'power_output':
+        count = effective_buff_count(reward, count)
+        amount = int(stacking_amount('power_output', count))
+        text = f'All power plants and turbines: +{amount} power each'
         if include_stack:
             text = f'{text} ({stack_label(count, limit)})'
         return [text]

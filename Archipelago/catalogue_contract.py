@@ -45,6 +45,7 @@ def _canonical_json(value):
 # checksum included release metadata, which is excluded from new checksums.
 BACKWARD_COMPATIBLE_CATALOGUE_CHECKSUMS = frozenset({
     '0053e46817c9e2f6d952b803d9cb9784da2bb2fde3f9e72a211a057b20ad827d',
+    '5085010ae3c4c120fad7de5925a282939c9412a7c8e0e46c7825fe6d073379c9',
 })
 
 

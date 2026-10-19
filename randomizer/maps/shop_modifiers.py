@@ -1,6 +1,11 @@
 """Apply Shop run modifiers to isolated player clone sections."""
 
 from randomizer.config.tuning import stacking_multiplier
+from randomizer.maps.houses import (
+    map_house_records, player_controlled_houses, resolve_configured_helper_houses,
+)
+from randomizer.maps.ini import section_value_map_preserve
+from randomizer.maps.ownership import unsafe_country_houses
 from randomizer.rewards.catalogue import BUFF_TARGETS, NAVAL_UNIT_IDS
 
 
@@ -82,7 +87,54 @@ def apply_shop_clone_restrictions(
     return tuple(touched)
 
 
-def apply_shop_clone_modifiers(rule_sections, handled_by_unit, settings):
+def shop_building_production_rules(
+    lines, installed_sections, settings, configured_helper_houses=(),
+    excluded_player_houses=(),
+):
+    factor = float(settings.get('shop_production_time_percent', 1.0))
+    if factor == 1.0:
+        return {}
+    records = map_house_records(lines)
+    excluded = {str(house).casefold() for house in excluded_player_houses}
+    houses = [
+        house for house in player_controlled_houses(lines, records=records)
+        if house.casefold() not in excluded
+    ]
+    helpers, _ = resolve_configured_helper_houses(
+        records, configured_helper_houses, houses,
+    )
+    houses = list(dict.fromkeys([*houses, *helpers]))
+    countries = list(dict.fromkeys(
+        records[house].get('country') or house.removesuffix(' House')
+        for house in houses
+    ))
+    if any(unsafe_country_houses(
+        lines, country, houses, records=records,
+    ) for country in countries):
+        return {}
+    rules = {}
+    for country in countries:
+        installed_values = next((
+            values for name, values in installed_sections.items()
+            if name.casefold() == country.casefold()
+        ), {})
+        values = {
+            key.casefold(): value for key, value in installed_values.items()
+        }
+        values.update({
+            key.casefold(): value for key, value
+            in section_value_map_preserve(lines, country).items()
+        })
+        current = _number(values, 'BuildTimeBuildingsMult', 1.0)
+        rules[country] = {}
+        _set_number(rules[country], 'BuildTimeBuildingsMult', current * factor)
+    return rules
+
+
+def apply_shop_clone_modifiers(
+    rule_sections, handled_by_unit, settings,
+    building_production_in_country=False,
+):
     """Compose run modifiers after normal Shop buff clone calculation."""
     damage_factor = float(settings.get('shop_player_damage_percent', 1.0))
     armor_factor = float(settings.get('shop_player_armor_percent', 1.0))
@@ -135,6 +187,14 @@ def apply_shop_clone_modifiers(rule_sections, handled_by_unit, settings):
             counts['armor_clones'] += 1
 
         combined_production = production_factor
+        if (
+            building_production_in_country
+            and category in {'defenses', 'special_buildings'}
+            and str(clone_values.get(
+                _key(clone_values, 'BuildCat'), ''
+            )).casefold() != 'combat'
+        ):
+            combined_production = 1.0
         if category in _COMBAT_CATEGORIES:
             combined_production *= combat_production_factor
         if combined_production != 1.0:

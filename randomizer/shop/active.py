@@ -206,7 +206,10 @@ def permanent_buff_snapshot(
             and (
                 (
                     entry.reward_type is ShopRewardType.UNIT_BUFF
-                    and entry.target_id in active_tech_ids
+                    and (
+                        entry.target_id in active_tech_ids
+                        or canonical_reward_for_id(item.reward_id).get('global_buff')
+                    )
                 )
                 or (
                     entry.reward_type is ShopRewardType.POWER_BUFF

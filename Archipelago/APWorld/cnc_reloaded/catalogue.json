@@ -11464,6 +11464,13 @@
       "id": 86295838
     },
     {
+      "name": "Power Plant Output I",
+      "classification": "useful",
+      "category": "unit_buffs",
+      "repeatable": true,
+      "id": 86297123
+    },
+    {
       "name": "Predator Tank Access",
       "classification": "progression",
       "category": "unit_unlocks",
@@ -19333,9 +19340,10 @@
       ]
     }
   ],
-  "catalogue_checksum": "5085010ae3c4c120fad7de5925a282939c9412a7c8e0e46c7825fe6d073379c9",
+  "catalogue_checksum": "fc9fdab2e7cd282a7b7757228a65c2c1c005423462b4371179afe4d8bfa7e2ab",
   "compatible_catalogue_checksums": [
-    "0053e46817c9e2f6d952b803d9cb9784da2bb2fde3f9e72a211a057b20ad827d"
+    "0053e46817c9e2f6d952b803d9cb9784da2bb2fde3f9e72a211a057b20ad827d",
+    "5085010ae3c4c120fad7de5925a282939c9412a7c8e0e46c7825fe6d073379c9"
   ],
   "id_ranges": {
     "items": {
@@ -63586,7 +63594,7 @@
     "generated_world": "mapping"
   },
   "review": {
-    "standalone_reward_items": 2434,
+    "standalone_reward_items": 2435,
     "victory_missions_verified": 108,
     "objective_runtime_enabled": true,
     "cabal_deferred": true

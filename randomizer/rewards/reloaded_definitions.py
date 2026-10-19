@@ -498,9 +498,30 @@ GLOBAL_BUFF_REWARDS = [{
     'global_buff': True,
     'credits_per_stack': 1000,
     'maximum_credits': 20000,
+}, {
+    'name': 'Power Plant Output I',
+    'description': (
+        'All owned power plants and power-producing upgrades generate '
+        f'+{int(BUFF_EFFECTS["power_output"]["amount_per_stack"])} power each '
+        'per stack, across every faction.'
+    ),
+    'rules': {},
+    'factions': [],
+    'kind': 'buff',
+    'unit': 'POWERPLANTS',
+    'target_label': 'Power Plants (all factions)',
+    'buff_type': 'power_output',
+    'global_buff': True,
+    'shop_available': True,
 }]
 ENEMY_REWARD_POOL = build_enemy_reward_pool(_PLAYER_POWER_REWARDS)
 BUFF_TYPES = (
+    {
+        'id': 'power_output',
+        'name': 'Power Output',
+        'setting_label': 'Power plant output (all factions)',
+        'description': '{plural} generate additional power.',
+    },
     {
         'id': 'production',
         'name': 'Drill',
@@ -796,6 +817,9 @@ def unit_role_equivalents(unit_id):
 
 
 def unit_display_label(unit_id):
+    for reward in GLOBAL_BUFF_REWARDS:
+        if reward.get('unit') == str(unit_id or '').upper():
+            return reward.get('target_label', str(unit_id))
     target = BUFF_TARGETS.get(str(unit_id or '').upper(), {})
     return target.get('label', str(unit_id or 'Unknown unit'))
 

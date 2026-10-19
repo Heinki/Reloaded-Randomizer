@@ -178,6 +178,12 @@
       }
     },
     "unit_target_prices": {
+      "POWERPLANTS": {
+        "run_access": null,
+        "run_buff": 4,
+        "permanent_access": null,
+        "permanent_buff": 15
+      },
       "AAOB_MP": {
         "run_access": 10,
         "run_buff": 6,

@@ -88,7 +88,9 @@ def catalogue_entry(reward):
         )
     if kind == 'buff':
         target_id = str(canonical.get('unit') or '').upper()
-        if not target_id or canonical.get('global_buff'):
+        if not target_id or (
+            canonical.get('global_buff') and not canonical.get('shop_available')
+        ):
             return None
         return ShopCatalogueEntry(
             reward_id,
@@ -232,6 +234,13 @@ def shop_catalogue():
 @lru_cache(maxsize=1)
 def shop_catalogue_by_reward_id():
     return {entry.reward_id: entry for entry in shop_catalogue()}
+
+
+def shop_global_buff_target_ids():
+    return frozenset(
+        entry.target_id for entry in shop_catalogue()
+        if canonical_reward_for_id(entry.reward_id).get('global_buff')
+    )
 
 
 def shop_entry_available(

@@ -1,8 +1,16 @@
 """Map-local engine hooks required by player-owned special buildings."""
 
+from math import floor
+
+from randomizer.config.tuning import stacking_amount
 from randomizer.core.collections import comma_items, unique_in_order
+from randomizer.maps.base import _collision_safe_type_id
+from randomizer.maps.buff_values import _register_map_type
 from randomizer.maps.ini import all_section_value_maps
-from randomizer.rewards.catalogue import BUFF_TARGETS
+from randomizer.maps.production import PLAYER_ORIGINAL_PRODUCTION_GATE_ID
+from randomizer.rewards.catalogue import (
+    BUFF_TARGETS, canonical_rewards, effective_buff_count,
+)
 
 
 REPROCESSOR_SOURCE_ID = 'FAREPR'
@@ -39,6 +47,71 @@ def _effective_section_values(map_sections, installed_sections, section):
     values = _section_values(installed_sections, section)
     values.update(_section_values(map_sections, section))
     return values
+
+
+def power_plant_bonus_rules(lines, rewards, installed_sections):
+    active = [reward for reward in canonical_rewards(rewards)
+              if reward.get('buff_type') == 'power_output']
+    if not active:
+        return {}, (), {}
+    stacks = effective_buff_count(active[0], len(active))
+    bonus = int(stacking_amount('power_output', stacks))
+    if not bonus:
+        return {}, (), {}
+    sections = all_section_value_maps(lines)
+    registered = unique_in_order([
+        *(_section_values(installed_sections, 'BuildingTypes').values()),
+        *(_section_values(sections, 'BuildingTypes').values()),
+    ])
+    buildings = {
+        building: _effective_section_values(sections, installed_sections, building)
+        for building in registered
+    }
+    upgrade_power = {}
+    for values in buildings.values():
+        power = int(values.get('power', '0'))
+        hosts = comma_items(values.get('powersupbuilding', ''))
+        hosts.extend(comma_items(values.get('powersup.buildings', '')))
+        if power > 0:
+            for host in hosts:
+                upgrade_power.setdefault(host.casefold(), set()).add(power)
+    groups, targets = {}, {}
+    for building, values in buildings.items():
+        power = int(values.get('power', '0'))
+        if power <= 0 or values.get('powersupbuilding') or values.get('powersup.buildings'):
+            continue
+        upgrades = upgrade_power.get(building.casefold(), set())
+        if len(upgrades) > 1:
+            raise ValueError(f'{building}: mixed turbine outputs cannot share a power bonus')
+        factor = 1.0 + bonus / next(iter(upgrades)) if upgrades else 1.0
+        amount = power + bonus - floor(power * factor + 0.5)
+        if amount < 0:
+            raise ValueError(f'{building}: turbine output is too low for a safe power bonus')
+        groups.setdefault((factor, amount), []).append(building)
+        targets[building] = {'base': power, 'factor': factor, 'amount': amount}
+    template = _section_values(sections, PLAYER_ORIGINAL_PRODUCTION_GATE_ID)
+    if not template:
+        raise ValueError('Player power bonus requires the isolated startup building template')
+    reserved = {name.casefold() for name in (*installed_sections, *sections)}
+    rules, providers = {}, []
+    for (factor, amount), plants in groups.items():
+        for offset in range(0, len(plants), 20):
+            provider = _collision_safe_type_id(
+                f'RLRPPower{len(providers) + 1}',
+                f'power-output:{len(providers) + 1}', reserved,
+            )
+            values = dict(template)
+            values.update({
+                'name': 'Randomizer Power Plant Output',
+                'uiname': 'NOSTR:Randomizer Power Plant Output',
+                'powerplantenhancer.powerplants': ','.join(plants[offset:offset + 20]),
+                'powerplantenhancer.amount': str(amount),
+                'powerplantenhancer.factor': format(factor, '.12g'),
+            })
+            rules[provider] = values
+            _register_map_type(rules, lines, installed_sections, 'BuildingTypes', provider)
+            providers.append(provider)
+    return rules, tuple(providers), {'stacks': stacks, 'bonus': bonus, 'targets': targets}
 
 
 def building_upgrade_clone_rules(lines, installed_sections, clone_handled):

@@ -21,6 +21,7 @@ from randomizer.shop.active import (
 from randomizer.shop.catalogue import (
     canonical_reward_for_id,
     shop_entry_available,
+    shop_global_buff_target_ids,
 )
 from randomizer.shop.economy import (
     mission_reward,
@@ -737,13 +738,16 @@ class ShopPolishController(ShopArchipelagoController):
         target_ids = sorted({
             entry.target_id for entry in candidates
             if entry.target_id in owned
+            or entry.target_id in shop_global_buff_target_ids()
         })
         labels = []
         mapping = {}
         for target_id in target_ids:
             name = unit_buff_target_label(target_id) if is_unit else target_id
             label = (
-                name if is_unit and target_id in SHARED_UNIT_BUFF_GROUPS
+                name if is_unit and target_id in (
+                    SHARED_UNIT_BUFF_GROUPS.keys() | shop_global_buff_target_ids()
+                )
                 else f'{name} [{target_id}]'
             )
             labels.append(label)
@@ -778,6 +782,7 @@ class ShopPolishController(ShopArchipelagoController):
         locked = (
             entry.reward_type is ShopRewardType.UNIT_BUFF
             and entry.target_id not in active_tech
+            and entry.target_id not in shop_global_buff_target_ids()
         ) or (
             entry.reward_type is ShopRewardType.POWER_BUFF
             and entry.target_id not in active_powers
