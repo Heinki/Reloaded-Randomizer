@@ -109,7 +109,10 @@ class GridTwoStartPositions(Toggle):
 
 
 class UnlockAllGridRewards(Toggle):
-    """Release unfinished Grid rewards after completing the final Grid mission."""
+    """Release local Grid rewards after the final mission in standalone runs.
+
+    Archipelago hosts control unfinished location release through release_mode.
+    """
 
     display_name = "Grid: Release Rewards After Goal"
 

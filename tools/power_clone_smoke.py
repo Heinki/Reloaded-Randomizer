@@ -134,6 +134,25 @@ def main():
         require_value('DropPodSpecial', 'DropPod.Maximum', '10')
         require_value('IronCurtainSpecial', 'Protect.Duration', '690')
         require_value('ForceShieldSpecial', 'Protect.Duration', '518')
+        require_value('IronCurtainSpecial', 'SW.Range', '4,4')
+        require_value('ChronoSphereSpecial', 'SW.Range', '4,4')
+        require_value('ForceShieldSpecial', 'SW.Range', '4.5')
+        require_value('PsychicDominatorSpecial', 'SW.Range', '2.5')
+        require_value('LightningStormSpecial', 'SW.Range', '11')
+
+        nuke_warhead = value(sections.get(clones['NukeSpecial'], {}), 'SW.Warhead')
+        registered_warheads = {
+            str(type_id).upper()
+            for type_id in sections.get('Warheads', {}).values()
+        }
+        if not nuke_warhead or nuke_warhead.upper() == 'NUKE':
+            failures.append('Nuclear Missile area buff did not isolate its warhead.')
+        elif nuke_warhead.upper() not in registered_warheads:
+            failures.append('Nuclear Missile private warhead was not registered.')
+        elif value(sections.get(nuke_warhead, {}), 'CellSpread') != '10.5':
+            failures.append('Nuclear Missile private blast radius did not increase.')
+        if value(sections.get('NUKE', {}), 'CellSpread'):
+            failures.append('Nuclear Missile area buff changed the shared warhead.')
 
         chemical = sections.get(clones['TiberiumShowerSpecial'], {})
         chemical_payload = value(chemical, 'ParaDrop.Types')

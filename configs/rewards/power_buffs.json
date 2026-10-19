@@ -20,18 +20,19 @@
       "amount_per_stack": 0.5,
       "rectangle_amount_per_stack": 1,
       "direct_fields": {
-        "NukeSpecial": {"field": "Range", "baseline": "7"},
-        "LightningStormSpecial": {"field": "Range", "baseline": "7"},
-        "PsychicDominatorSpecial": {"field": "Range", "baseline": "1.4"},
+        "LightningStormSpecial": {"field": "SW.Range", "baseline": "10", "general_default": "LightningCellSpread", "diameter": true},
+        "PsychicDominatorSpecial": {"field": "SW.Range", "baseline": "2", "general_default": "DominatorCaptureRange"},
         "TSIonCannonSpecial": {"field": "SW.Range", "baseline": "3"},
-        "IronCurtainSpecial": {"field": "Range", "baseline": "1.4"},
-        "ChronoSphereSpecial": {"field": "Range", "baseline": "1.75"},
-        "ForceShieldSpecial": {"field": "Range", "baseline": "3.4"},
+        "IronCurtainSpecial": {"field": "SW.Range", "baseline": "3,3"},
+        "ChronoSphereSpecial": {"field": "SW.Range", "baseline": "3,3"},
+        "ForceShieldSpecial": {"field": "SW.Range", "baseline": "4", "general_default": "ForceShieldRadius"},
         "GeneticConverterSpecial": {"field": "SW.Range", "baseline": "3"},
         "SonarPulseSpecial": {"field": "SW.Range", "baseline": "12"},
         "TiberiumShowerSpecial": {"field": "SW.Range", "baseline": "7"}
       },
-      "warhead_fields": {}
+      "warhead_fields": {
+        "NukeSpecial": {"source": "NUKE", "field": "CellSpread", "reference_key": "SW.Warhead"}
+      }
     },
     "damage": {
       "factor_per_stack": 1.15,

@@ -581,19 +581,10 @@ class UnlockViewController:
                 unlocks = self.mission_unlocks(code)
                 if code == self.state.get('grid', {}).get('goal') and node.get('state') != GRID_COMPLETED:
                     if archipelago_active:
-                        reward_note = (
-                            'queues every unchecked GRID location for '
-                            'Archipelago server confirmation, and '
-                            if self.state.get(
-                                'unlock_all_rewards_after_final_grid_mission',
-                                False,
-                            )
-                            else 'keeps unchecked Archipelago locations pending, and '
-                        )
                         lines.append(
-                            'Completing this endgoal records Randomizer victory, '
-                            + reward_note
-                            + 'unlocks every unfinished grid mission.'
+                            'Completing this endgoal records Randomizer victory. '
+                            'Archipelago host settings control release of '
+                            'unfinished locations. Optional missions remain playable.'
                         )
                     else:
                         reward_note = (

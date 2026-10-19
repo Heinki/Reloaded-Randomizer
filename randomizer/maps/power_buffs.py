@@ -145,11 +145,28 @@ def _apply_scalar_rule(rules, spec, count, factor):
 def _apply_area(reward, installed_sections, count):
     power_id = reward['superweapon']
     area = POWER_BUFF_CONFIG['area']
+    source_values = _source_values(reward, installed_sections)
+    cursor_range = _value(source_values, 'Range')
+    if cursor_range is not None:
+        reward.setdefault('superweapon_rules', {})['Range'] = (
+            _expanded_range(cursor_range, count)
+        )
     direct = area['direct_fields'].get(power_id)
     if direct:
-        reward.setdefault('superweapon_rules', {})[direct['field']] = (
-            _expanded_range(direct['baseline'], count)
-        )
+        # Range only draws the targeting cursor. Ares reads SW.Range for
+        # the actual effect, defaulting to General settings or native sizes.
+        baseline = _value(source_values, direct['field'])
+        if baseline is None:
+            baseline = _value(
+                installed_sections.get('General', {}),
+                direct.get('general_default', ''),
+                direct['baseline'],
+            )
+        # LightningStorm interprets a scalar SW.Range as diameter. Rectangles
+        # already grow by one cell per dimension for a half-cell edge increase.
+        scale = 2 if direct.get('diameter') and ',' not in str(baseline) else 1
+        rules = reward.setdefault('superweapon_rules', {})
+        rules[direct['field']] = _expanded_range(baseline, count * scale)
     warhead = area['warhead_fields'].get(power_id)
     if not warhead:
         return

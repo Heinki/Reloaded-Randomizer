@@ -506,7 +506,8 @@ def _build_right_panel(self, main_frame):
         'After the final Grid mission is completed, release every remaining '
         'seed reward, unlock the complete configured arsenal, and open all '
         'optional Grid missions. When disabled, ordinary neighbor progression '
-        'and hidden locked missions remain active.',
+        'and hidden locked missions remain active. In Archipelago, the host '
+        'controls release of unfinished locations.',
     )
 
     shop_settings_frame = ttk.LabelFrame(

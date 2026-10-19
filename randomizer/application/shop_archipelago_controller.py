@@ -285,11 +285,6 @@ class ShopArchipelagoController:
                 self._shop_item_stream_group(batch, 'shop_item_stream'),
             ))
         if transition.run.status is RunStatus.COMPLETED:
-            self._report_archipelago_location_groups((
-                self._shop_item_stream_group(
-                    item_locations, 'shop_item_stream_completion'
-                ),
-            ))
             self.report_archipelago_goal_if_complete()
 
     def _archipelago_shop_purchase_group(self, location_id):
@@ -388,7 +383,7 @@ class ShopArchipelagoController:
             'Each purchase sends its generated Archipelago item to the '
             'shown player/world. Each mission victory also releases up to '
             f'{shop.get("items_per_victory", 1)} unchecked Shop items; '
-            'finishing the run releases every remaining item. Placement '
+            'the host controls release of unfinished locations after goal. Placement '
             'remains server-assigned.'
         )
         self.shop_ap_purchase_button.configure(state='normal')
@@ -411,7 +406,6 @@ class ShopArchipelagoController:
         self.shop_service.reconcile_archipelago_purchases(identity, checked)
         groups = []
         run = self.shop_repository.load_run()
-        shop = self.archipelago_shop_slot_settings()
         if run is not None and run.ap_identity == identity:
             for key in run.rewarded_victories:
                 parts = key.split(':')
@@ -419,12 +413,6 @@ class ShopArchipelagoController:
                     group = self._archipelago_shop_stage_group(int(parts[1]))
                     if group:
                         groups.append(group)
-            if run.status is RunStatus.COMPLETED and shop:
-                item_locations = shop.get('item_locations', ())
-                if item_locations:
-                    groups.append(self._shop_item_stream_group(
-                        item_locations, 'shop_item_stream_completion'
-                    ))
         for location_id in self.shop_service.pending_archipelago_purchase_ids(
             identity
         ):

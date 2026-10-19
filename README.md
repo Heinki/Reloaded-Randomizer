@@ -170,8 +170,9 @@ Source maps and authored teams stay intact.
 The Reloaded APWorld contains 2,104 items, 108 missions, and reserved locations
 for objectives, victories, and Shop Mode. Each Shop seed has 120 shuffled item
 locations. Mission victories release up to 12 unchecked locations across failed
-and restarted runs. Completing the run releases every remaining location before
-reporting the goal.
+and restarted runs. Completing a Grid or Shop run reports the goal; the
+Archipelago host's `release_mode` controls release of unfinished locations.
+Local Grid reward-release settings never send unfinished Archipelago checks.
 
 ## Installation safety
 
