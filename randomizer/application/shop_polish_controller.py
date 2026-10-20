@@ -735,19 +735,19 @@ class ShopPolishController(ShopArchipelagoController):
         )
         is_unit = category == 'Unit Buffs'
         owned = active_tech if is_unit else active_powers
+        global_targets = shop_global_buff_target_ids()
+        grouped_targets = SHARED_UNIT_BUFF_GROUPS.keys() | global_targets
         target_ids = sorted({
             entry.target_id for entry in candidates
             if entry.target_id in owned
-            or entry.target_id in shop_global_buff_target_ids()
+            or entry.target_id in global_targets
         })
         labels = []
         mapping = {}
         for target_id in target_ids:
             name = unit_buff_target_label(target_id) if is_unit else target_id
             label = (
-                name if is_unit and target_id in (
-                    SHARED_UNIT_BUFF_GROUPS.keys() | shop_global_buff_target_ids()
-                )
+                name if is_unit and target_id in grouped_targets
                 else f'{name} [{target_id}]'
             )
             labels.append(label)

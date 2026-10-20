@@ -236,7 +236,9 @@ def shop_catalogue_by_reward_id():
     return {entry.reward_id: entry for entry in shop_catalogue()}
 
 
+@lru_cache(maxsize=1)
 def shop_global_buff_target_ids():
+    """Resolve immutable global targets once, as with the Shop catalogue."""
     return frozenset(
         entry.target_id for entry in shop_catalogue()
         if canonical_reward_for_id(entry.reward_id).get('global_buff')

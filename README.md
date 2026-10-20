@@ -126,8 +126,12 @@ factory, with no service depot or other support-tech prerequisites. Standard
 uses each faction's factory; Chaos and Randomizer Arsenal share compatible
 factories. MCV access also makes war factories available without other vehicle
 unlocks. Their construction yards remain deploy targets. Player-built refineries
-use private types that supply upgraded miners; native enemy refineries keep
-their original miners. Safe player miners
+use private types that supply upgraded miners, including earned cloaking, even
+before a war factory is built. Private refineries count toward refinery
+prerequisites. Original and upgraded miners can unload at either original or
+private player refineries, preserving each miner's compatible destinations.
+Native enemy refineries keep their original miners. Player miners revert to
+their native type when captured by computer-controlled houses. Safe player miners
 already placed in a mission receive the same upgrades, including ALL07_RA2's
 starting Chrono Miners. Miners named by exact scripted type checks retain their
 native identity to preserve those mission conditions. Relaunch a mission to

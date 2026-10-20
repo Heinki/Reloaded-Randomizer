@@ -3284,7 +3284,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             lines, installed_rule_sections, native_map_sections, clone_handled,
         )
         if refinery_failures:
-            raise ValueError('Player miner upgrades leaked through shared refineries: '
+            raise ValueError('Refinery/miner isolation validation failed: '
                              + '; '.join(refinery_failures))
         # Resolve attachments after registry reconciliation: earlier batch
         # merges can temporarily omit a host clone's BuildingTypes entry.
