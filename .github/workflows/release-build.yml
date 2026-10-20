@@ -33,12 +33,12 @@ jobs:
       - name: Compile source
         run: python -m compileall -q .
 
-      - name: Audit Archipelago catalogue
-        run: python -m Archipelago.audit
-
       - name: Build complete Archipelago release
         shell: powershell
         run: .\build_archipelago_release.ps1 -OutputDirectory 'release'
+
+      - name: Audit built Archipelago catalogue
+        run: python -m Archipelago.audit
 
       - name: Upload player downloads
         uses: actions/upload-artifact@v7

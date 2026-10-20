@@ -35,11 +35,11 @@ jobs:
         run: >-
           python -c "from randomizer.config.static import REQUIRED_STATIC_CONFIGS,
           validate_static_configs; validate_static_configs(REQUIRED_STATIC_CONFIGS)"
-      - name: Audit Archipelago catalogue
-        run: python -m Archipelago.audit
       - name: Build launcher and APWorld
         shell: powershell
         run: .\build_exe.ps1 -Output 'release\CnCReloadedRandomizer.exe'
+      - name: Audit built Archipelago catalogue
+        run: python -m Archipelago.audit
 
   linux-apworld:
     name: Linux APWorld build

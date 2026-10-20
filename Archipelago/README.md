@@ -195,6 +195,12 @@ python3 Archipelago/build_apworld.py
 Output is `Archipelago\cnc_reloaded.apworld`. The launcher build publishes the
 matching world beside `CnCReloadedRandomizer.exe`.
 
+The builder reads release versions from `randomizer/core/version.py`. With game
+assets installed it regenerates the catalogue from those assets. In clean CI
+checkouts it verifies the reviewed catalogue's content checksum, then refreshes
+only the launcher and APWorld release labels. A version-only change does not
+require game assets; content changes still require a refreshed reviewed snapshot.
+
 ## Shop Mode and YAML compatibility fixes
 
 Replace the installed APWorld in Archipelago's `custom_worlds` folder with the

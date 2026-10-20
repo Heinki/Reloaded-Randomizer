@@ -46,8 +46,7 @@ def build(
         raise FileNotFoundError(f'APWorld manifest not found: {manifest_path}')
 
     verify_live_sources = catalogue_sources_available()
-    if verify_live_sources:
-        generate_catalogue()
+    generate_catalogue()
     report = archipelago_foundation_report(
         verify_live_sources=verify_live_sources,
     )
