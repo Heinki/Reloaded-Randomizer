@@ -2,6 +2,7 @@
 
 from collections import Counter
 
+from randomizer.config.game_profile import ACTIVE_FAMILIES, CONTENT_FACTIONS, DEFERRED_CONTENT_FACTIONS
 from randomizer.config.static import load_static_config
 from randomizer.content.inventory import read_rules_sections, rules_fingerprint
 
@@ -39,8 +40,8 @@ def installed_balance_review_report():
     valid = (
         actual_fingerprint == configured_fingerprint
         and BALANCE_REVIEW['active_factions']
-        == ['Allies', 'Soviets', 'Yuri', 'GDI', 'Nod']
-        and BALANCE_REVIEW['deferred_factions'] == ['CABAL']
+        == list(CONTENT_FACTIONS)
+        and BALANCE_REVIEW['deferred_factions'] == list(DEFERRED_CONTENT_FACTIONS)
         and reviewed_power_total == len(registered_powers)
         and not missing_target_sections
     )

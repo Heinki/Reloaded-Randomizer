@@ -5,7 +5,33 @@ documents use `schema_version: 1` and a top-level `sections` object. Invalid or
 modified packaged configuration stops launcher startup.
 
 The active faction order is Allies, Soviets, Yuri, GDI, and Nod. CABAL is
-deferred and must not be added through inferred ownership.
+controlled by the build-time `ENABLE_CABAL = False` flag in
+`randomizer/config/game_profile.py`. While disabled, CABAL units, buildings,
+transform forms, saved rewards, campaign selection, and enemy bonus spawning
+are excluded. Secret Labs do not override the flag. Shared factory or Owner
+lists do not by themselves make an official-faction unit CABAL content.
+
+The flag covers full playable faction/campaign integration, not only Shop
+stock. When enabled it adds CABAL to faction ordering, country/side recognition,
+campaign filters, roster review, production paths, Shop faction rotation, and
+Archipelago profile validation. The CABAL campaign filter selects authored
+CABAL missions without guessing an unreleased campaign name.
+
+Before enabling a future release, install its actual rules/assets/maps, update
+the supported game version, and regenerate/review content, balance, production
+topology, and mission metadata using the existing tools. Add source-proven CABAL
+production mappings to `factions.json`, starters to `tier_one.json`, mission
+policy to `missions.json`, UI/EVA/default faction settings, enemy bonus rosters,
+and exact Shop prices. Review any new superweapons separately; the flag never
+promotes internal/debug powers or pending candidates automatically. Rebuild the
+launcher and APWorld together and run the validation commands below, including
+`python tools/audit_shop_content.py --assets` and campaign generation checks.
+
+After this release data is reviewed, `ENABLE_CABAL` is the single activation
+switch. Enabling it against the current five-faction catalogues fails with a
+clear validation error instead of presenting an incomplete playable faction.
+The current release has no playable CABAL campaign to validate; the flag does
+not invent missions, units, assets, or descriptions.
 
 ## Main configuration
 
@@ -116,6 +142,9 @@ ReloadedRandomizerData/configs/player/cnc_reloaded_randomizer.yaml
 ```
 
 Do not commit player seeds, credentials, or generated room state.
+Player YAML holds local settings, not shared gameplay policy. Legacy
+`config/cnc_reloaded_randomizer.yaml` migrates here when no active player file
+exists.
 
 ## Validation and regeneration
 

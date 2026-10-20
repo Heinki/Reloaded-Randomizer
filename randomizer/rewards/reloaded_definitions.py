@@ -7,9 +7,12 @@ part of the runtime catalogue.
 """
 
 from randomizer.config.static import load_static_config
+from randomizer.config.game_profile import CONTENT_FACTIONS
 from randomizer.config.tuning import BUFF_EFFECTS, REWARD_PLANNING
 from randomizer.content.ammo import UNLIMITED_AMMO_THRESHOLD, has_upgradeable_ammo
-from randomizer.content.inventory import FACTION_HOUSE_VARIANTS, read_rules_sections
+from randomizer.content.inventory import (
+    FACTION_HOUSE_VARIANTS, read_rules_sections, deferred_cabal_type_ids,
+)
 from randomizer.content.transforms import (
     linked_transform_families,
     techno_type_categories,
@@ -23,6 +26,7 @@ _BALANCE = load_static_config('rewards/reloaded_balance_catalogue.json')
 _FACTIONS = load_static_config('factions.json')
 _RULES, _RULES_SOURCE = read_rules_sections()
 _RULE_NAMES = {str(name).upper(): name for name in _RULES}
+DEFERRED_TECH_IDS = deferred_cabal_type_ids(_RULES)
 
 # These buildings only expose powers already granted directly by Randomizer,
 # or support another redundant provider in this set. Keep them out of access
@@ -52,7 +56,7 @@ def _approved_factions(record):
     return tuple(
         faction
         for faction, review in record['reviews'].items()
-        if review['status'] == 'approved'
+        if faction in CONTENT_FACTIONS and review['status'] == 'approved'
     )
 
 
@@ -69,6 +73,7 @@ _RUNTIME_RECORDS = tuple(
     for category, record in _source_records()
     if _approved_factions(record)
     and not str(record['id']).upper().endswith('_AI')
+    and str(record['id']).upper() not in DEFERRED_TECH_IDS
     and str(record['id']).upper() not in REDUNDANT_POWER_PROVIDER_IDS
 )
 
@@ -78,6 +83,8 @@ def _records():
 
 
 def _raw_label(record):
+    if record.get('reward_label'):
+        return str(record['reward_label'])
     if str(record['id']).upper() == 'LUNR':
         return 'Cosmonaut'
     label = str(record.get('name') or record.get('ui_name') or record['id'])
@@ -85,6 +92,7 @@ def _raw_label(record):
     # in Shop profiles, runs, or Archipelago catalogues.
     if record.get('secret_lab') and any(
         not other.get('secret_lab')
+        and not other.get('reward_label')
         and str(other.get('name') or other.get('ui_name') or other['id']) == label
         for _category, other in _RUNTIME_RECORDS
     ):
@@ -136,7 +144,7 @@ _CATEGORY_MAP = {
 FACTION_UNIT_ROSTERS = {
     faction: {'infantry': {}, 'units': {}, 'aircraft': {}}
     for faction in FACTION_HOUSE_VARIANTS
-    if faction != 'CABAL'
+    if faction in CONTENT_FACTIONS
 }
 FACTION_DEFENSE_ROSTERS = {
     faction: {} for faction in FACTION_UNIT_ROSTERS
@@ -364,6 +372,8 @@ _POWER_DEFINITIONS = (
 
 
 def _power_reward(power_id, label, category, factions):
+    if power_id.upper() in DEFERRED_TECH_IDS:
+        raise ValueError(f'CABAL powers are unavailable: {power_id}')
     if power_id.upper() not in _POWER_RECORD_BY_ID:
         raise ValueError(f'Reviewed Reloaded power is missing: {power_id}')
     reward = {
@@ -399,6 +409,12 @@ def _power_reward(power_id, label, category, factions):
         reward['superweapon_delivery_player_clone_ids'] = ['E1']
     if power_id == 'DropPodSpecial':
         reward['superweapon_delivery_player_clone_ids'] = ['TSE1', 'TSE2']
+    if power_id == 'TSMultiSpecial':
+        # Action 34 grants the power without its native physical silo.
+        reward['superweapon_rules'] = {
+            'AuxBuilding': 'none',
+            'Nuke.SiloLaunch': 'no',
+        }
     if power_id == 'TiberiumShowerSpecial':
         reward['superweapon_techno_clones'] = {
             'TIBBOMB': {
@@ -421,6 +437,25 @@ def _power_reward(power_id, label, category, factions):
                 'list': 'VehicleTypes',
                 'reference_keys': ('HunterSeeker.Type',),
                 'values': {},
+            },
+            'GAPLUG': {
+                'source': 'GAPLUG',
+                'clone': 'RLRPHUNTERBASE',
+                'list': 'BuildingTypes',
+                'reference_keys': ('HunterSeeker.Buildings',),
+                'startup_count': 1,
+                'static_startup': True,
+                'values': {
+                    'TechLevel': '-1', 'Image': 'GAPLUG',
+                    'InvisibleInGame': 'yes', 'IsPassable': 'yes',
+                    'Selectable': 'no', 'LegalTarget': 'no', 'Immune': 'yes',
+                    'Insignificant': 'yes', 'DontScore': 'yes',
+                    'BaseNormal': 'no', 'Capturable': 'no', 'Unsellable': 'yes',
+                    'Power': '0', 'Powered': 'no', 'Sight': '0',
+                    'RevealToAll': 'no', 'RadarInvisible': 'yes',
+                    'IsPlug': 'no', 'Upgrades': '0', 'Spyable': 'no',
+                    'Crewed': 'no',
+                },
             },
         }
     if power_id == 'EMPulseSpecial':
@@ -466,6 +501,10 @@ def _power_reward(power_id, label, category, factions):
             'SW.Inhibitors': '',
             'SW.AnyInhibitor': 'no',
         }
+    # Native debug names are not reliable display identities (the Psychic
+    # Dominator section is named "Lightning Storm"). Keep the private clone
+    # aligned with its reviewed reward label without changing native CSF keys.
+    reward.setdefault('superweapon_rules', {})['Name'] = label
     return reward
 
 
@@ -865,6 +904,30 @@ REWARD_POOL = (
     + ENEMY_REWARD_POOL
 )
 REWARD_BY_NAME = {reward['name']: reward for reward in REWARD_POOL}
+
+# Old profiles and received items can contain names without their old rules.
+# Retire deferred identities by their source/review labels so saved unlocks
+# cannot restore CABAL access after it has left the current catalogue.
+_DEFERRED_LABELS = {
+    str(_RULES[_RULE_NAMES[type_id]].get('Name') or type_id)
+    for type_id in DEFERRED_TECH_IDS if type_id in _RULE_NAMES
+}
+_DEFERRED_LABELS.update(
+    _raw_label(record) for _category, record in _source_records()
+    if str(record['id']).upper() in DEFERRED_TECH_IDS
+)
+for _deferred_label in _DEFERRED_LABELS:
+    for _deferred_name in (
+        f'{_deferred_label} Access',
+        *(f'{_deferred_label} {buff_type["name"]} I' for buff_type in BUFF_TYPES),
+    ):
+        if _deferred_name not in REWARD_BY_NAME:
+            RETIRED_REWARD_BY_NAME[_deferred_name] = {
+                'name': f'{_deferred_name} (retired: CABAL unavailable)',
+                'description': 'Disabled until the CABAL faction is officially available.',
+                'rules': {}, 'factions': [], 'kind': 'retired',
+                'retired_reward': True,
+            }
 REWARD_BY_BUFF_KEY = {
     (reward['unit'], reward['buff_type']): reward
     for reward in UNIT_BUFF_REWARDS

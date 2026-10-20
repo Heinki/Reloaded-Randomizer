@@ -391,7 +391,7 @@ def release_validation_report():
     pending_live_checks = [
         'one launch per campaign family and active faction',
         'no-build and trigger-critical mission launches',
-        'all 108 launch-smoke checks',
+        f'all {mission_count} launch-smoke checks',
         'complete campaign playthroughs',
     ]
     return {

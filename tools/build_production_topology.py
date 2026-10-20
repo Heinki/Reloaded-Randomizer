@@ -11,6 +11,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from randomizer.config.game_profile import (
+    CONTENT_FACTIONS,
     DEFERRED_CONTENT_FACTIONS,
     GENERATED_TYPE_PREFIX,
     SUPPORTED_GAME_VERSION,
@@ -199,7 +200,7 @@ def build_document():
             source_failures.append(f'{family}:{transport_id}: invalid amphibious transport')
 
         alternates = []
-        for type_id in ALTERNATE_FACTORIES[family]:
+        for type_id in ALTERNATE_FACTORIES.get(family, ()):
             fact = _fact(type_id, sections, registered)
             fact['category'] = _factory_category(fact)
             alternates.append(fact)
@@ -207,7 +208,7 @@ def build_document():
                 source_failures.append(f'{family}:{type_id}: invalid alternate factory')
 
         component_chains = []
-        for chain in COMPONENT_CHAINS[family]:
+        for chain in COMPONENT_CHAINS.get(family, ()):
             base = _fact(chain['base'], sections, registered)
             upgrades = [_fact(type_id, sections, registered) for type_id in chain['upgrades']]
             component_chains.append({'base': base, 'upgrades': upgrades})
@@ -218,8 +219,8 @@ def build_document():
                     )
 
         families[family] = {
-            'display_name': family.title() if family != 'gdi' else 'GDI',
-            'canonical_country': FACTION_HOUSES[family.title() if family != 'gdi' else 'GDI'],
+            'display_name': next(f for f in CONTENT_FACTIONS if f.lower() == family),
+            'canonical_country': FACTION_HOUSES[next(f for f in CONTENT_FACTIONS if f.lower() == family)],
             'mcv_conyard_pair': {'mcv': mcv, 'construction_yard': yard, 'reciprocal': reciprocal},
             'production': production,
             'alternate_production_candidates': alternates,

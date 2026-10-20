@@ -976,12 +976,6 @@
         "permanent_access": 50,
         "permanent_buff": 12
       },
-      "ROBOTSTNK": {
-        "run_access": 10,
-        "run_buff": 6,
-        "permanent_access": 50,
-        "permanent_buff": 12
-      },
       "ROCKETANGEL": {
         "run_access": 6,
         "run_buff": 4,
@@ -1407,6 +1401,78 @@
         "run_buff": 4,
         "permanent_access": 25,
         "permanent_buff": 8
+      },
+      "CHITZ": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
+      "AVATAR": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
+      "DISK": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
+      "HIND": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
+      "MDISK": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
+      "ODISK": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
+      "REDEEMER": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
+      "SCHP": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
+      "SHAD": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
+      "TDSK": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
+      "VENOM": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
+      },
+      "ZEP": {
+        "run_access": 10,
+        "run_buff": 6,
+        "permanent_access": 50,
+        "permanent_buff": 12
       }
     },
     "permanent_upgrades": {

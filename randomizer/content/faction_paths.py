@@ -8,7 +8,7 @@ production families. Unknown or incomplete paths remain unresolved.
 
 from functools import lru_cache
 
-from randomizer.config.game_profile import CONTENT_FACTIONS
+from randomizer.config.game_profile import CONTENT_FACTIONS, ENABLE_CABAL
 from randomizer.config.static import load_static_config
 from randomizer.content.inventory import (
     FACTION_HOUSE_VARIANTS,
@@ -56,19 +56,13 @@ def _active_eligible_factions(values):
 
 def _is_deferred_identifier(type_id):
     normalized = str(type_id or '').upper()
-    return normalized.startswith(('ROBOT', 'CABAL'))
+    return not ENABLE_CABAL and normalized.startswith(('ROBOT', 'CABAL'))
 
 
 def _anchor_scopes():
     scopes = {}
     sections = _FACTIONS_CONFIG
-    display = {
-        'allies': 'Allies',
-        'soviets': 'Soviets',
-        'yuri': 'Yuri',
-        'gdi': 'GDI',
-        'nod': 'Nod',
-    }
+    display = {faction.lower(): faction for faction in CONTENT_FACTIONS}
     for family in sections['active_families']:
         faction = display[family]
         scope = frozenset({faction})

@@ -22,8 +22,9 @@ Archipelago 0.6.8 play. It creates deterministic mission and reward plans,
 launches generated copies of campaign maps, tracks objectives and victories,
 and applies earned unit access, buffs, powers, and enemy rewards.
 
-The active factions are Allies, Soviets, Yuri, GDI, and Nod. CABAL is not yet
-supported.
+The active factions are Allies, Soviets, Yuri, GDI, and Nod. CABAL units and
+buildings are excluded from rewards and Shop stock, including Secret Lab
+unlocks, until that faction is officially available.
 
 ## Disclaimer
 
@@ -71,10 +72,9 @@ stage. Each selected mission gets one attempt. An **Emergency Revival** keeps
 the Shop run alive after a failed mission by repeating the same stage with new
 mission choices.
 
-Shop Mode uses all 108 reviewed Reloaded missions and its complete approved
-catalogue: 157 unit access rewards, 1,689 unit buffs, 18 powers, and 44 power
-buffs. Temporary mission cards can add one of 12 Reloaded player boons or 7
-Reloaded AI challenges; active power boons are not offered twice.
+Shop Mode uses all 108 reviewed Reloaded missions, approved units and defenses,
+buffs, and 18 powers. Temporary mission cards can add one of 12 Reloaded player
+boons or 7 Reloaded AI challenges; active power boons are not offered twice.
 
 Current Run Shop shows unit and power offers together. Start New Run always
 generates a fresh seed, and the rules dialog stays dismissed after confirmation.
@@ -167,8 +167,8 @@ eligibility and cap.
 Saved runs discard the retired Powerhouses run modifier when loaded.
 Source maps and authored teams stay intact.
 
-The Reloaded APWorld contains 2,104 items, 108 missions, and reserved locations
-for objectives, victories, and Shop Mode. Each Shop seed has 120 shuffled item
+The Reloaded APWorld contains the approved reward catalogue, 108 missions, and
+reserved locations for objectives, victories, and Shop Mode. Each Shop seed has 120 shuffled item
 locations. Mission victories release up to 12 unchecked locations across failed
 and restarted runs. Completing a Grid or Shop run reports the goal; the
 Archipelago host's `release_mode` controls release of unfinished locations.
@@ -209,7 +209,6 @@ Each maintained document has one purpose:
 | ------------------------------------------------------------------------------ | ---------------------- | ------------------------------------------------------------------------------------ |
 | [Archipelago/README.md](Archipelago/README.md)                                 | Players and room hosts | APWorld installation, Player YAML export, room connection, play, and troubleshooting |
 | [configs/README.md](configs/README.md)                                         | Maintainers            | Static mission, faction, reward, unit, Shop, and UI configuration                    |
-| [configs/player/README.md](configs/player/README.md)                           | Developers             | Source-mode player configuration location and privacy rules                          |
 | [Archipelago APWorld setup](Archipelago/APWorld/cnc_reloaded/docs/setup_en.md) | Archipelago clients    | Short package metadata and compatibility guide embedded in the APWorld               |
 
 ## Developer workflow

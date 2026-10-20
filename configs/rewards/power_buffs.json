@@ -7,7 +7,7 @@
       {"id": "cost", "name": "Logistics", "setting_label": "Lower activation cost", "description": "Activation cost is 15% cheaper per stack.", "maximum_stacks": 5},
       {"id": "area", "name": "Expanded Area", "setting_label": "Larger effect area", "description": "Effect radius grows by 0.5 cells per stack.", "maximum_stacks": 20},
       {"id": "damage", "name": "Amplified Payload", "setting_label": "Higher damage", "description": "Direct power damage is 15% higher per stack.", "maximum_stacks": 5},
-      {"id": "health", "name": "Reinforced Power Structure", "setting_label": "More payload health", "description": "A delivered power structure gains 15% health per stack.", "maximum_stacks": 5},
+      {"id": "health", "name": "Reinforced Power Structure", "setting_label": "More payload health", "description": "The delivered power payload gains 15% health per stack.", "maximum_stacks": 5},
       {"id": "duration", "name": "Extended Effect", "setting_label": "Longer effect duration", "description": "Timed effect duration is 15% longer per stack.", "maximum_stacks": 5},
       {"id": "effect", "name": "Amplified Status Effect", "setting_label": "Stronger status effect", "description": "A power status modifier is 25% stronger per stack.", "maximum_stacks": 5},
       {"id": "targeting", "name": "Universal Vehicle Targeting", "setting_label": "Affect all vehicles", "description": "Power affects reviewed vehicle armor types.", "maximum_stacks": 1},
@@ -27,11 +27,11 @@
         "ChronoSphereSpecial": {"field": "SW.Range", "baseline": "3,3"},
         "ForceShieldSpecial": {"field": "SW.Range", "baseline": "4", "general_default": "ForceShieldRadius"},
         "GeneticConverterSpecial": {"field": "SW.Range", "baseline": "3"},
-        "SonarPulseSpecial": {"field": "SW.Range", "baseline": "12"},
-        "TiberiumShowerSpecial": {"field": "SW.Range", "baseline": "7"}
+        "SonarPulseSpecial": {"field": "SW.Range", "baseline": "12"}
       },
       "warhead_fields": {
-        "NukeSpecial": {"source": "NUKE", "field": "CellSpread", "reference_key": "SW.Warhead"}
+        "NukeSpecial": {"source": "NUKE", "field": "CellSpread", "reference_key": "SW.Warhead"},
+        "TiberiumShowerSpecial": {"source": "MisilQuimicoWH", "field": "CellSpread", "payload_source": "TIBBOMB", "weapon_source": "SuperTiberiumExplosion"}
       }
     },
     "damage": {
@@ -53,8 +53,8 @@
     "duration": {
       "factor_per_stack": 1.15,
       "direct_fields": {
-        "IronCurtainSpecial": {"field": "Protect.Duration", "baseline": 600},
-        "ForceShieldSpecial": {"field": "Protect.Duration", "baseline": 450}
+        "IronCurtainSpecial": {"field": "Protect.Duration", "baseline": 600, "default_section": "CombatDamage", "default_field": "IronCurtainDuration"},
+        "ForceShieldSpecial": {"field": "Protect.Duration", "baseline": 450, "default_section": "General", "default_field": "ForceShieldDuration"}
       },
       "warhead_fields": {},
       "draining_techno_fields": {}
@@ -66,6 +66,7 @@
         "EMPulseSpecial": {
           "source": "EMPuls",
           "field": "EMP.Duration",
+          "cap_field": "EMP.Cap",
           "baseline": 1200,
           "reference_key": "SW.Warhead",
           "effect_label": "EMP duration"

@@ -15,6 +15,7 @@ from pathlib import Path
 from randomizer.config.game_profile import (
     ARCHIVE_GLOB,
     CONTENT_FACTIONS,
+    ENABLE_CABAL,
     RULES_INI_NAME,
 )
 from randomizer.core.mix import MixArchive, MixFormatError
@@ -62,6 +63,69 @@ def _split_list(value):
         for item in _strip_comment(value).split(',')
         if item.strip()
     }
+
+
+def is_cabal_content(type_id, values):
+    """Identify CABAL technology without rejecting shared faction ownership.
+
+    Prerequisites are AND gates; BuiltAt and Owner are alternative lists. A
+    shared factory list containing ROBOTWEAP does not make Yuri's Repair Disk
+    CABAL technology. A ROBOT-prefixed unit still belongs to CABAL when a
+    Secret Lab offers it to another faction.
+    """
+    def deferred_id(identifier):
+        return str(identifier).strip().upper().startswith(('ROBOT', 'CABAL'))
+
+    fields = {str(key).casefold(): value for key, value in values.items()}
+    if deferred_id(type_id) or 'cabal' in str(fields.get('name', '')).casefold():
+        return True
+    for key in ('prerequisite', 'deploysinto', 'undeploysinto'):
+        if any(deferred_id(token) for token in _split_list(fields.get(key, ''))):
+            return True
+    for key in ('builtat', 'owner', 'requiredhouses'):
+        tokens = _split_list(fields.get(key, '')) - {'none', '<none>'}
+        if tokens and all(deferred_id(token) for token in tokens):
+            return True
+    return False
+
+
+def cabal_type_ids(sections):
+    """Identify CABAL types and their transforms independently of feature state."""
+    from randomizer.content.transforms import TRANSFORM_REFERENCE_KEYS
+
+    values_by_id = {str(name).upper(): values for name, values in sections.items()}
+    registered = {
+        str(identifier).upper()
+        for registry in (*TYPE_SECTIONS.values(), 'SuperWeaponTypes')
+        for identifier in sections.get(registry, {}).values()
+    }
+    deferred = {
+        type_id for type_id in registered
+        if is_cabal_content(type_id, values_by_id.get(type_id, {}))
+    }
+    while True:
+        linked = {
+            type_id for type_id in registered - deferred
+            if any(
+                token.upper() in deferred
+                for key, value in values_by_id.get(type_id, {}).items()
+                if str(key).casefold() in TRANSFORM_REFERENCE_KEYS
+                for token in _split_list(value)
+            )
+        }
+        if not linked:
+            return frozenset(deferred)
+        deferred.update(linked)
+
+
+def is_deferred_cabal_content(type_id, values):
+    """Apply the release feature flag to CABAL identity."""
+    return not ENABLE_CABAL and is_cabal_content(type_id, values)
+
+
+def deferred_cabal_type_ids(sections):
+    """Return CABAL exclusions only while the faction feature is disabled."""
+    return frozenset() if ENABLE_CABAL else cabal_type_ids(sections)
 
 
 def _read_rules_text(text):
@@ -190,8 +254,9 @@ def secret_lab_factions(sections):
             continue
         boon_ids.update(_split_list(values.get('SecretLab.PossibleBoons', '')))
     result = {}
+    deferred = deferred_cabal_type_ids(sections)
     for type_id, values in sections.items():
-        if type_id.lower() not in boon_ids:
+        if type_id.lower() not in boon_ids or type_id.upper() in deferred:
             continue
         required = _split_list(values.get('SecretLab.RequiredHouses', ''))
         forbidden = _split_list(values.get('SecretLab.ForbiddenHouses', ''))

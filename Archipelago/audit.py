@@ -19,7 +19,11 @@ from Archipelago.catalogue_contract import (
     snapshot_is_current,
 )
 from Archipelago.client.session import _scout_location_ids
-from randomizer.config.game_profile import ENABLE_ARCHIPELAGO, FACTION_ORDER
+from randomizer.config.game_profile import (
+    DEFERRED_CONTENT_FACTIONS, ENABLE_ARCHIPELAGO, ENABLE_CABAL, FACTION_ORDER,
+)
+from randomizer.config.static import load_static_config
+from randomizer.content.inventory import deferred_cabal_type_ids
 
 
 ROOT = Path(__file__).resolve().parent
@@ -29,6 +33,8 @@ MANIFEST_TEMPLATE_PATH = WORLD_ROOT / 'archipelago.json.in'
 
 
 def archipelago_foundation_report(*, verify_live_sources=None):
+    from Archipelago.bundle_generation import _generation_rules
+
     snapshot = json.loads(CATALOGUE_PATH.read_text(encoding='utf-8'))
     manifest_template = json.loads(
         MANIFEST_TEMPLATE_PATH.read_text(encoding='utf-8')
@@ -91,6 +97,16 @@ def archipelago_foundation_report(*, verify_live_sources=None):
         'locations': {'MISSION': {'objective': [3, 1]}},
         'shop': {'purchase_locations': [5, 2]},
     }) == (1, 2, 3, 5)
+    # CI has no game installation. The reviewed rules snapshot lets builds
+    # enforce the same CABAL exclusion without importing runtime rewards.
+    deferred = deferred_cabal_type_ids(_generation_rules())
+    content = load_static_config('rewards/reloaded_content_catalogue.json')['content']
+    cabal_content_excluded = not any(
+        record['id'].upper() in deferred
+        and any(review['status'] == 'approved' for review in record['reviews'].values())
+        for records in (*content['units'].values(), content['production'], content['defenses'], content['powers'])
+        for record in records
+    )
     valid = all((
         not missing_files,
         snapshot_checksum_valid,
@@ -103,15 +119,16 @@ def archipelago_foundation_report(*, verify_live_sources=None):
         snapshot['game'] == GAME_NAME,
         snapshot['package_namespace'] == PACKAGE_NAMESPACE,
         snapshot['active_factions'] == list(FACTION_ORDER),
-        snapshot['deferred_factions'] == ['CABAL'],
-        len(mission_codes) == 108,
+        snapshot['deferred_factions'] == list(DEFERRED_CONTENT_FACTIONS),
+        len(mission_codes) == load_static_config('mission_catalogue.json')['mission_count'],
         len(mission_codes) == len(set(mission_codes)),
         len(scenarios) == len(set(scenarios)),
-        len(snapshot['local_victories']) == 108,
+        len(snapshot['local_victories']) == len(mission_codes),
         ranges_disjoint,
         ids_valid,
         identity_isolated,
         shop_purchase_scouting_valid,
+        cabal_content_excluded,
         not ENABLE_ARCHIPELAGO or snapshot['review_complete'],
     ))
     return {
@@ -129,6 +146,8 @@ def archipelago_foundation_report(*, verify_live_sources=None):
         'ids_valid': ids_valid,
         'identity_isolated': identity_isolated,
         'shop_purchase_scouting_valid': shop_purchase_scouting_valid,
+        'cabal_enabled': ENABLE_CABAL,
+        'disabled_content_excluded': cabal_content_excluded,
         'missing_files': missing_files,
         'live_source_validation': bool(verify_live_sources),
         'snapshot_checksum_valid': snapshot_checksum_valid,

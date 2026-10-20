@@ -16,6 +16,7 @@ from ._dependencies import (
     tk,
     traceback,
 )
+from randomizer.config.game_profile import FACTION_ORDER
 from randomizer.rewards.power_buff_definitions import power_buff_type_ids
 
 
@@ -83,14 +84,13 @@ class PowerBuffSettingsController:
                 'buff_types': power_buff_type_ids(power_id),
                 'reward': reward,
             })
-        faction_rank = {
-            'Allies': 0, 'Soviets': 1, 'Yuri': 2, 'GDI': 3, 'Nod': 4,
-            'Neutral': 5, 'Other': 6,
-        }
+        faction_rank = {faction: index for index, faction in enumerate(
+            (*FACTION_ORDER, 'Neutral', 'Other')
+        )}
         return sorted(
             entries,
             key=lambda entry: (
-                faction_rank.get(entry['faction'], 4),
+                faction_rank.get(entry['faction'], len(faction_rank)),
                 entry['label'].casefold(),
             ),
         )

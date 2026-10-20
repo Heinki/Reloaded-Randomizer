@@ -311,11 +311,12 @@ def build_snapshot(existing=None):
             'standalone_reward_items': len(items),
             'victory_missions_verified': len(projection['missions']),
             'objective_runtime_enabled': True,
-            'cabal_deferred': True,
+            'cabal_deferred': 'CABAL' in DEFERRED_CONTENT_FACTIONS,
         },
         # AP uses the same full five-faction catalogue as standalone.
         'review_complete': bool(
-            items and len(projection['missions']) == 108
+            items and len(projection['missions']) >= 108
+            and {m['faction'] for m in projection['missions']} == set(CONTENT_FACTIONS)
         ),
     }
 

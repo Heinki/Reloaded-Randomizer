@@ -132,8 +132,8 @@ def main():
         require_value('TiberiumShowerSpecial', 'ParaDrop.Num', '2')
         require_value('DropPodSpecial', 'DropPod.Minimum', '8')
         require_value('DropPodSpecial', 'DropPod.Maximum', '10')
-        require_value('IronCurtainSpecial', 'Protect.Duration', '690')
-        require_value('ForceShieldSpecial', 'Protect.Duration', '518')
+        require_value('IronCurtainSpecial', 'Protect.Duration', '862')
+        require_value('ForceShieldSpecial', 'Protect.Duration', '656')
         require_value('IronCurtainSpecial', 'SW.Range', '4,4')
         require_value('ChronoSphereSpecial', 'SW.Range', '4,4')
         require_value('ForceShieldSpecial', 'SW.Range', '4.5')
@@ -165,8 +165,13 @@ def main():
         maximum_debris = int(value(chemical_payload_values, 'MaxDebris') or 0)
         if not 0 < minimum_debris <= maximum_debris <= 12:
             failures.append('Chemical Bomb crystal debris exceeds its effect budget.')
-        if value(chemical_payload_values, 'DeathWeapon') != 'SuperTiberiumExplosion':
-            failures.append('Chemical Bomb lost its native chemical explosion.')
+        chemical_weapon = sections.get(value(chemical_payload_values, 'DeathWeapon'), {})
+        chemical_warhead_id = value(chemical_weapon, 'Warhead')
+        chemical_warhead = sections.get(chemical_warhead_id, {})
+        if not chemical_weapon or chemical_warhead_id == 'MisilQuimicoWH':
+            failures.append('Chemical Bomb area buff did not isolate its death weapon chain.')
+        elif value(chemical_warhead, 'CellSpread') != '10.5':
+            failures.append('Chemical Bomb blast radius did not increase.')
         _power_ids, installed_sections = installed_rules_registry()
         for field in ('MinDebris', 'MaxDebris', 'DebrisAnims', 'DeathWeapon'):
             native = section_value_map_preserve(lines, 'TIBBOMB')
@@ -176,6 +181,12 @@ def main():
             failures.append('Chemical Bomb generated sidebar PCX is missing.')
 
         hunter = sections.get(clones['HuntSeekSpecial'], {})
+        hunter_site = value(hunter, 'HunterSeeker.Buildings')
+        if not any(
+            str(placement).split(',')[1:2] == [hunter_site]
+            for placement in sections.get('Structures', {}).values()
+        ):
+            failures.append('Hunter Seeker private launch site was not placed.')
         hunter_payload = value(hunter, 'HunterSeeker.Type')
         if hunter_payload == 'GHUNTER' or not hunter_payload:
             failures.append('Hunter Seeker payload was not isolated to its clone.')

@@ -11,12 +11,15 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from randomizer.config.game_profile import CONTENT_FACTIONS, SUPPORTED_GAME_VERSION
+from randomizer.config.game_profile import (
+    CONTENT_FACTIONS, DEFERRED_CONTENT_FACTIONS, ENABLE_CABAL, SUPPORTED_GAME_VERSION,
+)
 from randomizer.content.ammo import has_upgradeable_ammo
 from randomizer.content.inventory import (
     FACTION_HOUSES,
     read_rules_sections,
     rules_fingerprint,
+    is_deferred_cabal_content,
 )
 
 
@@ -216,11 +219,7 @@ def _power_providers(sections):
         for key in ('SuperWeapon', 'SuperWeapon2', 'SuperWeapons'):
             power_ids.extend(_split(values.get(key)))
         for power_id in dict.fromkeys(power_ids):
-            building_text = f'{building_id} {values.get("Name", "")}'.lower()
-            if (
-                building_id.upper().startswith(('ROBOT', 'CABAL'))
-                or "cabal's" in building_text
-            ):
+            if is_deferred_cabal_content(building_id, values):
                 deferred_power_ids.add(power_id.upper())
                 continue
             if building_id.upper() == 'TEST_BUILDING':
@@ -260,7 +259,7 @@ def _power_buff_candidates(values):
 
 def _deferred_power(power_id, values, providers, deferred_power_ids):
     text = f'{power_id} {values.get("Name", "")}'.lower()
-    return (
+    return not ENABLE_CABAL and (
         any(token in text for token in ('cabal', 'robot'))
         or power_id.upper() in deferred_power_ids
     ) and not any(provider['eligible_factions'] for provider in providers)
@@ -401,7 +400,7 @@ def build_document():
             'rules_source': _source_name(source),
             'rules_fingerprint_sha256': rules_fingerprint(sections),
             'active_factions': list(CONTENT_FACTIONS),
-            'deferred_factions': ['CABAL'],
+            'deferred_factions': list(DEFERRED_CONTENT_FACTIONS),
             'buff_targets': targets,
             'powers': powers,
             'deferred_power_count': deferred_power_count,

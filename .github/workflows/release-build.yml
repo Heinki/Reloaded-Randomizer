@@ -33,6 +33,9 @@ jobs:
       - name: Compile source
         run: python -m compileall -q .
 
+      - name: Audit Archipelago catalogue
+        run: python -m Archipelago.audit
+
       - name: Build complete Archipelago release
         shell: powershell
         run: .\build_archipelago_release.ps1 -OutputDirectory 'release'

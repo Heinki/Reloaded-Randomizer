@@ -7,6 +7,7 @@ Private TechnoTypes and single-member hunt teams preserve authored identities.
 from hashlib import sha256
 
 from randomizer.config.static import load_static_config
+from randomizer.content.inventory import deferred_cabal_type_ids
 from randomizer.rewards.enemy_scaling import enemy_effect_values
 
 from .buff_values import _register_map_type
@@ -46,7 +47,7 @@ def enemy_powerhouse_rules(
     local = {name.lower(): values for name, values in sections.items()}
     installed = {name.lower(): values for name, values in installed_sections.items()}
     records = map_house_records(lines, sections=sections)
-    excluded = {str(unit).upper() for unit in excluded_unit_ids}
+    excluded = {str(unit).upper() for unit in excluded_unit_ids} | deferred_cabal_type_ids(installed_sections)
     difficulty = max(0, min(2, int(difficulty)))
     occupied = set(local) | set(installed)
     occupied.update(str(key).lower() for key in local.get('aitriggertypes', {}))

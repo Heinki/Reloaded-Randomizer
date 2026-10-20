@@ -2,9 +2,9 @@
 
 from functools import lru_cache
 
-from randomizer.config.game_profile import GENERATED_TYPE_PREFIX
+from randomizer.config.game_profile import GENERATED_TYPE_PREFIX, CONTENT_FACTIONS
 from randomizer.config.static import load_static_config
-from randomizer.content.inventory import read_rules_sections
+from randomizer.content.inventory import read_rules_sections, deferred_cabal_type_ids
 from randomizer.content.transforms import linked_transform_families
 
 
@@ -35,21 +35,23 @@ _CLONE_TEMPLATE_OVERRIDES = {
 
 def _approved_source_ids():
     result = set()
+    sections, _source = read_rules_sections()
+    deferred = deferred_cabal_type_ids(sections)
     for records in _CONTENT['units'].values():
         for record in records:
-            if str(record['id']).upper().endswith('_AI'):
+            if str(record['id']).upper().endswith('_AI') or record['id'].upper() in deferred:
                 continue
             if any(
-                review['status'] == 'approved'
-                for review in record['reviews'].values()
+                faction in CONTENT_FACTIONS and review['status'] == 'approved'
+                for faction, review in record['reviews'].items()
             ):
                 result.add(record['id'].upper())
     for record in _CONTENT['defenses']:
-        if str(record['id']).upper().endswith('_AI'):
+        if str(record['id']).upper().endswith('_AI') or record['id'].upper() in deferred:
             continue
         if any(
-            review['status'] == 'approved'
-            for review in record['reviews'].values()
+            faction in CONTENT_FACTIONS and review['status'] == 'approved'
+            for faction, review in record['reviews'].items()
         ):
             result.add(record['id'].upper())
     return frozenset(result)

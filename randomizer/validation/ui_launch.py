@@ -16,6 +16,7 @@ from pathlib import Path
 
 from randomizer.application.app import LauncherApp
 from randomizer.config.player import CONFIG_PATH
+from randomizer.missions.metadata import MISSION_METADATA
 from randomizer.core.paths import (
     DEBUG_LOG,
     GAME_EXE,
@@ -200,8 +201,8 @@ def run_ui_launch_smoke(mission_code='ALL01_RA2', seed='RLR-UI-SMOKE', timeout=1
                 if not getattr(app, 'initial_load_complete', False):
                     app.after(50, poll)
                     return
-                if len(app.missions) != 108:
-                    fail(f'UI loaded {len(app.missions)} missions instead of 108.')
+                if len(app.missions) != len(MISSION_METADATA):
+                    fail(f'UI loaded {len(app.missions)} missions instead of {len(MISSION_METADATA)}.')
                     return
                 mission = next(
                     (item for item in app.missions if item['code'].upper() == mission_code.upper()),

@@ -36,7 +36,15 @@ AI_INI_NAME = 'aimd.ini'
 ARCHIVE_GLOB = 'expandmd*.mix'
 MAP_DIRECTORY_PARTS = ('Maps', 'Missions')
 
-CAMPAIGN_FACTIONS = ('Allies', 'Soviets', 'Yuri', 'GDI', 'Nod')
+# Release feature flag. Enable only with reviewed CABAL production, starters,
+# mission metadata, UI, rewards, and prices from the supported game release.
+# This is a build-time setting: rebuild both launcher and APWorld after changing.
+ENABLE_CABAL = False
+
+CAMPAIGN_FACTIONS = ('Allies', 'Soviets', 'Yuri', 'GDI', 'Nod') + (
+    ('CABAL',) if ENABLE_CABAL else ()
+)
+ACTIVE_FAMILIES = tuple(faction.lower() for faction in CAMPAIGN_FACTIONS)
 CAMPAIGN_ORDER = (
     'Red Alert 2',
     "Yuri's Revenge",
@@ -61,13 +69,15 @@ CAMPAIGN_FILTER_SPECS = (
     ('GDI - Firestorm', 'GDI', 'Firestorm'),
     ('Nod - Firestorm', 'Nod', 'Firestorm'),
     ('Yuri - Resurgence', 'Yuri', 'Resurgence'),
-)
+) + ((('CABAL', 'CABAL', None),) if ENABLE_CABAL else ())
+# CABAL selects its authored campaigns by faction. Their unreleased names must
+# come from reviewed mission metadata, rather than a guessed campaign name.
 CAMPAIGN_FILTER_BY_LABEL = {
     label: {'faction': faction, 'campaign': campaign}
     for label, faction, campaign in CAMPAIGN_FILTER_SPECS
 }
 CONTENT_FACTIONS = CAMPAIGN_FACTIONS
-DEFERRED_CONTENT_FACTIONS = ('CABAL',)
+DEFERRED_CONTENT_FACTIONS = () if ENABLE_CABAL else ('CABAL',)
 FACTION_ORDER = CONTENT_FACTIONS
 ACTIVE_SIDE_SECTIONS = (
     'GDI',
@@ -75,13 +85,14 @@ ACTIVE_SIDE_SECTIONS = (
     'ThirdSide',
     'TSGDISide',
     'TSNodSide',
-)
+) + (('RobotSide',) if ENABLE_CABAL else ())
 EVA_SIDE_SECTION_BY_FACTION = {
     'Allies': 'GDI',
     'Soviets': 'Nod',
     'Yuri': 'ThirdSide',
     'GDI': 'TSGDISide',
     'Nod': 'TSNodSide',
+    **({'CABAL': 'RobotSide'} if ENABLE_CABAL else {}),
 }
 EVA_TAG_FALLBACK_BY_FACTION = {
     'Yuri': 'Yuri',

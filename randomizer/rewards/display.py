@@ -1,11 +1,14 @@
 """Reward canonicalization, stacking, and human-readable display."""
 
 import re
+
+from randomizer.config.game_profile import DEFERRED_CONTENT_FACTIONS
 from math import ceil
 
 from .reloaded_definitions import (
     BUFF_EFFECTS,
     BUFF_TARGETS,
+    DEFERRED_TECH_IDS,
     NONTRAINABLE_UNIT_IDS,
     RETIRED_REWARD_BY_NAME,
     REWARD_ALIASES,
@@ -40,6 +43,17 @@ from randomizer.rewards.enemy_scaling import (
 def canonical_reward(reward):
     if not isinstance(reward, dict):
         return {}
+    targets = {
+        str(reward.get('unit') or '').upper(),
+        str(reward.get('superweapon') or '').upper(),
+        *(str(key).upper() for key in (reward.get('rules') or {})),
+    }
+    if targets.intersection(DEFERRED_TECH_IDS) or set(DEFERRED_CONTENT_FACTIONS).intersection(reward.get('factions') or ()):
+        return {
+            'name': f'{reward.get("name", "Reward")} (retired: CABAL unavailable)',
+            'description': 'Disabled until the CABAL faction is officially available.',
+            'rules': {}, 'factions': [], 'kind': 'retired', 'retired_reward': True,
+        }
     if reward.get('_runtime_canonical') and not reward.get('enemy_reward'):
         return reward
 

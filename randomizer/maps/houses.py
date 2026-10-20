@@ -4,6 +4,7 @@ Functions here only interpret map ownership. Buff planning and clone mutation
 belong in their respective modules.
 """
 
+from randomizer.config.game_profile import ENABLE_CABAL
 from randomizer.core.collections import comma_items, unique_in_order
 from randomizer.maps.ini import all_section_value_maps, section_value_map
 
@@ -199,10 +200,9 @@ def country_family(record):
         record.get('parent_country') or '',
     ]).lower()
 
-    # CABAL is installed content, but deliberately outside the active
-    # randomizer scope until separate permission is granted.
-    if any(token in country_text for token in ('robotcountry', 'cabal')):
-        return ''
+    # Never let a disabled CABAL country fall through to another faction.
+    if any(token in text for token in ('robotcountry', 'robotside', 'cabal')):
+        return 'cabal' if ENABLE_CABAL else ''
     if any(token in country_text for token in (
         'yuricountry', 'yuri'
     )):

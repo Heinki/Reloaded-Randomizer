@@ -1,5 +1,7 @@
 """Tier-one starter selection and mission-local access rules."""
 
+from randomizer.rewards.catalogue import DEFERRED_TECH_IDS
+
 from .access import (
     CHAOS_PRIMARY_PRODUCTION,
     PRODUCTION_LOOKUP,
@@ -51,7 +53,7 @@ def normalize_tier_one_unit_ids(unit_ids):
         TIER_ONE_ROLE_UNITS['anti_air_vehicle']['gdi'][0]
         if str(unit_id).upper() == 'SMECH' else str(unit_id).upper()
         for unit_id in unit_ids or ()
-        if unit_id
+        if unit_id and str(unit_id).upper() not in DEFERRED_TECH_IDS
     ))
 
 def _tier_one_variant_entries(role, family=None):
@@ -89,7 +91,7 @@ def select_tier_one_unit_variants(
         str(unit_id or '').upper()
         for unit_id in excluded_unit_ids
         if unit_id
-    }
+    } | DEFERRED_TECH_IDS
     selected = []
     for value in starting_unit_ids or ():
         unit_id = str(value or '').upper()
@@ -128,7 +130,7 @@ def select_tier_one_defense_variants(
         str(unit_id or '').upper()
         for unit_id in excluded_unit_ids
         if unit_id
-    }
+    } | DEFERRED_TECH_IDS
     selected = []
     for value in starting_defense_ids or ():
         unit_id = str(value or '').upper()
@@ -165,7 +167,7 @@ def expanded_tier_one_unit_ids(starting_unit_ids):
             for family in STANDARD_TIER_ONE_FAMILIES
             for entry in _tier_one_variant_entries(role, family)
         )
-    return expanded
+    return expanded - DEFERRED_TECH_IDS
 
 def tier_one_defense_ids(families):
     """Return the abstract starter-defense marker for eligible seed pools."""
@@ -196,7 +198,7 @@ def expanded_tier_one_defense_ids(
             expanded.update(available_ids)
         elif unit_id in available_ids:
             expanded.add(unit_id)
-    return expanded
+    return expanded - DEFERRED_TECH_IDS
 
 def _random_tier_one_variant(rng, role, family):
     variants = _tier_one_variant_entries(role, family)
@@ -358,7 +360,7 @@ def starting_tier_one_defense_rules(
         str(unit_id or '').upper()
         for unit_id in (starting_defense_ids or ())
         if unit_id
-    }
+    } - DEFERRED_TECH_IDS
     if not selected_ids:
         return {}
     excluded_ids = {
@@ -510,7 +512,7 @@ def starting_tier_one_rules(
         str(unit_id or '').upper()
         for unit_id in (starting_unit_ids or ())
         if unit_id
-    }
+    } - DEFERRED_TECH_IDS
     if not selected_ids:
         return {}
     excluded_ids = {

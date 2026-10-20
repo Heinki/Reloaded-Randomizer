@@ -1,5 +1,6 @@
 """Validated access to Reloaded production topology review metadata."""
 
+from randomizer.config.game_profile import ACTIVE_FAMILIES, CONTENT_FACTIONS, DEFERRED_CONTENT_FACTIONS
 from randomizer.config.static import load_static_config
 from randomizer.content.inventory import read_rules_sections, rules_fingerprint
 from randomizer.maps.houses import country_family, map_house_records, player_house_from_map
@@ -40,8 +41,8 @@ def installed_production_topology_report():
         and source_validation['valid']
         and not source_validation['failures']
         and PRODUCTION_TOPOLOGY['active_families']
-        == ['allies', 'soviets', 'yuri', 'gdi', 'nod']
-        and PRODUCTION_TOPOLOGY['deferred_factions'] == ['CABAL']
+        == list(ACTIVE_FAMILIES)
+        and PRODUCTION_TOPOLOGY['deferred_factions'] == list(DEFERRED_CONTENT_FACTIONS)
         and not mission_family_failures
     )
     return {

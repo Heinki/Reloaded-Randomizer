@@ -3,6 +3,8 @@
 from fractions import Fraction
 from hashlib import sha256
 
+from randomizer.config.game_profile import FACTION_ORDER
+
 from .config import SHOP_CONFIG
 from .model import ShopModeConfig
 
@@ -74,7 +76,7 @@ def modifier_difficulty(modifier_ids):
     return len(tuple(dict.fromkeys(str(item) for item in modifier_ids or ())))
 
 
-SHOP_FACTION_ROTATION = ('Allies', 'Soviets', 'Yuri', 'GDI', 'Nod')
+SHOP_FACTION_ROTATION = FACTION_ORDER
 
 PRODUCTION_RESTRICTIONS = ('aircraft', 'vehicles', 'infantry', 'naval')
 PRODUCTION_RESTRICTION_LABELS = {

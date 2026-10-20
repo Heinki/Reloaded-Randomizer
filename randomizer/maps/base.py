@@ -664,6 +664,7 @@ def cloned_superweapon_plan(
             )
             clone_values['SW.ForbiddenHouses'] = 'none'
 
+        dependency_clones = {}
         techno_clones = dict(reward.get('superweapon_techno_clones') or {})
         mission_techno_clones = superweapon_techno_clone_overrides.get(
             source_type
@@ -748,6 +749,7 @@ def cloned_superweapon_plan(
                     # map-local clone must explicitly retain source art.
                     techno_values['Image'] = template_source
                 section_rules[techno_clone] = techno_values
+                dependency_clones[str(techno_source).casefold()] = techno_clone
 
                 map_entries = section_value_map_preserve(lines, list_section)
                 installed_entries = installed_sections.get(list_section, {})
@@ -836,6 +838,7 @@ def cloned_superweapon_plan(
                 auxiliary_values = dict(auxiliary_source_values)
                 auxiliary_values.update(clone_spec.get('values') or {})
                 section_rules[auxiliary_clone] = auxiliary_values
+                dependency_clones[str(auxiliary_source).casefold()] = auxiliary_clone
                 list_section = str(clone_spec.get('list') or '').strip()
                 if list_section:
                     # A named helper section is not necessarily a registered
@@ -880,6 +883,21 @@ def cloned_superweapon_plan(
                         )[type_key] = auxiliary_clone
                 for reference_key in clone_spec.get('reference_keys') or ():
                     clone_values[str(reference_key)] = auxiliary_clone
+
+            # Resolve dependency links only after every private identity has
+            # been allocated, including collision suffixes. Native payloads,
+            # weapons and warheads retain their original references.
+            for source, clone_spec in auxiliary_clones.items():
+                if not isinstance(clone_spec, dict):
+                    continue
+                for parent, fields in clone_spec.get('reference_sections', {}).items():
+                    parent_clone = dependency_clones.get(str(parent).casefold())
+                    target_clone = dependency_clones.get(str(source).casefold())
+                    if not parent_clone or not target_clone:
+                        missing.append(f'{parent}->{source}')
+                        continue
+                    for field in fields:
+                        section_rules[parent_clone][field] = target_clone
 
         # Narrow map-local additions may safely extend a shared registry or
         # warhead when every new key targets a private generated type. Existing

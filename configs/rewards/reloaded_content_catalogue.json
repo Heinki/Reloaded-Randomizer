@@ -622,26 +622,23 @@
               "Soviets": {
                 "status": "approved",
                 "flags": [
-                  "broad_owner_list",
-                  "civilian_or_natural"
+                  "broad_owner_list"
                 ],
-                "notes": "Approved from installed C&C Reloaded 2.7.0 rules and live sidebar evidence: DOG is the normal Soviet Barracks Attack Dog. Natural=yes describes dog behavior and does not make this player-buildable combat unit civilian content."
+                "notes": "Approved from installed C&C Reloaded 2.7.0 production-path evidence: Prerequisite=SOVHAND; resolved active faction scope is Soviets. No unresolved review hazard remains beyond broad Owner/provider ownership."
               },
               "Yuri": {
                 "status": "excluded",
                 "flags": [
-                  "broad_owner_list",
-                  "civilian_or_natural"
+                  "broad_owner_list"
                 ],
-                "notes": ""
+                "notes": "Excluded from Yuri: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=SOVHAND) resolves to Soviets, so this faction cannot build or provide the entry through that path."
               },
               "Nod": {
                 "status": "excluded",
                 "flags": [
-                  "broad_owner_list",
-                  "civilian_or_natural"
+                  "broad_owner_list"
                 ],
-                "notes": ""
+                "notes": "Excluded from Nod: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=SOVHAND) resolves to Soviets, so this faction cannot build or provide the entry through that path."
               }
             },
             "category": "infantry",
@@ -1229,18 +1226,16 @@
               "Allies": {
                 "status": "approved",
                 "flags": [
-                  "broad_owner_list",
-                  "civilian_or_natural"
+                  "broad_owner_list"
                 ],
-                "notes": "Approved from installed C&C Reloaded 2.7.0 rules: ADOG is the normal Allied Barracks Attack Dog. Natural=yes describes dog behavior and does not make this player-buildable combat unit civilian content."
+                "notes": "Approved from installed C&C Reloaded 2.7.0 production-path evidence: Prerequisite=GAPILE; resolved active faction scope is Allies. No unresolved review hazard remains beyond broad Owner/provider ownership."
               },
               "GDI": {
                 "status": "excluded",
                 "flags": [
-                  "broad_owner_list",
-                  "civilian_or_natural"
+                  "broad_owner_list"
                 ],
-                "notes": ""
+                "notes": "Excluded from GDI: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=GAPILE) resolves to Allies, so this faction cannot build or provide the entry through that path."
               }
             },
             "category": "infantry",
@@ -2420,42 +2415,37 @@
               "Allies": {
                 "status": "excluded",
                 "flags": [
-                  "broad_owner_list",
-                  "civilian_or_natural"
+                  "broad_owner_list"
                 ],
-                "notes": ""
+                "notes": "Excluded from Allies: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=SOVHAND,SOVTECH) resolves to Soviets, so this faction cannot build or provide the entry through that path."
               },
               "Soviets": {
-                "status": "excluded",
+                "status": "approved",
                 "flags": [
-                  "broad_owner_list",
-                  "civilian_or_natural"
+                  "broad_owner_list"
                 ],
-                "notes": ""
+                "notes": "Approved from installed C&C Reloaded 2.7.0 production-path evidence: Prerequisite=SOVHAND,SOVTECH; resolved active faction scope is Soviets. No unresolved review hazard remains beyond broad Owner/provider ownership."
               },
               "Yuri": {
                 "status": "excluded",
                 "flags": [
-                  "broad_owner_list",
-                  "civilian_or_natural"
+                  "broad_owner_list"
                 ],
-                "notes": ""
+                "notes": "Excluded from Yuri: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=SOVHAND,SOVTECH) resolves to Soviets, so this faction cannot build or provide the entry through that path."
               },
               "GDI": {
                 "status": "excluded",
                 "flags": [
-                  "broad_owner_list",
-                  "civilian_or_natural"
+                  "broad_owner_list"
                 ],
-                "notes": ""
+                "notes": "Excluded from GDI: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=SOVHAND,SOVTECH) resolves to Soviets, so this faction cannot build or provide the entry through that path."
               },
               "Nod": {
                 "status": "excluded",
                 "flags": [
-                  "broad_owner_list",
-                  "civilian_or_natural"
+                  "broad_owner_list"
                 ],
-                "notes": ""
+                "notes": "Excluded from Nod: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=SOVHAND,SOVTECH) resolves to Soviets, so this faction cannot build or provide the entry through that path."
               }
             },
             "category": "infantry",
@@ -2463,7 +2453,8 @@
             "harvester": false,
             "engineer": false,
             "trainable": true,
-            "deploys_into": ""
+            "deploys_into": "",
+            "reward_label": "Soviet Chitzkoi"
           },
           {
             "id": "YURIE",
@@ -3615,32 +3606,28 @@
               "Allies": {
                 "status": "approved",
                 "flags": [
-                  "broad_owner_list",
-                  "civilian_or_natural"
+                  "broad_owner_list"
                 ],
                 "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
               },
               "Yuri": {
                 "status": "approved",
                 "flags": [
-                  "broad_owner_list",
-                  "civilian_or_natural"
+                  "broad_owner_list"
                 ],
                 "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
               },
               "GDI": {
                 "status": "approved",
                 "flags": [
-                  "broad_owner_list",
-                  "civilian_or_natural"
+                  "broad_owner_list"
                 ],
                 "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
               },
               "Nod": {
                 "status": "approved",
                 "flags": [
-                  "broad_owner_list",
-                  "civilian_or_natural"
+                  "broad_owner_list"
                 ],
                 "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
               }
@@ -10741,43 +10728,464 @@
             "deploys_into": ""
           },
           {
-            "id": "ROBOTSTNK",
-            "name": "Stealth MLRS",
-            "ui_name": "Name:ROBOTSTNK",
-            "image": "ROBOTSTNK",
-            "tech_level": -1,
-            "cost": 1400,
+            "id": "ZEP",
+            "name": "Kirov Airship",
+            "ui_name": "Name:ZEP",
+            "image": "ZEP",
+            "tech_level": 10,
+            "cost": 2000,
             "build_limit": null,
             "owner": [
-              "RobotCountry",
-              "RobotCountry2",
-              "AlliesCountry",
-              "AlliesCountry2",
               "SovietCountry",
               "SovietCountry2",
-              "YuriCountry",
-              "YuriCountry2",
-              "GDICountry",
-              "GDICountry2",
-              "NodCountry",
-              "NodCountry2",
               "Russians",
               "Confederation",
               "Africans",
-              "Arabs",
+              "Arabs"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "SOVWEAP",
+              "NATECH"
+            ],
+            "built_at": [
+              "NAWEAP",
+              "GAWEAP",
+              "YAWEAP",
+              "NAWEAP2",
+              "NAWEAP3",
+              "GAWEAP2",
+              "GAWEAP3",
+              "YAWEAP2",
+              "YAWEAP3",
+              "TSNAMECHFACT",
+              "ROBOTWEAP",
+              "NAFIST"
+            ],
+            "eligible_factions": [
+              "Soviets"
+            ],
+            "primary": "BlimpBomb",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "ZEP",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Soviets": {
+                "status": "approved",
+                "flags": [],
+                "notes": "Approved from installed C&C Reloaded 2.7.0 production-path evidence: Prerequisite=SOVWEAP,NATECH; BuiltAt=NAWEAP,GAWEAP,YAWEAP,NAWEAP2,NAWEAP3,GAWEAP2,GAWEAP3,YAWEAP2,YAWEAP3,TSNAMECHFACT,ROBOTWEAP,NAFIST; resolved active faction scope is Soviets. No unresolved review hazard remains beyond broad Owner/provider ownership."
+              }
+            },
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "SHAD",
+            "name": "Nighthawk Transport",
+            "ui_name": "Name:SHAD",
+            "image": "SHAD",
+            "tech_level": 7,
+            "cost": 1000,
+            "build_limit": null,
+            "owner": [
+              "AlliesCountry",
+              "AlliesCountry2",
               "British",
-              "French",
               "Germans",
               "Americans",
+              "French",
               "Alliance"
             ],
             "required_houses": [],
             "forbidden_houses": [],
             "prerequisite": [
-              "FACTORY",
-              "TECH"
+              "ALLWEAP"
             ],
-            "built_at": [],
+            "built_at": [
+              "NAWEAP",
+              "GAWEAP",
+              "YAWEAP",
+              "NAWEAP2",
+              "NAWEAP3",
+              "GAWEAP2",
+              "GAWEAP3",
+              "YAWEAP2",
+              "YAWEAP3",
+              "TSNAMECHFACT",
+              "ROBOTWEAP",
+              "NAFIST"
+            ],
+            "eligible_factions": [
+              "Allies"
+            ],
+            "primary": "BlackHawkCannon",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "SHAD",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Allies": {
+                "status": "approved",
+                "flags": [],
+                "notes": "Approved from installed C&C Reloaded 2.7.0 production-path evidence: Prerequisite=ALLWEAP; BuiltAt=NAWEAP,GAWEAP,YAWEAP,NAWEAP2,NAWEAP3,GAWEAP2,GAWEAP3,YAWEAP2,YAWEAP3,TSNAMECHFACT,ROBOTWEAP,NAFIST; resolved active faction scope is Allies. No unresolved review hazard remains beyond broad Owner/provider ownership."
+              }
+            },
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "HIND",
+            "name": "Hind Transport",
+            "ui_name": "Name:HIND",
+            "image": "HIND",
+            "tech_level": 7,
+            "cost": 1000,
+            "build_limit": null,
+            "owner": [
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Africans",
+              "Arabs",
+              "Confederation"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "SOVWEAP",
+              "RADAR"
+            ],
+            "built_at": [
+              "NAWEAP",
+              "GAWEAP",
+              "YAWEAP",
+              "NAWEAP2",
+              "NAWEAP3",
+              "GAWEAP2",
+              "GAWEAP3",
+              "YAWEAP2",
+              "YAWEAP3",
+              "TSNAMECHFACT",
+              "ROBOTWEAP",
+              "NAFIST"
+            ],
+            "eligible_factions": [
+              "Soviets"
+            ],
+            "primary": "BlackHawkCannon",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "HIND",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Soviets": {
+                "status": "approved",
+                "flags": [],
+                "notes": "Approved from installed C&C Reloaded 2.7.0 production-path evidence: Prerequisite=SOVWEAP,RADAR; BuiltAt=NAWEAP,GAWEAP,YAWEAP,NAWEAP2,NAWEAP3,GAWEAP2,GAWEAP3,YAWEAP2,YAWEAP3,TSNAMECHFACT,ROBOTWEAP,NAFIST; resolved active faction scope is Soviets. No unresolved review hazard remains beyond broad Owner/provider ownership."
+              }
+            },
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "SCHP",
+            "name": "Soviet Siege Chopper",
+            "ui_name": "Name:SiegeChopper",
+            "image": "SCHP",
+            "tech_level": 7,
+            "cost": 1100,
+            "build_limit": null,
+            "owner": [
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Africans",
+              "Arabs",
+              "Confederation"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "SOVWEAP",
+              "NATECH"
+            ],
+            "built_at": [
+              "NAWEAP",
+              "GAWEAP",
+              "YAWEAP",
+              "NAWEAP2",
+              "NAWEAP3",
+              "GAWEAP2",
+              "GAWEAP3",
+              "YAWEAP2",
+              "YAWEAP3",
+              "TSNAMECHFACT",
+              "ROBOTWEAP",
+              "NAFIST"
+            ],
+            "eligible_factions": [
+              "Soviets"
+            ],
+            "primary": "BlackHawkCannon",
+            "secondary": "160mm",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "SCHP",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Soviets": {
+                "status": "approved",
+                "flags": [],
+                "notes": "Approved from installed C&C Reloaded 2.7.0 production-path evidence: Prerequisite=SOVWEAP,NATECH; BuiltAt=NAWEAP,GAWEAP,YAWEAP,NAWEAP2,NAWEAP3,GAWEAP2,GAWEAP3,YAWEAP2,YAWEAP3,TSNAMECHFACT,ROBOTWEAP,NAFIST; resolved active faction scope is Soviets. No unresolved review hazard remains beyond broad Owner/provider ownership."
+              }
+            },
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "DISK",
+            "name": "Floating Disk",
+            "ui_name": "Name:DISK",
+            "image": "DISK",
+            "tech_level": 7,
+            "cost": 1750,
+            "build_limit": null,
+            "owner": [
+              "YuriCountry",
+              "YuriCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "YURWEAP",
+              "YATECH"
+            ],
+            "built_at": [
+              "NAWEAP",
+              "GAWEAP",
+              "YAWEAP",
+              "NAWEAP2",
+              "NAWEAP3",
+              "GAWEAP2",
+              "GAWEAP3",
+              "YAWEAP2",
+              "YAWEAP3",
+              "TSNAMECHFACT",
+              "ROBOTWEAP",
+              "NAFIST"
+            ],
+            "eligible_factions": [
+              "Yuri"
+            ],
+            "primary": "DiskLaser",
+            "secondary": "DiskDrain",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "DISK",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Yuri": {
+                "status": "approved",
+                "flags": [],
+                "notes": "Approved from installed C&C Reloaded 2.7.0 production-path evidence: Prerequisite=YURWEAP,YATECH; BuiltAt=NAWEAP,GAWEAP,YAWEAP,NAWEAP2,NAWEAP3,GAWEAP2,GAWEAP3,YAWEAP2,YAWEAP3,TSNAMECHFACT,ROBOTWEAP,NAFIST; resolved active faction scope is Yuri. No unresolved review hazard remains beyond broad Owner/provider ownership."
+              }
+            },
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "ODISK",
+            "name": "Oppressor Disk",
+            "ui_name": "Name:ODISK",
+            "image": "ODISK",
+            "tech_level": 7,
+            "cost": 1750,
+            "build_limit": null,
+            "owner": [
+              "YuriCountry",
+              "YuriCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "YURWEAP",
+              "YATECHLAB"
+            ],
+            "built_at": [
+              "NAWEAP",
+              "GAWEAP",
+              "YAWEAP",
+              "NAWEAP2",
+              "NAWEAP3",
+              "GAWEAP2",
+              "GAWEAP3",
+              "YAWEAP2",
+              "YAWEAP3",
+              "TSNAMECHFACT",
+              "ROBOTWEAP",
+              "NAFIST"
+            ],
+            "eligible_factions": [
+              "Yuri"
+            ],
+            "primary": "MediumDiskLaser",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "ODISK",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Yuri": {
+                "status": "approved",
+                "flags": [],
+                "notes": "Approved from installed C&C Reloaded 2.7.0 production-path evidence: Prerequisite=YURWEAP,YATECHLAB; BuiltAt=NAWEAP,GAWEAP,YAWEAP,NAWEAP2,NAWEAP3,GAWEAP2,GAWEAP3,YAWEAP2,YAWEAP3,TSNAMECHFACT,ROBOTWEAP,NAFIST; resolved active faction scope is Yuri. No unresolved review hazard remains beyond broad Owner/provider ownership."
+              }
+            },
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "TDSK",
+            "name": "Transport Disk",
+            "ui_name": "Name:TDSK",
+            "image": "TDSK",
+            "tech_level": 7,
+            "cost": 1200,
+            "build_limit": null,
+            "owner": [
+              "YuriCountry",
+              "YuriCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "YURWEAP",
+              "YURTECH"
+            ],
+            "built_at": [
+              "NAWEAP",
+              "GAWEAP",
+              "YAWEAP",
+              "NAWEAP2",
+              "NAWEAP3",
+              "GAWEAP2",
+              "GAWEAP3",
+              "YAWEAP2",
+              "YAWEAP3",
+              "TSNAMECHFACT",
+              "ROBOTWEAP",
+              "NAFIST"
+            ],
+            "eligible_factions": [
+              "Yuri"
+            ],
+            "primary": "",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "TDSK",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Yuri": {
+                "status": "approved",
+                "flags": [],
+                "notes": "Approved from installed C&C Reloaded 2.7.0 production-path evidence: Prerequisite=YURWEAP,YURTECH; BuiltAt=NAWEAP,GAWEAP,YAWEAP,NAWEAP2,NAWEAP3,GAWEAP2,GAWEAP3,YAWEAP2,YAWEAP3,TSNAMECHFACT,ROBOTWEAP,NAFIST; resolved active faction scope is Yuri. No unresolved review hazard remains beyond broad Owner/provider ownership."
+              }
+            },
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": false,
+            "deploys_into": ""
+          },
+          {
+            "id": "MDISK",
+            "name": "Repair Disk",
+            "ui_name": "Name:MDISK",
+            "image": "MDISK",
+            "tech_level": 8,
+            "cost": 1500,
+            "build_limit": null,
+            "owner": [
+              "SovietCountry",
+              "SovietCountry2",
+              "Russians",
+              "Confederation",
+              "Africans",
+              "Arabs",
+              "YuriCountry",
+              "YuriCountry2",
+              "AlliesCountry",
+              "AlliesCountry2",
+              "British",
+              "French",
+              "Germans",
+              "Americans",
+              "Alliance",
+              "GDICountry",
+              "GDICountry2",
+              "NodCountry",
+              "NodCountry2",
+              "RobotCountry",
+              "RobotCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "YURWEAP",
+              "YATECHLAB"
+            ],
+            "built_at": [
+              "NAWEAP",
+              "GAWEAP",
+              "YAWEAP",
+              "NAWEAP2",
+              "NAWEAP3",
+              "GAWEAP2",
+              "GAWEAP3",
+              "YAWEAP2",
+              "YAWEAP3",
+              "TSNAMECHFACT",
+              "ROBOTWEAP",
+              "NAFIST"
+            ],
             "eligible_factions": [
               "Allies",
               "Soviets",
@@ -10785,57 +11193,553 @@
               "GDI",
               "Nod"
             ],
-            "primary": "MLRSDragon",
-            "secondary": "MLRSDragonAA",
+            "primary": "DiskHeal",
+            "secondary": "",
             "cameo": {
               "sidebar_pcx": "",
-              "art_image": "ROBOTSTNK",
+              "art_image": "MDISK",
               "status": "pending_review"
             },
             "reviews": {
               "Allies": {
-                "status": "approved",
+                "status": "excluded",
                 "flags": [
                   "broad_owner_list"
                 ],
-                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+                "notes": "Excluded from Allies: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=YURWEAP,YATECHLAB; BuiltAt=NAWEAP,GAWEAP,YAWEAP,NAWEAP2,NAWEAP3,GAWEAP2,GAWEAP3,YAWEAP2,YAWEAP3,TSNAMECHFACT,ROBOTWEAP,NAFIST) resolves to Yuri, so this faction cannot build or provide the entry through that path."
               },
               "Soviets": {
-                "status": "approved",
+                "status": "excluded",
                 "flags": [
                   "broad_owner_list"
                 ],
-                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+                "notes": "Excluded from Soviets: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=YURWEAP,YATECHLAB; BuiltAt=NAWEAP,GAWEAP,YAWEAP,NAWEAP2,NAWEAP3,GAWEAP2,GAWEAP3,YAWEAP2,YAWEAP3,TSNAMECHFACT,ROBOTWEAP,NAFIST) resolves to Yuri, so this faction cannot build or provide the entry through that path."
               },
               "Yuri": {
                 "status": "approved",
                 "flags": [
                   "broad_owner_list"
                 ],
-                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+                "notes": "Approved from installed C&C Reloaded 2.7.0 production-path evidence: Prerequisite=YURWEAP,YATECHLAB; BuiltAt=NAWEAP,GAWEAP,YAWEAP,NAWEAP2,NAWEAP3,GAWEAP2,GAWEAP3,YAWEAP2,YAWEAP3,TSNAMECHFACT,ROBOTWEAP,NAFIST; resolved active faction scope is Yuri. No unresolved review hazard remains beyond broad Owner/provider ownership."
               },
               "GDI": {
-                "status": "approved",
+                "status": "excluded",
                 "flags": [
                   "broad_owner_list"
                 ],
-                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+                "notes": "Excluded from GDI: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=YURWEAP,YATECHLAB; BuiltAt=NAWEAP,GAWEAP,YAWEAP,NAWEAP2,NAWEAP3,GAWEAP2,GAWEAP3,YAWEAP2,YAWEAP3,TSNAMECHFACT,ROBOTWEAP,NAFIST) resolves to Yuri, so this faction cannot build or provide the entry through that path."
               },
               "Nod": {
-                "status": "approved",
+                "status": "excluded",
                 "flags": [
                   "broad_owner_list"
                 ],
-                "notes": "Approved player technology explicitly listed in installed SecretLab.PossibleBoons and allowed by SecretLab house gates. Hidden native TechLevel is intentional; Randomizer unlocks an isolated production clone."
+                "notes": "Excluded from Nod: installed C&C Reloaded 2.7.0 production-path evidence (Prerequisite=YURWEAP,YATECHLAB; BuiltAt=NAWEAP,GAWEAP,YAWEAP,NAWEAP2,NAWEAP3,GAWEAP2,GAWEAP3,YAWEAP2,YAWEAP3,TSNAMECHFACT,ROBOTWEAP,NAFIST) resolves to Yuri, so this faction cannot build or provide the entry through that path."
               }
             },
-            "secret_lab": true,
-            "unlock_tech_level": 9,
             "category": "vehicles",
             "naval": false,
             "harvester": false,
             "engineer": false,
             "trainable": false,
+            "deploys_into": "",
+            "reward_label": "Yuri Repair Disk"
+          },
+          {
+            "id": "REDEEMER",
+            "name": "Redeemer",
+            "ui_name": "Name:REDEEMER",
+            "image": "REDEEMER",
+            "tech_level": 8,
+            "cost": 3000,
+            "build_limit": 1,
+            "owner": [
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "TSNAMECHFACT",
+              "TSNATECHLAB",
+              "TSNACNST"
+            ],
+            "built_at": [
+              "TSNAMECHFACT",
+              "ROBOTWEAP"
+            ],
+            "eligible_factions": [
+              "Nod"
+            ],
+            "primary": "RedeemerLaserFire",
+            "secondary": "RedeemerMammothTusk",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "REDEEMER",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Nod": {
+                "status": "approved",
+                "flags": [],
+                "notes": "Approved from installed C&C Reloaded 2.7.0 production-path evidence: Prerequisite=TSNAMECHFACT,TSNATECHLAB,TSNACNST; BuiltAt=TSNAMECHFACT,ROBOTWEAP; resolved active faction scope is Nod. No unresolved review hazard remains beyond broad Owner/provider ownership."
+              }
+            },
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "VENOM",
+            "name": "Nod Venom",
+            "ui_name": "Name:VENOM",
+            "image": "VENOM",
+            "tech_level": 7,
+            "cost": 1300,
+            "build_limit": null,
+            "owner": [
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "TSNAMECHFACT",
+              "TSNATECHLAB"
+            ],
+            "built_at": [
+              "TSNAMECHFACT",
+              "NAWEAP",
+              "GAWEAP",
+              "YAWEAP",
+              "NAWEAP2",
+              "NAWEAP3",
+              "GAWEAP2",
+              "GAWEAP3",
+              "YAWEAP2",
+              "YAWEAP3",
+              "ROBOTWEAP",
+              "NAFIST"
+            ],
+            "eligible_factions": [
+              "Nod"
+            ],
+            "primary": "VenomLaserFire",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "VENOM",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Nod": {
+                "status": "approved",
+                "flags": [],
+                "notes": "Approved from installed C&C Reloaded 2.7.0 production-path evidence: Prerequisite=TSNAMECHFACT,TSNATECHLAB; BuiltAt=TSNAMECHFACT,NAWEAP,GAWEAP,YAWEAP,NAWEAP2,NAWEAP3,GAWEAP2,GAWEAP3,YAWEAP2,YAWEAP3,ROBOTWEAP,NAFIST; resolved active faction scope is Nod. No unresolved review hazard remains beyond broad Owner/provider ownership."
+              }
+            },
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "AVATAR",
+            "name": "Avatar",
+            "ui_name": "Name:AVATAR",
+            "image": "AVATAR",
+            "tech_level": 7,
+            "cost": 1750,
+            "build_limit": null,
+            "owner": [
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "TSNAMECHFACT",
+              "TSNATECHLAB"
+            ],
+            "built_at": [
+              "TSNAMECHFACT",
+              "ROBOTWEAP"
+            ],
+            "eligible_factions": [
+              "Nod"
+            ],
+            "primary": "AvatarHeavyLaser",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "AVATAR",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Nod": {
+                "status": "approved",
+                "flags": [],
+                "notes": "Approved from installed C&C Reloaded 2.7.0 production-path evidence: Prerequisite=TSNAMECHFACT,TSNATECHLAB; BuiltAt=TSNAMECHFACT,ROBOTWEAP; resolved active faction scope is Nod. No unresolved review hazard remains beyond broad Owner/provider ownership."
+              }
+            },
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "AVATAR2",
+            "name": "Avatar",
+            "ui_name": "Name:AVATAR2",
+            "image": "AVATAR2",
+            "tech_level": 7,
+            "cost": 1750,
+            "build_limit": null,
+            "owner": [
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "TSNAMECHFACT",
+              "TSNATECHLAB",
+              "LIMBOUPGRADE_07"
+            ],
+            "built_at": [
+              "TSNAMECHFACT",
+              "ROBOTWEAP"
+            ],
+            "eligible_factions": [
+              "Nod"
+            ],
+            "primary": "Avatar2HeavyLaser",
+            "secondary": "Avatar2LightLaser",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "AVATAR2",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Nod": {
+                "status": "pending_review",
+                "flags": [
+                  "internal_upgrade_prerequisite"
+                ],
+                "notes": "Automatic approval withheld because source-derived review hazard flags require an explicit Reloaded gameplay decision."
+              }
+            },
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "AVATAR3",
+            "name": "Avatar",
+            "ui_name": "Name:AVATAR3",
+            "image": "AVATAR3",
+            "tech_level": 7,
+            "cost": 1750,
+            "build_limit": null,
+            "owner": [
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "TSNAMECHFACT",
+              "TSNATECHLAB",
+              "LIMBOUPGRADE_08"
+            ],
+            "built_at": [
+              "TSNAMECHFACT",
+              "ROBOTWEAP"
+            ],
+            "eligible_factions": [
+              "Nod"
+            ],
+            "primary": "AvatarHeavyLaser",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "AVATAR3",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Nod": {
+                "status": "pending_review",
+                "flags": [
+                  "internal_upgrade_prerequisite"
+                ],
+                "notes": "Automatic approval withheld because source-derived review hazard flags require an explicit Reloaded gameplay decision."
+              }
+            },
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "AVATAR4",
+            "name": "Avatar",
+            "ui_name": "Name:AVATAR4",
+            "image": "AVATAR4",
+            "tech_level": 7,
+            "cost": 1750,
+            "build_limit": null,
+            "owner": [
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "TSNAMECHFACT",
+              "TSNATECHLAB",
+              "LIMBOUPGRADE_07",
+              "LIMBOUPGRADE_08"
+            ],
+            "built_at": [
+              "TSNAMECHFACT",
+              "ROBOTWEAP"
+            ],
+            "eligible_factions": [
+              "Nod"
+            ],
+            "primary": "Avatar2HeavyLaser",
+            "secondary": "Avatar2LightLaser",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "AVATAR4",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Nod": {
+                "status": "pending_review",
+                "flags": [
+                  "internal_upgrade_prerequisite"
+                ],
+                "notes": "Automatic approval withheld because source-derived review hazard flags require an explicit Reloaded gameplay decision."
+              }
+            },
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "AVATAR5",
+            "name": "Avatar",
+            "ui_name": "Name:AVATAR5",
+            "image": "AVATAR5",
+            "tech_level": 7,
+            "cost": 1750,
+            "build_limit": null,
+            "owner": [
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "TSNAMECHFACT",
+              "TSNATECHLAB",
+              "LIMBOUPGRADE_09"
+            ],
+            "built_at": [
+              "TSNAMECHFACT",
+              "ROBOTWEAP"
+            ],
+            "eligible_factions": [
+              "Nod"
+            ],
+            "primary": "AvatarHeavyLaser",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "AVATAR5",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Nod": {
+                "status": "pending_review",
+                "flags": [
+                  "internal_upgrade_prerequisite"
+                ],
+                "notes": "Automatic approval withheld because source-derived review hazard flags require an explicit Reloaded gameplay decision."
+              }
+            },
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "AVATAR6",
+            "name": "Avatar",
+            "ui_name": "Name:AVATAR6",
+            "image": "AVATAR6",
+            "tech_level": 7,
+            "cost": 1750,
+            "build_limit": null,
+            "owner": [
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "TSNAMECHFACT",
+              "TSNATECHLAB",
+              "LIMBOUPGRADE_07",
+              "LIMBOUPGRADE_09"
+            ],
+            "built_at": [
+              "TSNAMECHFACT",
+              "ROBOTWEAP"
+            ],
+            "eligible_factions": [
+              "Nod"
+            ],
+            "primary": "Avatar2HeavyLaser",
+            "secondary": "Avatar2LightLaser",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "AVATAR6",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Nod": {
+                "status": "pending_review",
+                "flags": [
+                  "internal_upgrade_prerequisite"
+                ],
+                "notes": "Automatic approval withheld because source-derived review hazard flags require an explicit Reloaded gameplay decision."
+              }
+            },
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "AVATAR7",
+            "name": "Avatar",
+            "ui_name": "Name:AVATAR7",
+            "image": "AVATAR7",
+            "tech_level": 7,
+            "cost": 1750,
+            "build_limit": null,
+            "owner": [
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "TSNAMECHFACT",
+              "TSNATECHLAB",
+              "LIMBOUPGRADE_08",
+              "LIMBOUPGRADE_09"
+            ],
+            "built_at": [
+              "TSNAMECHFACT",
+              "ROBOTWEAP"
+            ],
+            "eligible_factions": [
+              "Nod"
+            ],
+            "primary": "AvatarHeavyLaser",
+            "secondary": "",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "AVATAR7",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Nod": {
+                "status": "pending_review",
+                "flags": [
+                  "internal_upgrade_prerequisite"
+                ],
+                "notes": "Automatic approval withheld because source-derived review hazard flags require an explicit Reloaded gameplay decision."
+              }
+            },
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
+            "deploys_into": ""
+          },
+          {
+            "id": "AVATAR8",
+            "name": "Avatar",
+            "ui_name": "Name:AVATAR8",
+            "image": "AVATAR8",
+            "tech_level": 7,
+            "cost": 1750,
+            "build_limit": null,
+            "owner": [
+              "NodCountry",
+              "NodCountry2"
+            ],
+            "required_houses": [],
+            "forbidden_houses": [],
+            "prerequisite": [
+              "TSNAMECHFACT",
+              "TSNATECHLAB",
+              "LIMBOUPGRADE_07",
+              "LIMBOUPGRADE_08",
+              "LIMBOUPGRADE_09"
+            ],
+            "built_at": [
+              "TSNAMECHFACT",
+              "ROBOTWEAP"
+            ],
+            "eligible_factions": [
+              "Nod"
+            ],
+            "primary": "Avatar2HeavyLaser",
+            "secondary": "Avatar2LightLaser",
+            "cameo": {
+              "sidebar_pcx": "",
+              "art_image": "AVATAR8",
+              "status": "pending_review"
+            },
+            "reviews": {
+              "Nod": {
+                "status": "pending_review",
+                "flags": [
+                  "internal_upgrade_prerequisite"
+                ],
+                "notes": "Automatic approval withheld because source-derived review hazard flags require an explicit Reloaded gameplay decision."
+              }
+            },
+            "category": "vehicles",
+            "naval": false,
+            "harvester": false,
+            "engineer": false,
+            "trainable": true,
             "deploys_into": ""
           }
         ],
@@ -25133,7 +26037,8 @@
             "MDISK_ST",
             "SCORP4",
             "GUARDIAN",
-            "ROBOTSTNK"
+            "SHAD",
+            "MDISK"
           ],
           "aircraft": [
             "APACHE",
@@ -25346,7 +26251,10 @@
             "MDISK_ST",
             "SCORP4",
             "GUARDIAN",
-            "ROBOTSTNK"
+            "ZEP",
+            "HIND",
+            "SCHP",
+            "MDISK"
           ],
           "aircraft": [
             "APACHE",
@@ -25565,7 +26473,10 @@
             "RA1MAMU_ST",
             "SCORP4",
             "GUARDIAN",
-            "ROBOTSTNK"
+            "DISK",
+            "ODISK",
+            "TDSK",
+            "MDISK"
           ],
           "aircraft": [
             "APACHE",
@@ -25787,7 +26698,7 @@
             "MDISK_ST",
             "SCORP4",
             "GUARDIAN",
-            "ROBOTSTNK"
+            "MDISK"
           ],
           "aircraft": [
             "APACHE",
@@ -26046,7 +26957,17 @@
             "MDISK_ST",
             "SCORP4",
             "GUARDIAN",
-            "ROBOTSTNK"
+            "MDISK",
+            "REDEEMER",
+            "VENOM",
+            "AVATAR",
+            "AVATAR2",
+            "AVATAR3",
+            "AVATAR4",
+            "AVATAR5",
+            "AVATAR6",
+            "AVATAR7",
+            "AVATAR8"
           ],
           "aircraft": [
             "APACHE",
@@ -26217,9 +27138,9 @@
       }
     },
     "review_summary": {
-      "approved": 380,
-      "excluded": 445,
-      "pending_review": 245
+      "approved": 387,
+      "excluded": 448,
+      "pending_review": 252
     },
     "review_complete": false
   }

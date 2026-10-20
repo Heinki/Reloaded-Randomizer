@@ -20,7 +20,7 @@ if str(PROJECT_ROOT) not in sys.path:
 from randomizer.config.static import validate_sections
 from randomizer.content.faction_paths import content_record_faction_path
 from randomizer.content.inventory import (
-    read_rules_sections, rules_fingerprint, secret_lab_factions,
+    read_rules_sections, rules_fingerprint, secret_lab_factions, deferred_cabal_type_ids,
 )
 
 
@@ -108,7 +108,12 @@ def review_catalogue(document):
     path_excluded = Counter()
     deferred = Counter()
     lab_factions = secret_lab_factions(installed_sections)
+    deferred_ids = deferred_cabal_type_ids(installed_sections)
     for section, category, faction, record, review in _iter_reviews(document):
+        if record['id'].upper() in deferred_ids:
+            review['status'] = 'excluded'
+            review['notes'] = 'CABAL technology is unavailable until the faction is officially released; Secret Labs do not override this restriction.'
+            continue
         if (
             review['status'] not in {'candidate', 'pending_review'}
             and not record.get('secret_lab')

@@ -31,7 +31,7 @@ def build_fixture_yaml() -> str:
         'seed': 'LOCAL-SEED-MUST-NOT-LEAK',
         'campaign_filter': 'All Campaigns',
         'progression_mode': 'Mission List',
-        'mission_goal': 108,
+        'mission_goal': len(catalogue['missions']),
         'rewards_per_objective': int(
             catalogue['maximum_rewards_per_check']
         ),

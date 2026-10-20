@@ -184,6 +184,15 @@ def _apply_area(reward, installed_sections, count):
             reward, source, warhead.get('reference_key')
         )
     spec['values'][warhead['field']] = _expanded_range(baseline, count)
+    if warhead.get('weapon_source') and warhead.get('payload_source'):
+        # ParaDrop SW.Range is a targeting setting, not the bomb's blast
+        # radius. Isolate and connect payload -> death weapon -> warhead.
+        weapon = warhead['weapon_source']
+        payload = warhead['payload_source']
+        spec.setdefault('list', 'Warheads')
+        spec['reference_sections'] = {weapon: ['Warhead']}
+        weapon_spec = _ensure_auxiliary_clone(reward, weapon)
+        weapon_spec['reference_sections'] = {payload: ['DeathWeapon']}
 
 
 def _apply_damage(reward, installed_sections, count):
@@ -246,9 +255,15 @@ def _apply_duration(reward, installed_sections, count):
     factor = float(duration['factor_per_stack'])
     direct = duration['direct_fields'].get(power_id)
     if direct:
+        baseline = _value(_source_values(reward, installed_sections), direct['field'])
+        if baseline is None:
+            baseline = _value(
+                installed_sections.get(direct.get('default_section', ''), {}),
+                direct.get('default_field', ''), direct['baseline'],
+            )
         _apply_scalar_rule(
             reward.setdefault('superweapon_rules', {}),
-            direct,
+            dict(direct, baseline=baseline),
             count,
             factor,
         )
@@ -332,6 +347,12 @@ def _apply_effect(reward, installed_sections, count):
                 float(effect['factor_per_stack']),
                 count,
             ))
+            cap_field = scalar.get('cap_field')
+            cap = _value(installed_sections.get(source, {}), cap_field, 0)
+            if cap_field and float(cap) > 0:
+                spec['values'][cap_field] = str(_scaled_integer(
+                    cap, float(effect['factor_per_stack']), count,
+                ))
     field_spec = effect['multiplier_fields'].get(reward['superweapon'])
     if not field_spec:
         return

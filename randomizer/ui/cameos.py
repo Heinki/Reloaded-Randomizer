@@ -395,7 +395,20 @@ def ensure_superweapon_cameos(
     synchronous=False,
 ):
     """Resolve the installed sidebar icon for each requested superweapon."""
-    sidebar_names = rules_sidebar_names(synchronous=synchronous)
+    # Overrides belong to this request, never to the cached native registry.
+    sidebar_names = dict(rules_sidebar_names(synchronous=synchronous))
+    # Some views (starting unlocks and text summaries) request the real power
+    # ID directly, without the Shop adapter's visual alias. Resolve canonical
+    # sidebar overrides here so every view uses the same reward artwork.
+    from randomizer.rewards.catalogue import REWARD_POOL
+
+    sidebar_names.update({
+        str(reward['superweapon']).upper(): str(rules['SidebarPCX'])
+        for reward in REWARD_POOL
+        if reward.get('kind') == 'superweapon'
+        for rules in (reward.get('superweapon_rules') or {},)
+        if rules.get('SidebarPCX')
+    })
     sidebar_names.update({
         str(superweapon_id).upper(): str(cameo_name)
         for superweapon_id, cameo_name in (sidebar_overrides or {}).items()

@@ -19,6 +19,8 @@ from randomizer.content.inventory import (
     rules_fingerprint,
     secret_lab_factions,
     secret_lab_tech_level,
+    is_deferred_cabal_content,
+    deferred_cabal_type_ids,
 )
 
 
@@ -104,25 +106,6 @@ def _owner_factions(values):
     )
 
 
-def _is_deferred_cabal_content(type_id, values):
-    """Keep CABAL-native identities outside five-faction review scope."""
-    normalized_id = str(type_id).upper()
-    if normalized_id.startswith(('ROBOT', 'CABAL')):
-        return True
-    if "cabal's" in str(values.get('Name') or '').lower():
-        return True
-    production_tokens = (
-        *_split(values.get('Prerequisite')),
-        *_split(values.get('BuiltAt')),
-        *_split(values.get('DeploysInto')),
-        *_split(values.get('UndeploysInto')),
-    )
-    return any(
-        str(token).upper().startswith(('ROBOT', 'CABAL'))
-        for token in production_tokens
-    )
-
-
 def _review_flags(type_id, values, eligible_factions):
     flags = []
     tech_level = _integer(values.get('TechLevel'))
@@ -134,9 +117,21 @@ def _review_flags(type_id, values, eligible_factions):
         flags.append('no_production_path')
     if not values.get('UIName'):
         flags.append('missing_ui_name')
+    if any(token.upper().startswith('LIMBOUPGRADE') for token in _split(values.get('Prerequisite'))):
+        flags.append('internal_upgrade_prerequisite')
     if _bool(values, 'Unbuildable'):
         flags.append('unbuildable')
-    if _bool(values, 'Civilian') or _bool(values, 'Natural'):
+    # Natural also marks trained combat animals such as Chitzkoi. A priced,
+    # selectable combatant with an explicit production path is player tech;
+    # faction-path review still decides which factions can actually build it.
+    produced_combatant = (
+        _bool(values, 'IsSelectableCombatant')
+        and (_integer(values.get('Cost')) or 0) > 0
+        and bool(_split(values.get('Prerequisite')) or _split(values.get('BuiltAt')))
+    )
+    if _bool(values, 'Civilian') or (
+        _bool(values, 'Natural') and not produced_combatant
+    ):
         flags.append('civilian_or_natural')
     if _bool(values, 'Insignificant') or _bool(values, 'DontScore'):
         flags.append('non_scoring')
@@ -210,12 +205,13 @@ def _base_record(type_id, values, eligible_factions):
 def _unit_records(sections):
     records = {category: [] for category in UNIT_CATEGORIES}
     lab_factions = secret_lab_factions(sections)
+    deferred = deferred_cabal_type_ids(sections)
     for category in UNIT_CATEGORIES:
         registry = TYPE_SECTIONS[category]
         for type_id in _registered_ids(sections, registry):
             values = sections.get(type_id, {})
             is_lab_boon = type_id in lab_factions
-            if not is_lab_boon and _is_deferred_cabal_content(type_id, values):
+            if type_id.upper() in deferred:
                 continue
             tech_level = _integer(values.get('TechLevel'))
             eligible = lab_factions.get(type_id, _eligible_factions(values))
@@ -246,13 +242,14 @@ def _building_records(sections):
     defenses = []
     powers = []
     lab_factions = secret_lab_factions(sections)
+    deferred = deferred_cabal_type_ids(sections)
     registered_powers = set(
         _registered_ids(sections, 'SuperWeaponTypes')
     )
     for type_id in _registered_ids(sections, 'BuildingTypes'):
         values = sections.get(type_id, {})
         is_lab_boon = type_id in lab_factions
-        if not is_lab_boon and _is_deferred_cabal_content(type_id, values):
+        if type_id.upper() in deferred:
             continue
         tech_level = _integer(values.get('TechLevel'))
         eligible = lab_factions.get(type_id, _eligible_factions(values))
@@ -291,7 +288,7 @@ def _building_records(sections):
             if power_id not in registered_powers:
                 continue
             power_values = sections.get(power_id, {})
-            if _is_deferred_cabal_content(power_id, power_values):
+            if is_deferred_cabal_content(power_id, power_values):
                 continue
             flags = []
             if str(power_values.get('SW.ShowCameo', '')).lower() == 'no':
@@ -363,8 +360,20 @@ def preserve_reviews(document):
         (faction, key): review
         for faction, key, _record, review in _iter_records(existing)
     }
+    labels = {
+        key: record['reward_label']
+        for _faction, key, record, _review in _iter_records(existing)
+        if record.get('reward_label')
+    }
     for faction, key, _record, review in _iter_records(document):
+        if key in labels:
+            _record['reward_label'] = labels[key]
         previous = existing_records.get((faction, key), {})
+        # A corrected extractor can change hazard flags without changing the
+        # installed rules. Re-review those decisions instead of preserving an
+        # exclusion based on a hazard that no longer exists.
+        if previous.get('flags') != review.get('flags'):
+            continue
         if previous.get('status') not in {'approved', 'excluded'}:
             continue
         review['status'] = previous['status']

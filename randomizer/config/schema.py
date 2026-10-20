@@ -7,6 +7,10 @@ config family can now find its contract without reading packaging behavior.
 from pathlib import Path
 import re
 
+from randomizer.config.game_profile import (
+    ACTIVE_FAMILIES, CAMPAIGN_FILTER_SPECS, CONTENT_FACTIONS,
+    DEFERRED_CONTENT_FACTIONS, ENABLE_CABAL,
+)
 from randomizer.config.mission_rewards import validate_mission_reward_config
 from randomizer.config.shop_mode import validate_shop_mode_config
 
@@ -233,6 +237,8 @@ def _validate_required_sections(config_key, sections, path):
 
 
 def _validate_missions(sections, path):
+    if sections['catalogue'].get('faction_order') != list(CONTENT_FACTIONS):
+        _invalid('Mission faction order does not match the release feature flags', path)
     allowed = {'base_build', 'true_no_build', 'no_build_production'}
     invalid = {
         code: value
@@ -799,7 +805,7 @@ def _validate_unit_policy(sections, path):
 
 def _validate_special_buildings(sections, path):
     required_fields = {'id', 'name', 'faction', 'prerequisite'}
-    valid_factions = {'Allies', 'Soviets', 'Yuri', 'GDI', 'Nod', 'CABAL'}
+    valid_factions = set(CONTENT_FACTIONS)
     seen_ids = set()
     for index, building in enumerate(sections['buildings']):
         if not isinstance(building, dict) or not required_fields.issubset(building):
@@ -821,18 +827,8 @@ def _validate_special_buildings(sections, path):
 
 
 def _validate_ui(sections, path):
-    active_factions = ['Allies', 'Soviets', 'Yuri', 'GDI', 'Nod']
-    exact_campaign_filters = [
-        'Allies - Red Alert 2',
-        'Soviets - Red Alert 2',
-        "Allies - Yuri's Revenge",
-        "Soviets - Yuri's Revenge",
-        'GDI - Tiberian Sun',
-        'Nod - Tiberian Sun',
-        'GDI - Firestorm',
-        'Nod - Firestorm',
-        'Yuri - Resurgence',
-    ]
+    active_factions = list(CONTENT_FACTIONS)
+    exact_campaign_filters = [label for label, _, _ in CAMPAIGN_FILTER_SPECS]
     if sections['campaign_filters'] != [
         'All Campaigns', *exact_campaign_filters,
     ]:
@@ -841,7 +837,7 @@ def _validate_ui(sections, path):
             path,
         )
     if list(sections['faction_tile_colors']) != active_factions:
-        _invalid('UI faction colors must match five active factions', path)
+        _invalid('UI faction colors must match enabled factions', path)
 
     progression_modes = sections['progression_modes']
     required_progression_modes = {'Classic', 'Mission List', 'Grid Mode'}
@@ -885,9 +881,10 @@ def _validate_ui(sections, path):
         'Yuri': 'Yuri',
         'GDI': 'EvaGDI',
         'Nod': 'EvaNod',
+        **({'CABAL': 'EvaRobot'} if ENABLE_CABAL else {}),
     }
     if voice_tags != expected_voice_tags:
-        _invalid('EVA voices must match the five Reloaded factions', path)
+        _invalid('EVA voices must match the enabled Reloaded factions', path)
 
     appearance_profiles = sections.get('eva_appearance_profiles', {})
     if not isinstance(appearance_profiles, dict):
@@ -1100,7 +1097,12 @@ def _validate_tier_one(sections, path):
     if not set(sections['ground_roles']).issubset(roles):
         _invalid('Invalid Tier 1 ground roles', path)
 
-    expected_families = set(sections['standard_families'])
+    expected_families = set(ACTIVE_FAMILIES)
+    if set(sections['standard_families']) != expected_families:
+        _invalid('Starter families do not match the release feature flags', path)
+    for role in sections['ground_roles']:
+        if set(roles[role]) != expected_families:
+            _invalid(f'Incomplete Tier 1 ground role {role}', path)
     invalid_defenses = (
         not sections['defense_marker']
         or not sections['defense_roles']
@@ -1398,7 +1400,7 @@ def _validate_enemy_scaling(sections, path):
                 or not isinstance(faction_families, list)
                 or not faction_families
                 or any(
-                    family not in {'allies', 'soviets', 'yuri', 'gdi', 'nod'}
+                    family not in ACTIVE_FAMILIES
                     for family in faction_families
                 )
             ):
@@ -1428,8 +1430,8 @@ def _validate_enemy_scaling(sections, path):
                     f'Invalid enemy production clamp {effect_id!r}', path
                 )
     rosters = sections['powerhouse_rosters']
-    if set(rosters) != {'allies', 'soviets', 'yuri', 'gdi', 'nod'}:
-        _invalid('Enemy Powerhouses requires all five active factions', path)
+    if set(rosters) != set(ACTIVE_FAMILIES):
+        _invalid('Enemy Powerhouses requires all enabled factions', path)
     for family, roster in rosters.items():
         if not isinstance(roster, dict) or set(roster) != {'heroes', 'specials'}:
             _invalid(f'Invalid Enemy Powerhouses roster {family!r}', path)
@@ -1668,8 +1670,12 @@ def _validate_mission_catalogue(sections, path):
     missions = sections['missions']
     if sections['catalogue_version'] != 1:
         _invalid('Unsupported mission catalogue version', path)
-    if sections['mission_count'] != 108 or len(missions) != 108:
-        _invalid('Mission catalogue must contain 108 missions', path)
+    if sections['mission_count'] != len(missions) or len(missions) < 108:
+        _invalid('Mission catalogue count is inconsistent or omits existing campaigns', path)
+    if not ENABLE_CABAL and len(missions) != 108:
+        _invalid('The supported five-faction release contains 108 missions', path)
+    if ENABLE_CABAL and not any(m.get('faction') == 'CABAL' for m in missions):
+        _invalid('ENABLE_CABAL requires reviewed playable CABAL campaign metadata', path)
     required_fields = {
         'code', 'scenario', 'title', 'faction', 'campaign', 'global_order',
         'campaign_order', 'mission_number', 'part', 'part_count',
@@ -1691,7 +1697,7 @@ def _validate_mission_catalogue(sections, path):
         scenario = mission['scenario']
         if not _is_nonempty_string(code) or not _is_nonempty_string(scenario):
             _invalid('Invalid mission metadata identity', path)
-        if mission['faction'] not in {'Allies', 'Soviets', 'Yuri', 'GDI', 'Nod'}:
+        if mission['faction'] not in CONTENT_FACTIONS:
             _invalid(f'Invalid mission faction for {code}', path)
         source_hash = mission['source_sha256']
         if (
@@ -1800,12 +1806,12 @@ def _validate_mission_catalogue(sections, path):
         scenarios.append(scenario.lower().replace('\\', '/'))
     if len(codes) != len(set(codes)) or len(scenarios) != len(set(scenarios)):
         _invalid('Duplicate mission code or scenario', path)
-    if [mission['global_order'] for mission in missions] != list(range(1, 109)):
+    if [mission['global_order'] for mission in missions] != list(range(1, len(missions) + 1)):
         _invalid('Mission global order must be contiguous', path)
 
 
 def _validate_reloaded_content_catalogue(sections, path):
-    factions = ('Allies', 'Soviets', 'Yuri', 'GDI', 'Nod')
+    factions = CONTENT_FACTIONS
     statuses = {'candidate', 'pending_review', 'approved', 'excluded'}
     fingerprint = sections['rules_fingerprint_sha256']
     if (
@@ -1920,11 +1926,11 @@ def _validate_reloaded_content_catalogue(sections, path):
 
 
 def _validate_factions(sections, path):
-    active = ['allies', 'soviets', 'yuri', 'gdi', 'nod']
+    active = list(ACTIVE_FAMILIES)
     if sections['active_families'] != active:
         _invalid(f'Active production families must be {active}', path)
-    if sections['deferred_families'] != ['cabal']:
-        _invalid('CABAL must remain the only deferred production family', path)
+    if sections['deferred_families'] != [f.lower() for f in DEFERRED_CONTENT_FACTIONS]:
+        _invalid('Deferred production families do not match the release feature flags', path)
 
     required_family_sections = (
         'engineer_by_family',
@@ -1937,7 +1943,7 @@ def _validate_factions(sections, path):
         values = sections[section_name]
         if set(values) != set(active):
             _invalid(
-                f'{section_name} must contain exactly the five active families',
+                f'{section_name} must contain exactly the enabled families',
                 path,
             )
 
@@ -1968,11 +1974,11 @@ def _validate_factions(sections, path):
 
 
 def _validate_production_topology(sections, path):
-    active = ['allies', 'soviets', 'yuri', 'gdi', 'nod']
+    active = list(ACTIVE_FAMILIES)
     if sections['active_families'] != active or set(sections['families']) != set(active):
-        _invalid('Production topology must contain exactly five active families', path)
-    if sections['deferred_factions'] != ['CABAL']:
-        _invalid('CABAL must remain deferred in production topology', path)
+        _invalid('Production topology must contain exactly enabled families', path)
+    if sections['deferred_factions'] != list(DEFERRED_CONTENT_FACTIONS):
+        _invalid('Deferred topology factions do not match the release feature flags', path)
     if len(sections['rules_fingerprint_sha256']) != 64:
         _invalid('Invalid production rules fingerprint', path)
 
@@ -2036,11 +2042,11 @@ def _validate_production_topology(sections, path):
 
 
 def _validate_reloaded_balance_catalogue(sections, path):
-    factions = ['Allies', 'Soviets', 'Yuri', 'GDI', 'Nod']
+    factions = list(CONTENT_FACTIONS)
     if sections['active_factions'] != factions:
-        _invalid('Balance catalogue must contain exactly five active factions', path)
-    if sections['deferred_factions'] != ['CABAL']:
-        _invalid('CABAL must remain deferred in balance catalogue', path)
+        _invalid('Balance catalogue must contain exactly enabled factions', path)
+    if sections['deferred_factions'] != list(DEFERRED_CONTENT_FACTIONS):
+        _invalid('Deferred balance factions do not match the release feature flags', path)
     if len(sections['rules_fingerprint_sha256']) != 64:
         _invalid('Invalid balance rules fingerprint', path)
 
@@ -2138,4 +2144,13 @@ def validate_sections(relative_path, sections, path):
     _validate_required_sections(config_key, sections, path)
     validator = CONFIG_VALIDATORS.get(config_key)
     if validator is not None:
-        validator(sections, path)
+        try:
+            validator(sections, path)
+        except StaticConfigError as exc:
+            if ENABLE_CABAL:
+                raise StaticConfigError(
+                    'ENABLE_CABAL requires a complete reviewed CABAL release data set. '
+                    'Regenerate and review the installed release catalogues before '
+                    f'building with this flag enabled. {exc}'
+                ) from exc
+            raise

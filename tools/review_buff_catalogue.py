@@ -18,6 +18,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from randomizer.config.static import load_static_config
 from randomizer.content.ammo import has_upgradeable_ammo
+from randomizer.content.inventory import read_rules_sections, deferred_cabal_type_ids
 
 
 CATALOGUE_PATH = (
@@ -64,10 +65,18 @@ def _approved_content_ids():
 def review_document(document):
     sections = document['sections']
     approved_ids = _approved_content_ids()
+    deferred = deferred_cabal_type_ids(read_rules_sections()[0])
     approved_targets = 0
     approved_effects = 0
     for target in sections['buff_targets']:
         unit_id = str(target['id']).upper()
+        if unit_id in deferred:
+            target['review'].update({
+                'status': 'excluded', 'approved_buff_types': [],
+                'excluded_buff_types': list(target.get('candidate_buff_types') or ()),
+                'notes': 'CABAL technology is unavailable until the faction is officially released.',
+            })
+            continue
         if unit_id not in approved_ids:
             continue
         candidates = set(target.get('candidate_buff_types') or ())

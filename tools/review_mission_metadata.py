@@ -313,7 +313,7 @@ def reviewed_document():
         },
         'promoted_codes': promoted,
         'failures': failures,
-        'valid': len(records) == 108 and not failures,
+        'valid': len(records) == document['sections']['mission_count'] and not failures,
     }
 
 

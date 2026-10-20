@@ -167,7 +167,7 @@ def mission_matches_campaign_filter(mission, selected):
     spec = CAMPAIGN_FILTER_BY_LABEL.get(selected)
     if spec:
         return (
-            mission.get('campaign') == spec['campaign']
+            (spec['campaign'] is None or mission.get('campaign') == spec['campaign'])
             and mission.get('faction') == spec['faction']
         )
     # Backward compatibility for imported settings created before exact
@@ -264,8 +264,13 @@ def parse_missions(path, fallback_objective_count=FALLBACK_OBJECTIVE_COUNT):
         scenario = section.get('Scenario') or section.get('SCENARIO')
         if not scenario:
             continue
-        position = len(missions) + 1
         metadata = MISSION_METADATA_BY_CODE.get(code.upper(), {})
+        faction = metadata.get('faction') or normalize_faction(
+            section.get('SideName') or section.get('Side') or ''
+        )
+        if faction not in FACTION_ORDER:
+            continue
+        position = len(missions) + 1
         objectives = parse_long_description_objectives(section.get('LongDescription', ''))
         briefing = normalize_long_description(section.get('LongDescription', ''))
         reviewed_build_classification = metadata.get('build_classification')
@@ -284,9 +289,7 @@ def parse_missions(path, fallback_objective_count=FALLBACK_OBJECTIVE_COUNT):
             'title': section.get('Description') or section.get('description') or code,
             'side': section.get('SideName') or section.get('Side') or '',
             'briefing': briefing,
-            'faction': metadata.get('faction') or normalize_faction(
-                section.get('SideName') or section.get('Side') or ''
-            ),
+            'faction': faction,
             'campaign': metadata.get('campaign', ''),
             'campaign_order': metadata.get('campaign_order', position),
             'mission_number': metadata.get('mission_number'),

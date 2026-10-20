@@ -29,13 +29,7 @@ from randomizer.progression.grid import (
 )
 
 
-EXPECTED_FACTION_COUNTS = {
-    'Allies': 19,
-    'Soviets': 19,
-    'Yuri': 13,
-    'GDI': 30,
-    'Nod': 27,
-}
+EXPECTED_FACTION_COUNTS = dict(Counter(m['faction'] for m in MISSION_METADATA))
 AUDIT_SEEDS = ('RLR-PROGRESSION-0', 'RLR-PROGRESSION-1')
 
 
@@ -98,10 +92,10 @@ def progression_audit_report():
             'error': 'active faction counts differ from reviewed profile',
             'actual': dict(faction_counts),
         })
-    if len(codes) != 108 or len(codes) != len(set(codes)):
+    if len(codes) != len(MISSION_METADATA) or len(codes) != len(set(codes)):
         failures.append({
             'scope': 'catalogue',
-            'error': 'mission codes are not 108 unique entries',
+            'error': 'mission codes differ from reviewed metadata or contain duplicates',
         })
 
     relationship_counts, relationship_failures = _validate_relationships(

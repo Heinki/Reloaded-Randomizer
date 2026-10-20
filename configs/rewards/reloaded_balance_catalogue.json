@@ -18501,108 +18501,6 @@
         }
       },
       {
-        "id": "ROBOTSTNK",
-        "category": "vehicles",
-        "name": "Stealth MLRS",
-        "eligible_factions": [
-          "Allies",
-          "Soviets",
-          "Yuri",
-          "GDI",
-          "Nod"
-        ],
-        "stats": {
-          "strength": 215,
-          "armor": "robo_armor",
-          "cost": 1400,
-          "speed": 4,
-          "sight": 7,
-          "ammo": null,
-          "passengers": null,
-          "trainable": false,
-          "cloakable": true,
-          "sensors": false
-        },
-        "weapons": [
-          {
-            "id": "MLRSDragon",
-            "damage": 45,
-            "rof": 95,
-            "range": 10,
-            "burst": 4,
-            "projectile": "TSHeatSeeker",
-            "warhead": "STNKAGWH",
-            "source_present": true
-          },
-          {
-            "id": "MLRSDragonAA",
-            "damage": 45,
-            "rof": 90,
-            "range": 11,
-            "burst": 4,
-            "projectile": "TSAAHeatSeeker1",
-            "warhead": "TSSuperHE",
-            "source_present": true
-          },
-          {
-            "id": "MLRSDragonE",
-            "damage": 60,
-            "rof": 95,
-            "range": 10,
-            "burst": 4,
-            "projectile": "TSHeatSeeker",
-            "warhead": "STNKAGWH",
-            "source_present": true
-          },
-          {
-            "id": "MLRSDragonAAE",
-            "damage": 60,
-            "rof": 90,
-            "range": 11,
-            "burst": 4,
-            "projectile": "TSAAHeatSeeker1",
-            "warhead": "TSSuperHE",
-            "source_present": true
-          }
-        ],
-        "shared_weapon_users": {},
-        "candidate_buff_types": [
-          "health",
-          "armor",
-          "damage",
-          "reload",
-          "range",
-          "speed",
-          "sight",
-          "cost",
-          "production",
-          "sensors",
-          "cloak"
-        ],
-        "review": {
-          "status": "approved",
-          "approved_buff_types": [
-            "armor",
-            "cost",
-            "damage",
-            "health",
-            "production",
-            "range",
-            "reload",
-            "sensors",
-            "sight",
-            "speed"
-          ],
-          "excluded_buff_types": [
-            "cloak"
-          ],
-          "flags": [
-            "nontrainable"
-          ],
-          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
-        }
-      },
-      {
         "id": "OLDORCA",
         "category": "aircraft",
         "name": "Orca",
@@ -19096,6 +18994,1719 @@
           ],
           "flags": [],
           "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "CHITZ",
+        "category": "infantry",
+        "name": "Chitzkoi",
+        "eligible_factions": [
+          "Soviets"
+        ],
+        "stats": {
+          "strength": 325,
+          "armor": "uncontrollable_chitzkoi_armor",
+          "cost": 300,
+          "speed": 12,
+          "sight": 9,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": true
+        },
+        "weapons": [
+          {
+            "id": "ChitzkoiBadTeeth",
+            "damage": 30,
+            "rof": 30,
+            "range": 4.5,
+            "burst": null,
+            "projectile": "CHITZJUMP",
+            "warhead": "ParasiteUltraDog",
+            "source_present": true
+          },
+          {
+            "id": "ChitzkoiVirtualScanner",
+            "damage": 1,
+            "rof": null,
+            "range": 5,
+            "burst": null,
+            "projectile": "InvisibleLow",
+            "warhead": "SA",
+            "source_present": true
+          },
+          {
+            "id": "ChitzkoiBadTeethE",
+            "damage": 30,
+            "rof": 30,
+            "range": 4.5,
+            "burst": null,
+            "projectile": "CHITZJUMP",
+            "warhead": "ParasiteUltra",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "ChitzkoiBadTeeth": [
+            "CHITZ",
+            "CHITZ_ST"
+          ],
+          "ChitzkoiVirtualScanner": [
+            "CHITZ",
+            "CHITZ_ST"
+          ],
+          "ChitzkoiBadTeethE": [
+            "CHITZ",
+            "CHITZ_ST"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [
+            "sensors"
+          ],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "ZEP",
+        "category": "vehicles",
+        "name": "Kirov Airship",
+        "eligible_factions": [
+          "Soviets"
+        ],
+        "stats": {
+          "strength": 2000,
+          "armor": "kirov_armor",
+          "cost": 2000,
+          "speed": 5,
+          "sight": 8,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "BlimpBomb",
+            "damage": 250,
+            "rof": 50,
+            "range": 1.5,
+            "burst": 1,
+            "projectile": "BlimpBombP",
+            "warhead": "BlimpHE",
+            "source_present": true
+          },
+          {
+            "id": "BlimpBombE",
+            "damage": 250,
+            "rof": 50,
+            "range": 1.5,
+            "burst": 1,
+            "projectile": "BlimpBombP",
+            "warhead": "KTSTLEXP",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "SHAD",
+        "category": "vehicles",
+        "name": "Nighthawk Transport",
+        "eligible_factions": [
+          "Allies"
+        ],
+        "stats": {
+          "strength": 175,
+          "armor": "air_light_armor",
+          "cost": 1000,
+          "speed": 12,
+          "sight": 7,
+          "ammo": null,
+          "passengers": 5,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "BlackHawkCannon",
+            "damage": 35,
+            "rof": 40,
+            "range": 6,
+            "burst": null,
+            "projectile": "QuadShell",
+            "warhead": "SA",
+            "source_present": true
+          },
+          {
+            "id": "BlackHawkCannonE",
+            "damage": 40,
+            "rof": 40,
+            "range": 6,
+            "burst": null,
+            "projectile": "QuadShell",
+            "warhead": "SSA",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "BlackHawkCannon": [
+            "HIND",
+            "SCHP",
+            "SHAD"
+          ],
+          "BlackHawkCannonE": [
+            "HIND",
+            "SCHP",
+            "SHAD"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "passenger_capacity",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "passenger_capacity",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "HIND",
+        "category": "vehicles",
+        "name": "Hind Transport",
+        "eligible_factions": [
+          "Soviets"
+        ],
+        "stats": {
+          "strength": 175,
+          "armor": "air_light_armor",
+          "cost": 1000,
+          "speed": 12,
+          "sight": 7,
+          "ammo": null,
+          "passengers": 5,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "BlackHawkCannon",
+            "damage": 35,
+            "rof": 40,
+            "range": 6,
+            "burst": null,
+            "projectile": "QuadShell",
+            "warhead": "SA",
+            "source_present": true
+          },
+          {
+            "id": "BlackHawkCannonE",
+            "damage": 40,
+            "rof": 40,
+            "range": 6,
+            "burst": null,
+            "projectile": "QuadShell",
+            "warhead": "SSA",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "BlackHawkCannon": [
+            "HIND",
+            "SCHP",
+            "SHAD"
+          ],
+          "BlackHawkCannonE": [
+            "HIND",
+            "SCHP",
+            "SHAD"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "passenger_capacity",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "passenger_capacity",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "SCHP",
+        "category": "vehicles",
+        "name": "Soviet Siege Chopper",
+        "eligible_factions": [
+          "Soviets"
+        ],
+        "stats": {
+          "strength": 200,
+          "armor": "air_light_armor",
+          "cost": 1100,
+          "speed": 12,
+          "sight": 7,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "BlackHawkCannon",
+            "damage": 35,
+            "rof": 40,
+            "range": 6,
+            "burst": null,
+            "projectile": "QuadShell",
+            "warhead": "SA",
+            "source_present": true
+          },
+          {
+            "id": "160mm",
+            "damage": 90,
+            "rof": 100,
+            "range": 12,
+            "burst": null,
+            "projectile": "Ballistic",
+            "warhead": "SCHOPWH",
+            "source_present": true
+          },
+          {
+            "id": "BlackHawkCannonE",
+            "damage": 40,
+            "rof": 40,
+            "range": 6,
+            "burst": null,
+            "projectile": "QuadShell",
+            "warhead": "SSA",
+            "source_present": true
+          },
+          {
+            "id": "160mmE",
+            "damage": 90,
+            "rof": 100,
+            "range": 12,
+            "burst": 2,
+            "projectile": "Ballistic",
+            "warhead": "SCHOPWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "BlackHawkCannon": [
+            "HIND",
+            "SCHP",
+            "SHAD"
+          ],
+          "BlackHawkCannonE": [
+            "HIND",
+            "SCHP",
+            "SHAD"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "DISK",
+        "category": "vehicles",
+        "name": "Floating Disk",
+        "eligible_factions": [
+          "Yuri"
+        ],
+        "stats": {
+          "strength": 600,
+          "armor": "air_light_armor",
+          "cost": 1750,
+          "speed": 15,
+          "sight": 9,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "DiskLaser",
+            "damage": 90,
+            "rof": 100,
+            "range": 7,
+            "burst": null,
+            "projectile": "InvisibleAll",
+            "warhead": "DiskWH",
+            "source_present": true
+          },
+          {
+            "id": "DiskDrain",
+            "damage": 1,
+            "rof": 50,
+            "range": 1.5,
+            "burst": 1,
+            "projectile": "InvisibleVertical",
+            "warhead": "AntiB",
+            "source_present": true
+          },
+          {
+            "id": "DiskLaserE",
+            "damage": 90,
+            "rof": 90,
+            "range": 7,
+            "burst": null,
+            "projectile": "InvisibleAll",
+            "warhead": "DiskWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "ODISK",
+        "category": "vehicles",
+        "name": "Oppressor Disk",
+        "eligible_factions": [
+          "Yuri"
+        ],
+        "stats": {
+          "strength": 500,
+          "armor": "air_light_armor",
+          "cost": 1750,
+          "speed": 15,
+          "sight": 9,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "MediumDiskLaser",
+            "damage": 55,
+            "rof": 105,
+            "range": 6,
+            "burst": null,
+            "projectile": "InvisibleAll",
+            "warhead": "DiskWH",
+            "source_present": true
+          },
+          {
+            "id": "MediumDiskLaserE",
+            "damage": 80,
+            "rof": 105,
+            "range": 6,
+            "burst": null,
+            "projectile": "InvisibleAll",
+            "warhead": "DiskWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "TDSK",
+        "category": "vehicles",
+        "name": "Transport Disk",
+        "eligible_factions": [
+          "Yuri"
+        ],
+        "stats": {
+          "strength": 265,
+          "armor": "air_light_armor",
+          "cost": 1200,
+          "speed": 10,
+          "sight": 7,
+          "ammo": null,
+          "passengers": 5,
+          "trainable": false,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "passenger_capacity",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "health",
+            "passenger_capacity",
+            "production",
+            "sensors",
+            "sight",
+            "speed"
+          ],
+          "excluded_buff_types": [],
+          "flags": [
+            "no_direct_weapon",
+            "nontrainable"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "MDISK",
+        "category": "vehicles",
+        "name": "Repair Disk",
+        "eligible_factions": [
+          "Yuri"
+        ],
+        "stats": {
+          "strength": 240,
+          "armor": "air_light_armor",
+          "cost": 1500,
+          "speed": 8,
+          "sight": 6,
+          "ammo": null,
+          "passengers": null,
+          "trainable": false,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "DiskHeal",
+            "damage": 100,
+            "rof": 150,
+            "range": 1.25,
+            "burst": null,
+            "projectile": "InvisibleVertical",
+            "warhead": "MDiskWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "DiskHeal": [
+            "MDISK",
+            "MDISK_ST"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed"
+          ],
+          "excluded_buff_types": [],
+          "flags": [
+            "shared_weapon_requires_clone",
+            "nontrainable"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "REDEEMER",
+        "category": "vehicles",
+        "name": "Redeemer",
+        "eligible_factions": [
+          "Nod"
+        ],
+        "stats": {
+          "strength": 2000,
+          "armor": "super_heavy_armor",
+          "cost": 3000,
+          "speed": 3,
+          "sight": 7,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "RedeemerLaserFire",
+            "damage": 300,
+            "rof": 85,
+            "range": 8,
+            "burst": null,
+            "projectile": "LLineFragment",
+            "warhead": "RedeemerSuperWH",
+            "source_present": true
+          },
+          {
+            "id": "RedeemerMammothTusk",
+            "damage": 45,
+            "rof": 100,
+            "range": 8,
+            "burst": 4,
+            "projectile": "TSAAHeatSeeker",
+            "warhead": "TSHE2",
+            "source_present": true
+          },
+          {
+            "id": "RedeemerLaserFireE",
+            "damage": 300,
+            "rof": 85,
+            "range": 8,
+            "burst": null,
+            "projectile": "LLineFragmentE",
+            "warhead": "RedeemerSuperWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "VENOM",
+        "category": "vehicles",
+        "name": "Nod Venom",
+        "eligible_factions": [
+          "Nod"
+        ],
+        "stats": {
+          "strength": 180,
+          "armor": "air_light_armor",
+          "cost": 1300,
+          "speed": 12,
+          "sight": 6,
+          "ammo": 1,
+          "passengers": 1,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "VenomLaserFire",
+            "damage": 7,
+            "rof": 24,
+            "range": 5,
+            "burst": null,
+            "projectile": "AGAALLine",
+            "warhead": "TWVenomWH",
+            "source_present": true
+          },
+          {
+            "id": "VenomLaserFireE",
+            "damage": 14,
+            "rof": 24,
+            "range": 5,
+            "burst": null,
+            "projectile": "AGAALLine",
+            "warhead": "TWVenomWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {},
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "ammo",
+          "passenger_capacity",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "ammo",
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "passenger_capacity",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "AVATAR",
+        "category": "vehicles",
+        "name": "Avatar",
+        "eligible_factions": [
+          "Nod"
+        ],
+        "stats": {
+          "strength": 700,
+          "armor": "heavy",
+          "cost": 1750,
+          "speed": 4,
+          "sight": 8,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "AvatarHeavyLaser",
+            "damage": 100,
+            "rof": 95,
+            "range": 6,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "TWSuperWH",
+            "source_present": true
+          },
+          {
+            "id": "AvatarHeavyLaserE",
+            "damage": 200,
+            "rof": 95,
+            "range": 6,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "TWSuperWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "AvatarHeavyLaser": [
+            "AVATAR",
+            "AVATAR3",
+            "AVATAR5",
+            "AVATAR7"
+          ],
+          "AvatarHeavyLaserE": [
+            "AVATAR",
+            "AVATAR3",
+            "AVATAR5",
+            "AVATAR7"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "approved",
+          "approved_buff_types": [
+            "armor",
+            "cloak",
+            "cost",
+            "damage",
+            "health",
+            "production",
+            "range",
+            "reload",
+            "sensors",
+            "sight",
+            "speed",
+            "veteran"
+          ],
+          "excluded_buff_types": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": "Approved for isolated player-production clones after the Reloaded content-path review. Native starting-unit edits remain guarded by opponent ownership and shared-weapon safety checks."
+        }
+      },
+      {
+        "id": "AVATAR2",
+        "category": "vehicles",
+        "name": "Avatar",
+        "eligible_factions": [
+          "Nod"
+        ],
+        "stats": {
+          "strength": 700,
+          "armor": "heavy",
+          "cost": 1750,
+          "speed": 4,
+          "sight": 8,
+          "ammo": 1,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "Avatar2HeavyLaser",
+            "damage": 100,
+            "rof": 5,
+            "range": 6,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "TWSuperWH",
+            "source_present": true
+          },
+          {
+            "id": "Avatar2LightLaser",
+            "damage": 8,
+            "rof": 10,
+            "range": 6,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "RedeemerSuperWH",
+            "source_present": true
+          },
+          {
+            "id": "Avatar2HeavyLaserE",
+            "damage": 200,
+            "rof": 5,
+            "range": 6,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "TWSuperWH",
+            "source_present": true
+          },
+          {
+            "id": "Avatar2LightLaserE",
+            "damage": 16,
+            "rof": 10,
+            "range": 6,
+            "burst": null,
+            "projectile": "BLineFragment1",
+            "warhead": "RedeemerSuperWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "Avatar2HeavyLaser": [
+            "AVATAR2",
+            "AVATAR4",
+            "AVATAR6",
+            "AVATAR8"
+          ],
+          "Avatar2LightLaser": [
+            "AVATAR2",
+            "AVATAR4",
+            "AVATAR6",
+            "AVATAR8"
+          ],
+          "Avatar2HeavyLaserE": [
+            "AVATAR2",
+            "AVATAR4",
+            "AVATAR6",
+            "AVATAR8"
+          ],
+          "Avatar2LightLaserE": [
+            "AVATAR2",
+            "AVATAR4",
+            "AVATAR6",
+            "AVATAR8"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "ammo",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "pending_review",
+          "approved_buff_types": [],
+          "excluded_buff_types": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": ""
+        }
+      },
+      {
+        "id": "AVATAR3",
+        "category": "vehicles",
+        "name": "Avatar",
+        "eligible_factions": [
+          "Nod"
+        ],
+        "stats": {
+          "strength": 700,
+          "armor": "heavy",
+          "cost": 1750,
+          "speed": 4,
+          "sight": 8,
+          "ammo": null,
+          "passengers": 1,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "AvatarHeavyLaser",
+            "damage": 100,
+            "rof": 95,
+            "range": 6,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "TWSuperWH",
+            "source_present": true
+          },
+          {
+            "id": "AvatarHeavyLaserE",
+            "damage": 200,
+            "rof": 95,
+            "range": 6,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "TWSuperWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "AvatarHeavyLaser": [
+            "AVATAR",
+            "AVATAR3",
+            "AVATAR5",
+            "AVATAR7"
+          ],
+          "AvatarHeavyLaserE": [
+            "AVATAR",
+            "AVATAR3",
+            "AVATAR5",
+            "AVATAR7"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "passenger_capacity",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "pending_review",
+          "approved_buff_types": [],
+          "excluded_buff_types": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": ""
+        }
+      },
+      {
+        "id": "AVATAR4",
+        "category": "vehicles",
+        "name": "Avatar",
+        "eligible_factions": [
+          "Nod"
+        ],
+        "stats": {
+          "strength": 700,
+          "armor": "heavy",
+          "cost": 1750,
+          "speed": 4,
+          "sight": 8,
+          "ammo": 1,
+          "passengers": 1,
+          "trainable": true,
+          "cloakable": false,
+          "sensors": false
+        },
+        "weapons": [
+          {
+            "id": "Avatar2HeavyLaser",
+            "damage": 100,
+            "rof": 5,
+            "range": 6,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "TWSuperWH",
+            "source_present": true
+          },
+          {
+            "id": "Avatar2LightLaser",
+            "damage": 8,
+            "rof": 10,
+            "range": 6,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "RedeemerSuperWH",
+            "source_present": true
+          },
+          {
+            "id": "Avatar2HeavyLaserE",
+            "damage": 200,
+            "rof": 5,
+            "range": 6,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "TWSuperWH",
+            "source_present": true
+          },
+          {
+            "id": "Avatar2LightLaserE",
+            "damage": 16,
+            "rof": 10,
+            "range": 6,
+            "burst": null,
+            "projectile": "BLineFragment1",
+            "warhead": "RedeemerSuperWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "Avatar2HeavyLaser": [
+            "AVATAR2",
+            "AVATAR4",
+            "AVATAR6",
+            "AVATAR8"
+          ],
+          "Avatar2LightLaser": [
+            "AVATAR2",
+            "AVATAR4",
+            "AVATAR6",
+            "AVATAR8"
+          ],
+          "Avatar2HeavyLaserE": [
+            "AVATAR2",
+            "AVATAR4",
+            "AVATAR6",
+            "AVATAR8"
+          ],
+          "Avatar2LightLaserE": [
+            "AVATAR2",
+            "AVATAR4",
+            "AVATAR6",
+            "AVATAR8"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "ammo",
+          "passenger_capacity",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "pending_review",
+          "approved_buff_types": [],
+          "excluded_buff_types": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": ""
+        }
+      },
+      {
+        "id": "AVATAR5",
+        "category": "vehicles",
+        "name": "Avatar",
+        "eligible_factions": [
+          "Nod"
+        ],
+        "stats": {
+          "strength": 750,
+          "armor": "heavy",
+          "cost": 1750,
+          "speed": 4,
+          "sight": 8,
+          "ammo": null,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": true,
+          "sensors": true
+        },
+        "weapons": [
+          {
+            "id": "AvatarHeavyLaser",
+            "damage": 100,
+            "rof": 95,
+            "range": 6,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "TWSuperWH",
+            "source_present": true
+          },
+          {
+            "id": "AvatarHeavyLaserE",
+            "damage": 200,
+            "rof": 95,
+            "range": 6,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "TWSuperWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "AvatarHeavyLaser": [
+            "AVATAR",
+            "AVATAR3",
+            "AVATAR5",
+            "AVATAR7"
+          ],
+          "AvatarHeavyLaserE": [
+            "AVATAR",
+            "AVATAR3",
+            "AVATAR5",
+            "AVATAR7"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "pending_review",
+          "approved_buff_types": [],
+          "excluded_buff_types": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": ""
+        }
+      },
+      {
+        "id": "AVATAR6",
+        "category": "vehicles",
+        "name": "Avatar",
+        "eligible_factions": [
+          "Nod"
+        ],
+        "stats": {
+          "strength": 750,
+          "armor": "heavy",
+          "cost": 1750,
+          "speed": 4,
+          "sight": 8,
+          "ammo": 1,
+          "passengers": null,
+          "trainable": true,
+          "cloakable": true,
+          "sensors": true
+        },
+        "weapons": [
+          {
+            "id": "Avatar2HeavyLaser",
+            "damage": 100,
+            "rof": 5,
+            "range": 6,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "TWSuperWH",
+            "source_present": true
+          },
+          {
+            "id": "Avatar2LightLaser",
+            "damage": 8,
+            "rof": 10,
+            "range": 6,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "RedeemerSuperWH",
+            "source_present": true
+          },
+          {
+            "id": "Avatar2HeavyLaserE",
+            "damage": 200,
+            "rof": 5,
+            "range": 6,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "TWSuperWH",
+            "source_present": true
+          },
+          {
+            "id": "Avatar2LightLaserE",
+            "damage": 16,
+            "rof": 10,
+            "range": 6,
+            "burst": null,
+            "projectile": "BLineFragment1",
+            "warhead": "RedeemerSuperWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "Avatar2HeavyLaser": [
+            "AVATAR2",
+            "AVATAR4",
+            "AVATAR6",
+            "AVATAR8"
+          ],
+          "Avatar2LightLaser": [
+            "AVATAR2",
+            "AVATAR4",
+            "AVATAR6",
+            "AVATAR8"
+          ],
+          "Avatar2HeavyLaserE": [
+            "AVATAR2",
+            "AVATAR4",
+            "AVATAR6",
+            "AVATAR8"
+          ],
+          "Avatar2LightLaserE": [
+            "AVATAR2",
+            "AVATAR4",
+            "AVATAR6",
+            "AVATAR8"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "ammo",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "pending_review",
+          "approved_buff_types": [],
+          "excluded_buff_types": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": ""
+        }
+      },
+      {
+        "id": "AVATAR7",
+        "category": "vehicles",
+        "name": "Avatar",
+        "eligible_factions": [
+          "Nod"
+        ],
+        "stats": {
+          "strength": 750,
+          "armor": "heavy",
+          "cost": 1750,
+          "speed": 4,
+          "sight": 8,
+          "ammo": null,
+          "passengers": 1,
+          "trainable": true,
+          "cloakable": true,
+          "sensors": true
+        },
+        "weapons": [
+          {
+            "id": "AvatarHeavyLaser",
+            "damage": 100,
+            "rof": 95,
+            "range": 6,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "TWSuperWH",
+            "source_present": true
+          },
+          {
+            "id": "AvatarHeavyLaserE",
+            "damage": 200,
+            "rof": 95,
+            "range": 6,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "TWSuperWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "AvatarHeavyLaser": [
+            "AVATAR",
+            "AVATAR3",
+            "AVATAR5",
+            "AVATAR7"
+          ],
+          "AvatarHeavyLaserE": [
+            "AVATAR",
+            "AVATAR3",
+            "AVATAR5",
+            "AVATAR7"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "passenger_capacity",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "pending_review",
+          "approved_buff_types": [],
+          "excluded_buff_types": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": ""
+        }
+      },
+      {
+        "id": "AVATAR8",
+        "category": "vehicles",
+        "name": "Avatar",
+        "eligible_factions": [
+          "Nod"
+        ],
+        "stats": {
+          "strength": 750,
+          "armor": "heavy",
+          "cost": 1750,
+          "speed": 4,
+          "sight": 8,
+          "ammo": 1,
+          "passengers": 1,
+          "trainable": true,
+          "cloakable": true,
+          "sensors": true
+        },
+        "weapons": [
+          {
+            "id": "Avatar2HeavyLaser",
+            "damage": 100,
+            "rof": 5,
+            "range": 6,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "TWSuperWH",
+            "source_present": true
+          },
+          {
+            "id": "Avatar2LightLaser",
+            "damage": 8,
+            "rof": 10,
+            "range": 6,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "RedeemerSuperWH",
+            "source_present": true
+          },
+          {
+            "id": "Avatar2HeavyLaserE",
+            "damage": 200,
+            "rof": 5,
+            "range": 6,
+            "burst": null,
+            "projectile": "LLine",
+            "warhead": "TWSuperWH",
+            "source_present": true
+          },
+          {
+            "id": "Avatar2LightLaserE",
+            "damage": 16,
+            "rof": 10,
+            "range": 6,
+            "burst": null,
+            "projectile": "BLineFragment1",
+            "warhead": "RedeemerSuperWH",
+            "source_present": true
+          }
+        ],
+        "shared_weapon_users": {
+          "Avatar2HeavyLaser": [
+            "AVATAR2",
+            "AVATAR4",
+            "AVATAR6",
+            "AVATAR8"
+          ],
+          "Avatar2LightLaser": [
+            "AVATAR2",
+            "AVATAR4",
+            "AVATAR6",
+            "AVATAR8"
+          ],
+          "Avatar2HeavyLaserE": [
+            "AVATAR2",
+            "AVATAR4",
+            "AVATAR6",
+            "AVATAR8"
+          ],
+          "Avatar2LightLaserE": [
+            "AVATAR2",
+            "AVATAR4",
+            "AVATAR6",
+            "AVATAR8"
+          ]
+        },
+        "candidate_buff_types": [
+          "health",
+          "armor",
+          "damage",
+          "reload",
+          "range",
+          "speed",
+          "sight",
+          "cost",
+          "production",
+          "veteran",
+          "ammo",
+          "passenger_capacity",
+          "sensors",
+          "cloak"
+        ],
+        "review": {
+          "status": "pending_review",
+          "approved_buff_types": [],
+          "excluded_buff_types": [],
+          "flags": [
+            "shared_weapon_requires_clone"
+          ],
+          "notes": ""
         }
       }
     ],
@@ -22413,8 +24024,8 @@
     "deferred_power_count": 47,
     "review_summary": {
       "buff_targets": {
-        "approved": 216,
-        "pending_review": 52
+        "approved": 227,
+        "pending_review": 59
       },
       "powers": {
         "candidate": 52,

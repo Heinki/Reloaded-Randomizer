@@ -9,17 +9,15 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from randomizer.config.static import load_static_config
+from randomizer.missions.metadata import MISSION_METADATA
 from randomizer.core.paths import BATTLE_INI
 from randomizer.missions.catalogue import parse_missions
 from tools.core_gameplay_smoke import run
 
 
 STARTER_TECH_BY_SIDE = {
-    'allies': 'E1',
-    'soviets': 'E2',
-    'yuri': 'INIT',
-    'gdi': 'TSE1',
-    'nod': 'TSNE1',
+    family: entry[0] for family, entry in load_static_config('tier_one.json')['role_units']['ground_infantry'].items()
 }
 
 
@@ -31,7 +29,7 @@ def main():
         try:
             run(
                 code,
-                STARTER_TECH_BY_SIDE[mission['side'].lower()],
+                STARTER_TECH_BY_SIDE[mission['faction'].lower()],
                 'health',
             )
             print(f'PASS {index:03}/{len(missions)} {code}', flush=True)
@@ -43,7 +41,7 @@ def main():
             )
 
     report = {
-        'valid': not failures and len(missions) == 108,
+        'valid': not failures and len(missions) == len(MISSION_METADATA),
         'mission_count': len(missions),
         'passed': len(missions) - len(failures),
         'failures': failures,

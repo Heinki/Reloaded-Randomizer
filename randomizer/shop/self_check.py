@@ -12,6 +12,9 @@ from randomizer.core.storage import atomic_write_json, atomic_write_text
 from randomizer.maps.shop_modifiers import apply_shop_clone_modifiers
 from randomizer.missions.tier_one import tier_one_defense_ids, tier_one_unit_ids
 from randomizer.rewards.rules import tech_ids_for_rewards
+from randomizer.rewards.catalogue import (
+    ALWAYS_AVAILABLE_TECH_IDS, REDUNDANT_POWER_PROVIDER_IDS, REWARD_POOL, DEFERRED_TECH_IDS,
+)
 from randomizer.ui.cameos import (
     ARCHIPELAGO_CAMEO_PATH,
     ensure_superweapon_cameos,
@@ -666,8 +669,8 @@ def _permanent_feature_checks(mission_pool):
             power_ids and set(power_cameos) == power_ids
         ),
         'starter_loadout_display_valid': bool(
-            len(concrete_starters) == 5
-            and len(set(concrete_starters)) == 5
+            len(concrete_starters) == len(marker_run.starting_unit_ids)
+            and len(set(concrete_starters)) == len(marker_run.starting_unit_ids)
             and len(concrete_defenses) == 2
             and concrete_starters == active_shop_starter_unit_ids(marker_run)
             and concrete_defenses == active_shop_starter_defense_ids(marker_run)
@@ -1548,14 +1551,23 @@ def validate_shop_domain():
         *(modifier.enemy_reward_id for modifier in MISSION_MODIFIERS
           if modifier.enemy_reward_id),
     }
+    content = load_static_config('rewards/reloaded_content_catalogue.json')['content']
+    expected_access = {
+        record['id'].upper()
+        for records in (*content['units'].values(), content['defenses'])
+        for record in records
+        if any(review['status'] == 'approved' for review in record['reviews'].values())
+        and not record['id'].upper().endswith('_AI')
+    } - ALWAYS_AVAILABLE_TECH_IDS - REDUNDANT_POWER_PROVIDER_IDS - DEFERRED_TECH_IDS
+    expected_powers = {
+        reward['superweapon'].upper() for reward in REWARD_POOL
+        if reward.get('kind') == 'superweapon'
+    }
     catalogue_valid = bool(
-        len(catalogue) == 1908
-        and len(access_entries) == 157
-        and len(buff_entries) == 1689
-        and len(power_entries) == 18
-        and len(power_buff_entries) == 44
-        and len(SHOP_CONFIG.unit_target_prices) == 177
-        and len(SHOP_CONFIG.power_target_prices) == 18
+        access_entries and buff_entries and power_entries and power_buff_entries
+        and len({entry.reward_id for entry in catalogue}) == len(catalogue)
+        and {entry.target_id for entry in access_entries} == expected_access
+        and {entry.target_id for entry in power_entries} == expected_powers
         and all(
             price.permanent_access > 0 and price.permanent_buff > 0
             for price in SHOP_CONFIG.power_target_prices.values()
