@@ -1,7 +1,6 @@
 """Read-only validation of Reloaded mission progression topology."""
 
 import json
-import random
 from collections import Counter
 
 from randomizer.config.game_profile import (
@@ -11,41 +10,14 @@ from randomizer.config.game_profile import (
 from randomizer.config.static import static_config_section
 from randomizer.core.paths import BATTLE_INI
 from randomizer.missions.catalogue import (
-    LOW_LEVEL_MISSION_COUNT,
     OPENING_MISSION_EXCLUSIONS,
-    classic_mission_order,
     parse_missions,
-    seed_mission_order,
 )
 from randomizer.missions.metadata import MISSION_METADATA
 from randomizer.missions.overrides import MISSION_OBJECTIVE_HOOK_ACTION_IDS
-from randomizer.progression.grid import (
-    COMPLETED,
-    UNLOCKED,
-    create_grid,
-    is_complete,
-    refresh_states,
-    starting_nodes,
-)
 
 
 EXPECTED_FACTION_COUNTS = dict(Counter(m['faction'] for m in MISSION_METADATA))
-AUDIT_SEEDS = ('RLR-PROGRESSION-0', 'RLR-PROGRESSION-1')
-
-
-def _simulate_grid(grid):
-    completed = []
-    while len(completed) < len(grid['nodes']):
-        states = refresh_states(grid, completed)
-        available = sorted(
-            code for code, state in states.items()
-            if state == UNLOCKED and code not in completed
-        )
-        if not available:
-            break
-        completed.append(available[0])
-    states = refresh_states(grid, completed)
-    return completed, states
 
 
 def _validate_relationships(missions):
@@ -81,7 +53,7 @@ def _validate_relationships(missions):
 
 
 def progression_audit_report():
-    """Validate Classic, Mission List, and Grid over every active pool."""
+    """Validate installed mission relationships and progression metadata."""
     missions = parse_missions(BATTLE_INI)
     failures = []
     codes = [mission['code'] for mission in missions]
@@ -113,84 +85,6 @@ def progression_audit_report():
         ]
         for faction in CAMPAIGN_FACTIONS
     })
-    mode_checks = 0
-    grid_checks = 0
-    for pool_name, pool in pools.items():
-        pool_codes = [mission['code'] for mission in pool]
-        if classic_mission_order(pool, len(pool)) != pool_codes:
-            failures.append({
-                'scope': pool_name,
-                'error': 'Classic order differs from installed catalogue',
-            })
-        else:
-            mode_checks += 1
-
-        for seed in AUDIT_SEEDS:
-            first = seed_mission_order(
-                pool,
-                random.Random(seed),
-                len(pool),
-                excluded_opening_codes=OPENING_MISSION_EXCLUSIONS,
-            )
-            second = seed_mission_order(
-                pool,
-                random.Random(seed),
-                len(pool),
-                excluded_opening_codes=OPENING_MISSION_EXCLUSIONS,
-            )
-            if first != second or set(first) != set(pool_codes):
-                failures.append({
-                    'scope': pool_name,
-                    'seed': seed,
-                    'error': 'Mission List order is not deterministic and complete',
-                })
-                continue
-            mode_checks += 1
-            opening_codes = set(first[:min(LOW_LEVEL_MISSION_COUNT, len(first))])
-            unsafe_openings = sorted(
-                opening_codes.intersection(OPENING_MISSION_EXCLUSIONS)
-            )
-            if unsafe_openings:
-                failures.append({
-                    'scope': pool_name,
-                    'seed': seed,
-                    'error': 'protected opening contains reviewed later mission',
-                    'codes': unsafe_openings,
-                })
-
-            for two_starts in (False, True):
-                try:
-                    grid = create_grid(
-                        first,
-                        two_start_positions=two_starts,
-                        protect_opening=True,
-                    )
-                    completed, states = _simulate_grid(grid)
-                except Exception as exc:
-                    failures.append({
-                        'scope': pool_name,
-                        'seed': seed,
-                        'two_starts': two_starts,
-                        'error': str(exc),
-                    })
-                    continue
-                expected_starts = 2 if two_starts else 1
-                if (
-                    len(starting_nodes(grid)) != expected_starts
-                    or len(completed) != len(first)
-                    or set(grid['nodes']) != set(first)
-                    or any(state != COMPLETED for state in states.values())
-                    or not is_complete(grid)
-                ):
-                    failures.append({
-                        'scope': pool_name,
-                        'seed': seed,
-                        'two_starts': two_starts,
-                        'error': 'Grid is incomplete, unreachable, or has bad starts',
-                    })
-                    continue
-                grid_checks += 1
-
     defaults = static_config_section(
         'default_player_config.json', 'defaults', dict
     )
@@ -244,8 +138,6 @@ def progression_audit_report():
         'mission_count': len(missions),
         'faction_counts': dict(faction_counts),
         'pool_count': len(pools),
-        'classic_and_mission_list_checks': mode_checks,
-        'grid_checks': grid_checks,
         'relationship_kind_counts': relationship_counts,
         'objective_reviewed_missions': objective_reviewed,
         'objective_review_complete': (

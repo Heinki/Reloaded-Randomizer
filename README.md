@@ -240,13 +240,6 @@ python -m compileall -q randomizer Archipelago launcher_gui.py
 python -c "from randomizer.config.static import REQUIRED_STATIC_CONFIGS, validate_static_configs; validate_static_configs(REQUIRED_STATIC_CONFIGS)"
 python -m randomizer.audit
 python -m Archipelago.audit
-python tools\all_mission_generation_smoke.py
-python tools\reported_mission_smoke.py
-python tools\cloak_deploy_smoke.py
-python tools\power_clone_smoke.py
-python tools\building_upgrade_smoke.py
-python tools\economy_isolation_smoke.py
-python tools\ammo_upgrade_smoke.py
 ```
 
 Build the launcher and matching APWorld on Windows:

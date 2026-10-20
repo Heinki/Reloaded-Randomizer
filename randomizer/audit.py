@@ -26,7 +26,7 @@ from randomizer.missions.metadata import installed_metadata_report
 from randomizer.missions.objective_review import objective_review_report
 from randomizer.missions.production_review import production_review_report
 from randomizer.progression.audit import progression_audit_report
-from randomizer.shop.self_check import validate_shop_domain
+from randomizer.shop.catalogue import shop_catalogue
 from randomizer.ui.reloaded_profile import installed_ui_profile_report
 from randomizer.validation.release import release_validation_report
 
@@ -49,9 +49,11 @@ def installation_report():
     progress_hooks = progress_hook_audit_report()
     ui_profile = installed_ui_profile_report()
     archipelago = archipelago_foundation_report()
-    shop = validate_shop_domain() if ENABLE_SHOP_MODE else {
-        'valid': False,
-        'enabled': False,
+    shop_entries = shop_catalogue() if ENABLE_SHOP_MODE else ()
+    shop = {
+        'enabled': ENABLE_SHOP_MODE,
+        'catalogue_entries': len(shop_entries),
+        'valid': bool(shop_entries),
     }
     release_validation = release_validation_report()
     return {

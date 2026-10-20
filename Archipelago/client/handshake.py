@@ -1,4 +1,4 @@
-"""Bounded Archipelago 0.6.8 handshake used by client smoke and UI layers."""
+"""Bounded Archipelago 0.6.8 handshake used by the launcher client."""
 
 from dataclasses import dataclass, field
 from hashlib import sha256

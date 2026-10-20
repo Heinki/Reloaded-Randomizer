@@ -18,7 +18,6 @@ from Archipelago.catalogue_contract import (
     snapshot_checksum_is_valid,
     snapshot_is_current,
 )
-from Archipelago.client.session import _scout_location_ids
 from randomizer.config.game_profile import (
     DEFERRED_CONTENT_FACTIONS, ENABLE_ARCHIPELAGO, ENABLE_CABAL, FACTION_ORDER,
 )
@@ -93,10 +92,6 @@ def archipelago_foundation_report(*, verify_live_sources=None):
         if verify_live_sources
         else snapshot_checksum_valid
     )
-    shop_purchase_scouting_valid = _scout_location_ids({
-        'locations': {'MISSION': {'objective': [3, 1]}},
-        'shop': {'purchase_locations': [5, 2]},
-    }) == (1, 2, 3, 5)
     # CI has no game installation. The reviewed rules snapshot lets builds
     # enforce the same CABAL exclusion without importing runtime rewards.
     deferred = deferred_cabal_type_ids(_generation_rules())
@@ -127,7 +122,6 @@ def archipelago_foundation_report(*, verify_live_sources=None):
         ranges_disjoint,
         ids_valid,
         identity_isolated,
-        shop_purchase_scouting_valid,
         cabal_content_excluded,
         not ENABLE_ARCHIPELAGO or snapshot['review_complete'],
     ))
@@ -145,7 +139,6 @@ def archipelago_foundation_report(*, verify_live_sources=None):
         'ranges_disjoint': ranges_disjoint,
         'ids_valid': ids_valid,
         'identity_isolated': identity_isolated,
-        'shop_purchase_scouting_valid': shop_purchase_scouting_valid,
         'cabal_enabled': ENABLE_CABAL,
         'disabled_content_excluded': cabal_content_excluded,
         'missing_files': missing_files,

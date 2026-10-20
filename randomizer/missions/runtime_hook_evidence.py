@@ -1,8 +1,8 @@
 """Validate persisted real-game victory-hook evidence.
 
-Evidence is written only by ``tools/runtime_victory_hook_check.py`` after a
-reviewed generated map reaches its victory marker, restores ``spawn.ini``,
-removes owned generated maps, and proves the authored source hash unchanged.
+Previously recorded evidence must show that a reviewed generated map reached
+its victory marker, restored ``spawn.ini``, removed owned generated maps, and
+preserved the authored source hash.
 """
 
 import json

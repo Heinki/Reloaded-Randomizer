@@ -49,16 +49,7 @@ def run_self_check():
     return 0 if report.get('passed') else 1
 
 
-def run_ui_launch_smoke():
-    """Exercise packaged UI controls through a real generated game launch."""
-    from randomizer.validation.ui_launch import run_from_command_line
-
-    return run_from_command_line(sys.argv[1:])
-
-
 if __name__ == '__main__':
     if '--self-check' in sys.argv:
         raise SystemExit(run_self_check())
-    if '--ui-launch-smoke' in sys.argv:
-        raise SystemExit(run_ui_launch_smoke())
     raise SystemExit(run_launcher())
