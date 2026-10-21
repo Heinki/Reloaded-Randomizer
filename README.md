@@ -15,6 +15,11 @@
 
 # C&C Reloaded Randomizer Launcher
 
+The Windows launcher supports optional in-place updates from GitHub Releases.
+Declining an update suppresses its popup for that version; the corner Update
+button remains available. See [launcher updates](UPDATING.md) for publishing,
+APWorld installation, and recovery details.
+
 [![Security checks](https://github.com/Heinki/Reloaded-Randomizer/actions/workflows/security.yml/badge.svg)](https://github.com/Heinki/Reloaded-Randomizer/actions/workflows/security.yml)
 
 A Windows campaign randomizer for C&C Reloaded 2.7.0 with standalone and

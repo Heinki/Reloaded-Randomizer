@@ -17,3 +17,7 @@ test -s "$published_apworld"
 
 printf 'Built release pair:\n  %s\n  %s\n' \
     "$launcher" "$published_apworld"
+
+python3 "$script_dir/tools/write_release_manifest.py" \
+    --launcher "$script_dir/../CnCReloadedRandomizer.exe" \
+    --apworld "$script_dir/Archipelago/cnc_reloaded.apworld"

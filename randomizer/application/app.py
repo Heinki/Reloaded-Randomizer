@@ -40,6 +40,7 @@ from ._dependencies import (
 )
 
 from .window import WindowController
+from .update_controller import UpdateController
 from .state_controller import StateController
 from .reward_controller import RewardController
 from .shop_controller import ShopController
@@ -61,6 +62,7 @@ from randomizer.config.game_profile import (
 
 
 class LauncherApp(
+    UpdateController,
     WindowController,
     ShopController,
     StateController,
@@ -512,6 +514,7 @@ class LauncherApp(
         if ENABLE_SHOP_MODE:
             self.refresh_shop_mode()
         self.initial_load_complete = True
+        self.start_update_check()
         log_event(
             'launcher_ready',
             missions=len(self.missions),

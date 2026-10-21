@@ -73,6 +73,13 @@ $checksumLines = foreach ($name in $checksumFiles) {
 }
 [IO.File]::WriteAllLines($checksumsPath, $checksumLines, [Text.Encoding]::ASCII)
 
+# Validate the actual bundle before it can be uploaded or published.
+& python (Join-Path $PSScriptRoot "tools\write_release_manifest.py") `
+    --verify-only --output-directory $outputPath
+if ($LASTEXITCODE -ne 0) {
+    throw "Release bundle verification failed with exit code $LASTEXITCODE."
+}
+
 Write-Output ([pscustomobject]@{
     output = $outputPath
     launcher = $launcherPath

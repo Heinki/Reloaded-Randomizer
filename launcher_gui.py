@@ -1,7 +1,13 @@
 """Entry point for source runs and the packaged Reloaded launcher."""
 
-import json
+# The copied helper must run before normal imports resolve game/config paths.
 import sys
+
+if __name__ == '__main__' and len(sys.argv) == 3 and sys.argv[1] == '--apply-update':
+    from randomizer.core.update_helper import main as apply_update_main
+    raise SystemExit(apply_update_main(sys.argv[2]))
+
+import json
 import traceback
 
 from randomizer.audit import installation_report
