@@ -1,5 +1,6 @@
 """Validate that displayed unit buffs produced real generated INI changes."""
 
+from randomizer.content.healing import self_healing_metadata
 from randomizer.maps.buff_values import _active_direct_buff_counts
 from randomizer.maps.ini import all_section_value_maps
 from randomizer.rewards.catalogue import (
@@ -20,7 +21,8 @@ _UNIT_BUFF_FIELDS = {
     'income': ('ProduceCashAmount',),
     'passenger_capacity': ('Passengers',),
     'open_topped': ('OpenTopped',),
-    'self_healing': ('SelfHealing', 'SelfHealing.Amount'),
+    'self_healing_cap': ('SelfHealing.Max',),
+    'self_healing_rate': ('SelfHealing.Rate',),
     'cloak': ('Cloakable', 'Cloakable.Stages', 'CloakingSpeed', 'Cloakable.Allowed'),
     'sensors': ('Sensors', 'SensorsSight'),
     'production': ('BuildTimeMultiplier',),
@@ -59,6 +61,42 @@ def _unit_fields_are_effective(
 ):
     lowered = _lower_values(values)
     base_values = _lower_values(base_values)
+    if buff_type == 'self_healing':
+        enabled = str(lowered.get('selfhealing', '')).casefold() in {
+            'yes', 'true', '1',
+        }
+        base_enabled = str(base_values.get('selfhealing', '')).casefold() in {
+            'yes', 'true', '1',
+        }
+        if enabled and (allow_existing or not base_enabled):
+            return True
+        abilities = {
+            ability.strip().casefold()
+            for ability in str(lowered.get('veteranabilities', '')).split(',')
+        }
+        base_abilities = {
+            ability.strip().casefold()
+            for ability in str(base_values.get('veteranabilities', '')).split(',')
+        }
+        return 'self_heal' in abilities and (
+            allow_existing or 'self_heal' not in base_abilities
+        )
+    if buff_type == 'self_healing_cap':
+        if 'selfhealing.max' not in lowered:
+            return False
+        raw_maximum = str(lowered['selfhealing.max']).strip()
+        actual = _numeric(raw_maximum.rstrip('%'))
+        if actual is None:
+            return False
+        if raw_maximum.endswith('%'):
+            actual /= 100
+        base_caps = (
+            self_healing_metadata(base_values, target.get('category'))['self_healing_caps']
+            if base_values else target.get('self_healing_caps', (1, 1, 1))
+        )
+        return actual == 1 and (
+            allow_existing or any(cap < 1 for cap in base_caps)
+        )
     required = _UNIT_BUFF_FIELDS.get(buff_type, ())
     if not required or any(key.lower() not in lowered for key in required):
         return False
@@ -66,7 +104,7 @@ def _unit_fields_are_effective(
         lowered['cloakable.allowed']
     ).strip().lower() not in {'yes', 'true', '1'}:
         return False
-    if buff_type in {'open_topped', 'self_healing', 'cloak', 'sensors'}:
+    if buff_type in {'open_topped', 'cloak', 'sensors'}:
         base_enabled = (
             str(base_values.get(required[0].lower(), 'no')).strip().lower()
             == 'yes'
@@ -93,6 +131,11 @@ def _unit_fields_are_effective(
     }.get(buff_type)
     if buff_type == 'production':
         base = _numeric(base_values.get('buildtimemultiplier', 1))
+        return base is not None and 0 < actual < base
+    if buff_type == 'self_healing_rate':
+        base = _numeric(base_values.get(
+            'selfhealing.rate', target.get('self_healing_rate')
+        ))
         return base is not None and 0 < actual < base
     base_key = required[0].lower()
     base = _numeric(base_values.get(base_key))

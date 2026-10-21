@@ -15,6 +15,7 @@ from randomizer.config.game_profile import (
     CONTENT_FACTIONS, DEFERRED_CONTENT_FACTIONS, ENABLE_CABAL, SUPPORTED_GAME_VERSION,
 )
 from randomizer.content.ammo import has_upgradeable_ammo
+from randomizer.content.healing import self_healing_buff_types, self_healing_metadata
 from randomizer.content.inventory import (
     FACTION_HOUSES,
     read_rules_sections,
@@ -30,7 +31,7 @@ WEAPON_FIELDS = ('Damage', 'ROF', 'Range', 'Burst', 'Projectile', 'Warhead')
 BUFF_ORDER = (
     'health', 'armor', 'damage', 'reload', 'range', 'speed', 'sight',
     'cost', 'production', 'veteran', 'ammo', 'passenger_capacity',
-    'sensors', 'cloak',
+    'sensors', 'cloak', 'self_healing', 'self_healing_cap', 'self_healing_rate',
 )
 
 
@@ -103,7 +104,7 @@ def _weapon_fact(weapon_id, sections, section_names):
     return fact
 
 
-def _candidate_buff_types(category, values, weapons):
+def _candidate_buff_types(category, values, weapons, healing):
     candidates = []
     strength = _number(values.get('Strength'))
     cost = _number(values.get('Cost'))
@@ -132,6 +133,7 @@ def _candidate_buff_types(category, values, weapons):
     if passengers is not None and passengers > 0:
         candidates.append('passenger_capacity')
     candidates.append('cloak')
+    candidates.extend(self_healing_buff_types({'strength': strength, **healing}))
     return [buff_type for buff_type in BUFF_ORDER if buff_type in candidates]
 
 
@@ -170,6 +172,9 @@ def _build_buff_targets(content, sections):
             flags.append('nontrainable')
         if any(_bool(values, key) for key in ('Spawned', 'MissileSpawn', 'VirtualUnit')):
             flags.append('spawned_or_virtual')
+        healing = self_healing_metadata(
+            values, category, sections.get('General', {}).get('RepairRate')
+        )
         target = {
             'id': type_id,
             'category': category,
@@ -189,7 +194,7 @@ def _build_buff_targets(content, sections):
             },
             'weapons': weapons,
             'shared_weapon_users': shared_weapons,
-            'candidate_buff_types': _candidate_buff_types(category, values, weapons),
+            'candidate_buff_types': _candidate_buff_types(category, values, weapons, healing),
             'review': {
                 'status': 'pending_review',
                 'approved_buff_types': [],

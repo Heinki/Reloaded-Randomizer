@@ -1,5 +1,7 @@
 """Clone source resolution and safe mission-reference rewriting."""
 
+from randomizer.content.healing import self_healing_metadata
+
 from ._shared import (
     CLONE_POLICY,
     TECHNO_TYPE_LISTS,
@@ -245,6 +247,10 @@ def _positive_build_limit(values):
 def _target_with_effective_unit_stats(target, effective_values):
     """Use a variant's own base stats while retaining curated buff metadata."""
     result = dict(target)
+    if effective_values:
+        result.update(self_healing_metadata(
+            effective_values, target.get('category'), target.get('self_healing_rate')
+        ))
     for target_key, rules_key in (
         ('strength', 'Strength'),
         ('sight', 'Sight'),

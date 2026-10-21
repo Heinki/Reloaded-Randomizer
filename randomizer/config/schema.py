@@ -5,6 +5,7 @@ config family can now find its contract without reading packaging behavior.
 """
 
 from pathlib import Path
+from math import isfinite
 import re
 
 from randomizer.config.game_profile import (
@@ -998,6 +999,26 @@ def _validate_tuning(sections, path):
         < effects['defense_self_heal_fraction']
     ):
         _invalid('Invalid self-healing buff cap', path)
+
+    self_heal_rate = effects.get('self_heal_rate')
+    if (
+        not isinstance(self_heal_rate, dict)
+        or not all(
+            isinstance(self_heal_rate.get(key), (int, float))
+            and not isinstance(self_heal_rate[key], bool)
+            and isfinite(self_heal_rate[key])
+            and self_heal_rate[key] > 0
+            for key in (
+                'minutes_at_15_fps', 'factor_per_stack', 'minimum_minutes',
+                'stack_limit',
+            )
+        )
+        or not isinstance(self_heal_rate['stack_limit'], int)
+        or self_heal_rate['factor_per_stack'] >= 1
+        or self_heal_rate['minimum_minutes']
+        > self_heal_rate['minutes_at_15_fps']
+    ):
+        _invalid('Invalid self-healing rate tuning', path)
 
     movement_speed = effects.get('movement_speed')
     movement_ceilings = (
@@ -2055,6 +2076,7 @@ def _validate_reloaded_balance_catalogue(sections, path):
         'health', 'armor', 'damage', 'reload', 'range', 'speed', 'sight',
         'cost', 'production', 'veteran', 'ammo', 'passenger_capacity',
         'sensors', 'cloak', 'recharge', 'area', 'payload', 'vision',
+        'self_healing', 'self_healing_cap', 'self_healing_rate',
     }
     target_ids = []
     target_statuses = []

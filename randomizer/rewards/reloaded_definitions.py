@@ -10,6 +10,7 @@ from randomizer.config.static import load_static_config
 from randomizer.config.game_profile import CONTENT_FACTIONS
 from randomizer.config.tuning import BUFF_EFFECTS, REWARD_PLANNING
 from randomizer.content.ammo import UNLIMITED_AMMO_THRESHOLD, has_upgradeable_ammo
+from randomizer.content.healing import self_healing_metadata
 from randomizer.content.inventory import (
     FACTION_HOUSE_VARIANTS, read_rules_sections, deferred_cabal_type_ids,
 )
@@ -203,6 +204,9 @@ for _category, _record in _records():
         'weapons': _weapons,
         'allowed_buff_types': [],
     }
+    _target.update(self_healing_metadata(
+        _native, _runtime_category, _number(_RULES.get('General', {}), 'RepairRate')
+    ))
     for _key in ('speed', 'ammo', 'passengers'):
         _value = _stats.get(_key)
         if _value is not None:
@@ -249,6 +253,10 @@ for _root_id, _family in LINKED_BUFF_VARIANTS.items():
                 _target.pop(_stat, None)
             else:
                 _target[_stat] = _value
+        _target.update(self_healing_metadata(
+            _native, _target['category'],
+            _number(_RULES.get('General', {}), 'RepairRate'),
+        ))
         _target['weapons'] = {}
         for _key, _weapon_id in _native.items():
             if str(_key).lower() not in {
@@ -641,6 +649,30 @@ BUFF_TYPES = (
         'setting_label': 'Passenger capacity +1',
         'description': '{plural} gain +1 passenger capacity per stack in future launched missions.',
         'requires_stat': 'passengers',
+        'requires_clone': True,
+    },
+    {
+        'id': 'self_healing',
+        'name': 'Regeneration',
+        'setting_label': 'Self-healing access',
+        'description': (
+            '{plural} unlock self-healing earlier: Veteran rank, then Rookie '
+            'rank. Nontrainable units and buildings gain immediate access.'
+        ),
+        'requires_clone': True,
+    },
+    {
+        'id': 'self_healing_cap',
+        'name': 'Regeneration Capacity',
+        'setting_label': 'Self-healing cap',
+        'description': '{plural} can self-heal to full health at every rank.',
+        'requires_clone': True,
+    },
+    {
+        'id': 'self_healing_rate',
+        'name': 'Rapid Regeneration',
+        'setting_label': 'Self-healing rate',
+        'description': '{plural} self-heal more frequently.',
         'requires_clone': True,
     },
     {
