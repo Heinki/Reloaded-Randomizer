@@ -6,6 +6,7 @@ from randomizer.config.game_profile import GENERATED_TYPE_PREFIX, CONTENT_FACTIO
 from randomizer.config.static import load_static_config
 from randomizer.content.inventory import read_rules_sections, deferred_cabal_type_ids
 from randomizer.content.transforms import linked_transform_families
+from randomizer.content.variants import REDUNDANT_UNIT_VARIANTS
 
 
 _CONTENT = load_static_config('rewards/reloaded_content_catalogue.json')[
@@ -39,7 +40,9 @@ def _approved_source_ids():
     deferred = deferred_cabal_type_ids(sections)
     for records in _CONTENT['units'].values():
         for record in records:
-            if str(record['id']).upper().endswith('_AI') or record['id'].upper() in deferred:
+            if (str(record['id']).upper().endswith('_AI')
+                    or record['id'].upper() in deferred
+                    or record['id'].upper() in REDUNDANT_UNIT_VARIANTS):
                 continue
             if any(
                 faction in CONTENT_FACTIONS and review['status'] == 'approved'

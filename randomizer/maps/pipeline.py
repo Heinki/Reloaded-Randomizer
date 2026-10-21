@@ -119,6 +119,7 @@ from randomizer.maps.shop_modifiers import (
 from randomizer.maps.special_buildings import (
     building_upgrade_clone_rules,
     power_plant_bonus_rules,
+    validate_power_plant_bonus_rules,
     refinery_free_unit_pairs,
     ore_purifier_miner_dock_rules,
     reprocessor_bounty_rules,
@@ -3269,8 +3270,16 @@ def prepare_hooked_map(self, mission, extra_rules=None):
     if launch_active:
         refinery_rules, player_refineries = player_refinery_rules(
             lines, installed_rule_sections, native_map_sections, clone_handled,
+            preserved_native_ids=native_required_access_ids,
         )
         merge_ini_section_values(lines, refinery_rules)
+        preserved_refineries = sorted(refinery_building_ids & native_required_access_ids)
+        if preserved_refineries:
+            self.append_log(
+                'Kept native refinery production for exact mission checks: '
+                + ', '.join(preserved_refineries)
+                + '. Their free miners retain native stats; factory-built miners keep earned upgrades.'
+            )
         starting_miner_replacements = upgrade_starting_player_miners(
             lines, installed_rule_sections, native_map_sections, clone_handled,
         )
@@ -3282,6 +3291,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             )
         refinery_failures = validate_refinery_miner_isolation(
             lines, installed_rule_sections, native_map_sections, clone_handled,
+            preserved_native_ids=native_required_access_ids,
         )
         if refinery_failures:
             raise ValueError('Refinery/miner isolation validation failed: '
@@ -3314,6 +3324,12 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             )
             if len(power_bonus_placements) != len(power_bonus_houses) * len(power_bonus_providers):
                 raise ValueError('Could not place every exact-House power output provider')
+            power_bonus_failures = validate_power_plant_bonus_rules(
+                lines, installed_rule_sections, power_bonus_providers, power_bonus_report,
+            )
+            if power_bonus_failures:
+                raise ValueError('Power plant output validation failed: '
+                                 + '; '.join(power_bonus_failures))
             self.append_log(
                 f'Applied +{power_bonus_report["bonus"]} power per plant and '
                 f'turbine across {len(power_bonus_report["targets"])} generator '

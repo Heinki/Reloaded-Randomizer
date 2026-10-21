@@ -21,6 +21,7 @@ from randomizer.content.inventory import (
 )
 from randomizer.rewards.catalogue import ALWAYS_AVAILABLE_TECH_IDS, REWARD_POOL, BUFF_TARGETS
 from randomizer.rewards.reloaded_roster import APPROVED_CLONE_SOURCE_IDS
+from randomizer.content.variants import REDUNDANT_UNIT_VARIANTS
 from randomizer.shop.catalogue import shop_catalogue
 from randomizer.shop.model import ShopRewardType
 from tools.build_content_catalogue import _unit_records
@@ -41,6 +42,13 @@ def audit(*, assets=False):
         set(BUFF_TARGETS) | set(APPROVED_CLONE_SOURCE_IDS) | {e.target_id for e in entries}
     )
     failures.extend(f'{unit}: CABAL content leaked into runtime stock' for unit in sorted(leaked))
+    duplicate_variants = set(REDUNDANT_UNIT_VARIANTS).intersection(
+        set(BUFF_TARGETS) | set(APPROVED_CLONE_SOURCE_IDS) | {e.target_id for e in entries}
+        | {str(reward.get('unit') or '').upper() for reward in REWARD_POOL}
+        | {str(unit).upper() for reward in REWARD_POOL for unit in reward.get('rules', {})}
+    )
+    failures.extend(f'{unit}: redundant unit variant leaked into runtime stock'
+                    for unit in sorted(duplicate_variants))
     for records in (*content['content']['units'].values(), content['content']['defenses'], content['content']['production']):
         for record in records:
             if record['id'].upper() in deferred and any(
@@ -58,13 +66,25 @@ def audit(*, assets=False):
             native = rules.get(unit, {})
             record = records.get(unit, {})
             approved = [f for f, r in record.get('reviews', {}).items() if r['status'] == 'approved']
+            consolidated_approvals = set(approved)
+            for variant, root in REDUNDANT_UNIT_VARIANTS.items():
+                if root == unit.upper():
+                    consolidated_approvals.update(
+                        faction for faction, review in records.get(variant, {}).get('reviews', {}).items()
+                        if review['status'] == 'approved'
+                    )
             entry = access.get(unit.upper())
             if unit.upper().endswith('_AI') or unit.upper() in deferred:
                 status = 'AI-only or deferred CABAL'
             elif entry:
                 status = 'Shop access'
-                if set(approved) != set(entry.factions):
+                if consolidated_approvals != set(entry.factions):
                     failures.append(f'{unit}: Shop faction mismatch')
+            elif unit.upper() in REDUNDANT_UNIT_VARIANTS:
+                root = REDUNDANT_UNIT_VARIANTS[unit.upper()]
+                status = f'Consolidated into {root}; no separate unlock or upgrades'
+                if root not in access:
+                    failures.append(f'{unit}: canonical unit {root} missing Shop access')
             elif unit.upper() in ALWAYS_AVAILABLE_TECH_IDS:
                 status = 'Core utility access; no purchase required'
             elif approved:
@@ -125,6 +145,7 @@ def audit(*, assets=False):
         'rules_source': source, 'rules_fingerprint_sha256': rules_fingerprint(rules),
         'unit_count': len(units), 'registered_power_count': len(powers),
         'shop_unit_access_count': len(access), 'shop_power_count': len(rewards),
+        'consolidated_unit_variant_count': len(REDUNDANT_UNIT_VARIANTS),
         'unit_status_counts': dict(Counter(u['status'] for u in units)),
         'assets_checked': assets, 'units': units, 'powers': powers,
         'cabal_enabled': ENABLE_CABAL,

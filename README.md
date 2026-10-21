@@ -106,6 +106,14 @@ reviewed superweapons and support powers, plus their 44 power buffs. Purchased
 permanent powers activate automatically in future Shop runs; unit buffs follow
 selected starting-loadout access.
 
+Minor Secret Lab copies are consolidated into one native unit each: Desolator,
+Chitzkoi, Cyborg, Terrorist, Yuri Clone, Tesla Tank and Repair Disk. Each has one
+access offer, one upgrade list and one player production identity, using the
+native unit's stats, tier and prices. Prior faction access is retained. Saved
+unlocks and upgrade stacks migrate to the canonical unit; published Archipelago
+item IDs remain readable for existing rooms. Distinct Secret Lab units remain
+available as separate rewards.
+
 MCVs share one set of buff stacks across factions. Harvesters share a separate
 set, including the Slave Miner and Stealth Harvester. Amphibious transporters
 share a third set, including the Landing Craft, Armored Transport and all three
@@ -135,6 +143,10 @@ use private types that supply upgraded miners, including earned cloaking, even
 before a war factory is built. Private refineries count toward refinery
 prerequisites. Original and upgraded miners can unload at either original or
 private player refineries, preserving each miner's compatible destinations.
+When mission construction events or reviewed objectives require an exact native refinery
+type, that refinery stays native and buildable. This preserves the Nod and GDI
+Tiberian Sun opening objectives. Its free miner retains native stats; miners
+built at factories still receive earned upgrades.
 Native enemy refineries keep their original miners. Player miners revert to
 their native type when captured by computer-controlled houses. Safe player miners
 already placed in a mission receive the same upgrades, including ALL07_RA2's

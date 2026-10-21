@@ -823,7 +823,7 @@ class ShopPolishController(ShopArchipelagoController):
             ShopRewardType.UNIT_BUFF,
             ShopRewardType.POWER_BUFF,
         }:
-            return entry.reward_id
+            return reward_display_name(canonical_reward_for_id(entry.reward_id))
         reward = canonical_reward_for_id(entry.reward_id)
         active_stacks = (buff_counts or {}).get(reward.get('buff_type'), stacks)
         if state == 'MAX':
@@ -1024,7 +1024,8 @@ class ShopPolishController(ShopArchipelagoController):
                 )
         for entry in candidates:
             if term and term not in (
-                entry.reward_id + ' ' + entry.target_id
+                reward_display_name(canonical_reward_for_id(entry.reward_id))
+                + ' ' + entry.reward_id + ' ' + entry.target_id
             ).casefold():
                 continue
             detail = self._shop_catalogue_entry_state(
@@ -1174,6 +1175,7 @@ class ShopPolishController(ShopArchipelagoController):
                 f'Target: {unit_buff_target_label(entry.target_id) if entry.reward_type is ShopRewardType.UNIT_BUFF else entry.target_id or "—"}\n'
                 f'Price: {self._entry_price_text(entry, price, stacks)}\n'
                 f'State: {reason}'
+                + '\n' + str(canonical_reward_for_id(entry.reward_id).get('description') or '')
                 + (
                     '\nEffect: '
                     + self._shop_catalogue_display_name(
@@ -1700,7 +1702,7 @@ class ShopPolishController(ShopArchipelagoController):
             )
             self.shop_permanent_unit_button.configure(
                 text=(
-                    f'Buy {reward_id} — {values[3]}'
+                    f'Buy {values[0]} — {values[3]}'
                     if unit_allowed else values[2]
                 )
             )
@@ -1719,9 +1721,11 @@ class ShopPolishController(ShopArchipelagoController):
         reward_id = self._shop_permanent_rows.get(row_id)
         if not reward_id:
             return ''
+        reward = canonical_reward_for_id(reward_id)
         return (
-            f'{reward_id}\nPermanent local entitlement. '
-            'Selectable in future Shop run loadouts.'
+            f'{reward_display_name(reward)}\n{reward.get("description", "")}\n'
+            'Permanent local entitlement. Selectable in future Shop run loadouts. '
+            'Tier and price follow this variant’s reviewed technology level.'
         )
 
     def shop_permanent_power_tooltip(self, row_id):

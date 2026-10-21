@@ -117,7 +117,9 @@ def build_catalogue_projection():
     # Reward definitions intentionally inspect installed Reloaded rules. Keep
     # this import lazy so clean source checkouts can package and verify the
     # already-reviewed, checked-in catalogue without proprietary game assets.
-    from randomizer.rewards.catalogue import MAX_REWARDS_PER_CHECK, REWARD_POOL
+    from randomizer.rewards.catalogue import (
+        LEGACY_UNIT_VARIANT_REWARDS, MAX_REWARDS_PER_CHECK, REWARD_POOL,
+    )
     from randomizer.rewards.weights import main_reward_weight_type
 
     items = [
@@ -127,7 +129,12 @@ def build_catalogue_projection():
             'category': main_reward_weight_type(reward),
             'repeatable': reward.get('kind') == 'buff',
         }
-        for reward in sorted(REWARD_POOL, key=lambda entry: entry['name'])
+        # Retain published IDs for received items from existing rooms. New
+        # generation uses only REWARD_POOL, which contains no minor copies.
+        for reward in sorted(
+            [*REWARD_POOL, *LEGACY_UNIT_VARIANT_REWARDS],
+            key=lambda entry: entry['name'],
+        )
     ]
 
     missions = []

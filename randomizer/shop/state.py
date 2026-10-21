@@ -78,6 +78,14 @@ def _strings(value, field):
     return tuple(value)
 
 
+def _unit_unlock_ids(value, field):
+    from randomizer.rewards.reloaded_definitions import REWARD_ALIASES
+
+    return tuple(dict.fromkeys(
+        REWARD_ALIASES.get(item, item) for item in _unique_strings(value, field)
+    ))
+
+
 def _mission_code_history(value, field):
     return tuple(code.upper() for code in _strings(value, field))
 
@@ -156,7 +164,7 @@ def normalize_shop_profile(document=None, *, config=SHOP_CONFIG):
     if document is None:
         document = {}
     document = migrate_shop_profile(document)
-    unlocks = _unique_strings(
+    unlocks = _unit_unlock_ids(
         document.get('permanent_unit_unlocks'), 'permanent_unit_unlocks'
     )
     power_unlocks = _unique_strings(
@@ -235,6 +243,9 @@ def _purchase_records(value, field, quantity_field, record_type):
         return ()
     if not isinstance(value, list):
         raise ShopStateError(f'Shop state field {field!r} must be a list')
+    from randomizer.content.variants import REDUNDANT_UNIT_VARIANTS
+    from randomizer.rewards.reloaded_definitions import REWARD_ALIASES, REWARD_BY_NAME
+
     combined = {}
     for index, raw_record in enumerate(value):
         record = _object(raw_record, f'{field}[{index}]')
@@ -246,10 +257,14 @@ def _purchase_records(value, field, quantity_field, record_type):
             f'{field}[{index}].{quantity_field}',
             1,
         )
-        if record_type is BuffPurchase:
-            from randomizer.rewards.reloaded_definitions import REWARD_ALIASES
-            reward_id = REWARD_ALIASES.get(reward_id, reward_id)
+        reward_id = REWARD_ALIASES.get(reward_id, reward_id)
         combined[reward_id] = combined.get(reward_id, 0) + quantity
+        if record_type is PurchaseRecord and set(
+            REWARD_BY_NAME.get(reward_id, {}).get('rules', {})
+        ).intersection(REDUNDANT_UNIT_VARIANTS.values()):
+            # Access is a single entitlement, even when both former copies
+            # were purchased. Buff quantities above remain additive.
+            combined[reward_id] = 1
     return tuple(
         record_type(reward_id, quantity)
         for reward_id, quantity in combined.items()
@@ -366,6 +381,9 @@ def normalize_shop_run(document, *, config=SHOP_CONFIG):
     stock_lock_reward_id = _string(
         document.get('stock_lock_reward_id'), 'stock_lock_reward_id'
     )
+    if stock_lock_reward_id:
+        from randomizer.rewards.reloaded_definitions import REWARD_ALIASES
+        stock_lock_reward_id = REWARD_ALIASES.get(stock_lock_reward_id, stock_lock_reward_id)
     stock_lock_stage = document.get('stock_lock_stage')
     if stock_lock_stage is not None:
         stock_lock_stage = _positive_int(
@@ -415,10 +433,10 @@ def normalize_shop_run(document, *, config=SHOP_CONFIG):
         starting_defense_ids=_unique_mission_codes(
             document.get('starting_defense_ids'), 'starting_defense_ids'
         ),
-        selected_permanent_units=_unique_strings(
+        selected_permanent_units=_unit_unlock_ids(
             document.get('selected_permanent_units'), 'selected_permanent_units'
         ),
-        random_starting_unit_unlocks=_unique_strings(
+        random_starting_unit_unlocks=_unit_unlock_ids(
             document.get('random_starting_unit_unlocks'),
             'random_starting_unit_unlocks',
         ),

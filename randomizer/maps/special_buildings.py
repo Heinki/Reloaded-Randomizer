@@ -128,6 +128,40 @@ def power_plant_bonus_rules(lines, rewards, installed_sections):
     return rules, tuple(providers), {'stacks': stacks, 'bonus': bonus, 'targets': targets}
 
 
+def validate_power_plant_bonus_rules(lines, installed_sections, providers, report):
+    """Reject missing engine keys, registrations or exact plant identities."""
+    if not providers:
+        return []
+    sections = all_section_value_maps(lines)
+    registered = {
+        value.upper() for source in (installed_sections, sections)
+        for value in _section_values(source, 'BuildingTypes').values()
+    }
+    failures, covered = [], set()
+    for provider in providers:
+        # Normalized lookup keys hide the original power-output bug:
+        # Phobos requires these tags in their original engine spelling.
+        values = section_value_map_preserve(lines, provider)
+        required = {'Strength', 'Image', 'Power', 'InvisibleInGame',
+                    'PowerPlantEnhancer.PowerPlants', 'PowerPlantEnhancer.Amount',
+                    'PowerPlantEnhancer.Factor'}
+        if provider.upper() not in registered or required - values.keys():
+            failures.append(f'{provider} has missing registration or engine keys')
+            continue
+        amount = int(values['PowerPlantEnhancer.Amount'])
+        factor = float(values['PowerPlantEnhancer.Factor'])
+        for plant in comma_items(values['PowerPlantEnhancer.PowerPlants']):
+            target = report['targets'].get(plant)
+            if not target or plant.upper() not in registered or plant in covered:
+                failures.append(f'{provider} has invalid or duplicate plant {plant}')
+            elif amount != target['amount'] or abs(factor - target['factor']) > 1e-9:
+                failures.append(f'{provider} has incorrect power bonus for {plant}')
+            covered.add(plant)
+    for plant in report['targets'].keys() - covered:
+        failures.append(f'{plant} has no power output provider')
+    return failures
+
+
 def building_upgrade_clone_rules(lines, installed_sections, clone_handled):
     """Let native and cloned attachments upgrade every actual host identity.
 

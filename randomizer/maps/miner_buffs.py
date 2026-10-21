@@ -62,14 +62,23 @@ def _expand_prerequisites(values, replacements):
     return rules
 
 
-def player_refinery_rules(lines, installed_sections, native_sections, clone_handled):
-    """Keep native refinery FreeUnit unchanged; expose private human copies."""
+def player_refinery_rules(
+    lines, installed_sections, native_sections, clone_handled, *,
+    preserved_native_ids=(),
+):
+    """Expose private refineries unless mission checks require native types."""
     sections = all_section_value_maps(lines)
     rules, refineries = {}, {}
     refinery_pairs = refinery_free_unit_pairs(native_sections, installed_sections)
     reserved = {str(name).casefold() for name in installed_sections}
     reserved.update(str(name).casefold() for name in sections)
+    preserved_native_ids = {str(item).upper() for item in preserved_native_ids}
     for refinery, miner in refinery_pairs.items():
+        # Event 19 checks the BuildingTypes index. GroupAs cannot make
+        # a private refinery satisfy it. The pipeline already grants and
+        # protects these exact native types; do not gate them again here.
+        if refinery in preserved_native_ids:
+            continue
         miner_clone = str((clone_handled.get(miner) or {}).get('clone_id') or '')
         if not miner_clone:
             continue
@@ -213,7 +222,10 @@ def upgrade_starting_player_miners(lines, installed_sections, native_sections, c
     return replacements
 
 
-def validate_refinery_miner_isolation(lines, installed_sections, native_sections, clone_handled):
+def validate_refinery_miner_isolation(
+    lines, installed_sections, native_sections, clone_handled, *,
+    preserved_native_ids=(),
+):
     """Reject shared spawn leaks and broken private refinery/miner links."""
     sections = all_section_value_maps(lines)
     clone_ids = {
@@ -223,6 +235,7 @@ def validate_refinery_miner_isolation(lines, installed_sections, native_sections
     } - {''}
     failures = []
     refinery_pairs = refinery_free_unit_pairs(native_sections, installed_sections)
+    preserved_native_ids = {str(item).upper() for item in preserved_native_ids}
     registered_buildings = {
         value.upper()
         for entries in (installed_sections, sections)
@@ -241,6 +254,15 @@ def validate_refinery_miner_isolation(lines, installed_sections, native_sections
                 failures.append(f'{refinery}.{key} points to a player clone')
         clone = str((clone_handled.get(refinery) or {}).get('clone_id') or '')
         miner_clone = str((clone_handled.get(miner) or {}).get('clone_id') or '')
+        if refinery in preserved_native_ids:
+            if clone:
+                failures.append(f'{refinery} uses a clone despite exact mission checks')
+            negatives = {item.upper() for item in comma_items(values.get('prerequisite.negative', ''))}
+            if PLAYER_ORIGINAL_PRODUCTION_GATE_ID.upper() in negatives:
+                failures.append(f'{refinery} is blocked despite exact mission checks')
+            if int(values.get('techlevel', '-1')) < 0:
+                failures.append(f'{refinery} is unavailable despite exact mission checks')
+            continue
         if not clone:
             authored = _values(installed_sections, refinery)
             authored.update(_values(native_sections, refinery))

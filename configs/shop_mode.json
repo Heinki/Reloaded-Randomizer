@@ -322,12 +322,6 @@
         "permanent_access": 25,
         "permanent_buff": 8
       },
-      "CHITZ_ST": {
-        "run_access": 10,
-        "run_buff": 6,
-        "permanent_access": 50,
-        "permanent_buff": 12
-      },
       "CHRP": {
         "run_access": 10,
         "run_buff": 6,
@@ -363,12 +357,6 @@
         "run_buff": 6,
         "permanent_access": 50,
         "permanent_buff": 12
-      },
-      "DESO_ST": {
-        "run_access": 6,
-        "run_buff": 4,
-        "permanent_access": 25,
-        "permanent_buff": 8
       },
       "DEST": {
         "run_access": 6,
@@ -707,12 +695,6 @@
         "permanent_buff": 12
       },
       "MAMU_ST": {
-        "run_access": 10,
-        "run_buff": 6,
-        "permanent_access": 50,
-        "permanent_buff": 12
-      },
-      "MDISK_ST": {
         "run_access": 10,
         "run_buff": 6,
         "permanent_access": 50,
@@ -1120,12 +1102,6 @@
         "permanent_access": 25,
         "permanent_buff": 8
       },
-      "TERROR_ST": {
-        "run_access": 6,
-        "run_buff": 4,
-        "permanent_access": 25,
-        "permanent_buff": 8
-      },
       "TESLA": {
         "run_access": 6,
         "run_buff": 4,
@@ -1157,12 +1133,6 @@
         "permanent_buff": 8
       },
       "TSCYBORG": {
-        "run_access": 6,
-        "run_buff": 4,
-        "permanent_access": 25,
-        "permanent_buff": 8
-      },
-      "TSCYBORG_ST": {
         "run_access": 6,
         "run_buff": 4,
         "permanent_access": 25,
@@ -1312,12 +1282,6 @@
         "permanent_access": 50,
         "permanent_buff": 12
       },
-      "TTNK_ST": {
-        "run_access": 10,
-        "run_buff": 6,
-        "permanent_access": 50,
-        "permanent_buff": 12
-      },
       "TWMAMU": {
         "run_access": 10,
         "run_buff": 6,
@@ -1395,12 +1359,6 @@
         "run_buff": 6,
         "permanent_access": 50,
         "permanent_buff": 12
-      },
-      "YURI_ST": {
-        "run_access": 6,
-        "run_buff": 4,
-        "permanent_access": 25,
-        "permanent_buff": 8
       },
       "CHITZ": {
         "run_access": 10,

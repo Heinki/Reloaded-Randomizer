@@ -3,6 +3,7 @@
 import random
 
 from randomizer.config.game_profile import CONTENT_FACTIONS
+from randomizer.content.variants import canonical_player_unit_id
 
 from randomizer.rewards.catalogue import (
     BUFF_TARGETS,
@@ -335,7 +336,7 @@ def generate_mission_arsenals(seed, mission_codes, reward_settings, arsenal_sett
 
 def arsenal_unit_ids(arsenal):
     return {
-        str(unit_id).upper()
+        canonical_player_unit_id(unit_id)
         for entry in (arsenal or {}).get('units', ())
         for unit_id in entry.get('tech_ids', (entry.get('unit_id'),))
         if unit_id
@@ -398,7 +399,8 @@ def arsenal_launch_rewards(arsenal, earned_rewards):
         if reward_matches_arsenal(reward, arsenal)
     ]
     for entry in (arsenal or {}).get('units', ()):
-        source = reward_by_name.get(entry.get('reward_name'))
+        reward_name = canonical_reward({'name': entry.get('reward_name')}).get('name')
+        source = reward_by_name.get(reward_name)
         if not source:
             continue
         reward = dict(source)
@@ -406,7 +408,7 @@ def arsenal_launch_rewards(arsenal, earned_rewards):
             section: dict(values)
             for section, values in source.get('rules', {}).items()
         }
-        selected_ids = {str(item).upper() for item in entry.get('tech_ids', ())}
+        selected_ids = {canonical_player_unit_id(item) for item in entry.get('tech_ids', ())}
         for section, values in reward['rules'].items():
             if str(section).upper() in selected_ids:
                 for key in list(values):

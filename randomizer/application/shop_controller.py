@@ -2487,7 +2487,8 @@ class ShopController(ShopPolishController):
                 and (
                     not self.shop_setup_search_var.get().strip()
                     or self.shop_setup_search_var.get().strip().casefold()
-                    in (entry.reward_id + ' ' + entry.target_id).casefold()
+                    in (reward_display_name(canonical_reward_for_id(entry.reward_id))
+                        + ' ' + entry.reward_id + ' ' + entry.target_id).casefold()
                 )
             ),
             key=lambda entry: entry.reward_id.casefold(),
@@ -2502,7 +2503,7 @@ class ShopController(ShopPolishController):
             options = {
                 'iid': iid,
                 'values': (
-                    entry.reward_id,
+                    reward_display_name(canonical_reward_for_id(entry.reward_id)),
                     (entry.tier or '').replace('_', ' ').title(),
                     (
                         'Permanent + AP'
@@ -2629,7 +2630,8 @@ class ShopController(ShopPolishController):
             (
                 entry for entry in self._shop_unit_entries
                 if not term or term in (
-                    entry.reward_id + ' ' + entry.target_id
+                    reward_display_name(canonical_reward_for_id(entry.reward_id))
+                    + ' ' + entry.reward_id + ' ' + entry.target_id
                 ).casefold()
             ),
             key=lambda item: item.reward_id.casefold(),
@@ -2660,7 +2662,7 @@ class ShopController(ShopPolishController):
                 'iid': iid,
                 'tags': (row_tag,),
                 'values': (
-                    entry.reward_id,
+                    reward_display_name(canonical_reward_for_id(entry.reward_id)),
                     (entry.tier or '').replace('_', ' ').title(),
                     state,
                     f'{price} Gems',
@@ -2811,14 +2813,14 @@ class ShopController(ShopPolishController):
         labels = list(dict.fromkeys(
             unit_buff_target_label(entry.target_id)
             if shared_unit_buff_target_id(entry.target_id) in SHARED_UNIT_BUFF_GROUPS
-            else entry.reward_id
+            else reward_display_name(canonical_reward_for_id(entry.reward_id))
             for entry in owned_entries
         ))
         self._shop_permanent_buff_target_ids = {
             (
                 unit_buff_target_label(entry.target_id)
                 if shared_unit_buff_target_id(entry.target_id) in SHARED_UNIT_BUFF_GROUPS
-                else entry.reward_id
+                else reward_display_name(canonical_reward_for_id(entry.reward_id))
             ): shared_unit_buff_target_id(entry.target_id)
             for entry in owned_entries
         }

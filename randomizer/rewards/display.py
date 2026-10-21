@@ -8,6 +8,7 @@ from .reloaded_definitions import (
     BUFF_EFFECTS,
     BUFF_TARGETS,
     DEFERRED_TECH_IDS,
+    LEGACY_UNIT_VARIANT_REWARD_NAMES,
     NONTRAINABLE_UNIT_IDS,
     RETIRED_REWARD_BY_NAME,
     REWARD_ALIASES,
@@ -53,7 +54,8 @@ def canonical_reward(reward):
             'description': 'Disabled until the CABAL faction is officially available.',
             'rules': {}, 'factions': [], 'kind': 'retired', 'retired_reward': True,
         }
-    if reward.get('_runtime_canonical') and not reward.get('enemy_reward'):
+    if (reward.get('_runtime_canonical') and not reward.get('enemy_reward')
+            and reward.get('name') not in LEGACY_UNIT_VARIANT_REWARD_NAMES):
         return reward
 
     reward_name = reward.get('name')
@@ -195,7 +197,7 @@ def reward_display_name(reward):
     reward = canonical_reward(reward)
     if reward.get('enemy_reward'):
         return enemy_reward_display_name(reward)
-    name = reward.get('name', 'Unknown reward')
+    name = reward.get('display_name') or reward.get('name', 'Unknown reward')
     if reward.get('shared_buff_label'):
         effect = name.removeprefix(unit_display_label(reward['unit']) + ' ')
         return f'{reward["shared_buff_label"]} {effect.removesuffix(" I")} (shared)'
@@ -530,7 +532,7 @@ def buff_effect_lines(
 
     target = BUFF_TARGETS.get(reward.get('unit'), {})
     buff_type = reward.get('buff_type')
-    label = target.get('label', reward.get('unit', 'Unit'))
+    label = unit_display_label(reward.get('unit'))
     prefix = f'{label}: ' if include_label else ''
     count = effective_buff_count(reward, count)
 

@@ -18,6 +18,7 @@ from randomizer.content.transforms import (
     linked_transform_families,
     techno_type_categories,
 )
+from randomizer.content.variants import REDUNDANT_UNIT_VARIANTS
 from randomizer.rewards.enemy_scaling import build_enemy_reward_pool
 from randomizer.rewards.power_buff_definitions import build_power_buff_rewards
 
@@ -119,6 +120,14 @@ def _plural(label):
     return label if label.endswith('s') else label + 's'
 
 
+def _display_label(record):
+    """Identify lab variants without renaming persisted rewards or AP items."""
+    if record.get('secret_lab'):
+        label = str(record.get('name') or record['id'])
+        return f'Secret Lab {label}'
+    return _label(record)
+
+
 def _number(values, key, default=None):
     try:
         value = next(
@@ -191,6 +200,7 @@ for _category, _record in _records():
     _target = {
         'category': _runtime_category,
         'label': _unit_label,
+        'display_label': _display_label(_record),
         'plural': _plural(_unit_label),
         'factions': list(_factions_for_record),
         'special_reward': False,
@@ -329,7 +339,16 @@ for _category, _record in _records():
         continue
     _reward = {
         'name': f'{_label(_record)} Access',
-        'description': f'Allows {_label(_record)} production.',
+        'display_name': f'{_display_label(_record)} Access',
+        'description': (
+            f'Allows {_display_label(_record)} production. '
+            f'Factions: {", ".join(_approved)}.'
+            + (
+                ' Secret Lab variant; faction access and production '
+                'prerequisites differ from the native faction unit.'
+                if _record.get('secret_lab') else ''
+            )
+        ),
         'kind': 'access',
         'access_category': _CATEGORY_MAP[_category],
         'rules': _reward_rules(_record, _approved),
@@ -892,7 +911,7 @@ def unit_display_label(unit_id):
         if reward.get('unit') == str(unit_id or '').upper():
             return reward.get('target_label', str(unit_id))
     target = BUFF_TARGETS.get(str(unit_id or '').upper(), {})
-    return target.get('label', str(unit_id or 'Unknown unit'))
+    return target.get('display_label') or target.get('label', str(unit_id or 'Unknown unit'))
 
 
 MOVEMENT_SPEED_SAFE_CEILINGS = {
@@ -988,3 +1007,59 @@ for _reward in UNIT_BUFF_REWARDS:
     )
     if _reward['name'] != _shared_reward['name']:
         REWARD_ALIASES[_reward['name']] = _shared_reward['name']
+
+
+def _consolidate_unit_variants():
+    """Keep one player identity and migrate published access/buff names."""
+    access_by_unit = {
+        unit_id: reward for reward in UNIT_UNLOCK_REWARDS
+        for unit_id in reward['rules']
+    }
+    records = {record['id'].upper(): record for _category, record in _records()}
+    legacy = []
+    display_labels = {'DESO': 'Desolator', 'CHITZ': 'Chitzkoi', 'MDISK': 'Repair Disk'}
+    for variant, root in REDUNDANT_UNIT_VARIANTS.items():
+        native_access = access_by_unit[root]
+        variant_access = access_by_unit[variant]
+        target = BUFF_TARGETS[root]
+        factions = set(target['factions']) | set(BUFF_TARGETS[variant]['factions'])
+        target['factions'] = [faction for faction in CONTENT_FACTIONS if faction in factions]
+        target['display_label'] = display_labels.get(root, target['label'])
+        native_access.update({
+            'display_name': f'{target["display_label"]} Access',
+            'description': f'Allows {target["display_label"]} production. '
+                           f'Factions: {", ".join(target["factions"])}.',
+            'factions': list(target['factions']),
+            'rules': _reward_rules(records[root], target['factions']),
+        })
+        legacy.append(variant_access)
+        REWARD_ALIASES[variant_access['name']] = native_access['name']
+        for reward in UNIT_BUFF_REWARDS:
+            if reward['unit'] == root:
+                reward['factions'] = list(target['factions'])
+            elif reward['unit'] == variant:
+                replacement = REWARD_BY_BUFF_KEY[(root, reward['buff_type'])]
+                REWARD_ALIASES[reward['name']] = replacement['name']
+                REWARD_BY_BUFF_KEY[(variant, reward['buff_type'])] = replacement
+                legacy.append(reward)
+        for roster in FACTION_UNIT_ROSTERS.values():
+            for units in roster.values():
+                units.pop(variant, None)
+        for faction in target['factions']:
+            FACTION_UNIT_ROSTERS[faction][target['category']][root] = target['display_label']
+        BUFF_TARGETS.pop(variant)
+        NAVAL_UNIT_IDS.discard(variant)
+        NONTRAINABLE_UNIT_IDS.discard(variant)
+        LIMITED_HERO_BUILD_LIMITS.pop(variant, None)
+    legacy_names = {reward['name'] for reward in legacy}
+    UNIT_UNLOCK_REWARDS[:] = [r for r in UNIT_UNLOCK_REWARDS if r['name'] not in legacy_names]
+    UNIT_BUFF_REWARDS[:] = [r for r in UNIT_BUFF_REWARDS if r['name'] not in legacy_names]
+    REWARD_POOL[:] = [r for r in REWARD_POOL if r['name'] not in legacy_names]
+    return tuple(legacy)
+
+
+# Compatibility-only item names stay available to old AP rooms, never to new
+# reward draws, Shop stock, upgrade selectors or player clone construction.
+LEGACY_UNIT_VARIANT_REWARDS = _consolidate_unit_variants()
+LEGACY_UNIT_VARIANT_REWARD_NAMES = frozenset(r['name'] for r in LEGACY_UNIT_VARIANT_REWARDS)
+LIMITED_HERO_UNIT_IDS = frozenset(LIMITED_HERO_BUILD_LIMITS)
