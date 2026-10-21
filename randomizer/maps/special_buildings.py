@@ -6,7 +6,9 @@ from randomizer.config.tuning import stacking_amount
 from randomizer.core.collections import comma_items, unique_in_order
 from randomizer.maps.base import _collision_safe_type_id
 from randomizer.maps.buff_values import _register_map_type
-from randomizer.maps.ini import all_section_value_maps
+from randomizer.maps.ini import (
+    all_section_value_maps, section_value_map_preserve,
+)
 from randomizer.maps.production import PLAYER_ORIGINAL_PRODUCTION_GATE_ID
 from randomizer.rewards.catalogue import (
     BUFF_TARGETS, canonical_rewards, effective_buff_count,
@@ -50,6 +52,13 @@ def _effective_section_values(map_sections, installed_sections, section):
 
 
 def power_plant_bonus_rules(lines, rewards, installed_sections):
+    """Enhance actual native and cloned plants without changing mission IDs.
+
+    Basic power plants retain their native BuildingType so authored build,
+    existence, and destruction checks still recognize them. Registered reward
+    clones are included by their actual runtime IDs as well; GroupAs only
+    provides selection grouping, not an alias for exact-type mission checks.
+    """
     active = [reward for reward in canonical_rewards(rewards)
               if reward.get('buff_type') == 'power_output']
     if not active:
@@ -89,7 +98,12 @@ def power_plant_bonus_rules(lines, rewards, installed_sections):
             raise ValueError(f'{building}: turbine output is too low for a safe power bonus')
         groups.setdefault((factor, amount), []).append(building)
         targets[building] = {'base': power, 'factor': factor, 'amount': amount}
-    template = _section_values(sections, PLAYER_ORIGINAL_PRODUCTION_GATE_ID)
+    # Lookup maps lowercase every key. Never emit those normalized mappings as
+    # standalone clones: the engine requires the original rules-key spelling,
+    # including Strength, Image, InvisibleInGame, Power, and the enhancer tags.
+    template = section_value_map_preserve(
+        lines, PLAYER_ORIGINAL_PRODUCTION_GATE_ID
+    )
     if not template:
         raise ValueError('Player power bonus requires the isolated startup building template')
     reserved = {name.casefold() for name in (*installed_sections, *sections)}
@@ -102,11 +116,11 @@ def power_plant_bonus_rules(lines, rewards, installed_sections):
             )
             values = dict(template)
             values.update({
-                'name': 'Randomizer Power Plant Output',
-                'uiname': 'NOSTR:Randomizer Power Plant Output',
-                'powerplantenhancer.powerplants': ','.join(plants[offset:offset + 20]),
-                'powerplantenhancer.amount': str(amount),
-                'powerplantenhancer.factor': format(factor, '.12g'),
+                'Name': 'Randomizer Power Plant Output',
+                'UIName': 'NOSTR:Randomizer Power Plant Output',
+                'PowerPlantEnhancer.PowerPlants': ','.join(plants[offset:offset + 20]),
+                'PowerPlantEnhancer.Amount': str(amount),
+                'PowerPlantEnhancer.Factor': format(factor, '.12g'),
             })
             rules[provider] = values
             _register_map_type(rules, lines, installed_sections, 'BuildingTypes', provider)
