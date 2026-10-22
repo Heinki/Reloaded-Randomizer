@@ -16,12 +16,19 @@ NEXT_OBJECTIVE_CHECK_ID = '__next_objective__'
 
 
 def native_trigger_check_markers(lines, plan):
-    """Use Phobos' synchronous trigger log as a completion receipt.
+    """Use Phobos' trigger log only when it proves action execution.
 
-    Phobos logs the trigger ID before running its actions, including immediate
-    victory and mission-transition actions. This provides a receipt independent
-    of the legacy empty team's creation message.
+    An AND tag (repeat mode 1) logs each attached object's event before all
+    attached objects have satisfied the trigger. Its log is not a completion
+    receipt; only the injected marker action proves that the actions ran.
+    Other tags retain the synchronous log fallback for immediate endings.
     """
+    action_marker_only_ids = set()
+    for value in section_value_map_preserve(lines, 'Tags').values():
+        tokens = [token.strip() for token in str(value).split(',')]
+        if len(tokens) == 3 and tokens[0] == '1':
+            action_marker_only_ids.add(tokens[2].casefold())
+
     triggers = {
         str(trigger_id).casefold(): str(trigger_id)
         for trigger_id in section_value_map_preserve(lines, 'Triggers')
@@ -35,6 +42,7 @@ def native_trigger_check_markers(lines, plan):
         check['id']
         for check, action_id in plan
         if str(action_id).casefold() in triggers
+        and str(action_id).casefold() not in action_marker_only_ids
         # The engine uses these IDs to link the action body to its trigger.
         # Do not report completion for a trigger with no matching action body.
         and triggers[str(action_id).casefold()] == actions.get(
