@@ -51,6 +51,12 @@ original Command & Conquer developers and publishers.
 6. Select an available mission and launch it through the Randomizer.
 7. Complete objectives and win missions to earn rewards and progression.
 
+The launcher uses its executable location to find the game and sets its working
+directory to that game folder before loading the application. Opening it from a
+browser's download list or a shortcut does not require a particular starting
+folder. Linux source runs locate the game beside the source checkout in the
+same way, independently of the terminal's working directory.
+
 For multiworld play, also download the matching `cnc_reloaded.apworld` and
 follow the [C&C Reloaded Archipelago guide](Archipelago/README.md). Never mix a
 launcher, APWorld, or Player YAML from different releases.

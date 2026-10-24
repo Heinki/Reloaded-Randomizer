@@ -8,17 +8,23 @@ if __name__ == '__main__' and len(sys.argv) == 3 and sys.argv[1] == '--apply-upd
     raise SystemExit(apply_update_main(sys.argv[2]))
 
 import json
+import os
 import traceback
 
-from randomizer.audit import installation_report
 from randomizer.config.game_profile import PRODUCT_NAME
 from randomizer.core.diagnostics import event as log_event
-from randomizer.core.paths import APP_DIR, LAUNCHER_LOG
+from randomizer.core.paths import APP_DIR, GAME_ROOT, LAUNCHER_LOG
 
 
 def run_launcher():
     """Load config-dependent application modules with visible startup errors."""
     try:
+        # Browsers and shortcuts can supply an unrelated working directory.
+        # Normalize it before loading Tk and the application, including native
+        # dependencies that may resolve relative paths. GAME_ROOT comes from
+        # the executable in packaged builds or the source tree on Linux.
+        os.chdir(GAME_ROOT)
+        log_event('launcher_working_directory_set', directory=GAME_ROOT)
         from randomizer.application.app import main
         main()
         return 0
@@ -46,6 +52,8 @@ def run_self_check():
     """Write a read-only Reloaded foundation and installation report."""
     report_path = APP_DIR / 'self_check.json'
     try:
+        from randomizer.audit import installation_report
+
         APP_DIR.mkdir(parents=True, exist_ok=True)
         report = installation_report()
     except Exception:

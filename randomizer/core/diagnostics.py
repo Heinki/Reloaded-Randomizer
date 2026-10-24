@@ -56,6 +56,10 @@ def setup_logging():
         LOGGER.addHandler(handler)
     except OSError:
         LOGGER.addHandler(logging.NullHandler())
+    try:
+        working_directory = os.getcwd()
+    except OSError:
+        working_directory = None
     event(
         'launcher_started',
         version=APP_VERSION,
@@ -64,6 +68,7 @@ def setup_logging():
         windows=str(sys.getwindowsversion()) if hasattr(sys, 'getwindowsversion') else sys.platform,
         executable=sys.executable,
         game_root=GAME_ROOT,
+        working_directory=working_directory,
     )
     return LOGGER
 
