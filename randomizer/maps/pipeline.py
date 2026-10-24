@@ -3437,6 +3437,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             progression_rewards=progression_rewards_for_report,
             active_rewards=access_report_active_rewards,
             mission_specific_ids=mission_specific_ids_for_report,
+            refinery_support_ids=player_refineries,
             delayed_mission_unlock_ids=delayed_native_unlock_ids,
             starting_faction_tech_ids=starting_faction_tech_ids_for_report,
             expected_buildable_source_ids=buildable_clone_ids,

@@ -455,6 +455,7 @@ def build_unit_access_report(
     progression_rewards=(),
     active_rewards=(),
     mission_specific_ids=(),
+    refinery_support_ids=(),
     delayed_mission_unlock_ids=(),
     starting_faction_tech_ids=(),
     expected_buildable_source_ids=(),
@@ -548,6 +549,8 @@ def build_unit_access_report(
     expected_ids = {
         str(item).upper() for item in expected_buildable_source_ids
     }
+    refinery_ids = {str(item).upper() for item in refinery_support_ids}
+    expected_ids.update(refinery_ids)
     controlled_ids = {str(item).upper() for item in controlled_source_ids}
 
     def access_sources(source_id, routes):
@@ -558,6 +561,8 @@ def build_unit_access_report(
             sources.append('Progression unlock')
         if source_id in mission_ids:
             sources.append('Mission required')
+        if source_id in refinery_ids:
+            sources.append('Required refinery support')
         if source_id in starting_tech_ids or (
             not randomize_unit_access and source_id in active_ids
         ):

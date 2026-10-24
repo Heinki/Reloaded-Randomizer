@@ -84,6 +84,9 @@ from randomizer.config.game_profile import (
     GENERATED_HOOK_PREFIX,
 )
 from randomizer.maps.generated import assert_file_hash
+from randomizer.core.mission_diagnostics import (
+    mission_diagnostic_baseline, preserve_mission_report,
+)
 
 class LaunchController:
 
@@ -964,6 +967,14 @@ class LaunchController:
         attempt = self.active_mission_attempt or {}
         attempt_code = attempt.get('mission_code')
         if attempt_code and not self.is_mission_complete(attempt_code):
+            try:
+                report = preserve_mission_report(
+                    attempt, self.active_hook,
+                    process.poll() if process is not None else None,
+                )
+                self.append_log(f'Saved incomplete mission report: {report}')
+            except OSError as exc:
+                self.append_log(f'Could not save mission report: {exc}', error=True)
             self.record_failed_mission_attempt(attempt_code, 'Mission closed without victory')
         self.active_hook = None
         self.active_game_process = None
@@ -1211,6 +1222,11 @@ class LaunchController:
         self.append_log('Attempting game launch via: ' + command_text)
 
         try:
+            try:
+                exception_baseline = mission_diagnostic_baseline()
+            except OSError as exc:
+                exception_baseline = None
+                self.append_log(f'Could not inspect existing engine diagnostics: {exc}', error=True)
             popen_options = {}
             if sys.platform != 'win32':
                 environment = os.environ.copy()
@@ -1274,6 +1290,12 @@ class LaunchController:
             self.active_mission_attempt = {
                 'mission_code': mission.get('code'),
                 'scenario': scenario,
+                'seed': self.active_launch_seed(),
+                'difficulty': difficulty_value,
+                'game_speed': game_speed_value,
+                'command': command_text,
+                'active_rewards': self.active_launch_rewards(),
+                'exception_baseline': exception_baseline,
             }
             self.after(HOOK_POLL_MS, self.poll_hook_log)
         except Exception as exc:

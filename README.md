@@ -170,8 +170,7 @@ Each Shop mission card shows a deterministic difficulty for that choice. Early
 stages favor Casual, middle stages favor Normal, and late stages can select
 Hard. Mission Difficulty Assist lowers only its chosen mission by one step while
 preserving the reward. Expanding the launcher log exposes a developer-only
-mission-choice picker for recovery and test completion through normal Shop
-transitions.
+mission-choice picker for recovery through normal Shop transitions.
 
 **Enemy Powerhouses** is a single-stack enemy buff in Shop stage scaling and
 the standalone/Archipelago enemy reward pool. It lets hostile AI bases build
@@ -233,6 +232,14 @@ Each maintained document has one purpose:
 | [Archipelago APWorld setup](Archipelago/APWorld/cnc_reloaded/docs/setup_en.md) | Archipelago clients    | Short package metadata and compatibility guide embedded in the APWorld               |
 
 ## Developer workflow
+
+This project does not use tests or unit tests. Do not add or run test suites,
+test harnesses, fixtures, automated gameplay simulations, or their dependencies,
+scripts, CI jobs, and launcher entry points. This applies to every future task,
+including requests to fix, build, release, validate, or check the project.
+Use source inspection, compilation, actual builds, and the existing production
+configuration/catalogue validators instead. Runtime validation and real mission
+crash diagnostics remain part of the application. See [AGENTS.md](AGENTS.md).
 
 Run from source with Python 3.14.6 from the fixed `Reloaded-Randomizer`
 directory:
@@ -325,6 +332,15 @@ The packaged report is written to
 `ReloadedRandomizerData\self_check.json`. Launcher diagnostics are stored in
 `ReloadedRandomizerData\logs\launcher.log`; objective and victory marker
 activity comes from `debug\debug.log`.
+
+When a launched mission closes without victory, the launcher saves a local
+report under `ReloadedRandomizerData\mission_reports` before applying failure
+progression and cleaning up launch files. It retains the five newest reports,
+including the generated map, launch options, saved run/state, log tails, and
+new or changed engine exception files. Each report is limited to 32 MiB;
+individual files over 16 MiB are listed as skipped in `report.json`. An
+incomplete mission report does not itself establish that the engine crashed.
+Source launches store reports under `Reloaded-Randomizer/mission_reports`.
 
 When reporting a problem, include those diagnostics, the mission code, seed,
 reward and progression modes, and whether the issue also occurs in a fresh,
