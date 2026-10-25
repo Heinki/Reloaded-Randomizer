@@ -189,6 +189,20 @@ def all_section_value_maps(lines):
     return sections
 
 
+def all_section_value_maps_preserve(lines):
+    """Read complete INI sections without changing native key capitalization."""
+    result = {}
+    current = None
+    for raw in lines:
+        line = raw.strip()
+        if line.startswith('[') and ']' in line:
+            current = result.setdefault(line[1:line.index(']')].strip(), {})
+        elif current is not None and line and not line.startswith(';') and '=' in line:
+            key, value = line.split('=', 1)
+            current[key.strip()] = value.split(';', 1)[0].strip()
+    return result
+
+
 def next_numeric_section_index(lines, section):
     highest = -1
     for line in section_lines(lines, section):

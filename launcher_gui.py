@@ -16,15 +16,18 @@ from randomizer.core.diagnostics import event as log_event
 from randomizer.core.paths import APP_DIR, GAME_ROOT, LAUNCHER_LOG
 
 
+def initialize_runtime():
+    """Normalize browser and shortcut launches before importing game data."""
+    # GAME_ROOT comes from the executable, or the source checkout's parent.
+    # Both GUI startup and --self-check must use the same installation.
+    os.chdir(GAME_ROOT)
+    log_event('launcher_working_directory_set', directory=GAME_ROOT)
+
+
 def run_launcher():
     """Load config-dependent application modules with visible startup errors."""
     try:
-        # Browsers and shortcuts can supply an unrelated working directory.
-        # Normalize it before loading Tk and the application, including native
-        # dependencies that may resolve relative paths. GAME_ROOT comes from
-        # the executable in packaged builds or the source tree on Linux.
-        os.chdir(GAME_ROOT)
-        log_event('launcher_working_directory_set', directory=GAME_ROOT)
+        initialize_runtime()
         from randomizer.application.app import main
         main()
         return 0
@@ -40,7 +43,10 @@ def run_launcher():
             messagebox.showerror(
                 f'{PRODUCT_NAME} Startup Failed',
                 'The launcher could not load its configuration or runtime.\n\n'
-                f'{detail.splitlines()[-1]}\n\nSee {LAUNCHER_LOG} for details.',
+                f'{detail.splitlines()[-1]}\n\n'
+                f'Game folder: {GAME_ROOT}\n'
+                f'Launcher: {sys.executable}\n\n'
+                f'See {LAUNCHER_LOG} for details.',
             )
             root.destroy()
         except Exception:
@@ -52,12 +58,18 @@ def run_self_check():
     """Write a read-only Reloaded foundation and installation report."""
     report_path = APP_DIR / 'self_check.json'
     try:
+        APP_DIR.mkdir(parents=True, exist_ok=True)
+        initialize_runtime()
         from randomizer.audit import installation_report
 
-        APP_DIR.mkdir(parents=True, exist_ok=True)
         report = installation_report()
     except Exception:
-        report = {'passed': False, 'traceback': traceback.format_exc()}
+        report = {
+            'passed': False,
+            'game_root': str(GAME_ROOT),
+            'executable': sys.executable,
+            'traceback': traceback.format_exc(),
+        }
     report_path.write_text(json.dumps(report, indent=2), encoding='utf-8')
     log_event('self_check_finished', **report)
     return 0 if report.get('passed') else 1

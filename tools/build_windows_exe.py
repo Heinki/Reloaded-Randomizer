@@ -201,8 +201,6 @@ def build(output: Path) -> None:
             '--noconfirm',
             '--clean',
             '--onefile',
-            '--runtime-tmpdir',
-            '.',
             '--noupx',
             '--optimize',
             '1',
@@ -279,6 +277,7 @@ def build(output: Path) -> None:
         while '//' in normalized_archive:
             normalized_archive = normalized_archive.replace('//', '/')
         required_entries = (
+            "'configs/final_fortress.json'",
             "'reloaded-randomizer.ico'",
             "'_tkinter.pyd'",
             "'tcl86t.dll'",

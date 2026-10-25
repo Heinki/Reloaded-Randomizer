@@ -15,6 +15,11 @@
 
 # C&C Reloaded Randomizer Launcher
 
+**Final Fortress:** choose Settings → Game Mode → Final Fortress for the
+standalone Wings of Faith survival mode, using the Mental Omega workspace
+layout. See the [Reloaded mode guide](FINAL_FORTRESS_RELOADED.md) for co-op,
+supported perks, engine adaptations and pending native gameplay review.
+
 The Windows launcher supports optional in-place updates from GitHub Releases.
 Declining an update suppresses its popup for that version; the corner Update
 button remains available. See [launcher updates](UPDATING.md) for publishing,
@@ -338,6 +343,15 @@ The packaged report is written to
 `ReloadedRandomizerData\self_check.json`. Launcher diagnostics are stored in
 `ReloadedRandomizerData\logs\launcher.log`; objective and victory marker
 activity comes from `debug\debug.log`.
+
+If startup reports `Could not locate installed rulesmd.ini`, check the game
+folder and launcher path shown in the error. The packaged executable must be
+beside `gamemd.exe` in the complete C&C Reloaded installation. Rules normally
+come from the installed `expandmd*.mix` archives; a loose `rulesmd.ini` is not
+required. Source checkouts must sit directly inside the game folder. The error
+lists the searched paths and any archive read failures. The `--self-check`
+command uses the same startup directory as the GUI and records the detected
+game folder if imports fail.
 
 When a launched mission closes without victory, the launcher saves a local
 report under `ReloadedRandomizerData\mission_reports` before applying failure

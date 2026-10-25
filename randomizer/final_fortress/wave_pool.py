@@ -1,0 +1,157 @@
+"""Small reusable population reservations for scripted enemy attacks.
+
+Each enemy has an equal share of the living-unit ceiling. Empty slots can be
+reused immediately by the pending wave; a survivor holds at most twenty slots,
+not an entire multi-house wave. Private identities also track captured units
+and native deployment conversions without depending on team death callbacks.
+"""
+
+from copy import deepcopy
+
+
+def _batches(units, capacity):
+    """Keep deliveries mixed within the native six-type TaskForce limit."""
+    remaining = deepcopy(units)
+    while any(unit['count'] for unit in remaining):
+        counts = [0] * len(remaining)
+        for _ in range(capacity):
+            available = [i for i, unit in enumerate(remaining) if unit['count']
+                         and (counts[i] or sum(count > 0 for count in counts) < 6)]
+            if not available:
+                break
+            index = min(available, key=lambda i: (counts[i], i))
+            remaining[index]['count'] -= 1
+            counts[index] += 1
+        yield [{'type': unit['type'], 'count': count}
+               for unit, count in zip(units, counts) if count]
+
+
+def _priority_batches(units, capacity, policy):
+    """Admit special and advanced units before filling capacity with lower tiers."""
+    from .wave_priority import priority
+    batch, available = [], capacity
+    for unit in sorted(units, key=lambda u: -priority(u['type'], policy)):
+        remaining = unit['count']
+        while remaining:
+            count = min(available, remaining)
+            batch.append({'type': unit['type'], 'count': count})
+            remaining -= count
+            available -= count
+            if not available:
+                yield batch
+                batch, available = [], capacity
+    if batch:
+        yield batch
+
+
+def reserve_pool_types(writer, plan, rules):
+    """Reserve survivor-counter identities before ordinary production clones."""
+    count = min(8, plan['wave_pressure']['max_active_units'] // 60)
+    return {waypoint: [writer.wave_types(
+        [group for wave in plan['wave_schedule'] for group in wave['groups']
+         if group['waypoint'] == waypoint], rules) for _ in range(count)]
+        for waypoint in plan['map']['enemy_waypoints']}
+
+
+def apply_wave_pool(writer, plan, rules, overrides, marker_teams, finished, *, wave_clock=None,
+                    reserved_types=None):
+    from .engine import _action, _waypoint
+
+    schedule = plan['wave_schedule']
+    if not schedule:
+        return
+    limit = plan['wave_pressure']['max_active_units']
+    if not 3 <= limit <= 480:
+        raise ValueError('Reusable wave pools support a shared living-unit ceiling of 3–480.')
+    capacity = min(20, limit // 3)
+    if capacity < 1:
+        raise ValueError('The wave population ceiling must allow at least one unit per enemy.')
+    slots_per_enemy = min(8, limit // (3 * capacity))
+    policy = plan.get('wave_priorities')
+    late = None
+    if policy:
+        late = writer.flag('Late enemy delivery priorities')
+        writer.trigger('Late enemy delivery priorities', [(13, 0, policy['late_seconds'])], [_action(56, late)])
+        writer.put('FFWavePriority', 'Late', late)
+    pools = {}
+    for enemy, waypoint in enumerate(plan['map']['enemy_waypoints'], 1):
+        groups = [group for wave in schedule for group in wave['groups'] if group['waypoint'] == waypoint]
+        slots = []
+        for slot_index in range(slots_per_enemy):
+            key = writer.key()
+            busy = writer.flag('Wave pool occupied ' + key)
+            aliases = writer.wave_types(groups, rules, overrides,
+                aliases=reserved_types[waypoint][slot_index] if reserved_types else None)
+            if len(aliases) > 30:
+                raise ValueError('Enemy wave roster exceeds the native slot-release event limit.')
+            release, _ = writer.trigger('Wave pool release ' + key,
+                [(36, 0, busy), *((61, 2, 0, alias) for alias in aliases.values())],
+                [_action(57, busy)], persistence=2)
+            writer.put('FFWavePools', key, f'FFENEMY{enemy},{capacity},{busy},{release}')
+            for original, alias in aliases.items():
+                writer.put('FFWavePoolTypes.' + key, original, alias)
+            slots.append((key, busy, aliases))
+        pools[waypoint] = slots
+
+    # Timers and handoff relays are created before their forward references.
+    timers = [writer.trigger(f'Wave {i + 1} interval', [(13, 0, plan['wave_interval_seconds'])],
+                             [], disabled=i > 0)[0] for i in range(len(schedule))]
+    for index, wave in enumerate(schedule):
+        grouped = []
+        for group in wave['groups']:
+            air = set(group.get('air_types', []))
+            ground_units = [unit for unit in group['units'] if unit['type'] not in air]
+            air_units = [unit for unit in group['units'] if unit['type'] in air]
+            chunks = [*_batches(ground_units, capacity), *_batches(air_units, capacity)]
+            if policy and wave['seconds'] >= policy['late_seconds']:
+                # Air support must not sit behind every ground batch at a full cap.
+                ground_chunks = list(_priority_batches(ground_units, capacity, policy))
+                air_chunks = list(_priority_batches(air_units, capacity, policy))
+                chunks = [chunk for i in range(max(len(ground_chunks), len(air_chunks)))
+                          for chunk in ([air_chunks[i]] if i < len(air_chunks) else [])
+                          + ([ground_chunks[i]] if i < len(ground_chunks) else [])]
+            grouped.append((group, chunks))
+        # Alternate active fronts instead of exhausting one before the others.
+        batches = [(group, chunks[n]) for n in range(max(len(chunks) for _, chunks in grouped))
+                   for group, chunks in grouped if n < len(chunks)]
+        relays = [writer.trigger(f'Wave {index + 1} delivery {n + 1}',
+                                 [(13, 0, 0), (37, 0, finished)], [], disabled=True)[0]
+                  for n in range(len(batches) + 1)]
+        writer.put('Actions', timers[index], '1,' + ','.join(_action(53, trigger=relays[0])))
+        for n, (group, units) in enumerate(batches):
+            alternatives = []
+            variants = [(None, units)]
+            if policy:
+                from .wave_priority import late_delivery
+                variants = ([('early', units), ('late', late_delivery(plan, wave, group, units))]
+                            if wave['seconds'] < policy['late_seconds'] else [('fixed', units)])
+            for phase, roster in variants:
+                for slot, busy, aliases in pools[group['waypoint']]:
+                    team = writer.team(f'Final Fortress wave {index + 1} {group["house"]} batch {n + 1} slot {slot}',
+                        [{'type': aliases[unit['type']], 'count': unit['count']} for unit in roster],
+                        group['waypoint'], owner=f'FFENEMY{plan["map"]["enemy_waypoints"].index(group["waypoint"]) + 1}')
+                    writer.put(team, 'VeteranLevel', group.get('veteran_level', 1))
+                    writer.put(team, 'Waypoint', _waypoint(16 + plan['map']['enemy_waypoints'].index(group['waypoint'])))
+                    events = [(37, 0, busy), (37, 0, finished)]
+                    if phase in ('early', 'late'):
+                        events.append((36 if phase == 'late' else 37, 0, late))
+                    gate, _ = writer.trigger(f'Wave {index + 1} slot dispatch', events, [], disabled=True)
+                    alternatives.append((gate, busy, team))
+                    writer.put('FFWaveDispatches', gate, f'{slot},{team},{relays[n]},{relays[n + 1]}'
+                               + (',' + phase if phase else ''))
+            writer.put('FFWaveChunks', relays[n], f'{index + 1},{group["house"]},{sum(u["count"] for u in units)}')
+            actions = [_action(53, trigger=gate) for gate, _, _ in alternatives]
+            writer.put('Actions', relays[n], str(len(actions)) + ',' + ','.join(t for a in actions for t in a))
+            for gate, busy, team in alternatives:
+                # Reserve before spawning and disable every alternative now;
+                # later gates cannot double-dispatch this same delivery.
+                actions = [*[_action(54, trigger=other) for other, _, _ in alternatives],
+                           _action(56, busy), writer.reinforce(team),
+                           _action(53, trigger=relays[n + 1])]
+                writer.put('Actions', gate, str(len(actions)) + ',' + ','.join(t for a in actions for t in a))
+        actions = [_action(4, team=marker_teams[f'wave:{index + 1}'])]
+        if index + 1 < len(timers):
+            actions.append(_action(53, trigger=timers[index + 1]))
+        if wave_clock is not None:
+            actions.append(_action(56, wave_clock[0] if index + 1 < len(timers) else wave_clock[1]))
+        writer.put('Actions', relays[-1], str(len(actions)) + ',' + ','.join(t for a in actions for t in a))

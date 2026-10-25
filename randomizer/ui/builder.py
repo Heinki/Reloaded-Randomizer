@@ -5,6 +5,7 @@ from .overlay import _build_log_and_overlay
 from .settings import _build_advanced_tab, _build_gameplay_settings
 from .archipelago import build_archipelago_tab
 from .shop import build_shop_tab
+from randomizer.final_fortress.ui import build_final_fortress_tab
 from randomizer.config.game_profile import (
     ENABLE_ADVANCED_UI,
     ENABLE_ADVANCED_GAMEPLAY,
@@ -54,6 +55,8 @@ def create_widgets(self):
             state='disabled',
         )
     _build_gameplay_settings(self, settings_frame)
+    self.build_fortress_settings(settings_frame)
+    build_final_fortress_tab(self, self.workspace_tabs)
     if not GAMEPLAY_CATALOGUES_READY:
         self.seed_action_button.configure(
             text='Generate Seed (Review Pending)',

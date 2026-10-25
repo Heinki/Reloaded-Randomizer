@@ -21,6 +21,10 @@ class StaticConfigError(RuntimeError):
 
 
 REQUIRED_SECTIONS = {
+    'final_fortress.json': {
+        'settings': dict, 'map': dict, 'difficulties': dict,
+        'milestones': list, 'perks': list,
+    },
     'default_player_config.json': {
         'defaults': dict,
     },
@@ -576,6 +580,14 @@ def _validate_missions(sections, path):
                             f'{code}:{section}:{key}',
                             path,
                         )
+
+
+def _validate_final_fortress(sections, path):
+    from randomizer.final_fortress.config import validate_config
+    try:
+        validate_config(sections, path)
+    except ValueError as exc:
+        _invalid(str(exc), path)
 
 
 def _validate_shop_mode(sections, path):
@@ -2138,6 +2150,7 @@ def _validate_reloaded_balance_catalogue(sections, path):
 
 
 CONFIG_VALIDATORS = {
+    'final_fortress.json': _validate_final_fortress,
     'missions.json': _validate_missions,
     'mission_catalogue.json': _validate_mission_catalogue,
     'factions.json': _validate_factions,

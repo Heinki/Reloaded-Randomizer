@@ -54,6 +54,7 @@ from .unlock_data import UnlockDataController
 from .unlock_view import UnlockViewController
 from .enemy_scaling import EnemyScalingController
 from .archipelago_controller import ArchipelagoController
+from .final_fortress_controller import FinalFortressController
 from randomizer.config.game_profile import (
     ENABLE_SHOP_MODE,
     OBJECTIVE_REWARDS_READY,
@@ -62,6 +63,7 @@ from randomizer.config.game_profile import (
 
 
 class LauncherApp(
+    FinalFortressController,
     UpdateController,
     WindowController,
     ShopController,
@@ -491,6 +493,7 @@ class LauncherApp(
         self.busy_depth = 0
         self.ui_queue = queue.Queue()
         self.initialize_shop_controller()
+        self.initialize_final_fortress_controller()
         self.cleanup_generated_root_maps()
         self.disable_generated_rules_for_client()
 

@@ -298,8 +298,16 @@ def enemy_native_unit_buff_rules(
     rewards,
     installed_sections,
     authored_map_sections,
+    *,
+    linked_sources=None,
 ):
-    """Buff native hostile T1/T2/T3 units; keep player clones separate."""
+    """Buff native hostile T1/T2/T3 units; keep player clones separate.
+
+    Isolated workspaces may supply outgoing transform/payload roots. Those
+    forms use the root's reviewed eligibility and tier with their own live
+    stats and weapons. Existing campaign callers keep their normal behavior.
+    """
+    linked_sources = linked_sources or {}
     counts, definitions = _effect_counts(rewards)
     unit_effects = {
         (int(definition.get('tier', 0)), definition.get('unit_buff_type')): (
@@ -386,6 +394,10 @@ def enemy_native_unit_buff_rules(
         str(unit_id).upper(): (target, str(unit_id).upper())
         for unit_id, target in BUFF_TARGETS.items()
     }
+    for unit_id, source_id in linked_sources.items():
+        source = BUFF_TARGETS.get(source_id)
+        if source:
+            targets[unit_id] = (source, source_id)
     if player_unit_limits:
         # Installed AI counterparts reuse a playable unit's Image. Keep their
         # authored weapons and ownership; use that unit's buff eligibility.
@@ -419,7 +431,11 @@ def enemy_native_unit_buff_rules(
             installed_by_lower.get(unit_id.lower(), {}),
             authored_by_lower.get(unit_id.lower(), {}),
         )
-        tier = _authored_tech_tier(authored_values)
+        tier_values = (_standalone_clone_values_from_maps(
+            installed_by_lower.get(buff_source_id.lower(), {}),
+            authored_by_lower.get(buff_source_id.lower(), {}),
+        ) if unit_id in linked_sources else authored_values)
+        tier = _authored_tech_tier(tier_values)
         if not tier and buff_source_id != unit_id:
             # Script-only AI counterparts often have TechLevel=-1. Their
             # playable counterpart supplies the same technology tier.
@@ -445,6 +461,16 @@ def enemy_native_unit_buff_rules(
                 sections_by_lower=sections_by_lower,
             )
         }
+        if unit_id in linked_sources:
+            possible_houses.update(
+                canonical_usage(house)
+                for house in techno_type_possible_houses(
+                    lines,
+                    installed_by_lower.get(buff_source_id.lower(), {}),
+                    records=records, sections=sections,
+                    sections_by_lower=sections_by_lower,
+                )
+            )
         relevant_houses = [
             house for house in enemy_houses
             if str(house).lower() in possible_houses

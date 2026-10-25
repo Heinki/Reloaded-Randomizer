@@ -31,3 +31,9 @@ PROJECT_CONTEXT.md
 assets/Campaign Only Units For All Factions.ini
 # Keep the no-tests instructions in the repository for future tasks.
 !/AGENTS.md
+final_fortress_state.json
+final_fortress_state.lock
+final_fortress_state.before_recovery.*.json
+final_fortress_testing_state*.json
+final_fortress_testing_state.lock
+final_fortress_debug.enabled

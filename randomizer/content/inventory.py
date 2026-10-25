@@ -16,6 +16,7 @@ from randomizer.config.game_profile import (
     ARCHIVE_GLOB,
     CONTENT_FACTIONS,
     ENABLE_CABAL,
+    GAME_EXECUTABLE_NAME,
     RULES_INI_NAME,
 )
 from randomizer.core.mix import MixArchive, MixFormatError
@@ -185,7 +186,14 @@ def read_rules_sections(path=None):
             fallback.read_text(encoding='utf-8', errors='ignore')
         ), str(fallback.resolve())
     detail = f' Rules scan errors: {"; ".join(skipped)}' if skipped else ''
-    raise FileNotFoundError(f'Could not locate installed {RULES_INI_NAME}.{detail}')
+    raise FileNotFoundError(
+        f'Could not locate installed {RULES_INI_NAME}. '
+        f'Searched {loose_rules}, {len(archives)} {ARCHIVE_GLOB} archives '
+        f'in {GAME_ROOT}, and {fallback}. '
+        f'Place the packaged launcher beside {GAME_EXECUTABLE_NAME} in a '
+        'complete C&C Reloaded installation; source checkouts must be '
+        f'directly inside that game folder.{detail}'
+    )
 
 
 def rules_fingerprint(sections):
