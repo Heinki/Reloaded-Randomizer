@@ -16,6 +16,7 @@ from ._builder_dependencies import (
     ttk,
 )
 from .shop import _tree
+from .viewport import ScrollableViewport
 from randomizer.config.game_profile import (
     OBJECTIVE_REWARDS_READY,
     WINDOW_TITLE,
@@ -31,6 +32,8 @@ def _build_window_shell(self):
 
     self.style = ttk.Style(self)
     self.style.configure('Randomizer.TNotebook', tabposition='n')
+    self.style.layout('Compact.Randomizer.TNotebook', [('Notebook.client', {'sticky': 'nswe'})])
+    self.style.layout('Compact.Randomizer.TNotebook.Tab', [])
     self.style.configure('Randomizer.TNotebook.Tab', padding=(16, 7), font=('Segoe UI', 10, 'bold'))
     self.style.configure('Unlocks.TNotebook', tabposition='n')
     self.style.configure('Unlocks.TNotebook.Tab', padding=(7, 7), font=('Segoe UI', 9, 'bold'))
@@ -46,22 +49,33 @@ def _build_window_shell(self):
         text=f'{WINDOW_TITLE} v{APP_VERSION}',
         font=('Segoe UI', 14, 'bold'),
     )
-    header.grid(row=0, column=0, sticky='w')
+    self.header_label = header
+    self._compact_window_heading = f'Reloaded Randomizer v{APP_VERSION}'
+    self._full_window_heading = header.cget('text')
+    header.grid(row=0, column=0, sticky='ew')
+    main_frame.bind('<Configure>', self.on_main_frame_configure, add='+')
     header_actions = ttk.Frame(main_frame)
     header_actions.grid(row=0, column=1, sticky='ne')
     self.create_update_button(header_actions)
+    self.initialize_skirmish_pool_settings()
     self.settings_toggle_button = ttk.Button(
         header_actions,
         text='Hide Details',
         command=self.toggle_settings_panel,
     )
     self.settings_toggle_button.grid(row=0, column=1, rowspan=2, sticky='ne')
+    self.workspace_menu = tk.Menu(header_actions, tearoff=False)
+    self.workspace_menu.configure(postcommand=self.populate_workspace_menu)
+    self.workspace_menu_button = ttk.Menubutton(
+        header_actions, text='Views', menu=self.workspace_menu, width=6,
+    )
+    self.workspace_menu_button.grid(row=0, column=2, sticky='ne', padx=(6, 0))
     self.subtitle_label = ttk.Label(
         main_frame,
         textvariable=self.header_summary_var,
         style='Muted.TLabel',
     )
-    self.subtitle_label.grid(row=1, column=0, sticky='w', pady=(2, 10))
+    self.subtitle_label.grid(row=1, column=0, sticky='ew', pady=(2, 10))
     for variable in (
         self.campaign_var,
         self.reward_mode_var,
@@ -165,6 +179,11 @@ def _build_window_shell(self):
     tree_scrollbar.grid(row=1, column=1, sticky='ns')
     self.missions_tree.configure(yscrollcommand=tree_scrollbar.set)
     self.tree_scrollbar = tree_scrollbar
+    self.mission_horizontal_scrollbar = ttk.Scrollbar(
+        mission_view_frame, orient='horizontal', command=self.missions_tree.xview,
+    )
+    self.mission_horizontal_scrollbar.grid(row=2, column=0, sticky='ew')
+    self.missions_tree.configure(xscrollcommand=self.mission_horizontal_scrollbar.set)
 
     self.grid_frame = ttk.Frame(mission_view_frame, padding=(4, 4, 4, 4))
     self.grid_frame.grid(row=1, column=0, columnspan=2, sticky='nsew')
@@ -231,15 +250,16 @@ def _build_window_shell(self):
         compact_complete_button,
         'Recovery only: use when a completed mission was not detected.',
     )
-    self.compact_action_row.grid(row=2, column=0, columnspan=2, sticky='ew')
+    self.compact_action_row.grid(row=3, column=0, columnspan=2, sticky='ew')
     self.compact_action_row.grid_remove()
 
     return main_frame
 
 def _build_right_panel(self, main_frame):
-    right_frame = ttk.Frame(main_frame)
-    self.right_frame = right_frame
-    right_frame.grid(row=2, column=1, rowspan=5, sticky='nsew')
+    viewport = ScrollableViewport(main_frame)
+    self.right_frame = viewport
+    viewport.grid(row=2, column=1, rowspan=5, sticky='nsew')
+    right_frame = viewport.content
     right_frame.columnconfigure(0, weight=1)
     right_frame.rowconfigure(1, weight=1)
 
@@ -254,33 +274,18 @@ def _build_right_panel(self, main_frame):
     settings_tab.columnconfigure(0, weight=1)
     settings_tab.rowconfigure(0, weight=1)
     self.workspace_tabs.add(settings_tab, text='Settings')
-    settings_canvas = tk.Canvas(
-        settings_tab,
-        borderwidth=0,
-        highlightthickness=0,
-        background=self.style.lookup('TFrame', 'background') or '#f0f0f0',
-    )
+    viewport = ScrollableViewport(settings_tab, padding=8)
+    self.settings_viewport = viewport
+    viewport.grid(row=0, column=0, sticky='nsew')
+    settings_canvas = viewport.canvas
     self.settings_canvas = settings_canvas
-    settings_scrollbar = ttk.Scrollbar(
-        settings_tab,
-        orient='vertical',
-        command=settings_canvas.yview,
-    )
-    settings_canvas.configure(yscrollcommand=settings_scrollbar.set)
-    settings_canvas.grid(row=0, column=0, sticky='nsew')
-    settings_scrollbar.grid(row=0, column=1, sticky='ns')
-    settings_frame = ttk.Frame(settings_canvas, padding=(8, 8, 8, 8))
+    self.settings_horizontal_scrollbar = viewport.horizontal
+    settings_frame = viewport.content
     settings_frame.columnconfigure(0, weight=1)
     settings_frame.columnconfigure(1, weight=0)
     self.settings_frame = settings_frame
-    self.settings_canvas_window = settings_canvas.create_window(
-        (0, 0),
-        window=settings_frame,
-        anchor='nw',
-    )
-    settings_frame.bind('<Configure>', self.on_settings_content_configure, add='+')
+    self.settings_canvas_window = viewport.window
     settings_canvas.bind('<Configure>', self.on_settings_canvas_configure, add='+')
-    self.bind_all('<MouseWheel>', self.on_settings_mousewheel, add='+')
 
     seed_settings_frame = ttk.LabelFrame(
         settings_frame,
@@ -323,7 +328,7 @@ def _build_right_panel(self, main_frame):
         width=6,
     )
     self.mission_goal_spinbox.grid(row=0, column=1, sticky='w')
-    ttk.Label(options_row, text='Game speed').grid(row=1, column=0, sticky='w', pady=(6, 0), padx=(0, 8))
+    ttk.Label(options_row, text='Game speed').grid(row=3, column=0, sticky='w', pady=(6, 0), padx=(0, 8))
     self.game_speed_combo = ttk.Combobox(
         options_row,
         state='readonly',
@@ -331,10 +336,10 @@ def _build_right_panel(self, main_frame):
         values=[name for name, _ in GAME_SPEEDS],
         width=10,
     )
-    self.game_speed_combo.grid(row=1, column=1, sticky='ew', pady=(6, 0))
+    self.game_speed_combo.grid(row=3, column=1, sticky='ew', pady=(6, 0))
 
     self.campaign_label = ttk.Label(options_row, text='Campaign / Add-on')
-    self.campaign_label.grid(row=2, column=0, sticky='w', pady=(6, 0), padx=(0, 8))
+    self.campaign_label.grid(row=1, column=0, sticky='w', pady=(6, 0), padx=(0, 8))
     self.campaign_combo = ttk.Combobox(
         options_row,
         state='readonly',
@@ -342,7 +347,7 @@ def _build_right_panel(self, main_frame):
         values=CAMPAIGN_FILTERS,
         width=27,
     )
-    self.campaign_combo.grid(row=2, column=1, sticky='ew', pady=(6, 0))
+    self.campaign_combo.grid(row=1, column=1, sticky='ew', pady=(6, 0))
     self.campaign_combo.bind('<<ComboboxSelected>>', self.on_campaign_filter_changed, add='+')
 
     settings_file_row = ttk.Frame(seed_settings_frame)
@@ -360,7 +365,7 @@ def _build_right_panel(self, main_frame):
         command=self.load_settings_file,
     ).grid(row=0, column=1, sticky='ew', padx=(3, 0))
 
-    ttk.Label(options_row, text='Difficulty').grid(row=3, column=0, sticky='w', pady=(6, 0), padx=(0, 8))
+    ttk.Label(options_row, text='Difficulty').grid(row=2, column=0, sticky='w', pady=(6, 0), padx=(0, 8))
     self.difficulty_combo = ttk.Combobox(
         options_row,
         state='readonly',
@@ -368,7 +373,7 @@ def _build_right_panel(self, main_frame):
         values=[name for name, _ in DIFFICULTIES],
         width=12,
     )
-    self.difficulty_combo.grid(row=3, column=1, sticky='ew', pady=(6, 0))
+    self.difficulty_combo.grid(row=2, column=1, sticky='ew', pady=(6, 0))
 
     self.rewards_per_check_label = ttk.Label(
         options_row,
@@ -513,6 +518,8 @@ def _build_right_panel(self, main_frame):
         'controls release of unfinished locations.',
     )
 
+    self.build_skirmish_pool_control(self.grid_options_frame, row=2)
+
     shop_settings_frame = ttk.LabelFrame(
         settings_frame,
         text='Shop Mode Setup',
@@ -520,19 +527,7 @@ def _build_right_panel(self, main_frame):
     )
     self.shop_settings_frame = shop_settings_frame
     shop_settings_frame.columnconfigure(1, weight=1)
-    ttk.Label(
-        shop_settings_frame,
-        text=(
-            f'Shop run = complete {self.shop_config.run_length}-stage session. '
-            'Stage = numbered step '
-            f'(Stage 1 / {self.shop_config.run_length}). Mission = map chosen '
-            'for that stage. Each selected mission gets one attempt. An '
-            'Emergency Revival repeats a failed stage with new mission choices.'
-        ),
-        style='Muted.TLabel',
-        justify='left',
-        wraplength=720,
-    ).grid(row=0, column=0, columnspan=2, sticky='ew', pady=(0, 12))
+    self.build_classic_shop_controls(shop_settings_frame)
 
     ttk.Label(shop_settings_frame, text='Game Mode').grid(
         row=1, column=0, sticky='w', padx=(0, 12)
@@ -606,6 +601,7 @@ def _build_right_panel(self, main_frame):
     shop_mission_pool_frame.grid(
         row=9, column=0, columnspan=2, sticky='ew', pady=(10, 0)
     )
+    self.build_skirmish_pool_control(shop_mission_pool_frame, row=2, shop=True)
     self.shop_include_no_build_missions_check = ttk.Checkbutton(
         shop_mission_pool_frame,
         text='Include true no-build / fixed-unit missions',
@@ -819,7 +815,7 @@ def _build_info_tabs(self, info_tabs):
 
     self.rewards_text = scrolledtext.ScrolledText(
         progress_frame,
-        height=16,
+        height=16, width=1,
         wrap='word',
         state='disabled',
         font=('Segoe UI', 9),
@@ -925,7 +921,7 @@ def _build_info_tabs(self, info_tabs):
     self.unlock_search_status.grid(row=0, column=4, padx=(6, 0))
     self.unlocks_text = scrolledtext.ScrolledText(
         summary_page,
-        height=16,
+        height=16, width=1,
         wrap='word',
         state='disabled',
         font=('Segoe UI', 9),

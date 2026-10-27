@@ -23,6 +23,7 @@ from randomizer.maps.starting_units import starting_unit_buff_plan
 from randomizer.maps.miner_buffs import (
     player_refinery_rules, upgrade_starting_player_miners, validate_refinery_miner_isolation,
 )
+from randomizer.maps.prerequisites import player_construction_yard_prerequisite_rules
 from randomizer.missions.required_access import mission_required_access_rules
 from randomizer.maps.enemy_powerhouses import enemy_powerhouse_rules
 from randomizer.maps.ownership import (
@@ -3273,6 +3274,11 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             preserved_native_ids=native_required_access_ids,
         )
         merge_ini_section_values(lines, refinery_rules)
+        yard_prerequisite_rules = player_construction_yard_prerequisite_rules(
+            lines, installed_rule_sections, clone_handled,
+        )
+        if yard_prerequisite_rules:
+            merge_ini_section_values(lines, yard_prerequisite_rules)
         preserved_refineries = sorted(refinery_building_ids & native_required_access_ids)
         if preserved_refineries:
             self.append_log(

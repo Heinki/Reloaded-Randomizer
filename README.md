@@ -15,6 +15,13 @@
 
 # C&C Reloaded Randomizer Launcher
 
+The launcher adapts every workspace to the available window size. Small windows
+use a full-width pane and a **Views** menu for all pages, including nested
+Advanced settings. Very short windows use that menu instead of a tab strip.
+Settings, Shop, Archipelago, and Final Fortress controls scroll in both
+directions when needed; larger windows restore the wider layout.
+
+
 **Final Fortress:** choose Settings → Game Mode → Final Fortress for the
 standalone Wings of Faith survival mode, using the Mental Omega workspace
 layout. See the [Reloaded mode guide](FINAL_FORTRESS_RELOADED.md) for co-op,
@@ -149,7 +156,11 @@ MCVs are available without buying an upgrade and require only a compatible war
 factory, with no service depot or other support-tech prerequisites. Standard
 uses each faction's factory; Chaos and Randomizer Arsenal share compatible
 factories. MCV access also makes war factories available without other vehicle
-unlocks. Their construction yards remain deploy targets. Player-built refineries
+unlocks. Their construction yards remain deploy targets. Yards deployed from
+Randomizer-built MCVs satisfy the same building prerequisites as the original
+yard, so losing the starting yard does not remove construction access. Other
+technology requirements still apply. Relaunch the mission to apply this fix;
+existing mission saves retain their previous rules. Player-built refineries
 use private types that supply upgraded miners, including earned cloaking, even
 before a war factory is built. Private refineries count toward refinery
 prerequisites. Original and upgraded miners can unload at either original or

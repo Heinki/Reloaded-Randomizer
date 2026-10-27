@@ -1,5 +1,6 @@
 """Advanced and gameplay settings widgets."""
 
+from .viewport import ScrollableViewport
 from .starting_unlocks import build_starting_unlocks_tab
 from .enemy_scaling import build_enemy_scaling_settings
 from .general_settings import build_general_settings
@@ -196,12 +197,13 @@ def _append_advanced_selected_actions(
 
 
 def _build_advanced_tab(self, workspace_tabs):
-    advanced_tab = ttk.Frame(workspace_tabs, padding=(8, 8, 8, 8))
-    self.advanced_tab = advanced_tab
+    viewport = ScrollableViewport(workspace_tabs, padding=8)
+    self.advanced_tab = viewport
+    workspace_tabs.add(viewport, text='Advanced')
+    advanced_tab = viewport.content
     advanced_tab.columnconfigure(0, weight=1)
     advanced_tab.rowconfigure(2, weight=1)
-    workspace_tabs.add(advanced_tab, text='Advanced')
-    advanced_tab.bind('<Configure>', self.on_advanced_tab_configure, add='+')
+    viewport.canvas.bind('<Configure>', self.on_advanced_tab_configure, add='+')
     self.advanced_pool_intro_label = ttk.Label(
         advanced_tab,
         text=(
@@ -703,6 +705,8 @@ def _build_advanced_tab(self, workspace_tabs):
     self.advanced_pool_frames['power_buffs'] = power_buff_content
     build_negative_buffs_tab(self, advanced_notebook)
     build_starting_unlocks_tab(self, advanced_notebook)
+
+    viewport.bind_controls()
 
 def _build_gameplay_settings(self, settings_frame):
     self.settings_intro_label = ttk.Label(

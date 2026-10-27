@@ -19,6 +19,8 @@ class RewardGeneration:
 
     def objective_templates_for_code(self, code):
         mission = self.mission_lookup().get(code, {})
+        if mission.get('skirmish'):
+            return [('victory', 'Skirmish Victory', 'Defeat the single enemy AI.')]
         objectives = list(mission.get('objectives') or ())
         reviewed_count = mission.get('objective_count')
         objective_count = (

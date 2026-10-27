@@ -1872,6 +1872,11 @@ def build_player_clone_sections(
         for factory_source, factory_clone_ids in runtime_factory_clones.items():
             if factory_source not in prerequisite_ids:
                 continue
+            if factory_source in CONYARD_BY_MCV.values():
+                # Final yard rebinding adds complete prerequisite paths for
+                # native structures and clones together. A bare yard here
+                # would bypass the rest of this type's technology gates.
+                continue
             _append_prerequisite_alternatives(
                 unit_values,
                 factory_clone_ids,

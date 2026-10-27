@@ -228,10 +228,7 @@ class FinalFortressController(FortressCoopController, FortressLauncherAdapter):
             copy_seed = getattr(self, 'copy_seed_button', None)
             if copy_seed is not None:
                 copy_seed.grid_remove()
-            self.right_frame.grid_remove()
-            self.workspace_tabs.grid_configure(columnspan=2, padx=0)
-            self.settings_toggle_button.grid_remove()
-            self.compact_action_row.grid_remove()
+            self.sync_workspace_layout()
             self.sync_debug_completion_controls()
             if self.workspace_tabs.select() == str(self.settings_tab):
                 self.after_idle(lambda: self.layout_settings_sections(
@@ -549,6 +546,7 @@ class FinalFortressController(FortressCoopController, FortressLauncherAdapter):
                 or getattr(self, '_challenge_preparing', False)):
             return
         preferences = dict(self.final_fortress_state['preferences'])
+        preferences['player_color'] = self.selected_fortress_color()
         speed = self.get_selected_game_speed_value()
         self._final_fortress_preparing = True
         self.refresh_final_fortress()
@@ -565,6 +563,7 @@ class FinalFortressController(FortressCoopController, FortressLauncherAdapter):
             state, run_id = self.final_fortress_repository.begin_run(
                 self.final_fortress_config, difficulty=preferences['difficulty'],
                 seed='FF-' + secrets.token_hex(8), player_country=preferences['player_country'],
+                player_color=preferences['player_color'],
                 wave_multiplier=preferences['wave_multiplier'])
             launch['run_id'] = run_id
             digest = prepare_game(GAME_ROOT, state['run'], rules, game_speed=speed)

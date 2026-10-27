@@ -558,6 +558,13 @@ def _cash_reward(writer, plan, rules, camp, claimed, index, *, waypoint=None):
 
 def build_map(game_root, run, rules, *, preloads=None):
     """Generate bytes only; never modify the original installed map."""
+    # The installed registries retain inactive IDs (for example YADEPT)
+    # without corresponding definitions. Clone only defined types, retaining
+    # the original registry indices and every authored definition unchanged.
+    rules = dict(rules)
+    for category in ('BuildingTypes', 'VehicleTypes', 'InfantryTypes', 'AircraftTypes'):
+        rules[category] = {index: kind for index, kind in rules[category].items()
+                           if kind in rules}
     plan = run['plan']
     definition = plan['map']
     inspect_map(game_root, definition)
@@ -798,6 +805,8 @@ def spawn_data(plan, map_data, *, game_speed=2):
         sections.setdefault('HouseColors', {})[house] = str((4, 6)[index - 1])
         sections.setdefault('HouseHandicaps', {})[house] = str(2 - plan['engine_difficulty'])
         sections['SpawnLocations'][house] = str(waypoint)
+    from .colors import remap_colors
+    remap_colors(sections, plan)
     return '\r\n'.join(line for section, values in sections.items()
                        for line in (f'[{section}]', *(f'{key}={value}' for key, value in values.items()), '')).encode('cp1252', errors='replace')
 

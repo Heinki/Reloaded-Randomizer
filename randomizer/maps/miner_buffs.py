@@ -1,8 +1,5 @@
 """Isolate refinery production and safely upgrade starting player miners."""
 
-from itertools import product
-import re
-
 from randomizer.core.collections import comma_items, unique_in_order
 from randomizer.maps.base import _collision_safe_type_id
 from randomizer.maps.buff_values import _register_map_type
@@ -11,6 +8,7 @@ from randomizer.maps.ini import (
     all_section_value_maps, merge_ini_section_values, section_value_map_preserve,
 )
 from randomizer.maps.production import PLAYER_ORIGINAL_PRODUCTION_GATE_ID
+from randomizer.maps.prerequisites import expand_prerequisite_paths
 from randomizer.maps.special_buildings import refinery_free_unit_pairs
 from randomizer.missions.access import MINERS
 
@@ -35,31 +33,6 @@ def _key_spellings(lines, installed_sections, name):
         for key in section_value_map_preserve(lines, name)
     })
     return spellings
-
-
-def _expand_prerequisites(values, replacements):
-    """Add full AND paths, retaining every factory/support requirement."""
-    paths = [comma_items(values.get('prerequisite.list0', values.get('prerequisite', '')))]
-    extra_lists = int(values.get('prerequisite.lists', '0'))
-    paths.extend(
-        comma_items(value) for key, value in values.items()
-        if (match := re.fullmatch(r'prerequisite\.list(\d+)', key))
-        and 0 < int(match.group(1)) <= extra_lists
-    )
-    paths = [path for path in paths if path]
-    expanded = []
-    for path in paths:
-        choices = [(item, *replacements.get(item.upper(), ())) for item in path]
-        for alternate in product(*choices):
-            text = ','.join(alternate)
-            if text not in expanded:
-                expanded.append(text)
-    if len(expanded) <= len({','.join(path) for path in paths}):
-        return {}
-    # List0 replaces Prerequisite; Lists counts only the 1-based alternatives.
-    rules = {'Prerequisite.Lists': str(len(expanded) - 1)}
-    rules.update({f'Prerequisite.List{index}': path for index, path in enumerate(expanded)})
-    return rules
 
 
 def player_refinery_rules(
@@ -184,7 +157,7 @@ def player_refinery_rules(
                 continue
             values = _values(sections, clone)
             values.update(_values(rules, clone))
-            rules.setdefault(clone, {}).update(_expand_prerequisites(values, replacements))
+            rules.setdefault(clone, {}).update(expand_prerequisite_paths(values, replacements))
 
     return rules, refineries
 

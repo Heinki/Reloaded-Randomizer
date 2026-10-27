@@ -18,7 +18,7 @@ def protect_enemy_buildings(writer, plan, rules, aliases):
     starting_only = True
     countries = list(zip((f'FFENEMY{i + 1}' for i in range(3)), plan['enemy_countries']))
     categories = {kind: category for category in ('BuildingTypes', 'VehicleTypes', 'InfantryTypes', 'AircraftTypes')
-                  for kind in rules[category].values()}
+                  for kind in rules[category].values() if kind in rules}
     referenced = {kind for _, country in countries
                   for kind in rules[country].get('AI.PowerPlants', '').split(',') if kind}
     referenced.update(kind for value in rules['AI'].values() for kind in value.split(',')
@@ -27,6 +27,10 @@ def protect_enemy_buildings(writer, plan, rules, aliases):
                       if kind in categories and row.get('DeploysInto') in rules['BuildingTypes'].values())
     buildings = []
     for original in rules['BuildingTypes'].values():
+        # Reloaded retains inactive registry IDs without an authored section.
+        # Only installed definitions can become private enemy base types.
+        if original not in categories:
+            continue
         row = rules[original]
         if not any(_eligible(row, country, original) for _, country in countries):
             continue
@@ -35,8 +39,8 @@ def protect_enemy_buildings(writer, plan, rules, aliases):
             continue
         aliases.setdefault(original, writer.key())
         buildings.append(original)
-    deployers = {original for original in rules['VehicleTypes'].values()
-                 if rules[original].get('DeploysInto') in buildings}
+    deployers = {original for original, category in categories.items()
+                 if category == 'VehicleTypes' and rules[original].get('DeploysInto') in buildings}
     mcvs = {original for original in deployers
             if rules[rules[original]['DeploysInto']].get('ConstructionYard', 'no').lower() == 'yes'}
     docking = {original for original, category in categories.items() if category != 'BuildingTypes'
