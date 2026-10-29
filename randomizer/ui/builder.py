@@ -23,7 +23,6 @@ def create_widgets(self):
         main_frame,
     )
     _build_info_tabs(self, info_tabs)
-    self.right_frame.bind_controls()
     if not GAMEPLAY_CATALOGUES_READY:
         for tab_id in tuple(info_tabs.tabs()):
             label = info_tabs.tab(tab_id, 'text')
