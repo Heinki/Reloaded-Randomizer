@@ -33,7 +33,7 @@ def mission_catalogue(root):
                 'skirmish_country': country, 'skirmish_map': map_info,
                 'index': 6, 'mission_number': 6, 'objective_count': 0,
                 'objectives': [], 'build_classification': 'base_build',
-                'reward_class': 'act_1',
+                'reward_class': 'standard',
                 'briefing': 'Defeat the single enemy AI. Normal run unlocks, buffs, rewards and failure rules apply.',
             })
     return result
