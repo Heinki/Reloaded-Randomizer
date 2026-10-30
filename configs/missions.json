@@ -4127,7 +4127,9 @@
       "SOV01": ["PsychicDominatorSpecial"]
     },
     "native_runtime_weapon_preserve_ids": {},
-    "native_runtime_identity_preserve_ids": {},
+    "native_runtime_identity_preserve_ids": {
+      "YUR04": ["PCV", "YACNST"]
+    },
     "objective_clone_event_refs": {},
     "required_access_rules": {},
     "techno_base_rules": {},

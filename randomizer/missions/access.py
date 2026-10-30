@@ -522,7 +522,7 @@ def single_engineer_rules(
     additional_build_houses=(),
     excluded_special_infantry_factories=(),
 ):
-    """Prepare exactly one faction-appropriate Engineer."""
+    """Prepare Engineers behind their Standard factories, or one Chaos peer."""
     sections = all_section_value_maps(lines)
     records = map_house_records(lines, sections=sections)
     special_barracks = list(_special_infantry_factories(
@@ -530,12 +530,10 @@ def single_engineer_rules(
         excluded_special_infantry_factories,
     ))
     player_family = _player_family(lines, records)
-    # Engineers are a base-operation essential, not captured-tech rewards.
-    # Installing one clone per physically reachable faction made every Chaos
-    # barracks expose four Engineer cameos. It also let a mission-granted
-    # allied barracks look like captured technology when its authored initial
-    # owner differed from the player House. Prefer the player's own family;
-    # only fall back when that family has no usable Engineer definition.
+    # Standard needs each reachable factory's own Engineer, including Allied
+    # barracks operated by a Yuri player. Exact prerequisites keep these peers
+    # dormant until the matching barracks is owned. Chaos shares every
+    # barracks, so select only one Engineer there to avoid duplicate cameos.
     available_families = (
         set(ENGINEER_BY_FAMILY)
         if chaos_mode
@@ -553,11 +551,13 @@ def single_engineer_rules(
         player_family,
         *ENGINEER_BY_FAMILY,
     ))
-    active_families = next((
-        [family]
+    active_families = [
+        family
         for family in ordered_families
         if family in available_families and ENGINEER_BY_FAMILY.get(family)
-    ), [])
+    ]
+    if chaos_mode:
+        active_families = active_families[:1]
 
     player_countries = safe_build_countries(
         lines,
@@ -667,8 +667,8 @@ def mission_basic_unit_rules(
     Exact access stays exact unless a caller explicitly requests legacy role
     translation. Unlocks remove native tech-tree requirements but retain the
     mode-specific production gate: Standard requires the matching faction
-    factory. Exactly one faction-appropriate Engineer remains a base-operation
-    essential.
+    factory. Engineers remain base-operation essentials behind their own
+    faction's barracks.
     """
     sections = all_section_value_maps(lines)
     house_records = map_house_records(lines, sections=sections)
@@ -759,6 +759,7 @@ def mission_basic_unit_rules(
             )
             unlocks.append((tech_id, tech_level, access_rule))
 
+    required_factories = set()
     for tech_id, tech_level, family, category, prerequisite, native_owners in access_catalog():
         if (family, category) not in expanded_categories:
             continue
@@ -769,6 +770,8 @@ def mission_basic_unit_rules(
         )
         if not has_access:
             continue
+        if category != 'base':
+            required_factories.add((family, category))
         access_rule = _build_access_rule(
             lines,
             sections,
@@ -780,15 +783,26 @@ def mission_basic_unit_rules(
         unlocks.append((tech_id, tech_level, access_rule))
 
     rules = {}
-    seen = set()
+    prerequisites_by_tech = {}
     for unlock in unlocks:
         tech_id, tech_level = unlock[:2]
         tech_id = tech_id.upper()
-        if tech_id in seen:
-            continue
-        seen.add(tech_id)
         rule = unlock[2] if len(unlock) > 2 else None
-        rules[tech_id] = dict(rule or {'TechLevel': tech_level})
+        rule = dict(rule or {'TechLevel': tech_level})
+        # A Global/multi-faction reward has several valid physical factories.
+        # Do not discard later factions after the first catalogue entry.
+        alternatives = prerequisites_by_tech.setdefault(tech_id, [])
+        alternatives.extend(
+            value for key, value in rule.items()
+            if value and (
+                key == 'Prerequisite'
+                or (key.startswith('Prerequisite.List')
+                    and key.removeprefix('Prerequisite.List').isdigit())
+            )
+        )
+        rules.setdefault(tech_id, {}).update(rule)
+    for tech_id, alternatives in prerequisites_by_tech.items():
+        rules[tech_id].update(_alternative_prerequisite_rules(alternatives))
     for section, values in single_engineer_rules(
         lines,
         chaos_mode=False,
@@ -798,6 +812,13 @@ def mission_basic_unit_rules(
         ),
     ).items():
         rules[section] = values
+    # Earned access also needs its production category at the campaign's low
+    # tech level. Keep each factory behind its own yard in Standard; never
+    # grant a foreign yard or substitute a cross-faction factory here.
+    from randomizer.missions.tier_one import _tier_one_factory_rules
+
+    for family, category in sorted(required_factories):
+        rules.update(_tier_one_factory_rules(lines, (family,), (category,)))
     return rules
 
 
@@ -1011,16 +1032,30 @@ def always_available_miner_rules(lines, additional_build_houses=()):
             'ForbiddenHouses': 'none',
             'FactoryOwners': None,
             'FactoryOwners.Forbidden': None,
-            # PrerequisiteOverride is satisfied by *any one* listed building.
-            # A normal prerequisite list requires both exact faction
-            # buildings, so foreign miners appear only after both structures
-            # are captured (or constructed).
-            'Prerequisite': f'{factory_id},{refinery_id}',
+            # Docking miners need both exact faction structures, including
+            # after capture. Slave Miners create their refinery themselves;
+            # requiring one first would deadlock Yuri's PROC-gated factory.
+            'Prerequisite': (
+                factory_id if family == 'yuri' else f'{factory_id},{refinery_id}'
+            ),
             'PrerequisiteOverride': None,
             'Prerequisite.Lists': None,
             'Prerequisite.List0': None,
             'Prerequisite.StolenTechs': None,
         }
+        if family == 'yuri':
+            rules[refinery_id] = {
+                'TechLevel': '1',
+                'Owner': owners,
+                'RequiredHouses': required_houses,
+                'ForbiddenHouses': 'none',
+                'FactoryOwners': None,
+                'FactoryOwners.Forbidden': None,
+                'Prerequisite': sections.get(refinery_id, {}).get(
+                    'prerequisite',
+                    f'POWER,{CHAOS_PRIMARY_PRODUCTION[family]["base"]}',
+                ),
+            }
     return rules
 
 

@@ -199,8 +199,19 @@ def reward_display_name(reward):
         return enemy_reward_display_name(reward)
     name = reward.get('display_name') or reward.get('name', 'Unknown reward')
     if reward.get('shared_buff_label'):
-        effect = name.removeprefix(unit_display_label(reward['unit']) + ' ')
-        return f'{reward["shared_buff_label"]} {effect.removesuffix(" I")} (shared)'
+        if reward.get('buff_type') == 'health':
+            increase = (stacking_multiplier('health', 1) - 1) * 100
+            return f'{reward["shared_buff_label"]}: Health +{increase:g}% (shared across factions)'
+        # Use the same current effect wording as ordinary buffs, retaining the
+        # shared scope without exposing legacy serialized upgrade names.
+        variant = dict(reward, _runtime_canonical=True)
+        variant.pop('shared_buff_units', None)
+        variant.pop('shared_buff_label', None)
+        effect_lines = buff_effect_lines(
+            variant, include_label=False, include_stack=False,
+        )
+        if effect_lines:
+            return f'{reward["shared_buff_label"]}: {effect_lines[0]} (shared across factions)'
     if reward.get('kind') == 'buff' and (
         reward.get('buff_type') or reward.get('power_buff_type')
     ):

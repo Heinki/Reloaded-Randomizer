@@ -186,6 +186,10 @@ MISSION_NATIVE_RUNTIME_WEAPON_PRESERVE_IDS = _frozenset_mapping(
     'native_runtime_weapon_preserve_ids'
 )
 
+# YUR04's Special-owned PCV changes to Yuri through script 01000104. Its
+# recovery, survival, and base-start events compare PCV/YACNST exactly. Keep
+# both native runtime forms free of player-production ownership restrictions;
+# separately built player clones can still carry earned upgrades.
 MISSION_NATIVE_RUNTIME_IDENTITY_PRESERVE_IDS = {
     code: frozenset(values)
     for code, values in _MISSION_CONFIG.get(

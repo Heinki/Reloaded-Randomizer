@@ -1717,11 +1717,9 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         # player identity. Without adding currently usable essentials here,
         # Chaos production buffs had no clone on which to write
         # BuildTimeMultiplier and silently disappeared.
-        # Exactly one Engineer is selected by mission access planning and is
-        # therefore present in fallback_tech_ids. An authored player TaskForce
-        # can contain another faction's Engineer without granting its factory
-        # cameo (EMOON uses Soviet Engineers as story units). Do not promote
-        # every such runtime identity into a second buildable clone.
+        # Access planning selects Standard Engineers behind exact faction
+        # barracks, or one shared Chaos Engineer. Authored TaskForce usage
+        # alone does not grant any additional Engineer factory cameo.
         buildable_clone_ids.update(
             set(fallback_tech_ids).intersection(ENGINEER_UNIT_IDS)
         )
@@ -1860,9 +1858,9 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             (set(isolated_native_ids) - set(preserved_native_access_ids))
             | actual_clone_source_ids
             | production_alias_ids
-            # One selected Engineer clone is the only factory cameo. Other
-            # faction Engineers may still occur in authored player teams, but
-            # must remain production-gated even though they are not cloned.
+            # Selected Engineer clones supply the factory cameos. Other
+            # Engineers may still occur in authored player teams, but must
+            # remain production-gated even though they are not cloned.
             | set(ENGINEER_UNIT_IDS)
             | set(MISSION_NATIVE_RUNTIME_PLAYER_FORBIDDEN_IDS.get(code, ()))
             | {

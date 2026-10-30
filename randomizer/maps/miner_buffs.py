@@ -118,9 +118,6 @@ def player_refinery_rules(
                 # A captured player miner must lose player upgrades, including
                 # reference clones used by authored mission placements/teams.
                 rules.setdefault(identifier, {})['Convert.HumanToComputer'] = source
-    if not refineries:
-        return rules, refineries
-
     replacements = {
         source.upper(): unique_in_order(
             str(details.get(key) or '')
@@ -129,12 +126,20 @@ def player_refinery_rules(
         )
         for source, details in clone_handled.items()
     }
+    # Deployable refineries such as YAREFN have no FreeUnit, but their private
+    # forms must still satisfy PROC and any exact refinery prerequisite.
+    refinery_replacements = dict(refineries)
+    for _miner, _factory, refinery in MINERS.values():
+        clone = str((clone_handled.get(refinery) or {}).get('clone_id') or '')
+        if clone:
+            refinery_replacements[refinery] = clone
     generic = _values(installed_sections, 'GenericPrerequisites')
     generic.update(_values(sections, 'GenericPrerequisites'))
     generic_spellings = _key_spellings(lines, installed_sections, 'GenericPrerequisites')
     for key, value in generic.items():
         originals = comma_items(value)
-        additions = [refineries[item.upper()] for item in originals if item.upper() in refineries]
+        additions = [refinery_replacements[item.upper()] for item in originals
+                     if item.upper() in refinery_replacements]
         if additions:
             rules.setdefault('GenericPrerequisites', {})[generic_spellings.get(key, key)] = ','.join(
                 unique_in_order(originals + additions)
@@ -144,11 +149,22 @@ def player_refinery_rules(
     general = _values(installed_sections, 'General')
     general.update(_values(sections, 'General'))
     processors = comma_items(general.get('prerequisiteproc', ''))
-    additions = [refineries[item.upper()] for item in processors if item.upper() in refineries]
+    additions = [refinery_replacements[item.upper()] for item in processors
+                 if item.upper() in refinery_replacements]
     if additions:
         rules.setdefault('General', {})['PrerequisiteProc'] = ','.join(
             unique_in_order(processors + additions)
         )
+    # Ares supports multiple non-building alternatives. Preserve the native
+    # mobile miner and add its private player forms, so undeployed miners also
+    # satisfy the authored PROC gate on Yuri's vehicle factory.
+    alternates = comma_items(general.get('prerequisiteprocalternate', ''))
+    expanded_alternates = unique_in_order([
+        *alternates,
+        *(clone for item in alternates for clone in replacements.get(item.upper(), ())),
+    ])
+    if expanded_alternates != alternates:
+        rules.setdefault('General', {})['PrerequisiteProcAlternate'] = ','.join(expanded_alternates)
 
     for details in clone_handled.values():
         for key in ('clone_id', 'reference_clone_id'):

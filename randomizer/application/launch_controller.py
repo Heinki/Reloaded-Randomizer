@@ -1151,10 +1151,6 @@ class LaunchController:
                 raise RuntimeError(
                     'Randomizer map generation produced no isolated launch map.'
                 )
-            if hook and hook.get('tooltip_asset'):
-                from randomizer.maps.tooltips import deploy_randomizer_tooltips
-
-                deploy_randomizer_tooltips(hook['tooltip_asset'])
             if hook and hook.get('root_map'):
                 backgrounds = deploy_campaign_sidebar_backgrounds(hook['root_map'])
                 if backgrounds:
@@ -1189,6 +1185,13 @@ class LaunchController:
                 original_scenario=scenario,
             )
             self.write_launch_options(difficulty_value, game_speed_value)
+            # Private RLRD labels in the map require their CSF at game startup.
+            # Deploy as the final preparation step and require a real
+            # installed table before starting the process.
+            if hook and hook.get('tooltip_asset'):
+                from randomizer.maps.tooltips import deploy_randomizer_tooltips
+
+                deploy_randomizer_tooltips(hook['tooltip_asset'])
         except Exception:
             self.cleanup_generated_root_maps()
             self.disable_generated_rules_for_client()

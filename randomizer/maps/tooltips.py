@@ -97,4 +97,12 @@ def stage_randomizer_tooltips(lines, clone_handled):
 
 def deploy_randomizer_tooltips(path):
     """Use the existing lease, ownership manifest, and cleanup lifecycle."""
-    return _activate_runtime_assets([path]) if path else []
+    if not path:
+        return []
+    # Asset activation deliberately skips missing/invalid optional inputs.
+    # This table is mandatory once a map contains private RLRD/RLRN labels;
+    # do not silently launch with MISSING labels if staging was cleaned.
+    deployed = _activate_runtime_assets([path])
+    if len(deployed) != 1 or not deployed[0].is_file():
+        raise ValueError('Randomizer tooltip string table was not deployed')
+    return deployed
