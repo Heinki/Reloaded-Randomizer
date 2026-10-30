@@ -31,6 +31,19 @@ jobs:
           cache: pip
           cache-dependency-path: requirements-build.txt
 
+      - name: Verify source version tag before building
+        if: startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/tags/V')
+        shell: powershell
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: >-
+          python -c "import os, sys;
+          from randomizer.core.version import APP_VERSION;
+          from randomizer.core.updater import version_key;
+          tag = os.environ['RELEASE_TAG'];
+          sys.exit(0 if version_key(tag) == version_key(APP_VERSION) else
+          f'Release tag {tag!r} does not match APP_VERSION {APP_VERSION!r}. Commit and push the version bump before creating the release tag.')"
+
       - name: Install pinned build dependencies
         run: python -m pip install --disable-pip-version-check -r requirements-build.txt
 

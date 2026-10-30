@@ -31,7 +31,10 @@ Do not mix launcher/APWorld releases within an existing multiworld.
 ## Publishing manually
 
 1. Increment `APP_VERSION` in `randomizer/core/version.py`. Use a dotted numeric
-   version and a matching GitHub tag, such as `v3.0` for `3.0`.
+   version and a matching GitHub tag, such as `v3.0` for `3.0`. Commit and push
+   the version bump before creating the tag, and create the tag on that commit.
+   Tags retain their original commit when `main` advances. CI rejects a tag
+   whose source version does not match before building the release.
 2. Build with `build_archipelago_release.ps1`, or `build_all_linux.sh` when using
    Wine. Both workflows prepare `release_manifest.json` and `SHA256SUMS.txt`
    alongside the launcher and APWorld. For other manual builds, run:
