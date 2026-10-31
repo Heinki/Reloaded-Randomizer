@@ -2762,7 +2762,11 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         if final_engineer_gate_rules:
             merge_ini_section_values(lines, final_engineer_gate_rules)
 
-        if len(selected_engineer_ids) > 1:
+        # Standard prepares one Engineer per reachable faction's barracks.
+        # Sheep's Clothing starts a Nod player with a GDI barracks, so its
+        # GDI Engineer must coexist with the dormant Nod Engineer. Only
+        # Chaos/Arsenal share every barracks and require a single identity.
+        if chaos_unit_specific_buffs and len(selected_engineer_ids) > 1:
             raise ValueError(
                 'More than one buildable Engineer identity was selected: '
                 + ', '.join(sorted(selected_engineer_ids))
