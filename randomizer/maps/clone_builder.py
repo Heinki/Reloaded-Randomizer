@@ -961,7 +961,10 @@ def build_player_clone_sections(
         effective_target = _target_with_effective_unit_stats(
             target, clone_source_values
         )
-        weapon_targets = dict(target.get('weapons', {}))
+        weapon_targets = {
+            str(weapon).upper(): dict(stats)
+            for weapon, stats in target.get('weapons', {}).items()
+        }
         if (
             unit_id != target_unit_id
             or target.get('category') == 'defenses'
@@ -981,9 +984,9 @@ def build_player_clone_sections(
                     not weapon
                     or weapon.lower() in {'none', '<none>'}
                     or weapon.lower().startswith('nota')
-                    or weapon in weapon_targets
                 ):
                     continue
+                weapon_id = weapon.upper()
                 installed_weapon = installed_name_by_lower.get(weapon.lower())
                 map_weapon = map_name_by_lower.get(weapon.lower())
                 weapon_values = _standalone_clone_values(
@@ -994,7 +997,13 @@ def build_player_clone_sections(
                 )
                 if not weapon_values:
                     continue
-                weapon_targets[weapon] = {
+                # Weapon IDs are case-insensitive. The catalogue stores
+                # TSVULCANTOWER while Reloaded's Primary uses TSVulcanTower;
+                # treating them as separate weapons created a second clone
+                # and replaced the first live reference. Refresh existing
+                # entries too: map overrides are the effective baseline for
+                # damage, range and ROF, not the installed catalogue snapshot.
+                weapon_targets[weapon_id] = {
                     'damage': parse_float(
                         _value_case_insensitive(weapon_values, 'Damage', 0), 0
                     ),
@@ -1619,6 +1628,7 @@ def build_player_clone_sections(
             'clone_weapon_buff_types': handled_weapon_types,
             'weapon_ids': native_handled_weapon_ids,
             'weapon_clone_ids': weapon_clone_ids,
+            'weapon_base_stats': weapon_targets,
             'clone_base_values': clone_base_values,
             'clone_id': clone_id,
             'selection_group': selection_group,

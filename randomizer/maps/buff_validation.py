@@ -2,6 +2,7 @@
 
 from randomizer.content.healing import self_healing_metadata
 from randomizer.maps.buff_values import _active_direct_buff_counts
+from randomizer.maps.clone_builder import _is_direct_weapon_reference_key
 from randomizer.maps.ini import all_section_value_maps
 from randomizer.rewards.catalogue import (
     BUFF_TARGETS,
@@ -155,19 +156,36 @@ def _weapon_field_is_effective(
     sections,
 ):
     field = _WEAPON_BUFF_FIELDS[buff_type]
-    targets = BUFF_TARGETS.get(unit_id, {}).get('weapons', {})
+    targets = details.get('weapon_base_stats') or BUFF_TARGETS.get(
+        unit_id, {}
+    ).get('weapons', {})
     target_names = {
         str(weapon_id).upper(): stats
         for weapon_id, stats in targets.items()
     }
+    sections_by_id = {
+        str(name).upper(): values for name, values in sections.items()
+    }
+    clone_values = sections_by_id.get(
+        str(details.get('clone_id') or '').upper(), {}
+    )
+    live_weapons = {
+        str(value).upper()
+        for key, value in clone_values.items()
+        if _is_direct_weapon_reference_key(key)
+    }
     for source_weapon, clone_weapon in (
         details.get('weapon_clone_ids', {}) or {}
     ).items():
+        # An unused private WeaponType does not upgrade the structure.
+        # Verify the final clone still points to the changed weapon.
+        if str(clone_weapon).upper() not in live_weapons:
+            continue
         stats = target_names.get(str(source_weapon).upper(), {})
         base_field = 'rof' if buff_type == 'reload' else buff_type
         base = _numeric(stats.get(base_field))
         actual = _numeric(
-            _lower_values(sections.get(str(clone_weapon), {})).get(
+            _lower_values(sections_by_id.get(str(clone_weapon).upper(), {})).get(
                 field.lower()
             )
         )
