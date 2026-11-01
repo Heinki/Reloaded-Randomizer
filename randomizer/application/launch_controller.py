@@ -426,12 +426,15 @@ class LaunchController:
         # Mental Omega mostly used flat archive member names, so its original
         # extraction path never needed these parents.
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        if output_path.exists():
-            return output_path
-
+        # Installed loose missions are authoritative. Reusing an older cache
+        # after a Reloaded update can pair obsolete tile indices and scripts
+        # with the new game assets, even though the installed source is intact.
         loose_root_map = resolve_installed_scenario(scenario)
         if loose_root_map.is_file():
             shutil.copy2(loose_root_map, output_path)
+            return output_path
+
+        if output_path.exists():
             return output_path
 
         mix_paths = sorted(

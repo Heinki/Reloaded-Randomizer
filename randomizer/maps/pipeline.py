@@ -3496,6 +3496,11 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         'reference(s), '
         f'{identity_validation["record_reference_count"]} authored record(s).'
     )
+    self.append_log(
+        'Validated authored terrain preservation: '
+        f'{identity_validation["terrain_section_count"]} map/packed/terrain '
+        'section(s) unchanged, including the theater and tile data.'
+    )
     assert_file_hash(integrity_path, authored_source_hash)
 
     tooltip_asset = stage_randomizer_tooltips(lines, clone_handled) if launch_active else None

@@ -1,4 +1,4 @@
-"""Fail-closed preservation of map-authored TechnoType identities.
+"""Fail-closed preservation of authored terrain and TechnoType identities.
 
 Reloaded campaign scripts frequently compare exact type IDs.  Generated maps
 may add player-production clones and alter stats. Authored TaskForces, triggers,
@@ -23,6 +23,10 @@ TECHNO_REGISTRY_SECTIONS = (
     'BuildingTypes',
 )
 PLACEMENT_SECTIONS = ('Infantry', 'Units', 'Aircraft', 'Structures')
+TERRAIN_SECTIONS = (
+    'Map', 'IsoMapPack5', 'OverlayPack', 'OverlayDataPack', 'PreviewPack',
+    'Terrain', 'Smudge',
+)
 PACKED_SECTIONS = {
     'isomappack5', 'overlaypack', 'overlaydatapack', 'previewpack',
 }
@@ -47,11 +51,12 @@ class RecordIdentity:
 
 @dataclass(frozen=True)
 class AuthoredIdentityContract:
-    """Immutable references captured before any randomizer mutation."""
+    """Immutable terrain and references captured before randomizer mutation."""
 
     positioned: tuple
     records: tuple
     protected_type_ids: frozenset
+    terrain_sections: tuple
 
 
 def registered_techno_ids(installed_sections, map_sections=None):
@@ -108,6 +113,9 @@ def _positioned_references(lines, map_sections, techno_ids):
 def capture_authored_identity_contract(lines, installed_sections):
     """Capture every authored record containing a known TechnoType ID."""
     map_sections = all_section_value_maps(lines)
+    sections_by_lower = {
+        str(name).casefold(): values for name, values in map_sections.items()
+    }
     techno_ids = registered_techno_ids(installed_sections, map_sections)
     positioned = _positioned_references(lines, map_sections, techno_ids)
     records = []
@@ -136,11 +144,39 @@ def capture_authored_identity_contract(lines, installed_sections):
         positioned=tuple(positioned),
         records=tuple(records),
         protected_type_ids=frozenset(protected),
+        terrain_sections=tuple(
+            (
+                name,
+                tuple(sections_by_lower[name.casefold()].items())
+                if name.casefold() in sections_by_lower else None,
+            )
+            for name in TERRAIN_SECTIONS
+        ),
     )
 
 
 def validate_authored_identity_contract(contract, lines, allowed_positioned_replacements=None):
-    """Raise when generated output removes or renames an authored identity."""
+    """Reject changed terrain and removed or renamed authored identities."""
+    # Terrain and packed tile/overlay data are never randomizer inputs to
+    # mutate. Fail before launch if a rule merge changes them, including the
+    # theater that selects the tile graphics. Compare ordered entries so a
+    # reordered packed stream cannot pass by retaining the same keys.
+    sections = {
+        str(name).casefold(): values
+        for name, values in all_section_value_maps(lines).items()
+    }
+    changed_terrain = [
+        name for name, expected in contract.terrain_sections
+        if (
+            tuple(sections[name.casefold()].items())
+            if name.casefold() in sections else None
+        ) != expected
+    ]
+    if changed_terrain:
+        raise ValueError(
+            'Generated map changed authored terrain sections: '
+            + ', '.join(changed_terrain)
+        )
     allowed_positioned_replacements = allowed_positioned_replacements or {}
     failures = []
     for reference in contract.positioned:
@@ -206,4 +242,7 @@ def validate_authored_identity_contract(contract, lines, allowed_positioned_repl
         'protected_type_count': len(contract.protected_type_ids),
         'positioned_reference_count': len(contract.positioned),
         'record_reference_count': len(contract.records),
+        'terrain_section_count': sum(
+            values is not None for _name, values in contract.terrain_sections
+        ),
     }

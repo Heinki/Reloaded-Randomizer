@@ -132,6 +132,18 @@ unlocks and upgrade stacks migrate to the canonical unit; published Archipelago
 item IDs remain readable for existing rooms. Distinct Secret Lab units remain
 available as separate rewards.
 
+Tesla Tank access therefore also works with Allied, Yuri, GDI and Nod war
+factories in Standard mode: it includes the former Secret Lab variant's
+faction access. A Soviet war factory is not required for this consolidated
+reward. Other Soviet-only units retain their normal faction production gates.
+
+Map generation checks that the authored theater, packed tiles, overlays,
+terrain objects and smudges remain unchanged before writing a launch map.
+Installed loose mission maps refresh their cached copies on every launch so
+game updates cannot leave the randomizer using an older map. These safeguards
+do not establish the cause of the reported Yuri Resurgence mission 06 visual
+artifacts; that report still needs the affected generated map and game log.
+
 MCVs share one set of buff stacks across factions. Harvesters share a separate
 set, including the Slave Miner and Stealth Harvester. Amphibious transporters
 share a third set, including the Landing Craft, Armored Transport and all three
