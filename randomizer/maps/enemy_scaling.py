@@ -743,6 +743,8 @@ def enemy_power_launch_rewards(rewards):
             'enemy_recharge_multiplier', 2
         )
         values = dict(reward.get('superweapon_rules') or {})
+        # Remove provider gates, but retain native inhibitors: radar jammers
+        # must protect against the isolated AI copy as well as the original.
         values.update({
             'IsPowered': 'false',
             'DisableableFromShell': 'no',
@@ -767,8 +769,6 @@ def enemy_power_launch_rewards(rewards):
             'SW.AuxBuildings': '',
             'SW.NegBuildings': '',
             'SW.Designators': '',
-            'SW.Inhibitors': '',
-            'SW.AnyInhibitor': 'no',
             'SW.RangeMaximum': '-1',
             'SW.RangeMinimum': '-1',
         })

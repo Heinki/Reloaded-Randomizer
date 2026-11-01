@@ -78,6 +78,18 @@ def prepare_game(root, definition, rewards, settings, *, country, color, opponen
     rows = all_section_value_maps_preserve(source.read_bytes().decode('latin-1').splitlines())
     if any(rows.get(name) for name in ('Triggers', 'TeamTypes', 'AITriggerTypes', 'Houses')):
         raise ValueError('Progression Skirmish requires an unscripted multiplayer map.')
+    # Team maps often put positions 0 and 1 beside each other. Keep the human
+    # at 0 (startup providers use it), and choose the farthest authored start.
+    waypoints = rows.get('Waypoints', {})
+    starts = {}
+    for index in definition['starts']:
+        packed = int(waypoints[str(index)])
+        starts[index] = (packed % 1000, packed // 1000)
+    player_start = starts[0]
+    enemy_start = max((index for index in starts if index != 0), key=lambda index: (
+        sum((value - origin) ** 2 for value, origin in zip(starts[index], player_start)),
+        -index,
+    ))
     if GAME == 'dta':
         from randomizer.coop.catalogue import inherited_sections
         rows = inherited_sections(root, source)
@@ -113,7 +125,7 @@ def prepare_game(root, definition, rewards, settings, *, country, color, opponen
     for index in range(opponents):
         house = f'Multi{index + 2}'
         enemy = rng.choice(native_countries)
-        spawn['SpawnLocations'][house] = str(index + 1)
+        spawn['SpawnLocations'][house] = str(enemy_start)
         indices = {value: index for index, value in enumerate(rows.get('Countries', {}).values())}
         spawn['HouseCountries'][house] = str(indices[enemy] if GAME != 'dta' else native_countries.index(enemy))
         spawn['HouseColors'][house] = str(palette[index])
@@ -198,7 +210,9 @@ def _ra2_rewards(rows, rewards, settings, country, randomized):
     from randomizer.ui.cameos import installed_rules_registry
     from randomizer.maps.player_clones import player_unit_clone_rules, player_clone_pad_aircraft_rules
     from randomizer.maps.power_buffs import apply_power_buffs_to_unlock_rewards
-    from randomizer.maps.base import cloned_superweapon_plan
+    from randomizer.maps.base import (
+        cloned_superweapon_plan, resolved_superweapon_targeting_clone_rules,
+    )
     from randomizer.rewards.catalogue import BUFF_TARGETS, ALWAYS_AVAILABLE_TECH_IDS, canonical_rewards
     from randomizer.rewards.rules import unlocked_reward_tech_ids
     from randomizer.content.inventory import read_rules_sections
@@ -344,6 +358,9 @@ def _ra2_rewards(rows, rewards, settings, country, randomized):
         providers.append('RZCREDITS')
     if actions or providers:
         _power_providers(lines, installed_types, installed, actions, providers)
+    merge_ini_section_values(lines, resolved_superweapon_targeting_clone_rules(
+        installed, all_section_value_maps_preserve(lines), handled,
+    ))
     rows = all_section_value_maps_preserve(lines)
     rows.pop('Houses', None)
     rows.pop('RZPLAYER House', None)

@@ -71,7 +71,7 @@ from randomizer.maps.rules import (
     validate_player_clone_selection_groups,
     resolved_academy_clone_rules,
     resolved_delivery_clone_rules,
-    resolved_native_designator_clone_rules,
+    resolved_superweapon_targeting_clone_rules,
     resolved_power_player_clone_rules,
     resolved_map_section_rules,
     remove_locked_techlevel_actions,
@@ -2364,16 +2364,6 @@ def prepare_hooked_map(self, mission, extra_rules=None):
                 'Resolved power target/designator restrictions to current '
                 'player clone IDs.'
             )
-        native_designator_clone_rules = resolved_native_designator_clone_rules(
-            installed_rule_sections,
-            native_map_sections,
-            clone_handled,
-        )
-        if native_designator_clone_rules:
-            merge_ini_section_values(lines, native_designator_clone_rules)
-            self.append_log(
-                'Extended native power designators to current player clone IDs.'
-            )
         if clone_warnings:
             self.append_log(
                 'Player unit/defense clone limitations: '
@@ -3271,6 +3261,15 @@ def prepare_hooked_map(self, mission, extra_rules=None):
 
     starting_miner_replacements = {}
     if launch_active:
+        targeting_clone_rules = resolved_superweapon_targeting_clone_rules(
+            installed_rule_sections, all_section_value_maps(lines), clone_handled,
+        )
+        if targeting_clone_rules:
+            merge_ini_section_values(lines, targeting_clone_rules)
+            self.append_log(
+                'Extended native and cloned power designators/inhibitors '
+                'to current player clone IDs.'
+            )
         refinery_rules, player_refineries = player_refinery_rules(
             lines, installed_rule_sections, native_map_sections, clone_handled,
             preserved_native_ids=native_required_access_ids,

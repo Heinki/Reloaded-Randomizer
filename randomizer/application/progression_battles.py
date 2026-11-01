@@ -292,7 +292,11 @@ class ProgressionBattlesController:
         return super().poll_hook_log()
 
     def launch_progression_skirmish(self, mission):
+        from randomizer.core.mission_diagnostics import (
+            mission_diagnostic_baseline, preserve_mission_report,
+        )
         from randomizer.core.paths import DEBUG_LOG
+        from randomizer.maps.generated import file_sha256
         from randomizer.skirmish import GAME, multiplayer_colors, prepare_game, preload_player_country
         from randomizer.skirmish_progression import SkirmishResultWatch
         process = getattr(self, 'active_game_process', None)
@@ -336,6 +340,7 @@ class ProgressionBattlesController:
         outcome_applied = False
 
         def prepare():
+            source_hash = file_sha256(definition['path'])
             command = self.build_command()
             preparation = getattr(self, 'begin_direct_game_preparation', None)
             if preparation:
@@ -352,10 +357,20 @@ class ProgressionBattlesController:
             if art:
                 art()
             preload_player_country(GAME_ROOT)
-            return command
+            return command, {
+                'root_map': str(GAME_ROOT / 'spawnmap.ini'),
+                'source_path': definition['path'],
+                'source_sha256': source_hash,
+            }
 
-        def finish(command):
+        def finish(prepared):
+            command, hook = prepared
             try:
+                try:
+                    baseline = mission_diagnostic_baseline()
+                except OSError as exc:
+                    baseline = None
+                    self.append_log(f'Could not inspect existing engine diagnostics: {exc}', error=True)
                 self._skirmish_watch = SkirmishResultWatch(DEBUG_LOG)
                 spawn = getattr(self, 'spawn_game_process', None)
                 if spawn:
@@ -369,6 +384,13 @@ class ProgressionBattlesController:
                     process = subprocess.Popen(command, cwd=GAME_ROOT, env=environment,
                                                start_new_session=os.name != 'nt')
                 self.active_game_process = process
+                self.active_mission_attempt = {
+                    'mission_code': code, 'scenario': mission['scenario'],
+                    'seed': seed, 'difficulty': difficulty, 'game_speed': speed,
+                    'command': command, 'active_rewards': rewards,
+                    'exception_baseline': baseline,
+                }
+                self._skirmish_report_hook = hook
                 self.append_log(f'Started {mission["title"]}: one human versus one AI; normal progression applies.')
                 self.after(1000, poll)
             except Exception as exc:
@@ -393,7 +415,9 @@ class ProgressionBattlesController:
         def cleanup():
             self._skirmish_busy = False
             self.active_game_process = None
+            self.active_mission_attempt = None
             self._skirmish_watch = None
+            self._skirmish_report_hook = None
             if shop:
                 self.finish_progression_launch_context()
             self.disable_generated_rules_for_client()
@@ -405,15 +429,25 @@ class ProgressionBattlesController:
         def poll():
             running = self.active_game_process.poll() is None
             result = self._skirmish_watch.poll(final=not running)
-            if result:
-                apply_outcome(result)
             if running:
                 self.after(1000, poll)
                 return
-            if not outcome_applied:
-                apply_outcome('defeat')
             if self._skirmish_watch.error:
                 self.append_log(self._skirmish_watch.error, error=True)
+            self.append_log(f'Skirmish result for {code}: {result or "unverified"}.')
+            if result != 'victory':
+                attempt = self.active_mission_attempt
+                attempt['skirmish_result'] = result
+                attempt['skirmish_result_error'] = self._skirmish_watch.error
+                try:
+                    report = preserve_mission_report(
+                        attempt, self._skirmish_report_hook,
+                        self.active_game_process.poll(),
+                    )
+                    self.append_log(f'Saved incomplete mission report: {report}')
+                except OSError as exc:
+                    self.append_log(f'Could not save mission report: {exc}', error=True)
+            apply_outcome(result or 'defeat')
             cleanup()
 
         def failed(exc, detail):

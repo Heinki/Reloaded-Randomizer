@@ -209,17 +209,16 @@ def resolved_power_player_clone_rules(
     return power_updates, clone_updates
 
 
-def resolved_native_designator_clone_rules(
+def resolved_superweapon_targeting_clone_rules(
     installed_sections,
     map_sections,
     clone_handled,
 ):
-    """Allow native designator-gated powers to use player clone identities.
+    """Keep exact-type designator and inhibitor lists valid after cloning.
 
-    Deployable units can turn into a player-only clone BuildingType while the
-    installed SuperWeaponType still names the native BuildingType in
-    ``SW.Designators``. Preserve the native designator for mission/AI users and
-    append every runtime player clone form.
+    Native and cloned powers must recognize production and deployed/reference
+    forms. Preserve authored lists, including explicit empty map overrides,
+    and append only runtime clones of the types already named there.
     """
     runtime_clones = {}
     for source, details in (clone_handled or {}).items():
@@ -252,18 +251,18 @@ def resolved_native_designator_clone_rules(
 
     updates = {}
     for entry in effective_sections.values():
-        designator = entry['values'].get('sw.designators')
-        if designator is None:
-            continue
-        key, value = designator
-        designators = comma_items(value)
-        expanded = list(designators)
-        for designator_id in designators:
-            expanded.extend(runtime_clones.get(designator_id.upper(), ()))
-        expanded = unique_in_order(expanded)
-        resolved_value = ','.join(expanded)
-        if resolved_value != str(value):
-            updates.setdefault(entry['name'], {})[key] = resolved_value
+        for field in ('sw.designators', 'sw.inhibitors'):
+            restriction = entry['values'].get(field)
+            if restriction is None:
+                continue
+            key, value = restriction
+            types = comma_items(value)
+            expanded = list(types)
+            for type_id in types:
+                expanded.extend(runtime_clones.get(type_id.upper(), ()))
+            resolved_value = ','.join(unique_in_order(expanded))
+            if resolved_value != str(value):
+                updates.setdefault(entry['name'], {})[key] = resolved_value
     return updates
 
 

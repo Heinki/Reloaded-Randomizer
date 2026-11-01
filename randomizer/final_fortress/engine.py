@@ -724,6 +724,16 @@ def build_map(game_root, run, rules, *, preloads=None):
         for aliases in reserved_friendly_types:
             writer.wave_types([{'units': plan['effects']['reinforcements']['units']}],
                                rules, friendly_overrides, aliases=aliases)
+    from randomizer.maps.base import resolved_superweapon_targeting_clone_rules
+    from randomizer.maps.ini import all_section_value_maps_preserve
+    targeting_lines = IniLines(list(writer.lines))
+    merge_ini_section_values(targeting_lines, writer.sections)
+    targeting_rules = resolved_superweapon_targeting_clone_rules(
+        rules, all_section_value_maps_preserve(targeting_lines),
+        {source: {'clone_id': alias} for source, alias in player_aliases.items()},
+    )
+    for section, values in targeting_rules.items():
+        writer.sections.setdefault(section, {}).update(values)
     if preloads is not None:
         map_only = {'Structures', 'Units', 'Infantry', 'Aircraft', 'Triggers', 'Tags', 'Events',
                     'Actions', 'VariableNames', 'CellTags', 'Waypoints', 'TaskForces', 'TeamTypes',
