@@ -18,7 +18,9 @@ from randomizer.content.transforms import (
     linked_transform_families,
     techno_type_categories,
 )
-from randomizer.content.variants import REDUNDANT_UNIT_VARIANTS
+from randomizer.content.variants import (
+    CONSOLIDATED_UNIT_FACTIONS, REDUNDANT_UNIT_VARIANTS,
+)
 from randomizer.rewards.enemy_scaling import build_enemy_reward_pool
 from randomizer.rewards.power_buff_definitions import build_power_buff_rewards
 
@@ -1022,7 +1024,10 @@ def _consolidate_unit_variants():
         native_access = access_by_unit[root]
         variant_access = access_by_unit[variant]
         target = BUFF_TARGETS[root]
-        factions = set(target['factions']) | set(BUFF_TARGETS[variant]['factions'])
+        target.setdefault('display_faction', target['factions'][0])
+        factions = set(CONSOLIDATED_UNIT_FACTIONS.get(
+            root, set(target['factions']) | set(BUFF_TARGETS[variant]['factions'])
+        ))
         target['factions'] = [faction for faction in CONTENT_FACTIONS if faction in factions]
         target['display_label'] = display_labels.get(root, target['label'])
         native_access.update({

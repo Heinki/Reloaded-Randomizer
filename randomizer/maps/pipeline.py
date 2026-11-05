@@ -23,7 +23,7 @@ from randomizer.maps.starting_units import starting_unit_buff_plan
 from randomizer.maps.miner_buffs import (
     player_refinery_rules, upgrade_starting_player_miners, validate_refinery_miner_isolation,
 )
-from randomizer.maps.prerequisites import player_construction_yard_prerequisite_rules
+from randomizer.maps.prerequisites import player_building_prerequisite_rules
 from randomizer.missions.required_access import mission_required_access_rules
 from randomizer.maps.enemy_powerhouses import enemy_powerhouse_rules
 from randomizer.maps.ownership import (
@@ -97,7 +97,7 @@ from randomizer.maps.progress_hooks import (
     native_trigger_check_markers,
     pending_check_hook_plan,
 )
-from randomizer.maps.hooks import validate_action_arguments
+from randomizer.maps.hooks import validate_action_arguments, validate_trigger_arguments
 from randomizer.maps.houses import (
     country_family,
     map_house_records,
@@ -187,6 +187,7 @@ from randomizer.ui.config import (
     RAINBOWIZER_COLORS,
 )
 from randomizer.rewards.reloaded_roster import randomizer_unit_roster
+from randomizer.content.variants import REDUNDANT_UNIT_VARIANTS
 from randomizer.maps.tooltips import stage_randomizer_tooltips
 from randomizer.rewards.arsenal import ARSENAL_MODE
 
@@ -1635,6 +1636,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
     assistance_stacks = self.mission_failure_stack(code)
     assistance_direct_rewards = []
     production_gate_rules = {}
+    native_sidebar_hard_locks = set()
     if self.failure_assistance_enabled() and assistance_stacks:
         assistance_rules, assisted_houses, skipped_assistance_countries = mission_assistance_buff_rules(
             lines,
@@ -1847,13 +1849,53 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             for source_id, details in clone_handled.items()
             if bool((details or {}).get('build_only'))
         }
+        production_aliases = {
+            **REDUNDANT_UNIT_VARIANTS,
+            **MISSION_NATIVE_PRODUCTION_ALIASES.get(code, {}),
+        }
         production_alias_ids = {
             alias_id
-            for alias_id, source_id in MISSION_NATIVE_PRODUCTION_ALIASES.get(
-                code, {}
-            ).items()
-            if source_id in actual_clone_source_ids
+            for alias_id, source_id in production_aliases.items()
+            if source_id in actual_clone_source_ids or source_id in isolated_native_ids
         }
+        # Factory-owner filters can be bypassed through captured factories or
+        # campaign ancestry. Types absent from every authored TaskForce need
+        # no production eligibility: TechLevel 11 leaves placements and exact
+        # trigger references intact. Keep all scripted payloads native and
+        # eligible, including unreferenced TaskForces and global AI templates.
+        native_taskforce_names = {
+            str(value).split(';', 1)[0].strip().lower()
+            for value in native_map_sections.get('TaskForces', {}).values()
+        } | {
+            str(values['taskforce']).split(';', 1)[0].strip().lower()
+            for values in native_map_sections.values()
+            if values.get('taskforce')
+        }
+        native_taskforce_payload_ids = {
+            tokens[1].upper()
+            for taskforce in native_taskforce_names
+            for key, value in native_sections_by_lower.get(taskforce, {}).items()
+            if str(key).isdigit()
+            if len(tokens := [item.strip() for item in str(value).split(';', 1)[0].split(',')]) >= 2
+        }
+        if str(native_map_sections.get('Basic', {}).get(
+            'ignoreglobalaitriggers', 'no'
+        )).lower() in {'yes', 'true', '1'}:
+            native_sidebar_hard_locks = (
+                actual_clone_source_ids | production_alias_ids
+            ) - (
+                native_taskforce_payload_ids
+                | runtime_identity_preserve_ids
+                | native_required_access_ids
+                | refinery_building_ids
+                | set(MISSION_NATIVE_PRODUCTION_GATE_EXCLUSIONS.get(code, ()))
+            )
+            native_sidebar_hard_locks = {
+                source_id for source_id in native_sidebar_hard_locks
+                if registered_techno_categories.get(source_id) in {
+                    'infantry', 'units', 'aircraft',
+                }
+            }
         production_gate_source_ids = (
             (set(isolated_native_ids) - set(preserved_native_access_ids))
             | actual_clone_source_ids
@@ -1989,12 +2031,11 @@ def prepare_hooked_map(self, mission, extra_rules=None):
                 + '.'
             )
         if production_alias_ids:
-            aliases = MISSION_NATIVE_PRODUCTION_ALIASES.get(code, {})
             self.append_log(
                 'Blocked mission production aliases duplicating player '
                 'clones: '
                 + ', '.join(
-                    f'{alias_id} -> {aliases[alias_id]}'
+                    f'{alias_id} -> {production_aliases[alias_id]}'
                     for alias_id in sorted(production_alias_ids)
                 )
                 + '.'
@@ -2823,13 +2864,13 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         # the production-only building filters in the final map as well.
         merge_ini_section_values(lines, native_building_factory_locks)
 
-    native_production_hard_locks = (
+    native_production_hard_locks = set(
         MISSION_NATIVE_PRODUCTION_HARD_LOCKS.get(code, ())
-    )
+    ) | native_sidebar_hard_locks
     if native_production_hard_locks:
         merge_ini_section_values(lines, {
             source_id: {'TechLevel': LOCKED_TECH_LEVEL}
-            for source_id in native_production_hard_locks
+            for source_id in sorted(native_production_hard_locks)
         })
 
     if required_access_rules:
@@ -3275,11 +3316,11 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             preserved_native_ids=native_required_access_ids,
         )
         merge_ini_section_values(lines, refinery_rules)
-        yard_prerequisite_rules = player_construction_yard_prerequisite_rules(
+        building_prerequisite_rules = player_building_prerequisite_rules(
             lines, installed_rule_sections, clone_handled,
         )
-        if yard_prerequisite_rules:
-            merge_ini_section_values(lines, yard_prerequisite_rules)
+        if building_prerequisite_rules:
+            merge_ini_section_values(lines, building_prerequisite_rules)
         preserved_refineries = sorted(refinery_building_ids & native_required_access_ids)
         if preserved_refineries:
             self.append_log(
@@ -3461,6 +3502,15 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             )
 
     validate_action_arguments(lines)
+    authored_trigger_ids = {
+        str(trigger_id).casefold()
+        for trigger_id in native_map_sections.get('Triggers', {})
+    }
+    validate_trigger_arguments(lines, (
+        trigger_id
+        for trigger_id in section_value_map_preserve(lines, 'Triggers')
+        if str(trigger_id).casefold() not in authored_trigger_ids
+    ))
     packed_sections = {
         'PreviewPack', 'IsoMapPack5', 'OverlayPack', 'OverlayDataPack',
     }

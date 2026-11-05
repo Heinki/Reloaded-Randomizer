@@ -7,6 +7,7 @@ from randomizer.maps.ini import (
     append_section_entry,
     append_section_list_entry,
     find_section_bounds,
+    ini_value_text,
     parse_action_groups,
     section_lines,
     section_value_map_preserve,
@@ -20,6 +21,25 @@ _ENGINE_LIMITS = static_config_section(
     dict,
 )
 MAX_MAP_ACTION_LINE_LENGTH = int(_ENGINE_LIMITS['max_map_action_line_length'])
+
+
+def validate_trigger_arguments(lines, trigger_ids):
+    """Reject truncated generated TriggerType records before map loading.
+
+    TriggerTypeClass::LoadFromINI compares the first two strtok results to
+    <none> without checking for null. A comment inside a generated owner
+    therefore becomes an access violation at 007C8D43, not a parser warning.
+    """
+    wanted = {str(trigger_id).casefold() for trigger_id in trigger_ids}
+    failures = []
+    for trigger_id, value in section_value_map_preserve(lines, 'Triggers').items():
+        if str(trigger_id).casefold() not in wanted:
+            continue
+        tokens = ini_value_text(value).split(',')
+        if len(tokens) != 8 or any(not token.strip() for token in tokens):
+            failures.append(f'{trigger_id}: missing trigger argument')
+    if failures:
+        raise ValueError('Unsafe generated map Triggers: ' + '; '.join(failures[:8]))
 
 
 def validate_action_arguments(lines):

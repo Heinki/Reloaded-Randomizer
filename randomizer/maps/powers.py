@@ -292,6 +292,10 @@ def append_superweapon_grant_trigger(
     if not houses:
         return ''
 
+    for house in houses:
+        if any(character in house for character in ',;\r\n'):
+            raise ValueError(f'Unsafe superweapon trigger owner: {house!r}')
+
     trigger_ids = []
     reserved_startup_cells = set()
     for house_number, house in enumerate(houses, 1):

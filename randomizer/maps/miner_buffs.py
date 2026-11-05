@@ -46,6 +46,15 @@ def player_refinery_rules(
     reserved = {str(name).casefold() for name in installed_sections}
     reserved.update(str(name).casefold() for name in sections)
     preserved_native_ids = {str(item).upper() for item in preserved_native_ids}
+    records = map_house_records(lines, sections=sections)
+    factory_countries = unique_in_order([
+        *(str(value).split(';', 1)[0].strip()
+          for entries in (installed_sections, sections)
+          for value in _values(entries, 'Countries').values()),
+        *(record.get('country', '') for record in records.values()),
+        *(record.get('parent_country', '') for record in records.values()),
+    ])
+    factory_countries = [country for country in factory_countries if country]
     for refinery, miner in refinery_pairs.items():
         # Event 19 checks the BuildingTypes index. GroupAs cannot make
         # a private refinery satisfy it. The pipeline already grants and
@@ -67,26 +76,31 @@ def player_refinery_rules(
         cloned = {
             spellings.get(key, key): value for key, value in values.items()
             if key not in {
-                'image', 'groupas', 'freeunit', 'owner', 'requiredhouses',
-                'techlevel', 'aibuildthis', 'forbiddenhouses', 'factoryowners',
-                'factoryowners.forbidden', 'prerequisite.negative',
-                'prerequisite.stolentechs', 'buildlimit',
+                'image', 'groupas', 'freeunit', 'requiredhouses', 'aibuildthis',
             }
         }
         cloned.update({
             'Image': values.get('image') or refinery,
             'GroupAs': values.get('groupas') or refinery,
             'FreeUnit': miner_clone,
-            'Owner': miner_values['owner'],
             'RequiredHouses': miner_values['requiredhouses'],
-            'TechLevel': '1', 'AIBuildThis': 'no',
+            'AIBuildThis': 'no',
         })
         rules[clone] = cloned
         _register_map_type(rules, lines, installed_sections, 'BuildingTypes', clone)
         negatives = comma_items(values.get('prerequisite.negative', ''))
-        rules[refinery] = {'Prerequisite.Negative': ','.join(unique_in_order([
-            *negatives, PLAYER_ORIGINAL_PRODUCTION_GATE_ID,
-        ]))}
+        rules[refinery] = {
+            'Prerequisite.Negative': ','.join(unique_in_order([
+                *negatives, PLAYER_ORIGINAL_PRODUCTION_GATE_ID,
+            ])),
+            # AI ignores this production-only building filter. It suppresses
+            # the native cameo even after a foreign construction yard capture,
+            # without affecting placements or the enemy's free miners.
+            'FactoryOwners.Forbidden': ','.join(unique_in_order([
+                *comma_items(values.get('factoryowners.forbidden', '')),
+                *factory_countries,
+            ])),
+        }
         refineries[refinery] = clone
         clone_handled[refinery] = {
             'clone_id': clone, 'selection_group': cloned['GroupAs'],
@@ -263,6 +277,16 @@ def validate_refinery_miner_isolation(
         if not miner_clone or miner_clone.upper() not in registered_units:
             failures.append(f'{clone} has no registered player miner')
         cloned = section_value_map_preserve(lines, clone)
+        authored = _values(installed_sections, refinery)
+        authored.update(_values(native_sections, refinery))
+        cloned_values = _values(sections, clone)
+        for key in (
+            'owner', 'forbiddenhouses', 'factoryowners',
+            'factoryowners.forbidden', 'prerequisite.negative',
+            'prerequisite.stolentechs', 'buildlimit', 'techlevel',
+        ):
+            if cloned_values.get(key, '') != authored.get(key, ''):
+                failures.append(f'{clone} changed native refinery restriction {key}')
         if cloned.get('FreeUnit', '').upper() != miner_clone.upper():
             failures.append(f'{clone}.FreeUnit does not spawn {miner_clone}')
         miner_values = _values(sections, miner_clone)

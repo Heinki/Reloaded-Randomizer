@@ -731,10 +731,11 @@ class UnlockDataController:
             if category not in category_labels:
                 continue
             factions = list(target.get('factions') or [])
-            if (
-                len(factions) != 1
-                or factions[0] not in (*FACTION_ORDER, 'Neutral')
-            ):
+            display_faction = target.get('display_faction') or next(
+                (faction for faction in factions if faction in (*FACTION_ORDER, 'Neutral')),
+                None,
+            )
+            if display_faction not in (*FACTION_ORDER, 'Neutral'):
                 continue
             key = f'unit:{unit_id}'
             source_data = sources.get(
@@ -786,8 +787,8 @@ class UnlockDataController:
                 'key': key,
                 'kind': 'unit',
                 'id': unit_id,
-                'label': target.get('label', unit_id),
-                'faction': factions[0],
+                'label': target.get('display_label') or target.get('label', unit_id),
+                'faction': display_faction,
                 'category': (
                     'Special' if special_reward else category_labels[category]
                 ),

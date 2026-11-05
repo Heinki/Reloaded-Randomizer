@@ -886,12 +886,6 @@
         "permanent_access": 25,
         "permanent_buff": 8
       },
-      "ORCA2": {
-        "run_access": 6,
-        "run_buff": 4,
-        "permanent_access": 25,
-        "permanent_buff": 8
-      },
       "OVERLORD": {
         "run_access": 10,
         "run_buff": 6,

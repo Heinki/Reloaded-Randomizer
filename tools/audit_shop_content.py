@@ -21,7 +21,9 @@ from randomizer.content.inventory import (
 )
 from randomizer.rewards.catalogue import ALWAYS_AVAILABLE_TECH_IDS, REWARD_POOL, BUFF_TARGETS
 from randomizer.rewards.reloaded_roster import APPROVED_CLONE_SOURCE_IDS
-from randomizer.content.variants import REDUNDANT_UNIT_VARIANTS
+from randomizer.content.variants import (
+    CONSOLIDATED_UNIT_FACTIONS, REDUNDANT_UNIT_VARIANTS,
+)
 from randomizer.shop.catalogue import shop_catalogue
 from randomizer.shop.model import ShopRewardType
 from tools.build_content_catalogue import _unit_records
@@ -74,6 +76,8 @@ def audit(*, assets=False):
                         if review['status'] == 'approved'
                     )
             entry = access.get(unit.upper())
+            if unit.upper() in CONSOLIDATED_UNIT_FACTIONS:
+                consolidated_approvals = set(CONSOLIDATED_UNIT_FACTIONS[unit.upper()])
             if unit.upper().endswith('_AI') or unit.upper() in deferred:
                 status = 'AI-only or deferred CABAL'
             elif entry:

@@ -5,6 +5,11 @@ retain their original ordering, so ConfigParser is not suitable here.
 """
 
 
+def ini_value_text(value):
+    """Read an INI value as the engine does, without its trailing comment."""
+    return str(value or '').split(';', 1)[0].strip()
+
+
 class IniLines(list):
     """Mutable map lines with read indexes invalidated by every mutation."""
 

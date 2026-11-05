@@ -127,10 +127,21 @@ selected starting-loadout access.
 Minor Secret Lab copies are consolidated into one native unit each: Desolator,
 Chitzkoi, Cyborg, Terrorist, Yuri Clone, Tesla Tank and Repair Disk. Each has one
 access offer, one upgrade list and one player production identity, using the
-native unit's stats, tier and prices. Prior faction access is retained. Saved
+native unit's stats, tier and prices. The Nod Cyborg keeps Nod production in
+Standard mode; the Secret Lab copy no longer opens other factions' barracks.
+Other consolidated units retain their prior faction access. Shared-faction
+units remain visible in Unlocks under their native faction, including Repair
+Disk under Yuri. Saved
 unlocks and upgrade stacks migrate to the canonical unit; published Archipelago
 item IDs remain readable for existing rooms. Distinct Secret Lab units remain
 available as separate rewards.
+
+Harrier and Intruder use one Harrier unlock and upgrade list because their
+weapons, stats, art and cameo are identical. Existing Intruder rewards migrate
+to Harrier; published Archipelago item IDs remain readable. Native production
+filters account for player factory ancestry without treating empty cinematic
+houses as AI producers. Additional native TechLevel locks are used only when
+no authored TaskForce needs the type and global AI triggers are disabled.
 
 Tesla Tank access therefore also works with Allied, Yuri, GDI and Nod war
 factories in Standard mode: it includes the former Secret Lab variant's
@@ -175,7 +186,10 @@ technology requirements still apply. Relaunch the mission to apply this fix;
 existing mission saves retain their previous rules. Player-built refineries
 use private types that supply upgraded miners, including earned cloaking, even
 before a war factory is built. Private refineries count toward refinery
-prerequisites. Original and upgraded miners can unload at either original or
+prerequisites, including exact building requirements on Radar and airfield
+construction. They retain the native refinery's faction restrictions so GDI
+and Nod refinery variants do not appear together merely because they share a
+miner. Original and upgraded miners can unload at either original or
 private player refineries, preserving each miner's compatible destinations.
 When mission construction events or reviewed objectives require an exact native refinery
 type, that refinery stays native and buildable. This preserves the Nod and GDI
@@ -187,6 +201,15 @@ already placed in a mission receive the same upgrades, including ALL07_RA2's
 starting Chrono Miners. Miners named by exact scripted type checks retain their
 native identity to preserve those mission conditions. Relaunch a mission to
 regenerate these rules; existing saves retain their previous map rules.
+
+The supplied Standard-mode GDI05A_TS crash at `007C8D43` was traced to an inline
+country comment copied into a generated superweapon trigger. Country and
+ParentCountry discovery now strips INI comments, grant writers reject unsafe
+owner tokens, and generated triggers are checked before the launch map is
+written. See [the crash analysis](GDI05A_TS_CRASH.md). Relaunch the mission to
+regenerate its map. Cosmonaut's native description and caption are present in
+this installation; generated tooltips supply a description fallback when a
+localized installation lacks its text.
 
 The first two Shop stages offer Standard mission choices, including a fixed-unit
 or hero mission when available. From stage 3 onward, every remaining eligible

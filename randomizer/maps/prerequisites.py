@@ -36,14 +36,22 @@ def expand_prerequisite_paths(values, replacements):
     return rules
 
 
-def player_construction_yard_prerequisite_rules(lines, installed_sections, clone_handled):
-    """Let private yards satisfy the same production gates as their sources.
+def player_building_prerequisite_rules(lines, installed_sections, clone_handled):
+    """Let private yards and refineries satisfy their native production gates.
 
     Ordinary campaign structures retain native identities and therefore are
     absent from the player clone list. Include every registered TechnoType,
     reading final map overrides after refinery and mission-access preparation.
     """
-    from randomizer.missions.access import CONYARD_BY_MCV
+    from randomizer.missions.access import CONYARD_BY_MCV, MINERS
+    from randomizer.maps.special_buildings import refinery_free_unit_pairs
+
+    building_sources = set(CONYARD_BY_MCV.values())
+    building_sources.update(refinery_free_unit_pairs(
+        all_section_value_maps(lines), installed_sections
+    ))
+    # Deployed Slave Miners have no FreeUnit, but are also refinery prerequisites.
+    building_sources.update(refinery for _miner, _factory, refinery in MINERS.values())
 
     replacements = {
         source: unique_in_order(
@@ -51,7 +59,7 @@ def player_construction_yard_prerequisite_rules(lines, installed_sections, clone
             for key in ('clone_id', 'reference_clone_id')
             if details.get(key) and str(details[key]).upper() != source
         )
-        for source in CONYARD_BY_MCV.values()
+        for source in building_sources
         if (details := clone_handled.get(source))
     }
     replacements = {source: clones for source, clones in replacements.items() if clones}

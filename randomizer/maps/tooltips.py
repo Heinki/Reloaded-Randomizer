@@ -13,6 +13,12 @@ from randomizer.maps.ini import all_section_value_maps, merge_ini_section_values
 
 MARKER = 'Granted by Randomizer'
 
+# Some localized installations omit the Lunar Infantry description. Use this
+# only when the installed text is absent; translated descriptions take priority.
+DESCRIPTION_FALLBACKS = {
+    'LUNR': 'Flying infantry. Attacks air targets and detects cloaked units.',
+}
+
 
 @lru_cache(maxsize=1)
 def installed_string_tables():
@@ -68,7 +74,7 @@ def stage_randomizer_tooltips(lines, clone_handled):
             text = description[6:]
         elif description.casefold() in installed:
             text = installed[description.casefold()]
-        elif description:
+        elif description and source_id.upper() not in DESCRIPTION_FALLBACKS:
             # An unresolved native label must stay intact. Put provenance in
             # the name instead, using a private CSF label with no NOSTR limit.
             name = str(values.get('uiname') or '')
@@ -81,6 +87,8 @@ def stage_randomizer_tooltips(lines, clone_handled):
             continue
         else:
             text = ''
+        if not text.strip():
+            text = DESCRIPTION_FALLBACKS.get(source_id.upper(), '')
         if MARKER not in text:
             text = '\n'.join(part for part in (text.rstrip(), MARKER) if part)
         label = f'RLRD:{clone_id}'

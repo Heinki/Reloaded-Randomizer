@@ -6,7 +6,7 @@ belong in their respective modules.
 
 from randomizer.config.game_profile import ENABLE_CABAL
 from randomizer.core.collections import comma_items, unique_in_order
-from randomizer.maps.ini import all_section_value_maps, section_value_map
+from randomizer.maps.ini import all_section_value_maps, ini_value_text, section_value_map
 
 
 def map_house_records(lines, sections=None):
@@ -16,26 +16,30 @@ def map_house_records(lines, sections=None):
     houses = by_lower.get('houses', {})
     records = {}
     for name in houses.values():
-        name = name.strip()
+        name = ini_value_text(name)
         if not name:
             continue
         values = by_lower.get(name.lower(), {})
-        country = values.get('country') or name.replace(' House', '')
+        # Country/ParentCountry comments are not part of their IDs. GDI05A_TS
+        # has Country=NodCountry ;Russians. Copying that raw value into a
+        # TriggerType comments out every remaining CSV field and crashes the
+        # engine's trigger loader in its null-argument string comparison.
+        country = ini_value_text(values.get('country')) or name.replace(' House', '')
         country_values = by_lower.get(country.lower(), {})
         records[name] = {
             'name': name,
             'country': country,
-            'parent_country': country_values.get('parentcountry', ''),
-            'side': country_values.get('side', ''),
-            'allies': comma_items(values.get('allies', '')),
-            'player': values.get('playercontrol', '').lower() == 'yes',
+            'parent_country': ini_value_text(country_values.get('parentcountry')),
+            'side': ini_value_text(country_values.get('side')),
+            'allies': comma_items(ini_value_text(values.get('allies'))),
+            'player': ini_value_text(values.get('playercontrol')).lower() == 'yes',
         }
     return records
 
 
 def canonical_house_name(records, value):
     """Resolve FinalAlert House/Country aliases without guessing."""
-    wanted = str(value or '').strip().lower()
+    wanted = ini_value_text(value).lower()
     if not wanted or wanted in {'<none>', 'none', 'neutral'}:
         return ''
 
@@ -85,8 +89,8 @@ def player_controlled_houses(lines, records=None):
 
 def country_inherits_from(lines, country, ancestor, sections=None):
     """Return whether country equals/inherits one ancestor."""
-    wanted = (ancestor or '').strip().lower()
-    current = (country or '').strip()
+    wanted = ini_value_text(ancestor).lower()
+    current = ini_value_text(country)
     visited = set()
     sections = sections if sections is not None else all_section_value_maps(lines)
     by_lower = {name.lower(): values for name, values in sections.items()}
@@ -96,7 +100,7 @@ def country_inherits_from(lines, country, ancestor, sections=None):
             return True
         visited.add(current_lower)
         values = by_lower.get(current_lower, {})
-        parent = values.get('parentcountry', '').strip()
+        parent = ini_value_text(values.get('parentcountry'))
         if not parent or parent.lower() == current_lower:
             break
         current = parent
@@ -113,7 +117,7 @@ def production_owner_countries(lines, countries, sections=None):
     result = []
     seen = set()
     for country in countries or ():
-        current = str(country or '').strip()
+        current = ini_value_text(country)
         chain_seen = set()
         while current and current.lower() not in chain_seen:
             current_lower = current.lower()
@@ -122,7 +126,7 @@ def production_owner_countries(lines, countries, sections=None):
                 seen.add(current_lower)
                 result.append(current)
             _section_name, values = by_lower.get(current_lower, ('', {}))
-            parent = str(values.get('parentcountry', '') or '').strip()
+            parent = ini_value_text(values.get('parentcountry'))
             if not parent or parent.lower() == current_lower:
                 break
             current = parent
@@ -130,7 +134,7 @@ def production_owner_countries(lines, countries, sections=None):
 
 
 def player_factory_owner_countries(lines, countries, records=None):
-    """Exclude shared AI ancestry from player production restrictions.
+    """Exclude active AI factory ancestry from player production restrictions.
 
     Red Revolution's human SovietCountry inherits Russians, which is also
     BadGuy1's country. Banning that ancestor on shared native units disables
@@ -144,12 +148,39 @@ def player_factory_owner_countries(lines, countries, records=None):
     controlled = {
         name.casefold() for name in player_controlled_houses(lines, records)
     }
+    # Empty cinematic Houses can share the player's ParentCountry. They have
+    # no factory plans to protect. Treating them as producers removed Americans
+    # and Germans from ALL11_RA2's native gates and exposed duplicate Harriers,
+    # Rocketeers and Aegis Cruisers through the player's own factories.
+    from randomizer.maps.ownership import build_unit_usage_index
+    from randomizer.missions.access import (
+        CONYARD_BY_MCV, MOBILE_FACTORY_BY_UNIT, PRODUCTION_LOOKUP,
+    )
+
+    factory_types = set(PRODUCTION_LOOKUP) | set(CONYARD_BY_MCV) | set(MOBILE_FACTORY_BY_UNIT)
+    usage = build_unit_usage_index(lines)
+    producers = {
+        str(owner).casefold()
+        for type_id in factory_types
+        for owner in usage.get(type_id, ())
+    }
+    sections = {name.casefold(): values for name, values in all_section_value_maps(lines).items()}
+    for name in records:
+        if any(
+            str(value).split(',', 1)[0].strip().upper() in factory_types
+            for key, value in sections.get(name.casefold(), {}).items()
+            if str(key).isdigit()
+        ):
+            producers.add(name.casefold())
     non_player_countries = {
         country.casefold()
         for country in production_owner_countries(
             lines,
             [record['country'] for name, record in records.items()
-             if name.casefold() not in controlled],
+             if name.casefold() not in controlled and producers.intersection({
+                 name.casefold(), name.removesuffix(' House').casefold(),
+                 record['country'].casefold(),
+             })],
         )
     }
     return [
