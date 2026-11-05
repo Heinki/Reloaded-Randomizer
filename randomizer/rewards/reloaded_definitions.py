@@ -124,6 +124,8 @@ def _plural(label):
 
 def _display_label(record):
     """Identify lab variants without renaming persisted rewards or AP items."""
+    if str(record['id']).upper() == 'NODSTLH_MP':
+        return 'Stealth Generator'
     if record.get('secret_lab'):
         label = str(record.get('name') or record['id'])
         return f'Secret Lab {label}'
@@ -600,7 +602,10 @@ BUFF_TYPES = (
         'id': 'cost',
         'name': 'Logistics',
         'setting_label': 'Cost reduction',
-        'description': '{plural} cost 20% less in future launched missions.',
+        'description': (
+            '{plural} cost 20% less than the previous stack in future launched '
+            'missions. Reductions multiply; full upgrades make production free.'
+        ),
     },
     {
         'id': 'speed',
@@ -824,11 +829,28 @@ def build_buff_rewards():
                 for stats in target.get('weapons', {}).values()
             ):
                 continue
+            description = buff_type['description'].format(plural=target['plural'])
+            if unit_id == 'NODSTLH_MP' and buff_type_id in {
+                'self_healing', 'self_healing_cap', 'self_healing_rate',
+            }:
+                description = {
+                    'self_healing': (
+                        'The Stealth Generator repairs its own health. '
+                        'This upgrade works in campaign missions and '
+                        'does not heal nearby units.'
+                    ),
+                    'self_healing_cap': (
+                        'The Stealth Generator can repair its own health to '
+                        '100% when self-healing is enabled.'
+                    ),
+                    'self_healing_rate': (
+                        'The Stealth Generator repairs its own health more '
+                        'frequently when self-healing is enabled.'
+                    ),
+                }[buff_type_id]
             rewards.append({
                 'name': f'{target["label"]} {buff_type["name"]} I',
-                'description': buff_type['description'].format(
-                    plural=target['plural']
-                ),
+                'description': description,
                 'rules': {},
                 'factions': list(target['factions']),
                 'kind': 'buff',

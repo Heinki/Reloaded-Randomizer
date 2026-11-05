@@ -1,4 +1,4 @@
-"""Append Randomizer provenance to private Phobos tooltip descriptions."""
+"""Stage private provenance, power-output and self-healing descriptions."""
 
 from functools import lru_cache
 
@@ -53,8 +53,10 @@ def installed_string_tables():
     return labels, frozenset(tables)
 
 
-def stage_randomizer_tooltips(lines, clone_handled):
-    """Keep native text and append a marker without overriding native CSF keys."""
+def stage_randomizer_tooltips(
+    lines, clone_handled, *, installed_sections=None, power_bonus_report=None,
+):
+    """Extend native descriptions without replacing shared installed CSF keys."""
     installed, occupied = installed_string_tables()
     filename = next((
         f'stringtable{index:02d}.csf' for index in reversed(range(100))
@@ -64,17 +66,31 @@ def stage_randomizer_tooltips(lines, clone_handled):
         raise ValueError('No unused Ares string-table slot for Randomizer tooltips')
     sections = all_section_value_maps(lines)
     labels, rules = {}, {}
-    for source_id, details in sorted(clone_handled.items()):
-        clone_id = str(details.get('clone_id') or '')
-        if not clone_id:
-            continue
-        values = sections.get(clone_id, {})
+    installed_sections = {
+        str(name).casefold(): {
+            str(key).casefold(): value for key, value in values.items()
+        }
+        for name, values in (installed_sections or {}).items()
+    }
+    power_outputs = (power_bonus_report or {}).get('display_outputs', {})
+    targets = {
+        str(details.get('clone_id')): (source_id, True)
+        for source_id, details in clone_handled.items()
+        if details.get('clone_id')
+    }
+    for building in power_outputs:
+        targets.setdefault(building, (building, False))
+    for clone_id, (source_id, granted) in sorted(targets.items()):
+        values = dict(installed_sections.get(str(source_id).casefold(), {}))
+        values.update(installed_sections.get(clone_id.casefold(), {}))
+        values.update(sections.get(clone_id, {}))
+        power = power_outputs.get(clone_id)
         description = str(values.get('uidescription') or '')
         if description.upper().startswith('NOSTR:'):
             text = description[6:]
         elif description.casefold() in installed:
             text = installed[description.casefold()]
-        elif description and source_id.upper() not in DESCRIPTION_FALLBACKS:
+        elif description and source_id.upper() not in DESCRIPTION_FALLBACKS and not power:
             # An unresolved native label must stay intact. Put provenance in
             # the name instead, using a private CSF label with no NOSTR limit.
             name = str(values.get('uiname') or '')
@@ -89,7 +105,19 @@ def stage_randomizer_tooltips(lines, clone_handled):
             text = ''
         if not text.strip():
             text = DESCRIPTION_FALLBACKS.get(source_id.upper(), '')
-        if MARKER not in text:
+        if source_id.upper() == 'NODSTLH_MP':
+            healing = str(values.get('selfhealing', '')).casefold() in {'yes', 'true', '1'}
+            text += '\n' + (
+                'Self-healing repairs this structure only; it does not heal nearby units.'
+                if healing else
+                'Regeneration upgrades enable self-repair of this structure only.'
+            )
+        if power:
+            text += (
+                f'\nYour power output with Randomizer upgrades: +{power["output"]}.'
+                f'\nTooltip header shows base power (+{power["base"]}).'
+            )
+        if granted and MARKER not in text:
             text = '\n'.join(part for part in (text.rstrip(), MARKER) if part)
         label = f'RLRD:{clone_id}'
         labels[label] = text

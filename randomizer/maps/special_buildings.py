@@ -125,7 +125,28 @@ def power_plant_bonus_rules(lines, rewards, installed_sections):
             rules[provider] = values
             _register_map_type(rules, lines, installed_sections, 'BuildingTypes', provider)
             providers.append(provider)
-    return rules, tuple(providers), {'stacks': stacks, 'bonus': bonus, 'targets': targets}
+    # The installed extended-tooltip header reads native Power, ignoring
+    # house-local enhancers. Supply exact per-type output to private tooltip
+    # descriptions, including attachments and every faction's generators.
+    target_names = {plant.casefold() for plant in targets}
+    display_outputs = {
+        building: {'base': int(values['power']),
+                   'output': int(values['power']) + bonus}
+        for building, values in buildings.items()
+        if int(values.get('power', '0')) > 0 and (
+            building in targets or any(
+                host.casefold() in target_names
+                for host in (
+                    comma_items(values.get('powersupbuilding', ''))
+                    + comma_items(values.get('powersup.buildings', ''))
+                )
+            )
+        )
+    }
+    return rules, tuple(providers), {
+        'stacks': stacks, 'bonus': bonus, 'targets': targets,
+        'display_outputs': display_outputs,
+    }
 
 
 def validate_power_plant_bonus_rules(lines, installed_sections, providers, report):

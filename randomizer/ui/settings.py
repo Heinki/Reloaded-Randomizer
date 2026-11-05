@@ -60,6 +60,8 @@ def buff_setting_amount_text(buff_type):
     if buff_id in {'production', 'cost'}:
         amount = round((1.0 - stacking_multiplier(buff_id, 1)) * 100)
         name = 'Production' if buff_id == 'production' else 'Cost'
+        if buff_id == 'cost':
+            return f'{name} (-{amount}% remaining; free at cap)'
         return f'{name} (-{amount}%)'
     if buff_id == 'reload':
         amount = round(

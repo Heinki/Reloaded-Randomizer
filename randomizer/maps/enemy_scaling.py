@@ -653,6 +653,18 @@ def enemy_native_unit_buff_rules(
     return rules, unique_in_order(applied_units), unique_in_order(skipped), applications
 
 
+def enemy_power_dispatch_rules(houses, grants):
+    """Allow earned AI powers to reach the campaign firing dispatcher.
+
+    Campaign opponents commonly have IQ=0; the installed SuperWeapons=4
+    threshold prevents Ares targeting from ever running. Lower only this
+    capability threshold when hostile rewards are granted, keeping every
+    house's authored IQ, production, recruitment and diplomacy intact. Each
+    power still honors its availability, targeting and inhibitor restrictions.
+    """
+    return {'IQ': {'SuperWeapons': '0'}} if houses and grants else {}
+
+
 def enemy_existing_power_grant_plan(lines, rewards, installed_types):
     """Grant reviewed native powers by runtime index; create no clone section."""
     runtime_types = list(installed_types or ())

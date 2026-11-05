@@ -51,6 +51,7 @@ from randomizer.maps.rules import (
     enemy_existing_power_grant_plan,
     enemy_existing_power_rule_overrides,
     enemy_native_unit_buff_rules,
+    enemy_power_dispatch_rules,
     enemy_power_launch_rewards,
     helper_ai_autobuild_plan,
     helper_ai_autobuild_rules,
@@ -189,6 +190,7 @@ from randomizer.ui.config import (
 from randomizer.rewards.reloaded_roster import randomizer_unit_roster
 from randomizer.content.variants import REDUNDANT_UNIT_VARIANTS
 from randomizer.maps.tooltips import stage_randomizer_tooltips
+from randomizer.maps.visuals import iron_curtain_visual_rules
 from randomizer.rewards.arsenal import ARSENAL_MODE
 
 
@@ -291,6 +293,9 @@ def prepare_hooked_map(self, mission, extra_rules=None):
     installed_superweapon_types, installed_rule_sections = (
         installed_rules_registry()
     )
+    visual_rules = iron_curtain_visual_rules(lines, installed_rule_sections)
+    if visual_rules:
+        merge_ini_section_values(lines, visual_rules)
     identity_contract = capture_authored_identity_contract(
         lines, installed_rule_sections
     )
@@ -3094,6 +3099,9 @@ def prepare_hooked_map(self, mission, extra_rules=None):
                 ).append(recipient)
 
     enemy_superweapon_trigger = ''
+    merge_ini_section_values(lines, enemy_power_dispatch_rules(
+        scaled_enemy_houses, enemy_power_grants,
+    ))
     for house, grants in enemy_power_grants_by_house.items():
         trigger_owner = (
             str(records.get(house, {}).get('country') or '').strip()
@@ -3301,6 +3309,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         )
 
     starting_miner_replacements = {}
+    power_bonus_report = {}
     if launch_active:
         targeting_clone_rules = resolved_superweapon_targeting_clone_rules(
             installed_rule_sections, all_section_value_maps(lines), clone_handled,
@@ -3553,7 +3562,10 @@ def prepare_hooked_map(self, mission, extra_rules=None):
     )
     assert_file_hash(integrity_path, authored_source_hash)
 
-    tooltip_asset = stage_randomizer_tooltips(lines, clone_handled) if launch_active else None
+    tooltip_asset = stage_randomizer_tooltips(
+        lines, clone_handled, installed_sections=installed_rule_sections,
+        power_bonus_report=power_bonus_report,
+    ) if launch_active else None
     GENERATED_MAP_DIR.mkdir(parents=True, exist_ok=True)
     launch_scenario = generated_map_name(
         code, scenario, authored_source_hash
