@@ -231,3 +231,9 @@ remain locked while connected. AP purchases are scouted; stage victories are
 sent as checks, and stage-victory marker receipts are acknowledged without
 becoming ordinary Shop rewards. Only a completed run belonging to the current AP slot
 can report its goal.
+
+## Grid victory objectives and AP mission keys
+
+See [Grid progression and mission access](../GRID_PROGRESSION.md) for required victory missions,
+AP unlock modes, the frozen whole-board currency budget, persistence, protocol
+compatibility, and the manual gameplay checklist.

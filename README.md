@@ -412,3 +412,9 @@ When reporting a problem, include those diagnostics, the mission code, seed,
 reward and progression modes, and whether the issue also occurs in a fresh,
 unmodified C&C Reloaded installation. Review `randomizer_state.json` before
 sharing it because it contains seed and progress data.
+
+## Grid victory objectives and AP mission keys
+
+See [Grid progression and mission access](GRID_PROGRESSION.md) for required victory missions,
+AP unlock modes, the frozen whole-board currency budget, persistence, protocol
+compatibility, and the manual gameplay checklist.

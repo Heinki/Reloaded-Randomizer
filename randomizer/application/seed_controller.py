@@ -1,5 +1,7 @@
 """Deterministic seed creation and mission-check completion."""
 
+from randomizer.progression.grid import required_goals
+
 from ._dependencies import (
     ARSENAL_MODE,
     CAMPAIGN_FILTERS,
@@ -248,6 +250,7 @@ class SeedController(SeedGeneration):
             'starting_unit_ids': starting_unit_ids,
             'progression_mode': self.progression_mode_var.get(),
             'two_start_positions': bool(self.grid_two_starts_var.get()),
+            'required_victory_missions': self.required_victory_missions_var.get(),
             'mission_pool_settings': {
                 'include_skirmishes': bool(self.include_skirmishes_var.get()),
                 'include_no_build_missions': bool(self.include_no_build_missions_var.get()),
@@ -391,7 +394,10 @@ class SeedController(SeedGeneration):
         grid_goal_victory = (
             check_id == 'victory'
             and self.active_progression_mode() == 'Grid Mode'
-            and code == grid.get('goal')
+            and code in required_goals(grid)
+            and set(required_goals(grid)).issubset(
+                set(self.state.get('completed_missions', [])) | {code}
+            )
         )
         grid_unlocks = self.mission_unlocks(code) if check_id == 'victory' else []
         released_rewards = []
@@ -541,8 +547,8 @@ class SeedController(SeedGeneration):
                     else ' Unchecked Archipelago locations remain pending.'
                 )
                 self.append_log(
-                    f'Grid endgoal achieved: {code}. Randomizer victory achieved. '
-                    'All remaining grid missions are unlocked.'
+                    f'All required Grid victories achieved: {code}. Randomizer victory achieved. '
+                    'Required victory objectives are complete.'
                     f'{release_note}{unlock_note}'
                 )
             else:
@@ -555,7 +561,7 @@ class SeedController(SeedGeneration):
                     else ' Rewards on unfinished missions remain pending.'
                 )
                 self.append_log(
-                    f'Grid endgoal achieved: {code}. Randomizer victory achieved. '
+                    f'All required Grid victories achieved: {code}. Randomizer victory achieved. '
                     f'All remaining grid missions are unlocked.{reward_note}{unlock_note}'
                 )
             log_event(
