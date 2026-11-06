@@ -1,7 +1,9 @@
 """Unlock display models, labels, sources, and tooltips."""
 
 from randomizer.rewards.display import inherited_unit_buff_rewards
-from randomizer.rewards.reloaded_definitions import shared_unit_buff_ids
+from randomizer.rewards.reloaded_definitions import (
+    NATIVE_POWER_INFORMATION, shared_unit_buff_ids,
+)
 from randomizer.config.tuning import mission_assistance_stack_count
 from randomizer.rewards.power_buff_definitions import (
     power_payload_buff_unit_ids,
@@ -857,10 +859,9 @@ class UnlockDataController:
             if power_id in seen_powers:
                 continue
             factions = list(reward.get('factions') or [])
-            if (
-                len(factions) != 1
-                or factions[0] not in (*FACTION_ORDER, 'Neutral')
-            ):
+            factions = [faction for faction in factions
+                        if faction in (*FACTION_ORDER, 'Neutral')]
+            if not factions:
                 continue
             seen_powers.add(power_id)
             key = f'power:{power_id}'
@@ -890,7 +891,7 @@ class UnlockDataController:
                 'key': key,
                 'kind': 'power',
                 'id': power_id,
-                'label': reward_display_name(reward),
+                'label': reward_display_name(reward) + ' (building-free)',
                 'faction': factions[0],
                 'category': (
                     'Special' if reward.get('special_reward') else 'Superweapons'
@@ -908,6 +909,29 @@ class UnlockDataController:
                 'arsenal_selected': arsenal_selected,
                 'arsenal_mission_label': arsenal_mission_label,
             })
+            # A shared power still has one reward identity. Show the same
+            # sources and upgrade stacks in every native faction's tab.
+            for faction in factions[1:]:
+                entries.append({**entries[-1], 'faction': faction})
+        for definition in NATIVE_POWER_INFORMATION:
+            for faction in definition['factions']:
+                entries.append({
+                    'key': f'native-power:{definition["id"]}',
+                    'kind': 'power', 'id': definition['id'],
+                    'label': definition['label'], 'faction': faction,
+                    'category': 'Superweapons', 'status': 'technology',
+                    'condition': definition['condition'], 'privacy': False,
+                    'native_description': definition['description'],
+                    'sources': {
+                        'assigned': [], 'earned': [], 'earned_unlocks': [],
+                        'available': [], 'available_unlocks': [], 'available_codes': [],
+                    },
+                    'reward': {
+                        'name': definition['label'],
+                        'description': definition['description'],
+                        'cameo_superweapon': definition['id'],
+                    },
+                })
         # One final shared pass covers units, defenses/buildings, support
         # powers, and superweapons without category-specific drift.
         for entry in entries:
@@ -925,6 +949,7 @@ class UnlockDataController:
             getattr(self, 'archipelago_run_active', lambda: False)()
         )
         status_labels = {
+            'technology': 'Native technology (mission dependent)',
             'unlocked': 'Unlocked',
             'available': 'Available now',
             'locked': 'Locked',
@@ -949,6 +974,10 @@ class UnlockDataController:
             entry["label"] if for_summary else f'{entry["label"]} - {status_label}',
             '─' * min(48, max(12, len(entry['label']) + 12)),
         ]
+        if entry.get('native_description'):
+            lines.append(entry['native_description'])
+            lines.append(f'Condition: {entry["condition"]}')
+            return '\n'.join(lines)
         sources = entry['sources']
         earned_source_names = list(dict.fromkeys(source for source, _ in sources['earned']))
         available_source_items = (

@@ -3,6 +3,7 @@
 from ._shared import (
     all_section_value_maps,
     build_unit_usage_index,
+    canonical_house_name,
     comma_items,
     map_house_records,
     merge_ini_section_values,
@@ -26,6 +27,28 @@ _VETERAN_FIELD_CATEGORIES = {
     'veteranaircraft': {'aircraft'},
     'veteranbuildings': {'defenses', 'special_buildings'},
 }
+
+
+def validated_cinematic_country_buff_houses(lines, configured_houses):
+    """Accept only the reviewed cinematic roster, without any production."""
+    records = map_house_records(lines)
+    usage = build_unit_usage_index(lines)
+    used = {}
+    for type_id, owners in usage.items():
+        for owner in owners:
+            name = (canonical_house_name(records, owner) or owner).casefold()
+            used.setdefault(name, set()).add(type_id.upper())
+    compatible = []
+    for configured, allowed_types in configured_houses.items():
+        house = canonical_house_name(records, configured)
+        values = section_value_map(lines, house) if house else {}
+        if (not house or not used.get(house.casefold(), set()).issubset(allowed_types)
+                or any(str(key).isdigit() for key in values)
+                or any(str(values.get(key, '0')).strip() != '0'
+                       for key in ('iq', 'nodecount', 'credits'))):
+            raise ValueError(f'Country-buff compatibility house exceeds its cinematic roster: {configured}')
+        compatible.append(house)
+    return compatible
 
 
 def _registered_veteran_buff_values(values, registered_techno_categories):

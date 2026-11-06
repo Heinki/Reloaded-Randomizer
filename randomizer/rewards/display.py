@@ -722,7 +722,8 @@ def buff_effect_lines(
         if count <= 0:
             return [stacked(f'{prefix}Self-healing cap {base_text}')]
         base_text = f' [{base_text}]' if show_base_values else ''
-        return [stacked(f'{prefix}Self-healing cap 100%{base_text}')]
+        return [stacked(f'{prefix}Self-healing cap 100%{base_text}'),
+                'Requires active self-healing; does not unlock it or change rank requirements.']
     if buff_type == 'self_healing_rate':
         base_rate = target.get('self_healing_rate')
         return value_text(
@@ -730,7 +731,7 @@ def buff_effect_lines(
             stacked_self_heal_rate(count, base_rate) * 60,
             stacked_self_heal_rate(0, base_rate) * 60,
             ' seconds',
-        )
+        ) + ['Requires active self-healing; rank, health cap and combat delay still apply.']
     if buff_type == 'cloak':
         return [stacked(f'{prefix}Cloaking enabled')]
     if buff_type == 'sensors':
@@ -798,7 +799,18 @@ def reward_rule_summary(reward):
     ):
         return buff_effect_lines(reward)
     if reward.get('kind') == 'superweapon':
-        return ['Building-free repeating power; restored at the start of future missions.']
+        lines = [
+            'Building-free repeating power; restored at the start of future missions.',
+            'Power buffs apply to this version only; structure-based powers retain native rules.',
+        ]
+        if reward.get('superweapon') == 'EMPulseSpecial':
+            lines.append('Direct EMP strike; no cannon or cannon distance restriction.')
+        elif reward.get('superweapon') == 'TSIonCannonSpecial':
+            lines.append(
+                'Classic direct Ion Cannon strike (base radius 3 cells); '
+                'the native Ion Cannon Uplink uses Reloaded\'s enhanced missile/payload attack.'
+            )
+        return lines
 
     summaries = []
     rules = reward.get('rules', {})

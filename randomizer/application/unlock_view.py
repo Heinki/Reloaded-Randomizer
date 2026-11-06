@@ -133,7 +133,12 @@ class UnlockViewController:
             reward.get('buff_type'),
             reward.get('power_category'),
         ) if value is not None).casefold()
-        return all(term in haystack for term in query.split())
+        # Match engine/localized spellings such as E.M.Pulse, EM Pulse and EMP.
+        compact = re.sub(r'[^\w]', '', haystack)
+        return all(
+            term in haystack or re.sub(r'[^\w]', '', term) in compact
+            for term in query.split()
+        )
 
     def refresh_unlock_dashboard(self):
         if not hasattr(self, 'unlock_icon_frames'):
@@ -187,6 +192,7 @@ class UnlockViewController:
             self.set_unlock_grid_highlights(())
 
         overlays = {
+            'technology': (None, '#858b95'),
             'unlocked': (None, '#4f86c6'),
             'available': ('#15a34a', '#40d36d'),
             'locked': ('#6b7280', '#858b95'),

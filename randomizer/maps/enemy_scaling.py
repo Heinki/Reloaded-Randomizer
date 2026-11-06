@@ -96,7 +96,7 @@ def discover_hostile_ai_houses(lines, excluded_houses=()):
             for pair in scripted_enemies
         )
         reason = ''
-        if record.get('player'):
+        if house_lower in player_lower:
             reason = 'player-controlled House'
         elif house_lower in excluded:
             reason = 'reviewed player helper House'
@@ -130,7 +130,7 @@ def active_hostile_enemy_houses(lines, configured_enemy_houses):
     for house in configured_enemy_houses or ():
         record = records.get(house)
         house_lower = house.lower()
-        if not record or record.get('player') or house_lower in transfers:
+        if not record or house_lower in player_lower or house_lower in transfers:
             skipped.append(house)
             continue
         scripted_hostile = any(

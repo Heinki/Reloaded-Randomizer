@@ -35,6 +35,13 @@ MISSION_HELPER_BUFF_EXCLUDED_HOUSES = _frozenset_mapping(
     'helper_buff_excluded_houses'
 )
 
+# Cinematic houses whose exact noncombat roster can share country buffs without
+# receiving player production clones, powers, or autonomous helper teams.
+MISSION_COUNTRY_BUFF_COMPATIBLE_HOUSES = {
+    code: {house: frozenset(types) for house, types in values.items()}
+    for code, values in _MISSION_CONFIG.get('country_buff_compatible_houses', {}).items()
+}
+
 MISSION_CLONE_ONLY_COUNTRY_BUFF_TYPES = _frozenset_mapping(
     'clone_only_country_buff_types'
 )

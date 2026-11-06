@@ -41,7 +41,7 @@ def mission_house_policy(code, config=None):
     config = config or _MISSION_CONFIG
     code = str(code or '').upper()
     house_config = config['house_config'].get(code, {})
-    return {
+    policy = {
         'allies': list(house_config.get('allies', ())),
         'enemies': list(house_config.get('enemies', ())),
         'helper_buff_excluded_houses': list(
@@ -57,6 +57,12 @@ def mission_house_policy(code, config=None):
             config['player_power_houses'].get(code, ())
         ),
     }
+    compatible = config.get('country_buff_compatible_houses', {}).get(code, ())
+    if compatible:
+        policy['country_buff_compatible_houses'] = {
+            house: list(types) for house, types in compatible.items()
+        }
+    return policy
 
 
 def house_policy_sha256(code, config=None):
@@ -140,6 +146,16 @@ def mission_house_policy_failures(metadata, policy, installed_sections):
         if evidence.get('source_house')
     }
     failures = []
+
+    if policy.get('country_buff_compatible_houses'):
+        from randomizer.maps.country_buffs import validated_cinematic_country_buff_houses
+
+        try:
+            validated_cinematic_country_buff_houses(
+                lines, policy['country_buff_compatible_houses']
+            )
+        except ValueError as exc:
+            failures.append(str(exc))
 
     for category in (
         'allies',

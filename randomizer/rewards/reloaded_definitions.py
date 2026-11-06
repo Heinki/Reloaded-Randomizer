@@ -402,6 +402,31 @@ _POWER_DEFINITIONS = (
 )
 
 
+# Information-only native controls. These do not enter reward pools or grants.
+NATIVE_POWER_INFORMATION = (
+    {
+        'id': 'EMPulseSpecial', 'label': 'E.M.Pulse (structure-based)',
+        'factions': ('GDI', 'Nod'),
+        'condition': 'Native tech tree: build an EMP Cannon; mission restrictions apply.',
+        'description': (
+            'Fires through a powered GDI or Nod EMP Cannon within 7–30 cells. '
+            'Native recharge: 7 minutes. Randomizer power buffs affect only '
+            'the separate building-free version.'
+        ),
+    },
+    {
+        'id': 'TSSuperIonCannonSpecial', 'label': 'Ion Cannon (structure-based)',
+        'factions': ('GDI',),
+        'condition': 'Native tech tree: build the Upgrade Center and Ion Cannon Uplink; mission restrictions apply.',
+        'description': (
+            'Uses Reloaded\'s enhanced missile/payload Ion Cannon, with a wider '
+            'blast than the building-free classic strike. Native recharge: '
+            '9.5 minutes. Randomizer power buffs affect only the building-free version.'
+        ),
+    },
+)
+
+
 def _power_reward(power_id, label, category, factions):
     if power_id.upper() in DEFERRED_TECH_IDS:
         raise ValueError(f'CABAL powers are unavailable: {power_id}')
@@ -536,6 +561,7 @@ def _power_reward(power_id, label, category, factions):
     # Dominator section is named "Lightning Storm"). Keep the private clone
     # aligned with its reviewed reward label without changing native CSF keys.
     reward.setdefault('superweapon_rules', {})['Name'] = label
+    reward['superweapon_rules']['UIName'] = f'NOSTR:{label} (building-free)'
     return reward
 
 
@@ -691,14 +717,20 @@ BUFF_TYPES = (
         'id': 'self_healing_cap',
         'name': 'Regeneration Capacity',
         'setting_label': 'Self-healing cap',
-        'description': '{plural} can self-heal to full health at every rank.',
+        'description': (
+            '{plural} can self-heal to full health at every rank when healing '
+            'is enabled. This upgrade does not unlock self-healing.'
+        ),
         'requires_clone': True,
     },
     {
         'id': 'self_healing_rate',
         'name': 'Rapid Regeneration',
         'setting_label': 'Self-healing rate',
-        'description': '{plural} self-heal more frequently.',
+        'description': (
+            '{plural} self-heal more frequently when healing is enabled. '
+            'This upgrade does not unlock self-healing or remove rank requirements.'
+        ),
         'requires_clone': True,
     },
     {

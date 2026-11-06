@@ -2639,10 +2639,11 @@
       },
       "GDI01A_FS": {
         "source_sha256": "2c5af59d44dc99eb5067e0317b276f1dad4a6fa5723a373aab7dc4433b32b748",
-        "policy_sha256": "0e4743589c03dc1d268dd8986047ab392aa4a52fae04c005e62681c33db279e9",
+        "policy_sha256": "bc109935555e74767db6c4bde91d397761115b04a9e5cfb2edb19720e4d2906c",
         "evidence": [
           "Player Houses, initial alliances, and the authored House registry were regenerated from the unchanged map source.",
-          "Optional helpers remain fail-closed; configured factory and power exceptions passed Reloaded source checks."
+          "Optional helpers remain fail-closed; configured factory and power exceptions passed Reloaded source checks.",
+          "Drop inherits GDICountry but owns only scripted TSORCATRAN cinematic transports, with IQ=0, credits=0 and no production nodes. Country-buff compatibility preserves earned native-unit veterancy; runtime validation rejects any roster outside this reviewed transport type."
         ]
       },
       "GDI02A_FS": {
@@ -3866,6 +3867,11 @@
     },
     "house_config": {},
     "helper_buff_excluded_houses": {},
+    "country_buff_compatible_houses": {
+      "GDI01A_FS": {
+        "Drop": ["TSORCATRAN"]
+      }
+    },
     "player_production_houses": {
       "YUR01": [
         "Russians House"
@@ -4134,6 +4140,14 @@
     "required_access_rules": {},
     "techno_base_rules": {},
     "map_section_rules": {
+      "NOD03A_TS": {
+        "086A8310": {
+          "2": "11,15"
+        },
+        "01000092": {
+          "2": "11,15"
+        }
+      },
       "YUR04": {
         "Actions": {
           "01000096": "2,99,7,_Amb_CricketDesert,0,0,0,0,W,99,7,_Amb_CricketDesert,0,0,0,0,X"

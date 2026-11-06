@@ -37,21 +37,23 @@ def expand_prerequisite_paths(values, replacements):
 
 
 def player_building_prerequisite_rules(lines, installed_sections, clone_handled):
-    """Let private yards and refineries satisfy their native production gates.
+    """Let private buildings satisfy their native production gates.
 
     Ordinary campaign structures retain native identities and therefore are
     absent from the player clone list. Include every registered TechnoType,
     reading final map overrides after refinery and mission-access preparation.
     """
-    from randomizer.missions.access import CONYARD_BY_MCV, MINERS
-    from randomizer.maps.special_buildings import refinery_free_unit_pairs
-
-    building_sources = set(CONYARD_BY_MCV.values())
-    building_sources.update(refinery_free_unit_pairs(
-        all_section_value_maps(lines), installed_sections
-    ))
-    # Deployed Slave Miners have no FreeUnit, but are also refinery prerequisites.
-    building_sources.update(refinery for _miner, _factory, refinery in MINERS.values())
+    sections = all_section_value_maps(lines)
+    # Power plants, tech centers and defense/support buildings are also exact
+    # prerequisite identities. Restricting this to yards and refineries leaves
+    # an upgraded NODAPWR unable to satisfy POWER, blocking the whole tech tree.
+    building_sources = {
+        str(identifier).upper()
+        for source_sections in (installed_sections, sections)
+        for name, values in source_sections.items()
+        if str(name).casefold() == 'buildingtypes'
+        for identifier in values.values()
+    }
 
     replacements = {
         source: unique_in_order(
@@ -66,7 +68,6 @@ def player_building_prerequisite_rules(lines, installed_sections, clone_handled)
     if not replacements:
         return {}
 
-    sections = all_section_value_maps(lines)
     effective = {}
     for source_sections in (installed_sections, sections):
         for name, values in source_sections.items():

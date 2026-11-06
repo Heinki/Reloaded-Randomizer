@@ -572,10 +572,10 @@ def scripted_reinforcement_veterancy_rules(
 ):
     """Promote eligible player reinforcement teams without widening rewards.
 
-    Actions 7, 80, and 107 force every created member to the TeamType's
-    VeteranLevel, overriding Country Veteran* lists. Set VeteranLevel=2 only
-    when every TaskForce member has earned veterancy; mixed teams containing
-    any unearned or nontrainable identity remain authored.
+    Explicit VeteranLevel=0 resets rank; 2 and 3 force Veteran and Elite.
+    The native member-creation switch leaves rank unchanged at 1. Preserve
+    Country Veteran* eligibility for mixed teams; promote the whole team only
+    when every TaskForce member has earned veterancy.
     """
     veteran_unit_ids = {
         str(unit_id or '').upper()

@@ -2,6 +2,7 @@
 
 from functools import lru_cache
 
+from randomizer.content.healing import self_healing_status_lines
 from randomizer.core.csf import read_csf, write_csf
 from randomizer.core.mix import MixArchive, MixFormatError
 from randomizer.core.paths import GAME_ROOT
@@ -110,8 +111,10 @@ def stage_randomizer_tooltips(
             text += '\n' + (
                 'Self-healing repairs this structure only; it does not heal nearby units.'
                 if healing else
-                'Regeneration upgrades enable self-repair of this structure only.'
+                'Self-repair requires the Regeneration access upgrade; Rapid Regeneration only changes its interval.'
             )
+        if any(key.startswith('selfhealing') for key in values):
+            text += '\n' + '\n'.join(self_healing_status_lines(values, ''))
         if power:
             text += (
                 f'\nYour power output with Randomizer upgrades: +{power["output"]}.'

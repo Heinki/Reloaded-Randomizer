@@ -83,6 +83,7 @@ from randomizer.maps.rules import (
     suppressed_superweapon_building_ids,
     unit_weapon_buff_rules,
     veteran_armor_safety_rules,
+    validated_cinematic_country_buff_houses,
 )
 from randomizer.maps.buff_validation import (
     validate_generated_unit_buff_changes,
@@ -134,6 +135,7 @@ from randomizer.missions.houses import (
 from randomizer.missions.catalogue import campaign_filter_factions
 from randomizer.missions.overrides import (
     MISSION_CLONE_ONLY_COUNTRY_BUFF_TYPES,
+    MISSION_COUNTRY_BUFF_COMPATIBLE_HOUSES,
     MISSION_DISABLED_TRIGGERS,
     MISSION_HELPER_BUFF_EXCLUDED_HOUSES,
     MISSION_NATIVE_DIRECT_BUFF_EXCLUSIONS,
@@ -561,9 +563,17 @@ def prepare_hooked_map(self, mission, extra_rules=None):
     discovered_enemies, discovered_enemy_skips = discover_hostile_ai_houses(
         lines, excluded_houses=native_helpers
     )
-    configured_enemies = unique_in_order(
-        list(configured_enemies) + list(discovered_enemies)
-    )
+    controlled_house_names = {
+        house.casefold() for house in player_controlled_houses(lines, records=records)
+    }
+    # [Basic] Player is authoritative even when PlayerControl=no (NOD04A_TS).
+    # Apply this before ownership exclusions as well as stat/power dispatch;
+    # otherwise the human country also forbids its own upgraded production.
+    configured_enemies = [
+        house for house in unique_in_order(
+            list(configured_enemies) + list(discovered_enemies)
+        ) if house.casefold() not in controlled_house_names
+    ]
     enemy_names = {house.lower() for house in configured_enemies}
     scaled_enemy_houses, phase_enemy_houses = active_hostile_enemy_houses(
         lines, configured_enemies
@@ -617,6 +627,9 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             house for house in records
             if house.lower() == 'sellmcv house'
         ]
+        + validated_cinematic_country_buff_houses(
+            lines, MISSION_COUNTRY_BUFF_COMPATIBLE_HOUSES.get(code, {})
+        )
     ))
     enemy_country_ids = unique_in_order(
         records.get(house, {}).get('country') or house.replace(' House', '')
