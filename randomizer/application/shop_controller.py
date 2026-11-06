@@ -211,7 +211,7 @@ class ShopController(ShopPolishController):
         self._shop_permanent_power_buff_buyable = {}
         self._shop_permanent_power_buff_refundable = {}
         self._shop_permanent_power_buff_target_ids = {}
-        self._shop_loadout_rows = {}
+        self._shop_setup_eligible_reward_ids = set()
         self._shop_pending_loadout_selection = set()
         self._shop_current_loadout_targets = {}
         self._shop_loadout_details = {}
@@ -1682,7 +1682,6 @@ class ShopController(ShopPolishController):
             self.finish_progression_launch_context()
 
     def _selected_loadout_reward_ids(self):
-        self.capture_shop_setup_selection()
         return tuple(sorted(self._shop_pending_loadout_selection))
 
     def _shop_modifier_toggled(self, modifier_id):
@@ -1727,17 +1726,29 @@ class ShopController(ShopPolishController):
                 parent=self,
             )
 
-    def capture_shop_setup_selection(self, _event=None):
-        if not hasattr(self, 'shop_loadout_select_tree'):
-            return
-        visible = set(self._shop_loadout_rows.values())
-        selected = {
-            self._shop_loadout_rows[item]
-            for item in self.shop_loadout_select_tree.selection()
-            if item in self._shop_loadout_rows
-        }
-        self._shop_pending_loadout_selection.difference_update(visible)
-        self._shop_pending_loadout_selection.update(selected)
+    def _maximum_shop_loadout(self):
+        definition = self.shop_config.permanent_upgrades['expanded_loadout']
+        return (
+            self.shop_config.max_selected_permanent_units
+            + self.shop_profile.upgrade_level('expanded_loadout')
+            * int(definition.effects['slots_per_level'])
+        )
+
+    def toggle_shop_setup_reward(self, reward_id, *, refresh=True):
+        if (
+            self.shop_run is not None
+            and self.shop_run.status is RunStatus.ACTIVE
+        ):
+            return False
+        if reward_id not in self._shop_setup_eligible_reward_ids:
+            return False
+        if reward_id in self._shop_pending_loadout_selection:
+            self._shop_pending_loadout_selection.remove(reward_id)
+        else:
+            self._shop_pending_loadout_selection.add(reward_id)
+        if refresh:
+            self._refresh_shop_setup()
+        return True
 
     def shop_reward_settings_for_new_run(self):
         """Remove hidden normal-mode tuning from Shop Mode run behavior."""
@@ -2437,33 +2448,11 @@ class ShopController(ShopPolishController):
         )
 
     def _refresh_shop_setup(self):
-        tree = self.shop_loadout_select_tree
-        self.capture_shop_setup_selection()
-        tree.delete(*tree.get_children())
-        self._shop_loadout_rows = {}
-        expanded_level = self.shop_profile.upgrade_level('expanded_loadout')
-        maximum_loadout = (
-            self.shop_config.max_selected_permanent_units
-            + expanded_level * int(self.shop_config.permanent_upgrades[
-                'expanded_loadout'
-            ].effects['slots_per_level'])
-        )
+        maximum_loadout = self._maximum_shop_loadout()
         random_ap_loadout = (
             self.archipelago_received_unit_loadout_mode()
             == ARCHIPELAGO_RECEIVED_UNIT_LOADOUT_RANDOM
         )
-        if random_ap_loadout:
-            self.shop_loadout_help_var.set(
-                f'Choose permanent units; received AP units randomly fill '
-                f'unused slots up to the {maximum_loadout}-unit limit when '
-                'the run starts. Mandatory Tier 1 starters are automatic.'
-            )
-        else:
-            self.shop_loadout_help_var.set(
-                f'Choose up to {maximum_loadout} permanent or AP-entitled '
-                'extra units. Mandatory Tier 1 starters are added '
-                'automatically.'
-            )
         local_owned = set(self.shop_profile.permanent_unit_unlocks)
         _ap_identity, ap_reward_ids = self.archipelago_shop_context()
         ap_owned = set(ap_unit_entitlement_ids(ap_reward_ids))
@@ -2499,55 +2488,84 @@ class ShopController(ShopPolishController):
         else:
             self._shop_pending_loadout_selection.intersection_update(owned)
             selected = set(self._shop_pending_loadout_selection)
+        self.shop_loadout_help_var.set(
+            ('Active run roster. ' if active_run else
+             'Click a card to include or exclude it for the next run. ')
+            + f'Selected {len(selected)} units; {maximum_loadout} extra unit slots. '
+            + (
+                'Received AP units randomly fill unused slots when the run starts. '
+                if random_ap_loadout else 'Permanent and AP-entitled units share these slots. '
+            )
+            + 'Mandatory Tier 1 starters are automatic. '
+            'Blue border: Included. Gray card: Excluded. Excluded units remain permanently unlocked.'
+            + (' Selection locked during active run.' if active_run else '')
+        )
         entries = sorted(
             (
                 entry for entry in self._shop_unit_entries
                 if entry.reward_id in owned
                 and self._shop_entry_available(entry)
-                and (
-                    not self.shop_setup_search_var.get().strip()
-                    or self.shop_setup_search_var.get().strip().casefold()
-                    in (reward_display_name(canonical_reward_for_id(entry.reward_id))
-                        + ' ' + entry.reward_id + ' ' + entry.target_id).casefold()
-                )
             ),
             key=lambda entry: entry.reward_id.casefold(),
         )
-        selection = []
         cameo_images = self._prepare_shop_unit_cameos(
             entry.reward_id for entry in entries
             if entry.reward_id not in ap_owned
         )
-        for index, entry in enumerate(entries):
-            iid = f'loadout-{index}'
-            options = {
-                'iid': iid,
-                'values': (
-                    reward_display_name(canonical_reward_for_id(entry.reward_id)),
-                    (entry.tier or '').replace('_', ' ').title(),
-                    (
-                        'Permanent + AP'
-                        if entry.reward_id in local_owned
-                        and entry.reward_id in ap_owned
-                        else 'AP Received'
-                        if entry.reward_id in ap_owned
-                        else 'Permanent'
-                    ),
-                ),
-            }
+        self._shop_setup_eligible_reward_ids = set(owned)
+        showcase_entries = {
+            item['id']: item for item in (
+                *self.advanced_unit_pool_entries(), *self.advanced_power_pool_entries()
+            )
+        }
+        showcase_order = {target_id: index for index, target_id in enumerate(showcase_entries)}
+        roster_items = []
+        for entry in entries:
+            source_reward_id = entry.reward_id
+            source = (
+                'Permanent + AP'
+                if entry.reward_id in local_owned
+                and entry.reward_id in ap_owned
+                else 'AP Received'
+                if entry.reward_id in ap_owned
+                else 'Permanent'
+            )
             cameo = (
                 self._shop_archipelago_cameo()
                 if entry.reward_id in ap_owned
                 else cameo_images.get(entry.reward_id)
             )
-            if cameo is not None:
-                options['image'] = cameo
-            tree.insert('', 'end', **options)
-            self._shop_loadout_rows[iid] = entry.reward_id
-            if entry.reward_id in selected:
-                selection.append(iid)
-        if selection:
-            tree.selection_set(selection)
+            showcase_entry = showcase_entries.get(entry.target_id, {})
+            reward = canonical_reward_for_id(entry.reward_id)
+            roster_items.append({
+                'id': source_reward_id,
+                'key': entry.reward_id,
+                'target_id': entry.target_id,
+                'label': showcase_entry.get('label', (
+                    unit_display_label(entry.target_id)
+                    if entry.reward_type is ShopRewardType.UNIT_ACCESS
+                    else reward_display_name(reward)
+                )),
+                'faction': showcase_entry.get('faction', next(iter(entry.factions), '')),
+                'category': (
+                    'powers' if entry.reward_type is ShopRewardType.POWER_ACCESS
+                    else showcase_entry.get('category', BUFF_TARGETS.get(entry.target_id, {}).get('category', 'units'))
+                ),
+                'special': bool(showcase_entry.get('special_reward') or reward.get('special_reward')),
+                'tier': (
+                    'Power' if entry.reward_type is ShopRewardType.POWER_ACCESS
+                    else (entry.tier or '').replace('_', ' ').title()
+                ),
+                'source': source,
+                'photo': cameo,
+                'included': source_reward_id in selected,
+                'locked': source_reward_id not in self._shop_setup_eligible_reward_ids,
+                'reason': 'Unavailable under the current roster restrictions.',
+            })
+        roster_items.sort(key=lambda item: (
+            showcase_order.get(item['target_id'], len(showcase_order)), item['label'].casefold(),
+        ))
+        self.shop_roster_showcase.set_items(roster_items, active_run=active_run)
         if active_run:
             self.shop_permanent_units_without_buffs_var.set(bool(
                 self.shop_run.reward_settings.get('disable_permanent_unit_buffs')
@@ -2559,7 +2577,6 @@ class ShopController(ShopPolishController):
             self.shop_run is not None
             and self.shop_run.status is RunStatus.ACTIVE
         )
-        tree.configure(selectmode='none' if modifiers_locked else 'extended')
         if modifiers_locked:
             selected_modifiers = set(self.shop_run.modifiers)
             for modifier_id, variable in self.shop_modifier_vars.items():

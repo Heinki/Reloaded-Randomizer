@@ -17,6 +17,7 @@ from ._builder_dependencies import (
 )
 from .shop import _tree
 from .viewport import ScrollableViewport
+from .showcase import RosterShowcase
 from randomizer.config.game_profile import (
     OBJECTIVE_REWARDS_READY,
     WINDOW_TITLE,
@@ -687,35 +688,18 @@ def _build_right_panel(self, main_frame):
         style='Muted.TLabel',
         wraplength=720,
     ).grid(row=12, column=0, columnspan=2, sticky='ew', pady=(2, 6))
-    shop_loadout_search = ttk.Frame(shop_settings_frame)
-    shop_loadout_search.grid(
-        row=13, column=0, columnspan=2, sticky='ew', pady=(0, 6)
-    )
-    ttk.Label(shop_loadout_search, text='Search permanent loadout:').pack(
-        side='left'
-    )
-    ttk.Entry(
-        shop_loadout_search, textvariable=self.shop_setup_search_var
-    ).pack(side='left', fill='x', expand=True, padx=(6, 0))
     shop_loadout_frame = ttk.Frame(shop_settings_frame)
     shop_loadout_frame.grid(
         row=14, column=0, columnspan=2, sticky='nsew'
     )
-    self.shop_loadout_select_tree = _tree(
-        shop_loadout_frame,
-        ('name', 'tier', 'source'),
-        (
-            ('name', 'Entitled Extra Unit', 330),
-            ('tier', 'Tier', 80),
-            ('source', 'Source', 130),
-        ),
-        selectmode='extended',
-        height=5,
-        cameos=True,
+    shop_loadout_frame.columnconfigure(0, weight=1)
+    self.shop_roster_showcase = RosterShowcase(
+        shop_loadout_frame, command=self.toggle_shop_setup_reward,
+        refresh=self._refresh_shop_setup, search_var=self.shop_setup_search_var,
+        choices=self.advanced_pool_group_choices('units'),
+        palette=self.ui_palette(),
     )
-    self.shop_loadout_select_tree.bind(
-        '<<TreeviewSelect>>', self.capture_shop_setup_selection
-    )
+    self.shop_roster_showcase.grid(row=0, column=0, columnspan=2, sticky='nsew')
 
     self.shop_permanent_units_without_buffs_check = ttk.Checkbutton(
         shop_loadout_frame,

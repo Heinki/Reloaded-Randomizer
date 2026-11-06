@@ -312,6 +312,8 @@ def apply_color_mode(self):
             canvas.configure(background=palette['canvas'])
     for canvas in getattr(self, 'advanced_pool_canvases', {}).values():
         canvas.configure(background=palette['canvas'])
+    if hasattr(self, 'shop_roster_showcase'):
+        self.shop_roster_showcase.canvas.configure(background=palette['canvas'])
     for slider in getattr(self, 'reward_weight_slider_controls', ()):
         slider.refresh_theme(palette)
     for text_name in (
