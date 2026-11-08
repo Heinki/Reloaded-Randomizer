@@ -356,7 +356,14 @@ def shop_enemy_scaling_entries(
     for reward_id, source, earned_from in candidates:
         reward = canonical_reward_for_id(reward_id)
         effect_id = str(reward.get('enemy_effect_id') or '')
-        maximum = _shop_enemy_maximum(run, reward)
+        # A displayed mission challenge is a committed Shop rule. The normal
+        # Randomizer's optional AI reward filters must not silently remove it.
+        # Keep the native per-effect cap and the no-build protection above.
+        maximum = (
+            max(0, int(reward.get('enemy_maximum', 0)))
+            if source == 'Shop mission challenge'
+            else _shop_enemy_maximum(run, reward)
+        )
         if not effect_id or counts[effect_id] >= maximum:
             continue
         counts[effect_id] += 1
