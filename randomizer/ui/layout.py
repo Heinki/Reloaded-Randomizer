@@ -593,7 +593,7 @@ def _build_right_panel(self, main_frame):
 
     shop_run_options = (
         (
-            'Faction pool', 'shop_faction_pool_combo',
+            'Shop stock / loadout faction', 'shop_faction_pool_combo',
             self.shop_faction_pool_var, self.shop_faction_pool_options,
         ),
         ('Game speed', 'shop_game_speed_combo', self.game_speed_var,
@@ -833,6 +833,10 @@ def _build_info_tabs(self, info_tabs):
         font=('Segoe UI', 9),
     )
     self.rewards_text.grid(row=1, column=0, sticky='nsew')
+    from .skirmish import SkirmishFactionPicker
+    self.skirmish_faction_picker = SkirmishFactionPicker(progress_frame, self)
+    self.skirmish_faction_picker.grid(row=2, column=0, sticky='ew', pady=(6, 0))
+    self.skirmish_faction_picker.set_mission(self.selected_mission())
 
     unlocks_frame = ttk.Frame(info_tabs, padding=(8, 8, 8, 8))
     self.unlocks_tab = unlocks_frame

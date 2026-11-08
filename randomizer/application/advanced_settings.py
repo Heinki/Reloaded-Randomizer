@@ -864,13 +864,13 @@ class AdvancedSettingsController:
         included_powers = len(visible_power_ids - self.excluded_superweapon_ids)
         self.advanced_pool_status_label.configure(
             text=(
-                f'{ARSENAL_MODE if arsenal_mode else selected_campaign}: '
+                f'{"Regular Shop: all campaigns" if self.shop_mode_selected() else ARSENAL_MODE if arsenal_mode else selected_campaign}: '
                 f'{"Shop missions" if self.shop_mode_selected() else "missions"} '
                 f'{included_missions}/{len(visible_missions)}, '
                 f'units/buildings {included_units}/{len(visible_unit_ids)}, '
                 f'superpowers {included_powers}/{len(visible_power_ids)} included'
                 + (
-                    ' | Warning: Shop Mode requires at least 10 missions.'
+                    ' | Shop Mode requires at least 10 missions (no maximum of 10).'
                     if self.shop_mode_selected() and included_missions < 10
                     else ' | Warning: exactly 10 missions selected; repeats possible.'
                     if self.shop_mode_selected() and included_missions == 10

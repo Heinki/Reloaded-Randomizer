@@ -1,6 +1,7 @@
 """Shop Mode workspace widgets."""
 
 from .viewport import ScrollableViewport
+from .skirmish import SkirmishFactionPicker
 from ._builder_dependencies import TreeTooltip, WidgetTooltip, tk, ttk
 
 
@@ -241,9 +242,12 @@ def build_shop_tab(self, workspace_tabs):
             state='disabled',
             style='Launch.TButton',
         )
-        launch_button.grid(row=5, column=0, sticky='ew')
+        faction_picker = SkirmishFactionPicker(card, self)
+        faction_picker.grid(row=5, column=0, sticky='ew', pady=(5, 5))
+        faction_picker.grid_remove()
+        launch_button.grid(row=6, column=0, sticky='ew')
         mission_actions = ttk.Frame(card)
-        mission_actions.grid(row=6, column=0, sticky='ew', pady=(5, 0))
+        mission_actions.grid(row=7, column=0, sticky='ew', pady=(5, 0))
         mission_actions.columnconfigure(0, weight=1)
         mission_actions.columnconfigure(1, weight=1)
         reroll_button = ttk.Button(
@@ -276,6 +280,7 @@ def build_shop_tab(self, workspace_tabs):
             'effect': effect_var,
             'effect_label': effect_label,
             'launch_button': launch_button,
+            'faction_picker': faction_picker,
             'reroll_button': reroll_button,
             'ease_button': ease_button,
             'tooltip': tooltip,

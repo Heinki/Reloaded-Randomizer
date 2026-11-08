@@ -99,6 +99,14 @@ Shop Mode uses all 108 reviewed Reloaded missions, approved units and defenses,
 buffs, and 18 powers. Temporary mission cards can add one of 12 Reloaded player
 boons or 7 Reloaded AI challenges; active power boons are not offered twice.
 
+Regular Shop randomizes missions across campaigns. Its stock/loadout faction
+does not restrict mission offers. Advanced can customize the mission pool, with
+at least ten missions required. **Shopmode Campaign Mode** instead plays every
+story mission in its selected campaign in order, without the normal stage cap.
+Optional skirmishes let you choose a faction on their mission card or in
+Details before launch. See [campaign and skirmish selection notes](SHOP_SKIRMISH_SELECTION.md)
+for the shared Reloaded, DTA, and Mental Omega behavior and verification limits.
+
 Current Run Shop shows unit and power offers together. Start New Run always
 generates a fresh seed, and the rules dialog stays dismissed after confirmation.
 Purchased buff stacks persist through mission victories and launcher reloads.
