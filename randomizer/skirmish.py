@@ -219,11 +219,16 @@ def _ra2_rewards(rows, rewards, settings, country, randomized):
     from randomizer.maps.player_clones import player_unit_clone_rules, player_clone_pad_aircraft_rules
     from randomizer.maps.power_buffs import apply_power_buffs_to_unlock_rewards
     from randomizer.maps.base import (
-        cloned_superweapon_plan, resolved_superweapon_targeting_clone_rules,
+        cloned_superweapon_plan, foreign_superweapon_aux_buildings,
+        resolved_superweapon_targeting_clone_rules,
     )
     from randomizer.rewards.catalogue import BUFF_TARGETS, ALWAYS_AVAILABLE_TECH_IDS, canonical_rewards
     from randomizer.rewards.rules import unlocked_reward_tech_ids
     from randomizer.content.inventory import read_rules_sections
+    from randomizer.config.tuning import CLONE_POLICY
+    from randomizer.maps.prerequisites import (
+        player_building_prerequisite_rules, prerequisite_override_rules,
+    )
     installed, _ = read_rules_sections()
     installed_types = tuple(installed.get('SuperWeaponTypes', {}).values())
     countries = dict(installed['Countries'])
@@ -256,7 +261,20 @@ def _ra2_rewards(rows, rewards, settings, country, randomized):
             if target and unit not in ALWAYS_AVAILABLE_TECH_IDS and not target.get('power_payload_only'):
                 forbidden = changes.get('ForbiddenHouses', base.get('ForbiddenHouses', ''))
                 changes['ForbiddenHouses'] = ','.join(dict.fromkeys([*filter(None, forbidden.split(',')), 'RZPLAYER']))
+    native_lines = IniLines(_serialize(rows).splitlines())
+    merge_ini_section_values(native_lines, prerequisite_override_rules(native_lines, installed))
+    rows = all_section_value_maps_preserve(native_lines)
+    # The clone builder keeps only explicitly planned production gates.
+    # Ownership-only overlays otherwise erase native MCV prerequisites and
+    # faction tech paths for types without a randomized-access plan.
     overlays = {}
+    for unit in unlocked:
+        native = {**installed.get(unit, {}), **rows.get(unit, {})}
+        overlays[unit] = {
+            key: value for key, value in native.items()
+            if key.lower() in CLONE_POLICY['production_gate_keys']
+            or key.lower().startswith(tuple(CLONE_POLICY['production_gate_prefixes']))
+        }
     for reward in canonical_rewards(rewards):
         if reward.get('kind') == 'buff':
             continue
@@ -291,7 +309,10 @@ def _ra2_rewards(rows, rewards, settings, country, randomized):
     starters = _starter_rules(planning_lines, settings)
     unlocked.update(starters)
     for unit in unlocked:
-        overlays.setdefault(unit, {}).update(planned.get(unit, {}))
+        if randomized:
+            overlays.setdefault(unit, {}).update(planned.get(unit, {}))
+        else:
+            overlays.setdefault(unit, {})
         overlays[unit].update(starters.get(unit, {}))
         overlays[unit].update(TechLevel='1', Owner='RZPLAYER', RequiredHouses='RZPLAYER', ForbiddenHouses='none')
     powers = apply_power_buffs_to_unlock_rewards(list(rewards), installed)
@@ -340,12 +361,22 @@ def _ra2_rewards(rows, rewards, settings, country, randomized):
     merge_ini_section_values(lines, changes)
     pad_rules, _ = player_clone_pad_aircraft_rules(lines, installed, handled)
     merge_ini_section_values(lines, pad_rules)
+    # Deployed MCVs, generators and upgrade hosts have private identities.
+    # Native structures and attachments must recognize those same types.
+    from randomizer.maps.special_buildings import building_upgrade_clone_rules
+    merge_ini_section_values(lines, player_building_prerequisite_rules(lines, installed, handled))
+    merge_ini_section_values(lines, building_upgrade_clone_rules(lines, installed, handled))
     if GAME == 'mo':
         from randomizer.maps.special_buildings import reprocessor_bounty_rules
         bounty, _ = reprocessor_bounty_rules(lines, installed, handled, unlocked)
         merge_ini_section_values(lines, bounty)
+    from randomizer.skirmish_factions import faction_for_country
+    power_gates = ({} if chaos else foreign_superweapon_aux_buildings(
+        powers, faction_for_country(country), installed,
+    ))
     rules, actions, _, startup, static, missing = cloned_superweapon_plan(
         lines, powers, installed_types, installed,
+        superweapon_aux_buildings=power_gates,
         superweapon_required_houses=('RZPLAYER',), force_required_houses=True)
     if missing:
         raise ValueError('Missing Skirmish power definitions: ' + ', '.join(missing))
@@ -421,7 +452,8 @@ def _hidden_provider():
             'Owner': 'RZPLAYER', 'Power': '0', 'Powered': 'no', 'Capturable': 'no',
             'Selectable': 'no', 'Unsellable': 'yes', 'Insignificant': 'yes',
             'InvisibleInGame': 'yes', 'IsPassable': 'yes', 'LegalTarget': 'no',
-            'KeepAlive': 'no', 'DontScore': 'yes', 'Immune': 'yes'}
+            'KeepAlive': 'no', 'DontScore': 'yes', 'Immune': 'yes',
+            'BaseNormal': 'no', 'Adjacent': '0', 'EligibileForAllyBuilding': 'no'}
 
 
 def _startup_trigger(rows, owner, actions, key):

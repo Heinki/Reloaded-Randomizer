@@ -57,6 +57,7 @@ from randomizer.maps.rules import (
     helper_ai_autobuild_rules,
     is_generated_hooked_map,
     foreign_capturable_factory_forbidden_houses,
+    foreign_superweapon_aux_buildings,
     mission_assistance_buff_rules,
     mission_assistance_direct_rewards,
     mission_assistance_unit_ids,
@@ -762,40 +763,14 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             player_family,
             normalize_faction(mission.get('side', '')),
         )
-        faction_families = {
-            label: family for family, label in family_labels.items()
+        power_aux_buildings = foreign_superweapon_aux_buildings(
+            earned_rewards, player_faction, installed_rule_sections,
+        )
+        gated_power_names = {
+            reward_display_name(reward)
+            for reward in canonical_rewards(earned_rewards)
+            if str(reward.get('superweapon') or '').upper() in power_aux_buildings
         }
-        installed_building_ids_upper = {
-            str(item).upper() for item in installed_building_ids
-        }
-        gated_power_names = set()
-        for reward in canonical_rewards(earned_rewards):
-            if reward.get('kind') != 'superweapon':
-                continue
-            if reward.get('superweapon_ignore_foreign_tech_gate'):
-                continue
-            reward_factions = set(reward.get('factions') or ())
-            if (
-                not reward_factions
-                or 'Neutral' in reward_factions
-                or player_faction in reward_factions
-            ):
-                continue
-            aux_buildings = unique_in_order(
-                building_id
-                for faction in reward_factions
-                for family in (faction_families.get(faction),)
-                if family
-                for category_ids in PRODUCTION_BUILDINGS.get(
-                    family, {}
-                ).values()
-                for building_id in sorted(category_ids)
-                if str(building_id).upper() in installed_building_ids_upper
-            )
-            power_id = str(reward.get('superweapon') or '').upper()
-            if power_id and aux_buildings:
-                power_aux_buildings[power_id] = aux_buildings
-                gated_power_names.add(reward_display_name(reward))
         if gated_power_names:
             self.append_log(
                 'Gated foreign power rewards behind captured faction tech: '

@@ -6,6 +6,42 @@ from randomizer.core.collections import comma_items, unique_in_order
 from randomizer.maps.ini import all_section_value_maps
 
 
+def prerequisite_override_rules(lines, installed_sections):
+    """Retain shortcut paths without bypassing house and unlock restrictions.
+
+    Ares evaluates PrerequisiteOverride before Required/ForbiddenHouses and
+    TechLevel. Equivalent alternate lists still enforce those restrictions.
+    """
+    effective = {}
+    for source in (installed_sections, all_section_value_maps(lines)):
+        for name, values in source.items():
+            effective.setdefault(str(name).upper(), {}).update({
+                str(key).lower(): value for key, value in values.items()
+            })
+    identifiers = {
+        str(identifier)
+        for registry in ('INFANTRYTYPES', 'VEHICLETYPES', 'AIRCRAFTTYPES', 'BUILDINGTYPES')
+        for identifier in effective.get(registry, {}).values()
+    }
+    rules = {}
+    for identifier in sorted(identifiers):
+        values = effective.get(identifier.upper(), {})
+        shortcuts = [
+            item for item in comma_items(values.get('prerequisiteoverride', ''))
+            if item.lower() not in {'none', '<none>'}
+        ]
+        if not shortcuts:
+            continue
+        count = int(values.get('prerequisite.lists', '0'))
+        changes = {'PrerequisiteOverride': 'none'}
+        for shortcut in shortcuts:
+            count += 1
+            changes[f'Prerequisite.List{count}'] = shortcut
+        changes['Prerequisite.Lists'] = str(count)
+        rules[identifier] = changes
+    return rules
+
+
 def expand_prerequisite_paths(values, replacements):
     """Add full AND paths, retaining every factory/support requirement."""
     paths = [comma_items(values.get('prerequisite.list0', values.get('prerequisite', '')))]

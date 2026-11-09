@@ -486,6 +486,14 @@ def _power_reward(power_id, label, category, factions):
             },
         }
     if power_id == 'HuntSeekSpecial':
+        # HunterSeeker requires an owned launch building. Use actual deployed
+        # yards instead of placing a hidden GAPLUG with its footprint and art.
+        launch_yards = ','.join(_FACTIONS['conyard_by_mcv'].values())
+        reward['description'] = 'Launches a Hunter Seeker from an owned Construction Yard.'
+        reward['superweapon_rules'] = {
+            'HunterSeeker.Buildings': launch_yards,
+            'SW.AuxBuildings': launch_yards,
+        }
         reward['superweapon_techno_clones'] = {
             'GHUNTER': {
                 'source': 'GHUNTER',
@@ -493,25 +501,6 @@ def _power_reward(power_id, label, category, factions):
                 'list': 'VehicleTypes',
                 'reference_keys': ('HunterSeeker.Type',),
                 'values': {},
-            },
-            'GAPLUG': {
-                'source': 'GAPLUG',
-                'clone': 'RLRPHUNTERBASE',
-                'list': 'BuildingTypes',
-                'reference_keys': ('HunterSeeker.Buildings',),
-                'startup_count': 1,
-                'static_startup': True,
-                'values': {
-                    'TechLevel': '-1', 'Image': 'GAPLUG',
-                    'InvisibleInGame': 'yes', 'IsPassable': 'yes',
-                    'Selectable': 'no', 'LegalTarget': 'no', 'Immune': 'yes',
-                    'Insignificant': 'yes', 'DontScore': 'yes',
-                    'BaseNormal': 'no', 'Capturable': 'no', 'Unsellable': 'yes',
-                    'Power': '0', 'Powered': 'no', 'Sight': '0',
-                    'RevealToAll': 'no', 'RadarInvisible': 'yes',
-                    'IsPlug': 'no', 'Upgrades': '0', 'Spyable': 'no',
-                    'Crewed': 'no',
-                },
             },
         }
     if power_id == 'EMPulseSpecial':
@@ -561,7 +550,8 @@ def _power_reward(power_id, label, category, factions):
     # Dominator section is named "Lightning Storm"). Keep the private clone
     # aligned with its reviewed reward label without changing native CSF keys.
     reward.setdefault('superweapon_rules', {})['Name'] = label
-    reward['superweapon_rules']['UIName'] = f'NOSTR:{label} (building-free)'
+    requirement = 'requires Construction Yard' if power_id == 'HuntSeekSpecial' else 'building-free'
+    reward['superweapon_rules']['UIName'] = f'NOSTR:{label} ({requirement})'
     return reward
 
 

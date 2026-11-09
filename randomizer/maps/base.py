@@ -209,12 +209,40 @@ def resolved_power_player_clone_rules(
     return power_updates, clone_updates
 
 
+def foreign_superweapon_aux_buildings(rewards, player_faction, installed_sections):
+    """Keep Standard foreign powers behind their faction's physical tech."""
+    from randomizer.missions.access import PRODUCTION_BUILDINGS
+
+    installed_buildings = {
+        str(identifier).upper()
+        for identifier in installed_sections.get('BuildingTypes', {}).values()
+    }
+    gates = {}
+    for reward in canonical_rewards(rewards):
+        if reward.get('kind') != 'superweapon' or reward.get('superweapon_ignore_foreign_tech_gate'):
+            continue
+        factions = set(reward.get('factions') or ())
+        if not factions or 'Neutral' in factions or player_faction in factions:
+            continue
+        buildings = unique_in_order(
+            building
+            for faction in sorted(factions)
+            for identifiers in PRODUCTION_BUILDINGS.get(str(faction).lower(), {}).values()
+            for building in sorted(identifiers)
+            if building.upper() in installed_buildings
+        )
+        power = str(reward.get('superweapon') or '').upper()
+        if power and buildings:
+            gates[power] = buildings
+    return gates
+
+
 def resolved_superweapon_targeting_clone_rules(
     installed_sections,
     map_sections,
     clone_handled,
 ):
-    """Keep exact-type designator and inhibitor lists valid after cloning.
+    """Keep exact-type targeting, availability and launch lists valid after cloning.
 
     Native and cloned powers must recognize production and deployed/reference
     forms. Preserve authored lists, including explicit empty map overrides,
@@ -251,7 +279,10 @@ def resolved_superweapon_targeting_clone_rules(
 
     updates = {}
     for entry in effective_sections.values():
-        for field in ('sw.designators', 'sw.inhibitors'):
+        for field in (
+            'sw.designators', 'sw.inhibitors', 'sw.auxbuildings',
+            'sw.negbuildings', 'hunterseeker.buildings',
+        ):
             restriction = entry['values'].get(field)
             if restriction is None:
                 continue
