@@ -245,12 +245,13 @@ def _build_window_shell(self):
     self.compact_action_row = ttk.Frame(mission_view_frame)
     self.compact_action_row.columnconfigure(0, weight=1)
     self.compact_action_row.columnconfigure(1, weight=1)
-    ttk.Button(
+    self.compact_launch_button = ttk.Button(
         self.compact_action_row,
         text='Launch Selected Mission',
         command=self.on_launch_selected,
         style='Launch.TButton',
-    ).grid(row=0, column=0, sticky='ew', padx=(0, 4), pady=(6, 0))
+    )
+    self.compact_launch_button.grid(row=0, column=0, sticky='ew', padx=(0, 4), pady=(6, 0))
     compact_complete_button = ttk.Button(
         self.compact_action_row,
         text='Mark Mission Complete',
@@ -797,12 +798,13 @@ def _build_right_panel(self, main_frame):
     button_row = ttk.Frame(right_frame)
     button_row.grid(row=0, column=0, sticky='ew', pady=(0, 6))
     button_row.columnconfigure(0, weight=1)
-    ttk.Button(
+    self.launch_selected_button = ttk.Button(
         button_row,
         text='Launch Selected Mission',
         command=self.on_launch_selected,
         style='Launch.TButton',
-    ).grid(row=0, column=0, sticky='ew', pady=(0, 4))
+    )
+    self.launch_selected_button.grid(row=0, column=0, sticky='ew', pady=(0, 4))
     self.debug_complete_button = ttk.Button(
         button_row,
         text='Mark Mission Complete',

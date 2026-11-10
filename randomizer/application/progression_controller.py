@@ -187,7 +187,7 @@ class ProgressionController(GridAccessController):
                 continue
             mission = lookup.get(code, {})
             state = states.get(code, GRID_LOCKED)
-            if self.hide_locked_grid_missions_var.get() and state == GRID_LOCKED:
+            if self.grid_mission_names_hidden() and state == GRID_LOCKED:
                 widgets['tile'].grid()
                 background, foreground = '#3f454b', '#d4d8dc'
                 for widget in widgets.values():
@@ -294,7 +294,7 @@ class ProgressionController(GridAccessController):
             )
 
     def select_grid_mission(self, index):
-        if self.hide_locked_grid_missions_var.get() and self.state:
+        if self.grid_mission_names_hidden() and self.state:
             try:
                 code = self.missions[index]['code']
             except (IndexError, TypeError):

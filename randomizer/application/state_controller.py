@@ -342,7 +342,7 @@ class StateController(GenerationSettings):
         self.__dict__.pop('_unlock_dashboard_sources_cache', None)
         self.__dict__.pop('_configured_reward_pool_cache', None)
         self._enemy_buffs_view_dirty = True
-        atomic_write_json(STATE_PATH, self.state, indent=None)
+        atomic_write_json(STATE_PATH, self.state, indent=None, durable=durable)
 
 
     def current_reward_settings(self):
