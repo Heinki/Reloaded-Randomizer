@@ -773,6 +773,13 @@ class LaunchController:
         if not self.active_hook or not text:
             return
 
+        watch = getattr(self, '_shop_interruption_watch', None)
+        if watch is not None:
+            watch.observe_text(text)
+        text = self.active_hook.pop('log_tail', '') + text
+        parts = text.split('\n')
+        self.active_hook['log_tail'] = parts.pop()
+        text = '\n'.join(parts)
         code = self.active_hook['mission_code']
         markers = {
             **self.active_hook.get('markers', {}),
@@ -787,6 +794,8 @@ class LaunchController:
         for line in text.splitlines():
             folded_line = line.casefold()
             for marker, check_id in markers.items():
+                if check_id == 'defeat' and f"Creating a new team named '{marker}'." not in line:
+                    continue
                 if marker in seen or marker.casefold() not in folded_line:
                     continue
                 seen.add(marker)
@@ -831,7 +840,7 @@ class LaunchController:
             if 'MapClass::Init_Clear entry' in line:
                 if self.active_hook.get('scenario_ready'):
                     self.active_hook['scenario_ready'] = False
-                    if not self.is_mission_complete(code):
+                    if not self.shop_launch_active() and not self.is_mission_complete(code):
                         self.record_failed_mission_attempt(code, 'In-game mission restart detected')
             elif 'Capture_Mouse()' in line:
                 self.active_hook['scenario_ready'] = True
@@ -905,6 +914,7 @@ class LaunchController:
                     # across that boundary or the first Init_Clear in the new
                     # file is misclassified as an in-game restart.
                     self.active_hook['scenario_ready'] = False
+                    self.active_hook.pop('log_tail', None)
                 with DEBUG_LOG.open('r', encoding='utf-8', errors='ignore') as handle:
                     handle.seek(offset)
                     text = handle.read()
@@ -918,6 +928,8 @@ class LaunchController:
             self.after(HOOK_POLL_MS, self.poll_hook_log)
             return
 
+        if self.active_hook and self.active_hook.get('log_tail'):
+            self.process_hook_log_text('\n')
         if self.active_hook:
             scenario = self.active_hook.get('scenario', 'mission')
             seen_count = len(self.active_hook.get('seen', set()))
@@ -978,7 +990,9 @@ class LaunchController:
                 self.append_log(f'Saved incomplete mission report: {report}')
             except OSError as exc:
                 self.append_log(f'Could not save mission report: {exc}', error=True)
-            self.record_failed_mission_attempt(attempt_code, 'Mission closed without victory')
+            if not self.shop_launch_active():
+                self.record_failed_mission_attempt(attempt_code, 'Mission closed without victory')
+            # Shop cleanup below releases an unresolved attempt without a loss.
         self.active_hook = None
         self.active_game_process = None
         self.active_mission_attempt = None
@@ -1222,6 +1236,7 @@ class LaunchController:
         game_speed_value,
         launch_note='',
     ):
+        self.begin_shop_mission_interruption_watch()
         scenario = mission['scenario']
         cmd = self.build_command()
         command_text = subprocess.list2cmdline(cmd)

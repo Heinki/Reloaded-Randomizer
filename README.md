@@ -95,6 +95,19 @@ stage. Each selected mission gets one attempt. An **Emergency Revival** keeps
 the Shop run alive after a failed mission by repeating the same stage with new
 mission choices.
 
+Crashes, co-op desyncs, launch errors, and exits without a verified result
+preserve the active Shop stage, Ore, purchases, original mission offers, and
+Emergency Revivals. After the game closes, retry the same mission or select
+another original offer. Reopening the launcher also recovers an unresolved
+mission commitment automatically. Recovery awards no victory rewards. Verified
+defeats still follow the normal failure and Emergency Revival rules. Update
+both players' launchers before co-op play.
+
+Fresh engine SYNC/EXCEPT diagnostics and explicit desync/reconnection errors take
+precedence over native winner/loser records. Old diagnostic files are ignored;
+unverified Shop attempts remain retryable without spending an Emergency Revival.
+Reloaded currently has no randomizer co-op lobby to exchange peer results.
+
 Shop Mode uses all 108 reviewed Reloaded missions, approved units and defenses,
 buffs, and 18 powers. Temporary mission cards can add one of 12 Reloaded player
 boons or 7 Reloaded AI challenges; active power boons are not offered twice.

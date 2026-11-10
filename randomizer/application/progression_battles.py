@@ -418,6 +418,8 @@ class ProgressionBattlesController:
         def finish(prepared):
             command, hook = prepared
             try:
+                if shop:
+                    self.begin_shop_mission_interruption_watch()
                 try:
                     baseline = mission_diagnostic_baseline()
                 except OSError as exc:
@@ -458,11 +460,17 @@ class ProgressionBattlesController:
             nonlocal outcome_applied
             if outcome_applied or not same_run():
                 return
+            if shop and self.shop_mission_interruption_reason():
+                result = None
             outcome_applied = True
             if result == 'victory':
                 self.unlock_mission_check(code, 'victory', 'Verified 1v1 Skirmish victory')
+            elif result == 'defeat':
+                self.record_failed_mission_attempt(code, 'Verified Skirmish defeat')
+            elif shop:
+                self.record_interrupted_mission_attempt(code, 'Skirmish closed without a verified result')
             else:
-                self.record_failed_mission_attempt(code, 'Skirmish defeat or closed without victory')
+                self.record_failed_mission_attempt(code, 'Skirmish closed without victory')
 
         def cleanup():
             self._skirmish_busy = False
@@ -499,7 +507,7 @@ class ProgressionBattlesController:
                     self.append_log(f'Saved incomplete mission report: {report}')
                 except OSError as exc:
                     self.append_log(f'Could not save mission report: {exc}', error=True)
-            apply_outcome(result or 'defeat')
+            apply_outcome(result)
             cleanup()
 
         def failed(exc, detail):
