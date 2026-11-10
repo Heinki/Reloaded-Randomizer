@@ -23,7 +23,9 @@ from randomizer.maps.starting_units import starting_unit_buff_plan
 from randomizer.maps.miner_buffs import (
     player_refinery_rules, upgrade_starting_player_miners, validate_refinery_miner_isolation,
 )
-from randomizer.maps.prerequisites import player_building_prerequisite_rules
+from randomizer.maps.prerequisites import (
+    negative_prerequisite_safety_rules, player_building_prerequisite_rules,
+)
 from randomizer.missions.required_access import mission_required_access_rules
 from randomizer.maps.enemy_powerhouses import enemy_powerhouse_rules
 from randomizer.maps.ownership import (
@@ -3497,6 +3499,18 @@ def prepare_hooked_map(self, mission, extra_rules=None):
                 report_line,
                 error=report_line.startswith('WARNING:'),
             )
+
+    prerequisite_safety_rules, repaired_prerequisites = negative_prerequisite_safety_rules(
+        lines, installed_rule_sections,
+    )
+    if prerequisite_safety_rules:
+        merge_ini_section_values(lines, prerequisite_safety_rules)
+        self.append_log(
+            'Prepared safe negative building prerequisites before AI team selection: '
+            + '; '.join(f'{identifier}: {", ".join(items)}'
+                        for identifier, items in repaired_prerequisites.items())
+            + '.'
+        )
 
     validate_action_arguments(lines)
     authored_trigger_ids = {

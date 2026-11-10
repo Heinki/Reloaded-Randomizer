@@ -756,6 +756,14 @@ def build_map(game_root, run, rules, *, preloads=None):
     from .wave_pool import apply_wave_pool
     apply_wave_pool(writer, plan, rules, overrides, marker_teams, finished, wave_clock=wave_clock,
                     reserved_types=reserved_enemy_types)
+    from randomizer.maps.prerequisites import negative_prerequisite_safety_rules
+    safety_lines = IniLines(list(writer.lines))
+    merge_ini_section_values(safety_lines, writer.sections)
+    safety_rules, _ = negative_prerequisite_safety_rules(safety_lines, rules)
+    for section, values in safety_rules.items():
+        writer.sections.setdefault(section, {}).update(values)
+        if preloads is not None:
+            preloads['rules'].setdefault(section, {}).update(values)
     writer.put('Basic', 'Name', 'Final Fortress - ' + definition['display_name'])
     writer.put('Basic', 'IgnoreGlobalAITriggers', 'no')
     writer.put('SpecialFlags', 'FixedAlliance', 'yes')

@@ -227,6 +227,7 @@ def _ra2_rewards(rows, rewards, settings, country, randomized):
     from randomizer.content.inventory import read_rules_sections
     from randomizer.config.tuning import CLONE_POLICY
     from randomizer.maps.prerequisites import (
+        negative_prerequisite_safety_rules,
         player_building_prerequisite_rules, prerequisite_override_rules,
     )
     installed, _ = read_rules_sections()
@@ -400,6 +401,8 @@ def _ra2_rewards(rows, rewards, settings, country, randomized):
     merge_ini_section_values(lines, resolved_superweapon_targeting_clone_rules(
         installed, all_section_value_maps_preserve(lines), handled,
     ))
+    safety_rules, _ = negative_prerequisite_safety_rules(lines, installed)
+    merge_ini_section_values(lines, safety_rules)
     rows = all_section_value_maps_preserve(lines)
     rows.pop('Houses', None)
     rows.pop('RZPLAYER House', None)

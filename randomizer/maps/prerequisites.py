@@ -1,9 +1,79 @@
 """Preserve production requirements across native and private building types."""
 
+import hashlib
 from itertools import product
 
 from randomizer.core.collections import comma_items, unique_in_order
 from randomizer.maps.ini import all_section_value_maps
+
+
+def negative_prerequisite_safety_rules(lines, installed_sections):
+    """Repair negative prerequisites that Reloaded's AI misindexes.
+
+    The custom Phobos parser uses TechnoTypeClass::FindIndex for negative
+    prerequisites, but HouseExt::PrerequisitesMet indexes BuildingTypes with
+    the result. Vehicle self-references such as MOBWARG therefore can crash
+    AI team selection. Map-added buildings also have combined-array indices
+    beyond BuildingTypes. Wrap these in singleton generic groups: Ares keeps
+    the exact gate, while Phobos either resolves a building-index group or
+    ignores a map-only group it has not loaded. Such buildings are private
+    player gates, not prerequisites for native AI production.
+
+    Ares already ignores non-building references, so remove those without
+    changing its production behavior or authored BuildLimit. Run last so
+    generated clones and gates are included.
+    """
+    effective = {}
+    for source in (installed_sections, all_section_value_maps(lines)):
+        for name, values in source.items():
+            effective.setdefault(str(name).upper(), {}).update({
+                str(key).lower(): value for key, value in values.items()
+            })
+    buildings = {
+        str(identifier).upper()
+        for identifier in effective.get('BUILDINGTYPES', {}).values()
+    }
+    installed_buildings = {
+        str(identifier).upper()
+        for name, values in installed_sections.items()
+        if str(name).casefold() == 'buildingtypes'
+        for identifier in values.values()
+    }
+    generics = set(effective.get('GENERICPREREQUISITES', {}))
+    generics.update(('power', 'factory', 'barracks', 'radar', 'tech', 'proc'))
+    techno_ids = {
+        str(identifier)
+        for registry in ('INFANTRYTYPES', 'VEHICLETYPES', 'AIRCRAFTTYPES', 'BUILDINGTYPES')
+        for identifier in effective.get(registry, {}).values()
+    }
+    map_buildings = buildings - installed_buildings
+    techno_names = {name.upper() for name in techno_ids}
+    rules, repaired = {}, {}
+    for identifier in sorted(techno_ids):
+        values = effective.get(identifier.upper(), {})
+        prerequisites = comma_items(values.get('prerequisite.negative', ''))
+        safe, changes = [], []
+        for item in prerequisites:
+            if item.upper() in map_buildings:
+                digest = hashlib.sha256(item.upper().encode('utf-8')).hexdigest()[:16]
+                group = 'RLRNEG' + digest
+                # Never reuse an unrelated installed/map group or TechnoType.
+                existing = effective.get('GENERICPREREQUISITES', {}).get(group.lower())
+                if (group.upper() in techno_names
+                        or (existing is not None and str(existing).upper() != item.upper())):
+                    raise ValueError(f'Negative prerequisite safety group collision: {group}')
+                rules.setdefault('GenericPrerequisites', {})[group] = item
+                safe.append(group)
+                changes.append(f'{item} via {group}')
+            elif (item.upper() in buildings or item.lower() in generics
+                  or item.lower() in {'none', '<none>'}):
+                safe.append(item)
+            else:
+                changes.append(f'{item} (removed)')
+        if changes:
+            rules[identifier] = {'Prerequisite.Negative': ','.join(safe)}
+            repaired[identifier] = changes
+    return rules, repaired
 
 
 def prerequisite_override_rules(lines, installed_sections):
