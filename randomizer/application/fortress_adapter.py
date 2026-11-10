@@ -56,11 +56,6 @@ class FortressLauncherAdapter:
         frame = self.fortress_settings_frame = ttk.LabelFrame(
             parent, text='Final Fortress co-op', padding=12)
         frame.columnconfigure(1, weight=1)
-        ttk.Label(frame, text='Game Mode').grid(row=0, column=0, sticky='w', padx=(0, 12))
-        self.fortress_settings_mode_combo = ttk.Combobox(
-            frame, textvariable=self.game_mode_var, values=self.game_mode_choices, state='readonly')
-        self.fortress_settings_mode_combo.grid(row=0, column=1, sticky='ew')
-        self.fortress_settings_mode_combo.bind('<<ComboboxSelected>>', self.on_game_mode_changed)
         self.fortress_settings_coop_check = ttk.Checkbutton(
             frame, text='Co-op', variable=self.final_fortress_coop_var,
             command=self.on_fortress_coop_mode_changed)

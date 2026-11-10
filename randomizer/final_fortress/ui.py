@@ -205,7 +205,6 @@ def build_final_fortress_tab(app, notebook):
     setup.columnconfigure(1, weight=1)
     app.final_fortress_setup_combos = []
     for row, (label, variable, values, handler) in enumerate((
-        ('Game Mode', app.game_mode_var, app.game_mode_choices, app.on_game_mode_changed),
         ('Map', app.final_fortress_map_var, app.final_fortress_map_choices, app.on_final_fortress_map_changed),
         ('Player faction', app.final_fortress_country_var,
          tuple(app.final_fortress_country_choices), app.on_final_fortress_country_changed),

@@ -19,7 +19,10 @@ from ._dependencies import (
     traceback,
 )
 
-class WindowController:
+from .game_mode_navigation import GameModeNavigationController
+
+
+class WindowController(GameModeNavigationController):
 
     def close_launcher(self):
         """Keep cleanup polling alive until an active game safely exits."""
@@ -45,6 +48,7 @@ class WindowController:
 
     def create_widgets(self):
         build_launcher_widgets(self)
+        self.initialize_game_mode_navigation()
 
     def update_header_summary(self, *_args):
         """Show the core selected run settings beneath the launcher title."""

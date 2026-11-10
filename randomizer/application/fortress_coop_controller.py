@@ -27,6 +27,7 @@ class FortressCoopController(FortressCoopLaunchController):
 
     def refresh_fortress_settings_controls(self):
         """Present Fortress's own lobby choices without changing campaign settings."""
+        self.refresh_game_mode_navigation()
         if not hasattr(self, 'final_fortress_coop_var'):
             return
         fortress = self.final_fortress_mode_selected()
@@ -40,7 +41,6 @@ class FortressCoopController(FortressCoopLaunchController):
             self.fortress_settings_coop_check.configure(state='disabled' if locked else 'normal')
             self.fortress_settings_count_combo.configure(
                 state='readonly' if enabled and not locked else 'disabled')
-            self.fortress_settings_mode_combo.configure(state='disabled' if locked else 'readonly')
             self.fortress_settings_connection_button.configure(state='disabled' if self._final_fortress_preparing else 'normal')
             if enabled or sessions:
                 self.fortress_settings_connection_button.grid()
@@ -186,8 +186,6 @@ class FortressCoopController(FortressCoopLaunchController):
                 'Waiting for host. Host perks shared; Fundraising uses your own enabled rank.')
         for widget in getattr(self, 'final_fortress_setup_combos', ()):
             widget.configure(state='disabled' if busy or guest else 'readonly')
-        if sessions:
-            self.final_fortress_setup_combos[0].configure(state='disabled')
         if hasattr(self, 'final_fortress_profile_combo') and sessions:
             self.final_fortress_profile_combo.configure(state='disabled')
 

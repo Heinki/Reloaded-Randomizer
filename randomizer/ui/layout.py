@@ -7,7 +7,6 @@ from ._builder_dependencies import (
     DIFFICULTIES,
     GAME_SPEEDS,
     MAX_REWARDS_PER_CHECK,
-    PROGRESSION_MODES,
     REWARD_MODES,
     TreeTooltip,
     WidgetTooltip,
@@ -474,23 +473,6 @@ def _build_right_panel(self, main_frame):
         'mission a seed-fixed mixed roster.',
     )
 
-    ttk.Label(options_row, text='Game Mode').grid(row=10, column=0, sticky='w', pady=(6, 0), padx=(0, 8))
-    self.progression_mode_combo = ttk.Combobox(
-        options_row,
-        state='readonly',
-        textvariable=self.game_mode_var,
-        values=self.game_mode_choices,
-        width=12,
-    )
-    self.progression_mode_combo.grid(row=10, column=1, sticky='ew', pady=(6, 0))
-    self.progression_mode_combo.bind('<<ComboboxSelected>>', self.on_game_mode_changed, add='+')
-    WidgetTooltip(
-        self.progression_mode_combo,
-        'Classic follows the installed campaign order and opens one mission at a time. '
-        'Mission List uses a randomized linear order. Grid Mode uses randomized missions '
-        'on an orthogonal-neighbor board. Shop Mode replaces the mission view with its '
-        'roguelike run, loadout, and purchase workspace.',
-    )
     # Read-only ttk comboboxes retain focus after selection and their class
     # binding consumes the mouse wheel before bind_all sees it. Bind directly
     # so scrolling Settings never changes a previously focused option.
@@ -499,7 +481,6 @@ def _build_right_panel(self, main_frame):
         self.campaign_combo,
         self.difficulty_combo,
         self.reward_mode_combo,
-        self.progression_mode_combo,
     ):
         combo.bind('<MouseWheel>', self.on_settings_control_mousewheel, add='+')
 
@@ -559,21 +540,6 @@ def _build_right_panel(self, main_frame):
     shop_settings_frame.columnconfigure(1, weight=1)
     self.build_classic_shop_controls(shop_settings_frame)
 
-    ttk.Label(shop_settings_frame, text='Game Mode').grid(
-        row=1, column=0, sticky='w', padx=(0, 12)
-    )
-    self.shop_progression_mode_combo = ttk.Combobox(
-        shop_settings_frame,
-        state='readonly',
-        textvariable=self.game_mode_var,
-        values=self.game_mode_choices,
-        width=18,
-    )
-    self.shop_progression_mode_combo.grid(row=1, column=1, sticky='ew')
-    self.shop_progression_mode_combo.bind(
-        '<<ComboboxSelected>>', self.on_game_mode_changed, add='+'
-    )
-
     ttk.Separator(shop_settings_frame, orient='horizontal').grid(
         row=2, column=0, columnspan=2, sticky='ew', pady=12
     )
@@ -620,9 +586,6 @@ def _build_right_panel(self, main_frame):
         combo.bind('<MouseWheel>', self.on_settings_control_mousewheel, add='+')
     self.shop_faction_pool_combo.bind(
         '<<ComboboxSelected>>', self.on_shop_faction_pool_changed, add='+'
-    )
-    self.shop_progression_mode_combo.bind(
-        '<MouseWheel>', self.on_settings_control_mousewheel, add='+'
     )
 
     shop_mission_pool_frame = ttk.LabelFrame(
