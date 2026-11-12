@@ -21,7 +21,8 @@ from randomizer.maps.identity_safety import (
 )
 from randomizer.maps.starting_units import starting_unit_buff_plan
 from randomizer.maps.miner_buffs import (
-    player_refinery_rules, upgrade_starting_player_miners, validate_refinery_miner_isolation,
+    native_refinery_miner_upgrade_rules, player_refinery_rules,
+    upgrade_starting_player_miners, validate_refinery_miner_isolation,
 )
 from randomizer.maps.prerequisites import (
     negative_prerequisite_safety_rules, player_building_prerequisite_rules,
@@ -3324,11 +3325,22 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         if building_prerequisite_rules:
             merge_ini_section_values(lines, building_prerequisite_rules)
         preserved_refineries = sorted(refinery_building_ids & native_required_access_ids)
+        native_miner_rules, native_miner_upgrades = native_refinery_miner_upgrade_rules(
+            lines, installed_rule_sections, native_map_sections, clone_handled,
+            preserved_native_ids=native_required_access_ids,
+        )
+        merge_ini_section_values(lines, native_miner_rules)
         if preserved_refineries:
             self.append_log(
                 'Kept native refinery production for exact mission checks: '
                 + ', '.join(preserved_refineries)
-                + '. Their free miners retain native stats; factory-built miners keep earned upgrades.'
+                + '. Safe human-owned free miners receive earned upgrades '
+                'through an owner-only conversion power; native AI spawns stay unchanged.'
+            )
+        if native_miner_upgrades:
+            self.append_log(
+                'Prepared owner-only native refinery miner upgrades: '
+                + ', '.join(sorted(native_miner_upgrades)) + '.'
             )
         starting_miner_replacements = upgrade_starting_player_miners(
             lines, installed_rule_sections, native_map_sections, clone_handled,
@@ -3342,6 +3354,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         refinery_failures = validate_refinery_miner_isolation(
             lines, installed_rule_sections, native_map_sections, clone_handled,
             preserved_native_ids=native_required_access_ids,
+            native_miner_upgrades=native_miner_upgrades,
         )
         if refinery_failures:
             raise ValueError('Refinery/miner isolation validation failed: '

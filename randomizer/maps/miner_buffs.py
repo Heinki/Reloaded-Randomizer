@@ -225,9 +225,78 @@ def upgrade_starting_player_miners(lines, installed_sections, native_sections, c
     return replacements
 
 
-def validate_refinery_miner_isolation(
+def native_refinery_miner_upgrade_rules(
     lines, installed_sections, native_sections, clone_handled, *,
     preserved_native_ids=(),
+):
+    """Upgrade human free miners without changing exact refinery identities.
+
+    FreeUnit is shared with AI refineries. A hidden, owner-only Phobos
+    conversion power instead upgrades newly spawned miners once per second.
+    Never convert a miner named by an authored exact-type event or action.
+    """
+    pairs = refinery_free_unit_pairs(native_sections, installed_sections)
+    preserved = {str(item).upper() for item in preserved_native_ids}
+    scripted = {
+        token.strip().upper()
+        for section in ('Events', 'Actions')
+        for value in _values(native_sections, section).values()
+        for token in str(value).split(',')
+    }
+    conversions = {
+        miner: str((clone_handled.get(miner) or {}).get('clone_id') or '')
+        for refinery, miner in pairs.items()
+        if refinery in preserved and miner not in scripted
+    }
+    conversions = {source: clone for source, clone in conversions.items() if clone}
+    records = map_house_records(lines)
+    countries = unique_in_order(
+        records[house].get('country') or house.removesuffix(' House')
+        for house in player_controlled_houses(lines, records=records)
+    )
+    if not conversions or not countries:
+        return {}, {}
+
+    reserved = {str(name).casefold() for name in installed_sections}
+    reserved.update(str(name).casefold() for name in all_section_value_maps(lines))
+    power = _collision_safe_type_id('RLRMinerUpgrade', 'native-refinery-miners', reserved)
+    warhead = _collision_safe_type_id('RLRMinerUpgradeWH', 'native-refinery-warhead', reserved)
+    rules = {
+        warhead: {
+            'Verses': '0%,0%,0%,0%,0%,0%,0%,0%,0%,0%,0%',
+            'CellSpread': '0', 'AnimList': 'none',
+            'Wall': 'no', 'Wood': 'no', 'Tiberium': 'no',
+        },
+        power: {
+            'Name': 'Randomizer native refinery miner upgrades',
+            'Type': 'GenericWarhead', 'Action': 'None',
+            'RechargeTime': '0.016667', 'IsPowered': 'no',
+            'DisableableFromShell': 'no', 'ShowTimer': 'no',
+            'SW.AlwaysGranted': 'yes', 'SW.RequiredHouses': ','.join(countries),
+            'SW.AllowPlayer': 'yes', 'SW.AllowAI': 'no',
+            'SW.InitialReady': 'yes', 'SW.AutoFire': 'yes',
+            'SW.ManualFire': 'no', 'SW.ShowCameo': 'no',
+            'SW.AITargeting': 'NoTarget', 'SW.AITargeting.Constraints': 'none',
+            'SW.Damage': '0', 'SW.Warhead': warhead,
+            'SW.CreateRadarEvent': 'no', 'SW.ActivationSound': 'none',
+            'EVA.Ready': 'none', 'EVA.Activated': 'none', 'EVA.Detected': 'none',
+            'Message.Detected': 'NOSTR:',
+        },
+    }
+    for index, (source, clone) in enumerate(sorted(conversions.items())):
+        rules[power].update({
+            f'Convert{index}.From': source,
+            f'Convert{index}.To': clone,
+            f'Convert{index}.AffectedHouses': 'owner',
+        })
+    _register_map_type(rules, lines, installed_sections, 'Warheads', warhead)
+    _register_map_type(rules, lines, installed_sections, 'SuperWeaponTypes', power)
+    return rules, conversions
+
+
+def validate_refinery_miner_isolation(
+    lines, installed_sections, native_sections, clone_handled, *,
+    preserved_native_ids=(), native_miner_upgrades=None,
 ):
     """Reject shared spawn leaks and broken private refinery/miner links."""
     sections = all_section_value_maps(lines)
@@ -249,6 +318,35 @@ def validate_refinery_miner_isolation(
         for entries in (installed_sections, sections)
         for value in _values(entries, 'VehicleTypes').values()
     }
+    registered_powers = {
+        value.upper()
+        for entries in (installed_sections, sections)
+        for value in _values(entries, 'SuperWeaponTypes').values()
+    }
+    for source, clone in (native_miner_upgrades or {}).items():
+        powers = [
+            (power, values, key[:-2])
+            for power, values in sections.items()
+            if power.upper() in registered_powers
+            for key, value in values.items()
+            if key.startswith('convert') and key.endswith('.to')
+            and value.upper() == clone.upper()
+            and values.get(key[:-2] + 'from', '').upper() == source.upper()
+        ]
+        if not powers:
+            failures.append(f'{source} has no registered owner-only upgrade power')
+        for power, values, prefix in powers:
+            if values.get(prefix + 'affectedhouses', '').lower() != 'owner':
+                failures.append(f'{power} converts non-owner {source} miners')
+            for key, expected in (
+                ('sw.allowai', 'no'), ('sw.allowplayer', 'yes'),
+                ('sw.alwaysgranted', 'yes'), ('sw.autofire', 'yes'),
+                ('sw.showcameo', 'no'), ('sw.aitargeting', 'notarget'),
+            ):
+                if values.get(key, '').lower() != expected:
+                    failures.append(f'{power} has invalid {key}')
+            if clone.upper() not in registered_units:
+                failures.append(f'{power} converts to an unregistered miner {clone}')
     for refinery, miner in refinery_pairs.items():
         values = _values(installed_sections, refinery)
         values.update(_values(sections, refinery))

@@ -142,8 +142,10 @@ payload upgrades; the native chemical explosion remains active.
 
 Permanent Shop progression spends Gems on unit access, unit buffs, all 18
 reviewed superweapons and support powers, plus their 44 power buffs. Purchased
-permanent powers activate automatically in future Shop runs; unit buffs follow
-selected starting-loadout access.
+permanent powers activate automatically in future Shop runs. Permanent unit
+buffs are frozen at run start and activate when their unit becomes available,
+including units bought later with Ore. Older active runs repair incomplete
+snapshots once when loaded; disabled permanent unit buffs stay disabled.
 
 Minor Secret Lab copies are consolidated into one native unit each: Desolator,
 Chitzkoi, Cyborg, Terrorist, Yuri Clone, Tesla Tank and Repair Disk. Each has one
@@ -214,8 +216,11 @@ miner. Original and upgraded miners can unload at either original or
 private player refineries, preserving each miner's compatible destinations.
 When mission construction events or reviewed objectives require an exact native refinery
 type, that refinery stays native and buildable. This preserves the Nod and GDI
-Tiberian Sun opening objectives. Its free miner retains native stats; miners
-built at factories still receive earned upgrades.
+Tiberian Sun opening objectives. A hidden owner-only conversion power upgrades
+its human-owned free miners within one recharge interval (about one game
+second), including in Nod's second Tiberian Sun mission. Miners referenced by
+exact scripted type checks retain their native identity. Factory-built miners
+receive earned upgrades directly.
 Native enemy refineries keep their original miners. Player miners revert to
 their native type when captured by computer-controlled houses. Safe player miners
 already placed in a mission receive the same upgrades, including ALL07_RA2's
