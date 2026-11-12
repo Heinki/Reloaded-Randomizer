@@ -19,6 +19,9 @@ from randomizer.config.game_profile import ART_INI_NAME, RULES_INI_NAME
 ART_CACHE_PATH = CAMEO_CACHE_DIR / ART_INI_NAME
 RULES_CACHE_PATH = CAMEO_CACHE_DIR / RULES_INI_NAME
 ARCHIPELAGO_CAMEO_PATH = SOURCE_DIR / 'Assets' / 'archipelago.png'
+# Menu previews must show the original rookie artwork, independently of
+# installed art mappings and previously cached promotion cameos.
+UNIT_PREVIEW_IMAGES = {'HTNK': 'rhino-unranked.png'}
 SAFE_ASSET_NAME = re.compile(r'^[A-Za-z0-9_.-]+$')
 _ART_CAMEO_NAMES = None
 _RULES_ART_NAMES = None
@@ -360,7 +363,7 @@ def ensure_unit_cameos(unit_ids, *, synchronous=False):
     for unit_id in unit_ids:
         unit_id = str(unit_id).upper()
         sidebar_config = UNIT_SIDEBAR_IMAGES.get(unit_id, {})
-        custom_image = sidebar_config.get('image')
+        custom_image = UNIT_PREVIEW_IMAGES.get(unit_id) or sidebar_config.get('image')
         if custom_image:
             result[unit_id] = custom_sidebar_preview(custom_image)
             continue
