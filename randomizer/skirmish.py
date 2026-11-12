@@ -2,6 +2,7 @@
 
 from copy import deepcopy
 import hashlib
+import logging
 from pathlib import Path
 import random
 
@@ -35,7 +36,7 @@ def playable_countries():
 
 
 def discover_maps(root):
-    """Offer unscripted maps only; authored campaigns keep their own adapters."""
+    """Offer installed multiplayer maps, preserving their authored map scripts."""
     root = Path(root)
     result = {}
     for directory in ('Maps', 'MapsMO'):
@@ -45,13 +46,18 @@ def discover_maps(root):
         for source in sorted(folder.rglob('*')):
             if source.suffix.lower() not in ('.map', '.mpr', '.yrm'):
                 continue
-            if any(part.casefold() in ('co-op', 'cooperative', 'coop', 'challenge', 'campaign') for part in source.relative_to(folder).parts[:-1]):
+            if any(part.casefold() in ('co-op', 'cooperative', 'coop', 'challenge', 'challenges', 'campaign', 'campaigns') for part in source.relative_to(folder).parts[:-1]):
                 continue
             rows = all_section_value_maps_preserve(source.read_bytes().decode('latin-1').splitlines())
-            if any(rows.get(name) for name in ('Triggers', 'TeamTypes', 'AITriggerTypes', 'Houses')):
+            if rows.get('Basic', {}).get('MultiplayerOnly', 'yes').casefold() in ('no', 'false', '0'):
                 continue
-            starts = [i for i in range(8) if str(i) in rows.get('Waypoints', {})]
-            if len(starts) < 2 or starts != list(range(len(starts))):
+            # Later low-numbered waypoints can be script destinations, not
+            # player seats. Prefer the authored multiplayer start count.
+            count = rows.get('Header', {}).get(
+                'NumberStartingPoints', rows.get('Basic', {}).get('MaxPlayer', '8'))
+            limit = int(count) if count.isdigit() and 2 <= int(count) <= 8 else 8
+            starts = [i for i in range(limit) if str(i) in rows.get('Waypoints', {})]
+            if len(starts) < 2 or 0 not in starts:
                 continue
             from randomizer.skirmish_factions import map_countries
             countries = tuple(map_countries(root, {'path': str(source.resolve())}, rows=rows).values())
@@ -84,8 +90,8 @@ def prepare_game(root, definition, rewards, settings, *, country, color, opponen
     if len(definition['starts']) < 2:
         raise ValueError('Skirmish map requires two start positions.')
     rows = all_section_value_maps_preserve(source.read_bytes().decode('latin-1').splitlines())
-    if any(rows.get(name) for name in ('Triggers', 'TeamTypes', 'AITriggerTypes', 'Houses')):
-        raise ValueError('Progression Skirmish requires an unscripted multiplayer map.')
+    if rows.get('Basic', {}).get('MultiplayerOnly', 'yes').casefold() in ('no', 'false', '0'):
+        raise ValueError('Progression Skirmish requires a multiplayer map.')
     # Team maps often put positions 0 and 1 beside each other. Keep the human
     # at 0 (startup providers use it), and choose the farthest authored start.
     waypoints = rows.get('Waypoints', {})
@@ -285,7 +291,12 @@ def _ra2_rewards(rows, rewards, settings, country, randomized):
     for unit in unlocked:
         overlays.setdefault(unit, {}).update(TechLevel='1', Owner='RZPLAYER', RequiredHouses='RZPLAYER', ForbiddenHouses='none')
     # Campaign clone code receives a temporary House record for ownership analysis.
-    rows['Houses'] = {'0': 'RZPLAYER House'}
+    authored_houses = deepcopy(rows.get('Houses'))
+    if 'RZPLAYER House' in rows:
+        raise ValueError('Source map reserves the progression player house.')
+    rows['Houses'] = dict(authored_houses or {})
+    next_house = max((int(key) for key in rows['Houses'] if key.isdigit()), default=-1) + 1
+    rows['Houses'][str(next_house)] = 'RZPLAYER House'
     rows['RZPLAYER House'] = {'Country': 'RZPLAYER', 'PlayerControl': 'yes'}
     rows.setdefault('Basic', {})['Player'] = 'RZPLAYER House'
     lines = IniLines(_serialize(rows).splitlines())
@@ -346,8 +357,13 @@ def _ra2_rewards(rows, rewards, settings, country, randomized):
         forced_isolated_clone_ids=payload, forced_compact_clone_ids=payload,
         share_basic_equivalent_buffs=bool(settings.get('_skirmish_share_buffs', False)),
         unit_specific_mode=True, owned_clone_rule_overlays=overlays, **kwargs)
+    # Keeping authored script references native does not block production clones.
+    blocking = [warning for warning in warnings
+                if not str(warning).endswith('build-only clone kept native mission references')]
+    if blocking:
+        raise ValueError('Cannot apply Skirmish rewards: ' + '; '.join(map(str, blocking)))
     if warnings:
-        raise ValueError('Cannot apply Skirmish rewards: ' + '; '.join(map(str, warnings)))
+        logging.getLogger(__name__).info('Skirmish clone notices: %s', '; '.join(map(str, warnings)))
     from randomizer.maps.shop_modifiers import apply_shop_clone_modifiers, apply_shop_clone_restrictions
     apply_shop_clone_modifiers(changes, handled, settings)
     apply_shop_clone_restrictions(changes, handled, installed, settings)
@@ -404,7 +420,10 @@ def _ra2_rewards(rows, rewards, settings, country, randomized):
     safety_rules, _ = negative_prerequisite_safety_rules(lines, installed)
     merge_ini_section_values(lines, safety_rules)
     rows = all_section_value_maps_preserve(lines)
-    rows.pop('Houses', None)
+    if authored_houses is None:
+        rows.pop('Houses', None)
+    else:
+        rows['Houses'] = authored_houses
     rows.pop('RZPLAYER House', None)
     return rows, side
 

@@ -49,6 +49,8 @@ def select_pool(missions, catalogue, *, enabled, factions=(), excluded=()):
     factions, excluded = set(factions), set(excluded)
     grouped = {}
     for mission in catalogue:
+        if (GAME == 'mo' and Path(mission['scenario']).stem.casefold() == 'l_levelgrounddancing'):
+            continue  # Authored start pocket prevents AI MCV deployment.
         if mission['code'] in excluded or (factions and mission['faction'] not in factions):
             continue
         grouped.setdefault(mission['scenario'], []).append(mission)
@@ -62,7 +64,7 @@ class SkirmishResultWatch:
     """Read both fresh, complete native 1v1 score records.
 
     Closing/restarting a game cannot award victory. DTA uses its existing
-    directory-aware ScoreLog reader and completion receipt. RA2 can collect
+    directory-aware ScoreLog reader. RA2 can collect
     scores without sending network statistics, and its AI name is localized.
     """
     def __init__(self, path):
@@ -114,7 +116,7 @@ class SkirmishResultWatch:
                 continue
             if not self._scenario:
                 continue
-            if "quit, but didn't see completion" in line:
+            if "quit, but didn't see completion" in line and len(self._scores) < 2:
                 self._quit = True
             if 'Sending game results.' in line:
                 self._completion = bool(re.search(r'\bSawCompletion=1\b', line))
@@ -131,8 +133,6 @@ class SkirmishResultWatch:
         if not self._scenario or self._quit or self._unarmed:
             return
         if GAME != 'dta' and not final:
-            return
-        if not self._completion and not (final and GAME != 'dta'):
             return
         local = [outcome for name, outcome in self._scores if name == 'Commander']
         enemy = [outcome for name, outcome in self._scores if name != 'Commander']
@@ -168,7 +168,8 @@ class SkirmishResultWatch:
                     self._offset, self._identity = handle.tell(), identity
                     handle.seek(max(0, self._offset - 64))
                     self._anchor = handle.read(min(self._offset, 64))
-            self.error = ''
+            if not self._unarmed:
+                self.error = ''
         except OSError as exc:
             self.error = str(exc)
         if final and self._tail:
