@@ -37,3 +37,8 @@ final_fortress_state.before_recovery.*.json
 final_fortress_testing_state*.json
 final_fortress_testing_state.lock
 final_fortress_debug.enabled
+
+# Personal Conquest campaigns and durable battle receipts
+conquest_state*
+conquest_coop_state*
+conquest_coop_guest*

@@ -63,6 +63,9 @@ def run_self_check():
         from randomizer.audit import installation_report
 
         report = installation_report()
+        from randomizer.conquest.engine import catalogue_report as conquest_catalogue_report
+        conquest = conquest_catalogue_report(GAME_ROOT)
+        report['conquest'] = {key: value for key, value in conquest.items() if key != 'maps'}
     except Exception:
         report = {
             'passed': False,

@@ -55,6 +55,7 @@ from .unlock_view import UnlockViewController
 from .enemy_scaling import EnemyScalingController
 from .archipelago_controller import ArchipelagoController
 from .final_fortress_controller import FinalFortressController
+from .conquest_controller import ConquestController
 from randomizer.config.game_profile import (
     ENABLE_SHOP_MODE,
     OBJECTIVE_REWARDS_READY,
@@ -66,6 +67,7 @@ from .progression_battles import ProgressionBattlesController
 
 
 class LauncherApp(
+    ConquestController,
     ProgressionBattlesController,
     FinalFortressController,
     UpdateController,
@@ -506,6 +508,7 @@ class LauncherApp(
         bind_cameo_loader(self)
         self.initialize_shop_controller()
         self.initialize_final_fortress_controller()
+        self.initialize_conquest()
         self.cleanup_generated_root_maps()
         self.disable_generated_rules_for_client()
 
