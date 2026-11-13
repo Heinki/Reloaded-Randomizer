@@ -19,18 +19,13 @@ def _map_catalogue(path):
     }
 
 
-def map_countries(root, definition, *, rows=None):
-    """Respect native map side exclusions and disabled country overrides."""
-    from randomizer.skirmish import GAME, all_section_value_maps_preserve, playable_countries
+def map_metadata(root, definition):
+    """Resolve native map metadata, including inherited catalogue sections."""
+    from randomizer.skirmish import GAME
     root = Path(root).resolve()
     source = (root / definition['path']).resolve()
     if not source.is_relative_to(root):
         raise ValueError('Skirmish map must belong to this installation.')
-    if rows is None:
-        rows = all_section_value_maps_preserve(source.read_text(encoding='latin-1').splitlines())
-    if GAME == 'dta':
-        from randomizer.coop.catalogue import inherited_sections
-        rows = inherited_sections(root, source)
     filename = 'MentalOmegaMaps.ini' if GAME == 'mo' else 'MPMaps.ini'
     catalogue = _map_catalogue(root / 'INI' / filename)
     key = source.relative_to(root).with_suffix('').as_posix().casefold()
@@ -42,6 +37,48 @@ def map_countries(root, definition, *, rows=None):
             raise ValueError('Invalid Skirmish catalogue BaseSection.')
         seen.add(parent)
         metadata = {**catalogue[parent], **metadata}
+    return metadata
+
+
+def supports_progression_skirmish(root, definition, *, rows):
+    """Accept AI-compatible standard maps without requiring mode patches."""
+    from randomizer.skirmish import GAME
+    metadata = map_metadata(root, definition)
+    basic = {key.casefold(): value.split(';', 1)[0].strip()
+             for key, value in rows.get('Basic', {}).items()}
+    if basic.get('multiplayeronly', 'yes').casefold() in ('no', 'false', '0'):
+        return False
+    if any(values.get('humanplayersonly', '').casefold() in ('yes', 'true', '1')
+           for values in (basic, metadata)):
+        return False
+    if GAME == 'reloaded':
+        source = (Path(root) / definition['path']).resolve()
+        folders = source.relative_to(Path(root).resolve()).parts[:-1]
+        if any(part.casefold() in (
+                'missions', 'campaign', 'campaigns', 'co-op', 'cooperative',
+                'coop', 'challenge', 'challenges', 'assault', 'koth', 'survivor',
+        ) for part in folders):
+            return False
+        # Built-in Oil Control variants also live in Maps/Standard. The
+        # native catalogue, rather than the folder, defines their mode.
+        # Unlisted custom maps can declare their mode in [Basic].
+        modes = metadata.get('gamemodes', basic.get('gamemode', 'Standard'))
+        if 'standard' not in {mode.strip().casefold() for mode in modes.split(',')}:
+            return False
+    return True
+
+
+def map_countries(root, definition, *, rows=None):
+    """Respect native map side exclusions and disabled country overrides."""
+    from randomizer.skirmish import GAME, all_section_value_maps_preserve, playable_countries
+    root = Path(root).resolve()
+    source = (root / definition['path']).resolve()
+    metadata = map_metadata(root, definition)
+    if rows is None:
+        rows = all_section_value_maps_preserve(source.read_text(encoding='latin-1').splitlines())
+    if GAME == 'dta':
+        from randomizer.coop.catalogue import inherited_sections
+        rows = inherited_sections(root, source)
     countries = playable_countries()
     denied = {
         int(token.strip()) for token in metadata.get('disallowedplayersides', '').split(',')

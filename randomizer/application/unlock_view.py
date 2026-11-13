@@ -92,6 +92,7 @@ class UnlockViewController:
     def unlocks_view_visible(self):
         return bool(
             hasattr(self, 'info_tabs')
+            and self.info_tabs.winfo_ismapped()
             and hasattr(self, 'unlocks_tab')
             and self.info_tabs.select() == str(self.unlocks_tab)
         )
@@ -110,12 +111,19 @@ class UnlockViewController:
 
     def on_unlock_dashboard_tab_changed(self, _event=None):
         if self.unlocks_view_visible():
-            self.after_idle(self.refresh_unlock_dashboard)
+            self.queue_view_refresh(self.refresh_unlock_dashboard)
 
     def on_unlock_dashboard_search_changed(self, *_args):
         self.unlock_dashboard_signature = None
         if self.unlocks_view_visible():
-            self.refresh_unlock_dashboard()
+            pending = getattr(self, '_unlock_search_after', None)
+            if pending is not None:
+                self.after_cancel(pending)
+            def refresh():
+                self._unlock_search_after = None
+                if self.unlocks_view_visible():
+                    self.refresh_unlock_dashboard()
+            self._unlock_search_after = self.after(150, refresh)
 
     def unlock_dashboard_search_matches(self, entry):
         query = self.unlock_dashboard_search_var.get().strip().casefold()

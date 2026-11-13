@@ -424,3 +424,11 @@ def ensure_superweapon_cameos(
         if cameo_name:
             requested[superweapon_id] = cameo_name
     return ensure_requested_cameos(requested, synchronous=synchronous)
+
+
+# Tk requests are batched on the existing worker; workers retain direct access.
+from .asset_loader import deferred_cameos
+
+ensure_unit_cameos, ensure_superweapon_cameos, bind_cameo_loader = deferred_cameos(
+    ensure_unit_cameos, ensure_superweapon_cameos, synchronous=True,
+)

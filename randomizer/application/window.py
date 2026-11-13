@@ -245,6 +245,29 @@ class WindowController(GameModeNavigationController):
         ):
             self.after_idle(self.resize_grid_canvas_window)
 
+    def queue_view_refresh(self, callback):
+        """Coalesce page renders and paint the existing modal before Tk work."""
+        jobs = self.__dict__.setdefault('_pending_view_refreshes', set())
+        key = callback
+        if key in jobs:
+            return
+        jobs.add(key)
+
+        def render():
+            jobs.discard(key)
+            if not getattr(self, 'initial_load_complete', False) or self.busy_depth:
+                callback()
+                return
+            self.show_busy('Loading page…', 'Preparing this page. Please wait.')
+            def display():
+                try:
+                    callback()
+                finally:
+                    self.hide_busy()
+            self.after(20, display)
+
+        self.after_idle(render)
+
     def on_info_tab_changed(self, _event=None):
         if (
             getattr(self, '_enemy_buffs_view_dirty', False)
@@ -252,7 +275,7 @@ class WindowController(GameModeNavigationController):
             and hasattr(self, 'enemy_buffs_tab')
             and self.info_tabs.select() == str(self.enemy_buffs_tab)
         ):
-            self.after_idle(self.refresh_enemy_buffs_view)
+            self.queue_view_refresh(self.refresh_enemy_buffs_view)
             return
         if (
             not getattr(self, '_unlocks_view_dirty', False)
@@ -261,7 +284,7 @@ class WindowController(GameModeNavigationController):
             or self.info_tabs.select() != str(self.unlocks_tab)
         ):
             return
-        self.after_idle(self.refresh_unlocks_view)
+        self.queue_view_refresh(self.refresh_unlocks_view)
 
     def ui_palette(self):
         return DARK_UI_PALETTE if self.dark_mode_var.get() else LIGHT_UI_PALETTE
@@ -391,7 +414,7 @@ class WindowController(GameModeNavigationController):
         self.busy_progress.configure(
             mode='indeterminate', maximum=100, value=0
         )
-        self.busy_progress.start(12)
+        self.busy_progress.start(60)
         # Cursor names differ between Windows and X11 Tk builds.
         for cursor_name in ('wait', 'watch'):
             try:
@@ -413,7 +436,7 @@ class WindowController(GameModeNavigationController):
         self.busy_detail.configure(
             text=f'{self.busy_detail_text}\nElapsed: {elapsed}s',
         )
-        self.busy_update_after_id = self.after(250, self.update_busy_elapsed)
+        self.busy_update_after_id = self.after(1000, self.update_busy_elapsed)
 
     def hide_busy(self):
         self.busy_depth = max(0, self.busy_depth - 1)
@@ -433,6 +456,7 @@ class WindowController(GameModeNavigationController):
             pass
         self.busy_overlay.place_forget()
         self.configure(cursor='')
+        self.refresh_game_mode_navigation()
 
     def queue_busy_progress(self, detail, current=None, total=None):
         """Queue a real worker stage without reading Tk from that worker."""
@@ -451,7 +475,7 @@ class WindowController(GameModeNavigationController):
             )
         else:
             self.busy_progress.configure(mode='indeterminate')
-            self.busy_progress.start(12)
+            self.busy_progress.start(60)
         elapsed = max(0, int(time.monotonic() - self.busy_started_at))
         self.busy_detail.configure(
             text=f'{self.busy_detail_text}\nElapsed: {elapsed}s',
@@ -484,14 +508,14 @@ class WindowController(GameModeNavigationController):
                 sys.setswitchinterval(previous_switch_interval)
 
             def deliver_result(result=result):
-                # The background phase is finished. Remove the animated
-                # overlay before the main-thread UI refresh so it cannot look
-                # like a frozen loading screen while cards/grid are painted.
-                self.hide_busy()
+                # Keep the modal visible until the result has been displayed.
                 try:
                     on_success(result)
                 except Exception as exc:
+                    self.hide_busy()
                     on_error(exc, traceback.format_exc())
+                else:
+                    self.hide_busy()
 
             self.ui_queue.put(('callback', deliver_result))
 

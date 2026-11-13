@@ -414,4 +414,10 @@ class RewardController(RewardGeneration):
         if children:
             self.missions_tree.selection_set(children[0])
             self.selected_index.set(int(children[0]))
-        self.append_log(f'Loaded {len(self.missions)} missions.')
+        campaign_count = sum(not mission.get('skirmish') for mission in self.missions)
+        skirmish_count = len({mission['scenario'] for mission in self.missions
+                              if mission.get('skirmish')})
+        message = f'Loaded {campaign_count} campaign missions.'
+        if skirmish_count:
+            message += f' {skirmish_count} unique skirmish maps available for standalone Shop/Grid runs.'
+        self.append_log(message)

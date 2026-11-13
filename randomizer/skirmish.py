@@ -36,7 +36,9 @@ def playable_countries():
 
 
 def discover_maps(root):
-    """Offer installed multiplayer maps, preserving their authored map scripts."""
+    """Offer installed standard AI maps, preserving their authored scripts."""
+    from randomizer.skirmish_factions import map_countries, supports_progression_skirmish
+
     root = Path(root)
     result = {}
     for directory in ('Maps', 'MapsMO'):
@@ -49,7 +51,8 @@ def discover_maps(root):
             if any(part.casefold() in ('co-op', 'cooperative', 'coop', 'challenge', 'challenges', 'campaign', 'campaigns') for part in source.relative_to(folder).parts[:-1]):
                 continue
             rows = all_section_value_maps_preserve(source.read_bytes().decode('latin-1').splitlines())
-            if rows.get('Basic', {}).get('MultiplayerOnly', 'yes').casefold() in ('no', 'false', '0'):
+            definition = {'path': str(source.resolve())}
+            if not supports_progression_skirmish(root, definition, rows=rows):
                 continue
             # Later low-numbered waypoints can be script destinations, not
             # player seats. Prefer the authored multiplayer start count.
@@ -59,8 +62,7 @@ def discover_maps(root):
             starts = [i for i in range(limit) if str(i) in rows.get('Waypoints', {})]
             if len(starts) < 2 or 0 not in starts:
                 continue
-            from randomizer.skirmish_factions import map_countries
-            countries = tuple(map_countries(root, {'path': str(source.resolve())}, rows=rows).values())
+            countries = tuple(map_countries(root, definition, rows=rows).values())
             if not countries:
                 continue
             label = str(source.relative_to(root))
@@ -81,17 +83,17 @@ def prepare_game(root, definition, rewards, settings, *, country, color, opponen
         raise ValueError('Skirmish map must belong to this installation.')
     if country not in playable_countries().values() or color not in multiplayer_colors(root).values():
         raise ValueError('Choose an installed faction and color.')
-    from randomizer.skirmish_factions import map_countries
-    available = tuple(map_countries(root, definition).values())
+    from randomizer.skirmish_factions import map_countries, supports_progression_skirmish
+    rows = all_section_value_maps_preserve(source.read_bytes().decode('latin-1').splitlines())
+    if not supports_progression_skirmish(root, definition, rows=rows):
+        raise ValueError('Progression Skirmish requires a standard multiplayer map that supports AI players.')
+    available = tuple(map_countries(root, definition, rows=rows).values())
     if country not in available:
         raise ValueError('Selected faction is not supported by this Skirmish map.')
     if type(opponents) is not int or opponents != 1:
         raise ValueError('Progression Skirmish requires exactly one enemy AI.')
     if len(definition['starts']) < 2:
         raise ValueError('Skirmish map requires two start positions.')
-    rows = all_section_value_maps_preserve(source.read_bytes().decode('latin-1').splitlines())
-    if rows.get('Basic', {}).get('MultiplayerOnly', 'yes').casefold() in ('no', 'false', '0'):
-        raise ValueError('Progression Skirmish requires a multiplayer map.')
     # Team maps often put positions 0 and 1 beside each other. Keep the human
     # at 0 (startup providers use it), and choose the farthest authored start.
     waypoints = rows.get('Waypoints', {})
