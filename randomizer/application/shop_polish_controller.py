@@ -1057,14 +1057,14 @@ class ShopPolishController(ShopArchipelagoController):
         if category == 'Unit Buffs':
             self.shop_catalogue_help_var.set(
                 f'Buffing {self.shop_buff_target_var.get()}. '
-                'Buy a buff repeatedly to stack it up to its listed limit.'
+                'Buy one stack or use Buy Max to spend available Ore up to its listed limit.'
                 if visible else
                 'Select an owned unit above. No unavailable-unit buffs are shown.'
             )
         elif category == 'Power Buffs':
             self.shop_catalogue_help_var.set(
                 f'Buffing {self.shop_buff_target_var.get()}. '
-                'Buy a buff repeatedly to add stacks up to its listed limit.'
+                'Buy one stack or use Buy Max to spend available Ore up to its listed limit.'
                 if visible else
                 'Select an owned power above. No unavailable-power buffs are shown.'
             )
@@ -1270,8 +1270,11 @@ class ShopPolishController(ShopArchipelagoController):
         self.shop_loadout_upgrade_purchase_button.configure(
             state='normal' if buyable else 'disabled'
         )
+        self.shop_loadout_upgrade_max_button.configure(
+            state='normal' if buyable else 'disabled'
+        )
 
-    def buy_selected_loadout_upgrade(self, _event=None):
+    def buy_selected_loadout_upgrade(self, _event=None, *, buy_max=False):
         selected = self.shop_loadout_upgrade_tree.selection()
         reward_id = (
             self._shop_loadout_upgrade_rows.get(selected[0], '')
@@ -1279,7 +1282,7 @@ class ShopPolishController(ShopArchipelagoController):
         )
         if reward_id:
             self._shop_loadout_upgrade_focus_reward_id = reward_id
-            self._buy_shop_reward(reward_id)
+            self._buy_shop_reward(reward_id, buy_max=buy_max)
         return 'break'
 
     def shop_loadout_upgrade_tooltip(self, row_id):
@@ -1430,6 +1433,19 @@ class ShopPolishController(ShopArchipelagoController):
         )
         self.shop_purchase_button.configure(
             state='normal' if buyable else 'disabled'
+        )
+        selected_reward_id = (
+            self._shop_catalogue_rows.get(selected[0], '') if selected else ''
+        )
+        selected_entry = self._shop_entry_by_reward_id.get(selected_reward_id)
+        can_buy_max = bool(
+            buyable and selected_entry is not None
+            and selected_entry.reward_type in {
+                ShopRewardType.UNIT_BUFF, ShopRewardType.POWER_BUFF
+            }
+        )
+        self.shop_purchase_max_button.configure(
+            state='normal' if can_buy_max else 'disabled'
         )
         reward_id = self._shop_catalogue_rows.get(
             selected[0], ''

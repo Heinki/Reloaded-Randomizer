@@ -140,6 +140,17 @@ It uses the chemical cameo for both access and upgrade cards. Its private payloa
 emits 8–12 crystal debris animations per bomb to reduce slowdown, including with
 payload upgrades; the native chemical explosion remains active.
 
+For run buffs, **Buy Max** sits beside **Purchase Selected** in both the
+Current Run Shop and Current Loadout upgrade view. It buys the selected
+buff until the next stack is unaffordable or the stack limit is reached.
+Each stack uses the normal Ore price, discounts, coupons, and available
+Free Buff Tokens; the complete purchase is saved once.
+
+In Shop Mode, select a permanent unit or power buff and click **Buy Max**
+to buy all affordable stacks in one purchase. Purchases stop at the buff
+stack limit and leave any unspent Gems. Permanent buff purchases are
+available only between runs; the arrows still buy or refund one stack.
+
 Permanent Shop progression spends Gems on unit access, unit buffs, all 18
 reviewed superweapons and support powers, plus their 44 power buffs. Purchased
 permanent powers activate automatically in future Shop runs. Permanent unit
