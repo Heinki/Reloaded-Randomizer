@@ -26,6 +26,7 @@ from randomizer.maps.miner_buffs import (
 )
 from randomizer.maps.prerequisites import (
     negative_prerequisite_safety_rules, player_building_prerequisite_rules,
+    prerequisite_override_rules,
 )
 from randomizer.missions.required_access import mission_required_access_rules
 from randomizer.maps.enemy_powerhouses import enemy_powerhouse_rules
@@ -3319,6 +3320,17 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             preserved_native_ids=native_required_access_ids,
         )
         merge_ini_section_values(lines, refinery_rules)
+        # Installed shortcuts survive the native production gates and can
+        # expose unbuffed originals beside earned player clones. Normalize
+        # them after clone/refinery discovery, before expanding building
+        # aliases, so their alternate paths also recognize private factories.
+        shortcut_rules = prerequisite_override_rules(lines, installed_rule_sections)
+        if shortcut_rules:
+            merge_ini_section_values(lines, shortcut_rules)
+            self.append_log(
+                f'Preserved {len(shortcut_rules)} production shortcut(s) as '
+                'alternate prerequisites enforcing house and technology gates.'
+            )
         building_prerequisite_rules = player_building_prerequisite_rules(
             lines, installed_rule_sections, clone_handled,
         )

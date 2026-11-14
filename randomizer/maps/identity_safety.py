@@ -10,6 +10,7 @@ import re
 from collections import Counter
 from dataclasses import dataclass
 
+from randomizer.core.collections import comma_items
 from randomizer.maps.ini import (
     all_section_value_maps,
     section_value_map_preserve,
@@ -214,6 +215,24 @@ def validate_authored_identity_contract(contract, lines, allowed_positioned_repl
         current_counts = Counter(
             _identity_tokens(current or '', techno_ids)
         )
+        if (
+            reference.key.casefold() == 'prerequisiteoverride'
+            and str(current or '').strip().casefold() in {'none', '<none>'}
+        ):
+            # Production shortcut normalization moves each OR member into a
+            # singleton alternate path. Accept that equivalent reference move
+            # only while the shortcut is disabled and the path is active;
+            # a member buried in an AND list does not preserve its shortcut.
+            values_by_lower = {
+                str(key).casefold(): value for key, value in values.items()
+            }
+            count = int(values_by_lower.get('prerequisite.lists', '0'))
+            for index in range(1, count + 1):
+                members = comma_items(values_by_lower.get(
+                    f'prerequisite.list{index}', ''
+                ))
+                if len(members) == 1:
+                    current_counts.update(_identity_tokens(members[0], techno_ids))
         replacement = allowed_positioned_replacements.get(
             (reference.section, reference.key.lower())
         )
