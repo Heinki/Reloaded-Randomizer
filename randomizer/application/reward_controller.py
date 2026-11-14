@@ -419,5 +419,5 @@ class RewardController(RewardGeneration):
                               if mission.get('skirmish')})
         message = f'Loaded {campaign_count} campaign missions.'
         if skirmish_count:
-            message += f' {skirmish_count} unique skirmish maps available for standalone Shop/Grid runs.'
+            message += f' {skirmish_count} selected skirmish maps.'
         self.append_log(message)

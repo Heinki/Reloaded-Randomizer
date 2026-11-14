@@ -529,7 +529,9 @@ def _build_right_panel(self, main_frame):
         'controls release of unfinished locations.',
     )
 
-    self.build_skirmish_pool_control(self.grid_options_frame, row=4)
+    skirmish_options = ttk.Frame(options_row)
+    skirmish_options.grid(row=12, column=0, columnspan=2, sticky='ew', pady=(6, 0))
+    self.build_skirmish_pool_control(skirmish_options, row=0)
 
     shop_settings_frame = ttk.LabelFrame(
         settings_frame,

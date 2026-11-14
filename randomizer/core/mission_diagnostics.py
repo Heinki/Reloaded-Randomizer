@@ -109,6 +109,8 @@ def preserve_mission_report(attempt, hook, returncode):
         map_path = (hook or {}).get('generated_map')
     if map_path:
         copy_file(map_path, 'mission.MAP')
+    if (hook or {}).get('combat_report'):
+        copy_file(hook['combat_report'], 'combat-rules.json')
     for path in (SPAWN_INI, OPTIONS_INI, SHOP_RUN_PATH, SHOP_PROFILE_PATH, STATE_PATH):
         copy_file(path, path.name)
     copy_file(DEBUG_LOG, 'debug.log', tail=True)

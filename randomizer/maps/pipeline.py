@@ -3620,6 +3620,24 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             code,
             ai_reward_applications,
         )
+    from randomizer.maps.combat_diagnostics import REPORTED_MISSION_CODES
+    combat_report = None
+    if code in REPORTED_MISSION_CODES:
+        import json
+        from randomizer.maps.combat_diagnostics import mission_combat_snapshot
+        try:
+            report = mission_combat_snapshot(
+                IniLines(read_text(integrity_path).splitlines()), lines, installed_rule_sections)
+            report.update(mission_code=code, scenario=scenario,
+                          source_sha256=authored_source_hash,
+                          seed=str(self.active_launch_seed()))
+            combat_report = generated_path.with_suffix('.combat.json')
+            combat_report.write_text(json.dumps(report, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+            self.append_log(f'Saved mission combat rules for investigation: {combat_report}')
+        except Exception as exc:
+            # Optional diagnostics must never block a valid mission launch.
+            combat_report = None
+            self.append_log(f'Could not save mission combat rules: {exc}', error=True)
     self.append_log(f'Prepared generated map {scenario}: {len(markers)} marker trigger(s).')
 
     return {
@@ -3629,6 +3647,7 @@ def prepare_hooked_map(self, mission, extra_rules=None):
         'source_path': str(integrity_path),
         'source_sha256': authored_source_hash,
         'generated_map': str(generated_path),
+        'combat_report': str(combat_report) if combat_report else None,
         'markers': markers,
         'trigger_markers': trigger_markers,
         'seen': set(),
