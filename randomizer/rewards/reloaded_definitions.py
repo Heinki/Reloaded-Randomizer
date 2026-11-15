@@ -620,7 +620,7 @@ BUFF_TYPES = (
         'setting_label': 'Cost reduction',
         'description': (
             '{plural} cost 20% less than the previous stack in future launched '
-            'missions. Reductions multiply; full upgrades make production free.'
+            'missions. Reductions multiply; full upgrades reduce production to 1 credit.'
         ),
     },
     {

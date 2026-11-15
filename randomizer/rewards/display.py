@@ -321,10 +321,9 @@ def _uncached_buff_stack_limit(reward):
         base_cost = max(1, int(round(float(target.get('cost', 1)))))
         for count in range(1, configured + 1):
             current = stacked_cost(base_cost, count)
-            # Integer rounding can repeat a price before a later stack lowers
-            # it again. Do not make the configured free-at-cap reward
-            # unreachable merely because two intermediate prices match.
-            if current == 0:
+            # Rounded intermediate prices may repeat before falling again.
+            # Only stop early when the engine-safe one-credit floor is met.
+            if current <= 1:
                 return count
         return configured
     if buff_type in {'damage', 'reload'}:
