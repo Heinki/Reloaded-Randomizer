@@ -127,7 +127,7 @@ def active_shop_starter_defense_ids(run):
     )
 
 
-def active_shop_permanent_buffs(run):
+def active_shop_permanent_buffs(run, *, delivery_unit_ids=()):
     """Activate frozen permanent buffs when their unit or power is acquired."""
     from .permanent import active_permanent_buffs
     if run is None:
@@ -136,6 +136,7 @@ def active_shop_permanent_buffs(run):
         *active_shop_starter_unit_ids(run),
         *active_shop_starter_defense_ids(run),
         *shop_always_available_unit_ids(),
+        *delivery_unit_ids,
     ))
 
 

@@ -992,6 +992,10 @@ def prepare_hooked_map(self, mission, extra_rules=None):
             + ', '.join(delivery_clone_ids)
             + '.'
         )
+        if self.shop_launch_active():
+            delivery_buffs = self.shop_delivery_buff_rewards(delivery_clone_ids)
+            earned_rewards.extend(delivery_buffs)
+            access_report_active_rewards.extend(delivery_buffs)
     power_reference_clone_ids = unique_in_order(
         unit_id
         for unit_ids in power_player_clone_reference_fields.values()

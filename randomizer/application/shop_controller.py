@@ -654,6 +654,19 @@ class ShopController(ShopPolishController):
             return self.active_launch_rewards()
         return super().launch_rewards_for_mission(code)
 
+    def shop_delivery_buff_rewards(self, delivery_unit_ids):
+        """Resolve permanent buff stacks newly activated by player powers."""
+        run = self._shop_launch_run
+        active = set(active_shop_permanent_buffs(run))
+        return [
+            canonical_reward_for_id(buff.reward_id)
+            for buff in active_shop_permanent_buffs(
+                run, delivery_unit_ids=delivery_unit_ids,
+            )
+            if buff not in active
+            for _ in range(buff.stacks)
+        ]
+
     def active_starting_rewards_for_report(self):
         run = self._shop_context_run()
         if run is not None:

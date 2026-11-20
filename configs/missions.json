@@ -4140,6 +4140,14 @@
     "required_access_rules": {},
     "techno_base_rules": {},
     "map_section_rules": {
+      "NOD08A_FS": {
+        "ReaperWebWH": {
+          "Webby": "no"
+        },
+        "NanitesInjectorWH": {
+          "Webby": "no"
+        }
+      },
       "NOD03A_TS": {
         "086A8310": {
           "2": "11,15"
