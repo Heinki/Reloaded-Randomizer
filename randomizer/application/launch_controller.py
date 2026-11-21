@@ -830,6 +830,7 @@ class LaunchController:
                     code,
                     check_id,
                     'In-game hook',
+                    started_at=(self.active_mission_attempt or {}).get('started_at'),
                 )
                 # The check may already be marked unlocked when Archipelago
                 # syncs a reward before the local hook is processed.  Victory
@@ -1263,6 +1264,7 @@ class LaunchController:
                     env=environment,
                     start_new_session=True,
                 )
+            started_at = time.monotonic()
             process = subprocess.Popen(cmd, cwd=GAME_ROOT, **popen_options)
             self.append_log(f'Launched game process PID={process.pid}.')
             if (
@@ -1311,6 +1313,7 @@ class LaunchController:
             self.active_mission_attempt = {
                 'mission_code': mission.get('code'),
                 'scenario': scenario,
+                'started_at': started_at,
                 'seed': self.active_launch_seed(),
                 'difficulty': difficulty_value,
                 'game_speed': game_speed_value,
