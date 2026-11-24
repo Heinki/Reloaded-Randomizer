@@ -8,6 +8,7 @@ from .reloaded_definitions import (
     BUFF_EFFECTS,
     BUFF_TARGETS,
     DEFERRED_TECH_IDS,
+    LINKED_BUFF_VARIANTS,
     LEGACY_UNIT_VARIANT_REWARD_NAMES,
     NONTRAINABLE_UNIT_IDS,
     RETIRED_REWARD_BY_NAME,
@@ -22,6 +23,7 @@ from .reloaded_definitions import (
 )
 from randomizer.config.tuning import (
     REWARD_PLANNING,
+    psi_wave_radius,
     stacked_cost,
     stacked_self_heal_rate,
     stacked_weapon_damage,
@@ -29,6 +31,7 @@ from randomizer.config.tuning import (
     stacking_amount,
     stacking_multiplier,
     stacking_stack_limit,
+    upgraded_sensor_sight,
 )
 from randomizer.rewards.power_buff_definitions import (
     power_buff_effect_text,
@@ -561,15 +564,20 @@ def buff_effect_lines(
             text += f' [{number(base)}]'
         return [stacked(text + unit)]
 
-    def weapon_text(label, field, calculator, minimum=0, unit='', show_base=True):
+    def weapon_text(
+        label, field, calculator, minimum=0, unit='', show_base=True,
+        excluded_weapons=(),
+    ):
         pairs = {}
         for weapon, stats in target.get('weapons', {}).items():
             base = float(stats.get(field, 0))
-            if base <= minimum or not stats.get('buff_safe', True):
+            if weapon in excluded_weapons or base <= minimum or not stats.get('buff_safe', True):
                 continue
             current = calculator(base)
             pairs.setdefault((current, base if show_base else None), []).append(weapon)
         if not pairs:
+            if excluded_weapons:
+                return []
             return [stacked(f'{prefix}{label}: no applicable weapon')]
         parts = []
         for (current, base), weapons in pairs.items():
@@ -657,10 +665,19 @@ def buff_effect_lines(
         )
 
     if buff_type == 'range':
-        return weapon_text(
+        wave_ranges = {
+            weapon: stats['psi_wave_radius']
+            for weapon, stats in target.get('weapons', {}).items()
+            if 'psi_wave_radius' in stats and stats.get('buff_safe', True)
+        }
+        lines = weapon_text(
             'Range', 'range', lambda base: base + stacking_amount('range', count),
-            unit=' cells',
+            unit=' cells', excluded_weapons=wave_ranges,
         )
+        for weapon, base in wave_ranges.items():
+            label = 'Psi Wave radius' if weapon == 'PSIWAVE' else 'Super Psi Wave radius'
+            lines.extend(value_text(label, psi_wave_radius(base, count), base, ' cells'))
+        return lines
 
     if buff_type == 'ammo':
         increase = int(stacking_amount('ammo', count))
@@ -734,9 +751,17 @@ def buff_effect_lines(
     if buff_type == 'cloak':
         return [stacked(f'{prefix}Cloaking enabled')]
     if buff_type == 'sensors':
-        sensor_range = int(round(
-            target.get('sight', 5) + float(BUFF_EFFECTS['sensor_sight_bonus'])
-        ))
+        base = target.get('sensor_sight', 0)
+        sensor_range = upgraded_sensor_sight(base, target.get('sight', 5))
+        deployed_ranges = sorted({
+            variant['sensor_sight']
+            for variant_id in LINKED_BUFF_VARIANTS.get(reward.get('unit'), ())
+            if (variant := BUFF_TARGETS[variant_id]).get('sensor_sight', 0) > base
+            and variant.get('category') == 'defenses'
+        })
+        if deployed_ranges:
+            deployed = upgraded_sensor_sight(max(deployed_ranges), target['sight'])
+            return [stacked(f'{prefix}Sensors {sensor_range} cells mobile, {deployed} deployed')]
         return [stacked(f'{prefix}Sensors {sensor_range} cells')]
     return []
 

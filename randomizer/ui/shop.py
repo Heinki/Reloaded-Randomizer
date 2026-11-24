@@ -342,6 +342,7 @@ def build_shop_tab(self, workspace_tabs):
     panels = ttk.Notebook(content, style='Unlocks.TNotebook')
     self.shop_panels = panels
     panels.grid(row=3, column=0, sticky='nsew')
+    panels.bind('<<NotebookTabChanged>>', self.refresh_visible_shop_panel, add='+')
 
     run_shop = ttk.Frame(panels, padding=8)
     self.shop_run_panel = run_shop

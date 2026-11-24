@@ -105,7 +105,15 @@ def _unit_fields_are_effective(
         lowered['cloakable.allowed']
     ).strip().lower() not in {'yes', 'true', '1'}:
         return False
-    if buff_type in {'open_topped', 'cloak', 'sensors'}:
+    if buff_type == 'sensors':
+        radius = _numeric(lowered['sensorssight'])
+        base = _numeric(base_values.get('sensorssight', target.get('sensor_sight', 0)))
+        return (
+            str(lowered['sensors']).strip().casefold() in {'yes', 'true', '1'}
+            and radius is not None
+            and radius > max(0, base or 0)
+        )
+    if buff_type in {'open_topped', 'cloak'}:
         base_enabled = (
             str(base_values.get(required[0].lower(), 'no')).strip().lower()
             == 'yes'
@@ -182,13 +190,17 @@ def _weapon_field_is_effective(
         if str(clone_weapon).upper() not in live_weapons:
             continue
         stats = target_names.get(str(source_weapon).upper(), {})
+        weapon_values = _lower_values(sections_by_id.get(str(clone_weapon).upper(), {}))
+        if buff_type == 'range' and 'psi_wave_radius' in stats:
+            warhead = str(weapon_values.get('warhead') or '').upper()
+            registered = {str(value).upper() for value in sections_by_id.get('WARHEADS', {}).values()}
+            radius = _numeric(_lower_values(sections_by_id.get(warhead, {})).get('cellspread'))
+            if warhead in registered and radius is not None and radius > stats['psi_wave_radius']:
+                return True
+            continue
         base_field = 'rof' if buff_type == 'reload' else buff_type
         base = _numeric(stats.get(base_field))
-        actual = _numeric(
-            _lower_values(sections_by_id.get(str(clone_weapon).upper(), {})).get(
-                field.lower()
-            )
-        )
+        actual = _numeric(weapon_values.get(field.lower()))
         if base is None or actual is None:
             continue
         if buff_type == 'reload' and actual < base:

@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from randomizer.content.transforms import TRANSFORM_REFERENCE_KEYS
+from randomizer.config.tuning import PSI_WAVE_WEAPON_IDS
 
 from ._shared import (
     BUFF_TARGETS,
@@ -54,6 +55,7 @@ from .base import (
     _value_case_insensitive,
     parse_float,
 )
+from .weapon_buffs import clone_psi_wave_warhead
 
 LINKED_CLONE_REFERENCE_KEYS = TRANSFORM_REFERENCE_KEYS | {
     'passengers.allowed',
@@ -1243,8 +1245,12 @@ def build_player_clone_sections(
                 )
                 continue
             applied_weapon = False
+            wave_range_count = 0
             for buff_type in ('damage', 'range', 'reload'):
                 if buff_type in weapon_buff_types:
+                    if buff_type == 'range' and weapon.upper() in PSI_WAVE_WEAPON_IDS:
+                        wave_range_count = counts[buff_type]
+                        continue
                     applied_type = apply_weapon_buff_value(
                         weapon_values,
                         base_stats,
@@ -1260,13 +1266,26 @@ def build_player_clone_sections(
                 )
                 section_rules[weapon] = weapon_values
                 continue
-            if not applied_weapon:
+            if not applied_weapon and not wave_range_count:
                 continue
             weapon_clone = _collision_safe_type_id(
                 f'{CLONE_POLICY["weapon_id_prefix"]}{unit_id}{weapon}',
                 f'player-weapon:{unit_id}:{weapon}',
                 reserved_ids,
             )
+            if wave_range_count:
+                wave = clone_psi_wave_warhead(
+                    lines, section_rules, weapon, weapon_values, weapon_clone,
+                    wave_range_count, installed_sections, map_sections, reserved_ids,
+                )
+                if wave:
+                    warhead_id, base_radius = wave
+                    _remove_case_insensitive(weapon_values, 'Warhead')
+                    weapon_values['Warhead'] = warhead_id
+                    base_stats['psi_wave_radius'] = base_radius
+                    handled_weapon_types.add('range')
+                elif not applied_weapon:
+                    continue
             _register_map_type(
                 section_rules, lines, installed_sections, 'WeaponTypes', weapon_clone
             )

@@ -37,6 +37,7 @@ from randomizer.config.tuning import (
     stacked_self_heal_rate,
     stacked_weapon_damage,
     stacked_weapon_rof,
+    upgraded_sensor_sight,
 )
 
 
@@ -219,10 +220,16 @@ def apply_unit_buff_value(values, target, buff_type, count):
         values['CloakingSpeed'] = '1'
         values['CloakSound'] = 'none'
     elif buff_type == 'sensors':
+        base = max(
+            target.get('sensor_sight', 0),
+            parse_float(_value_case_insensitive(values, 'SensorsSight'), 0),
+        )
+        _remove_case_insensitive(values, 'Sensors')
+        _remove_case_insensitive(values, 'SensorsSight')
         values['Sensors'] = 'yes'
-        values['SensorsSight'] = str(int(round(
-            target.get('sight', 5) + float(BUFF_EFFECTS['sensor_sight_bonus'])
-        )))
+        values['SensorsSight'] = str(upgraded_sensor_sight(
+            base, target.get('sight', 5)
+        ))
     elif buff_type == 'cost':
         values['Cost'] = str(stacked_cost(target['cost'], count))
     elif buff_type == 'production':

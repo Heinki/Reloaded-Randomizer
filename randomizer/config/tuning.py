@@ -15,6 +15,7 @@ CLONE_UI_DESCRIPTION = str(
 )
 MISSION_ASSISTANCE = _CONFIG['mission_assistance']
 REWARD_PLANNING = _CONFIG['reward_planning']
+PSI_WAVE_WEAPON_IDS = frozenset({'PSIWAVE', 'SUPERPSIWAVE'})
 
 
 def mission_assistance_stack_count(count):
@@ -69,6 +70,17 @@ def stacking_amount(effect, count):
     if maximum is not None:
         amount = min(float(maximum), amount)
     return amount
+
+
+def psi_wave_radius(base_radius, count):
+    """Grow the warhead radius within the engine's cell-spread table."""
+    return max(base_radius, min(11, base_radius + stacking_amount('range', count)))
+
+
+def upgraded_sensor_sight(base_sensors, base_sight):
+    """Extend native detection, or grant detection to a unit without it."""
+    base = base_sensors if base_sensors > 0 else base_sight
+    return int(round(base + float(BUFF_EFFECTS['sensor_sight_bonus'])))
 
 
 def stacked_cost(base_cost, count):

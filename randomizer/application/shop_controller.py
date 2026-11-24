@@ -1013,18 +1013,44 @@ class ShopController(ShopPolishController):
                 self.shop_choices_frame.grid()
                 self.shop_actions_frame.grid()
         self._refresh_shop_missions()
-        self.refresh_shop_catalogue()
-        self._refresh_shop_loadout()
-        if self.__dict__.get('_shop_loadout_upgrade_target'):
-            self._refresh_shop_loadout_upgrade_view()
-        self._refresh_shop_setup()
-        self._refresh_permanent_shop()
-        self._refresh_shop_history()
-        self._refresh_archipelago_shop_purchases()
+        self._shop_setup_dirty = True
+        self.refresh_visible_shop_setup()
+        self.sync_shop_ap_panel()
+        self.refresh_visible_shop_panel()
         self.refresh_shop_settings_controls()
         if hasattr(self, 'shop_debug_mission_combo'):
             self.refresh_shop_debug_completion_choices()
         self.refresh_progress_view()
+
+    def refresh_visible_shop_panel(self, _event=None):
+        """Rebuild only the selected Shop panel from the current run."""
+        if (
+            not hasattr(self, 'shop_panels')
+            or self.workspace_tabs.select() != str(self.shop_tab)
+        ):
+            return
+        panel = self.shop_panels.select()
+        if panel == str(self.shop_run_panel):
+            self.refresh_shop_catalogue()
+        elif panel == str(self.shop_loadout_panel):
+            if self.__dict__.get('_shop_loadout_upgrade_target'):
+                self._refresh_shop_loadout_upgrade_view()
+            else:
+                self._refresh_shop_loadout()
+        elif panel == str(self.shop_permanent_panel):
+            self._refresh_permanent_shop()
+        elif panel == str(self.shop_ap_panel):
+            self._refresh_archipelago_shop_purchases()
+        elif panel in (str(self.shop_summary_panel), str(self.shop_history_panel)):
+            self._refresh_shop_history()
+
+    def refresh_visible_shop_setup(self):
+        if (
+            self.__dict__.get('_shop_setup_dirty', True)
+            and self.shop_mode_selected()
+            and self.workspace_tabs.select() == str(self.settings_tab)
+        ):
+            self._refresh_shop_setup()
 
     def refresh_shop_debug_completion_choices(self):
         """Populate the hidden developer picker from current mission choices."""
@@ -2690,6 +2716,8 @@ class ShopController(ShopPolishController):
                 if modifiers_locked or unavailable else 'normal'
             )
         self._refresh_shop_modifier_difficulty()
+
+        self._shop_setup_dirty = False
 
     def _refresh_shop_modifier_difficulty(self, *_args):
         if not hasattr(self, 'shop_modifier_difficulty_var'):

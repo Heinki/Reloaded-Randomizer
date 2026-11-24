@@ -245,7 +245,8 @@ class ShopRun:
     failed_mission_code: str | None = None
     failed_stage: int | None = None
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self, *, copy_enemy_applications=True) -> dict[str, Any]:
+        applications = dict(self.enemy_reward_applications)
         return {
             'schema_version': self.schema_version,
             'run_id': self.run_id,
@@ -289,8 +290,8 @@ class ShopRun:
             'mission_committed': self.mission_committed,
             'completed_missions': list(self.completed_missions),
             'rewarded_victories': list(self.rewarded_victories),
-            'enemy_reward_applications': deepcopy(
-                dict(self.enemy_reward_applications)
+            'enemy_reward_applications': (
+                deepcopy(applications) if copy_enemy_applications else applications
             ),
             'modifiers': list(self.modifiers),
             'coupon_used_stage': self.coupon_used_stage,

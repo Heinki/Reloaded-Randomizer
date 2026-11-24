@@ -207,10 +207,9 @@ class ShopPolishController(ShopArchipelagoController):
             return launch_run
         if not self._shop_mode_context_selected():
             return None
-        repository = self.__dict__.get('shop_repository')
-        if repository is None:
-            return self.__dict__.get('shop_run')
-        return repository.load_run()
+        # The controller reloads after transitions. View lookups share that
+        # snapshot instead of reparsing the same run for each widget.
+        return self.__dict__.get('shop_run')
 
     def _shop_ui_rewards(self):
         run = self._shop_context_run()
@@ -1100,8 +1099,19 @@ class ShopPolishController(ShopArchipelagoController):
             entry.reward_id for entry, _detail in visible
         )
         restore_iid = ''
+        buff_counts_by_target = {}
         for index, (entry, detail) in enumerate(visible):
             state, price, locked, stacks = detail
+            buff_counts = None
+            if entry.reward_type is ShopRewardType.UNIT_BUFF:
+                if entry.target_id not in buff_counts_by_target:
+                    buff_counts_by_target[entry.target_id] = unit_buff_counts(
+                        display_rewards, entry.target_id
+                    )
+                buff_counts = buff_counts_by_target[entry.target_id]
+            effect = self._shop_catalogue_display_name(
+                entry, state, stacks, buff_counts=buff_counts
+            )
             iid = f'shop-{index}'
             buyable = state == 'Available' or state.startswith('Stacks ')
             row_tag = (
@@ -1142,10 +1152,7 @@ class ShopPolishController(ShopArchipelagoController):
                 'iid': iid,
                 'tags': (row_tag,),
                 'values': (
-                self._shop_catalogue_display_name(
-                    entry, state, stacks,
-                    buff_counts=unit_buff_counts(display_rewards, entry.target_id),
-                ),
+                effect,
                 (entry.tier or '').replace('_', ' ').title(),
                 state,
                 self._entry_price_text(entry, price, stacks),
@@ -1169,21 +1176,16 @@ class ShopPolishController(ShopArchipelagoController):
                 else 'Purchase/unlock this power first.'
                 if locked else state
             )
+            reward = canonical_reward_for_id(entry.reward_id)
+            title = entry.reward_id if buff_category else reward_display_name(reward)
             self._shop_catalogue_details[iid] = (
-                f'{reward_display_name(canonical_reward_for_id(entry.reward_id))}\nType: '
+                f'{title}\nType: '
                 f'{entry.reward_type.value.replace("_", " ").title()}\n'
                 f'Target: {unit_buff_target_label(entry.target_id) if entry.reward_type is ShopRewardType.UNIT_BUFF else entry.target_id or "—"}\n'
                 f'Price: {self._entry_price_text(entry, price, stacks)}\n'
                 f'State: {reason}'
-                + '\n' + str(canonical_reward_for_id(entry.reward_id).get('description') or '')
-                + (
-                    '\nEffect: '
-                    + self._shop_catalogue_display_name(
-                    entry, state, stacks,
-                    buff_counts=unit_buff_counts(display_rewards, entry.target_id),
-                )
-                    if buff_category else ''
-                )
+                + '\n' + str(reward.get('description') or '')
+                + (f'\nEffect: {effect}' if buff_category else '')
                 + (f'\nCurrent stacks: {stacks}' if stacks else '')
             )
             if entry.reward_id == selected_reward_id:
@@ -1258,7 +1260,10 @@ class ShopPolishController(ShopArchipelagoController):
         self._shop_loadout_upgrade_target = None
         self.shop_loadout_upgrades_frame.grid_remove()
         self.shop_loadout_overview_frame.grid()
-        self.shop_panels.select(self.shop_loadout_panel)
+        if self.shop_panels.select() == str(self.shop_loadout_panel):
+            self._refresh_shop_loadout()
+        else:
+            self.shop_panels.select(self.shop_loadout_panel)
 
     def refresh_loadout_upgrade_purchase_button(self, _event=None):
         selected = self.shop_loadout_upgrade_tree.selection()

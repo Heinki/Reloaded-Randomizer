@@ -1,5 +1,7 @@
 """Player weapon clones, native variants, and veterancy rules."""
 
+from randomizer.config.tuning import PSI_WAVE_WEAPON_IDS, psi_wave_radius
+
 from ._shared import (
     BUFF_TARGETS,
     MAX_COUNTRY_VETERAN_VALUE_LENGTH,
@@ -25,6 +27,7 @@ from ._shared import (
 )
 from .buff_values import (
     _active_direct_buff_counts,
+    _register_map_type,
     apply_unit_buff_value,
     apply_weapon_buff_value,
 )
@@ -33,11 +36,44 @@ from .clone_references import (
     _target_with_effective_unit_stats,
 )
 from .base import (
+    _collision_safe_type_id,
+    _remove_case_insensitive,
     _value_case_insensitive,
     format_multiplier,
     merge_unique_csv_bounded,
     parse_float,
 )
+
+
+def clone_psi_wave_warhead(
+    lines, rules, weapon, weapon_values, new_weapon_id, count,
+    installed_sections, map_sections, reserved_ids,
+):
+    """Clone a wave's warhead so its radius upgrade only affects this weapon."""
+    if weapon.upper() not in PSI_WAVE_WEAPON_IDS or not count:
+        return None
+    if str(_value_case_insensitive(weapon_values, 'AreaFire', '')).lower() not in {
+        'yes', 'true', '1',
+    }:
+        return None
+    warhead = str(_value_case_insensitive(weapon_values, 'Warhead', '')).casefold()
+    warhead_values = _standalone_clone_values_from_maps(
+        next((values for name, values in installed_sections.items()
+              if name.casefold() == warhead), {}),
+        next((values for name, values in map_sections.items()
+              if name.casefold() == warhead), {}),
+    )
+    base = parse_float(_value_case_insensitive(warhead_values, 'CellSpread'), 0)
+    if base <= 0:
+        return None
+    warhead_id = _collision_safe_type_id(
+        new_weapon_id + 'WH', f'player-wave-warhead:{new_weapon_id}', reserved_ids
+    )
+    _remove_case_insensitive(warhead_values, 'CellSpread')
+    warhead_values['CellSpread'] = format_multiplier(psi_wave_radius(base, count))
+    _register_map_type(rules, lines, installed_sections, 'Warheads', warhead_id)
+    rules[warhead_id] = warhead_values
+    return warhead_id, base
 
 
 def spawned_missile_range_guard_rules(target, range_count):
@@ -90,6 +126,7 @@ def unit_weapon_buff_rules(
     sections_by_lower = {
         str(name).lower(): values for name, values in sections.items()
     }
+    reserved_ids = set(installed_by_lower) | set(sections_by_lower)
     records = map_house_records(lines, sections=sections)
     player_house = player_house_from_map(lines, records=records)
     if not player_house:
@@ -283,12 +320,22 @@ def unit_weapon_buff_rules(
                 weapon_values = {}
                 for buff_type in ('damage', 'range', 'reload'):
                     if buff_type in weapon_buff_types:
-                        buff_applied = apply_weapon_buff_value(
-                            weapon_values,
-                            base_stats,
-                            buff_type,
-                            counts[buff_type],
-                        )
+                        if buff_type == 'range' and weapon.upper() in PSI_WAVE_WEAPON_IDS:
+                            source = _standalone_clone_values_from_maps(
+                                installed_sections.get(installed_by_lower.get(weapon.lower())),
+                                sections_by_lower.get(weapon.lower()),
+                            )
+                            wave = clone_psi_wave_warhead(
+                                lines, rule_sections, weapon, source, weapon,
+                                counts[buff_type], installed_sections, sections, reserved_ids,
+                            )
+                            if wave:
+                                weapon_values['Warhead'] = wave[0]
+                            buff_applied = wave is not None
+                        else:
+                            buff_applied = apply_weapon_buff_value(
+                                weapon_values, base_stats, buff_type, counts[buff_type],
+                            )
                         applied = buff_applied or applied
                         if buff_type == 'range' and buff_applied:
                             range_applied = True

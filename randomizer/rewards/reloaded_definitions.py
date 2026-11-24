@@ -8,7 +8,7 @@ part of the runtime catalogue.
 
 from randomizer.config.static import load_static_config
 from randomizer.config.game_profile import CONTENT_FACTIONS
-from randomizer.config.tuning import BUFF_EFFECTS, REWARD_PLANNING
+from randomizer.config.tuning import BUFF_EFFECTS, PSI_WAVE_WEAPON_IDS, REWARD_PLANNING
 from randomizer.content.ammo import UNLIMITED_AMMO_THRESHOLD, has_upgradeable_ammo
 from randomizer.content.healing import self_healing_metadata
 from randomizer.content.inventory import (
@@ -200,7 +200,15 @@ for _category, _record in _records():
             if _weapon.get(field) is not None
         }
         if _weapon_stats:
-            _weapons[str(_weapon['id']).upper()] = _weapon_stats
+            _weapon_id = str(_weapon['id']).upper()
+            if _weapon_id in PSI_WAVE_WEAPON_IDS:
+                _weapon_values = _RULES.get(_RULE_NAMES.get(_weapon_id), {})
+                _warhead_id = str(_weapon_values.get('Warhead', '')).upper()
+                _warhead = _RULES.get(_RULE_NAMES.get(_warhead_id), {})
+                _radius = _number(_warhead, 'CellSpread')
+                if _radius is not None:
+                    _weapon_stats['psi_wave_radius'] = _radius
+            _weapons[_weapon_id] = _weapon_stats
     _target = {
         'category': _runtime_category,
         'label': _unit_label,
@@ -211,6 +219,7 @@ for _category, _record in _records():
         'strength': _stats.get('strength') or _number(_native, 'Strength', 1),
         'cost': _stats.get('cost') or _number(_native, 'Cost', 1),
         'sight': _stats.get('sight') or _number(_native, 'Sight', 1),
+        'sensor_sight': _number(_native, 'SensorsSight', 0),
         'guard_range': _number(
             _native, 'GuardRange', _stats.get('sight') or 1
         ),
@@ -260,6 +269,7 @@ for _root_id, _family in LINKED_BUFF_VARIANTS.items():
         for _stat, _field in (
             ('strength', 'Strength'), ('cost', 'Cost'), ('sight', 'Sight'),
             ('guard_range', 'GuardRange'), ('speed', 'Speed'), ('ammo', 'Ammo'),
+            ('sensor_sight', 'SensorsSight'),
             ('passengers', 'Passengers'),
         ):
             _value = _number(_native, _field)

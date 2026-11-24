@@ -1,10 +1,12 @@
-"""Read-only combat-rule snapshots for the reported Firestorm mission pair."""
+"""Read-only combat-rule snapshots for reported campaign issues."""
 
 from .ini import all_section_value_maps_preserve
 from .ownership import build_unit_usage_index
 
 
-REPORTED_MISSION_CODES = frozenset({'GDI02A_FS', 'NOD02A_FS'})
+REPORTED_MISSION_CODES = frozenset({
+    'GDI02A_FS', 'NOD02A_FS', 'GDI08A_FS', 'GDI06A_TS', 'SOV06',
+})
 
 
 def mission_combat_snapshot(source_lines, launch_lines, installed_sections):
@@ -46,7 +48,8 @@ def mission_combat_snapshot(source_lines, launch_lines, installed_sections):
                                  if key.startswith('versus.') or key in (
                                      'verses', 'pronedamage', 'affectsallies', 'affectsenemies',
                                      'cankill', 'allowzerodamage', 'effectsrequiredamage',
-                                     'sonic', 'tiberium', 'cellspread', 'percentatmax')}))
+                                     'sonic', 'tiberium', 'cellspread', 'percentatmax',
+                                     'webby')}))
             technos.append(dict(
                 id=type_id, houses=sorted(owners),
                 values={key: value for key, value in values.items()

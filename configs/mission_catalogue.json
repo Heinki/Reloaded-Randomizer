@@ -14154,15 +14154,6 @@
             "winner_codes": [
               "1"
             ]
-          },
-          {
-            "action_id": ";091e1cd0",
-            "codes": [
-              "1"
-            ],
-            "winner_codes": [
-              "1"
-            ]
           }
         ],
         "candidate_objective_actions": [],
@@ -14172,8 +14163,7 @@
         "expected_objective_count": 0,
         "difficulty_class": "opening",
         "verified_victory_action_ids": [
-          "091e1cd0",
-          ";091e1cd0"
+          "091e1cd0"
         ],
         "review": {
           "battle_ini": "verified",

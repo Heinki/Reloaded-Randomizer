@@ -82,18 +82,11 @@ def action_has_code(groups, code):
 
 def action_line_ids(lines, predicate):
     """Return Action keys whose parsed groups satisfy predicate."""
-    start, end = find_section_bounds(lines, 'Actions')
-    if start is None:
-        return []
-
     ids = []
-    for line in lines[start + 1:end]:
-        if '=' not in line:
-            continue
-        key, value = line.split('=', 1)
+    for key, value in section_value_map_preserve(lines, 'Actions').items():
         count, groups = parse_action_groups(value)
         if count and predicate(groups):
-            ids.append(key.strip())
+            ids.append(key)
     return ids
 
 

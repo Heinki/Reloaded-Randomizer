@@ -647,8 +647,7 @@
         "0ad1df80"
       ],
       "GDI05A_TS": [
-        "091e1cd0",
-        ";091e1cd0"
+        "091e1cd0"
       ],
       "GDI05B_TS": [
         "098f49f0"
@@ -4140,6 +4139,20 @@
     "required_access_rules": {},
     "techno_base_rules": {},
     "map_section_rules": {
+      "SOV06": {
+        "Actions": {
+          "05E81BEC": "0",
+          "09231BFC": "14,47,0,0,0,0,0,0,A,7,1,0C65889C,0,0,0,0,A,21,6,EVA_BattlefieldControlOnline,0,0,0,0,A,4,1,0890193C,0,0,0,0,A,4,1,0890148C,0,0,0,0,A,74,0,2,0,0,0,0,A,4,1,092BA62C,0,0,0,0,A,4,1,092BB81C,0,0,0,0,A,4,1,0BE0132C,0,0,0,0,A,4,1,0BE0351C,0,0,0,0,A,3,0,2,0,0,0,0,A,53,2,0B1E809C,0,0,0,0,A,53,2,069BBD3C,0,0,0,0,A,53,2,077B9E1C,0,0,0,0,A"
+        }
+      },
+      "GDI08A_FS": {
+        "ReaperWebWH": {
+          "Webby": "no"
+        },
+        "NanitesInjectorWH": {
+          "Webby": "no"
+        }
+      },
       "NOD08A_FS": {
         "ReaperWebWH": {
           "Webby": "no"

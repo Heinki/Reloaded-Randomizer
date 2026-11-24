@@ -254,6 +254,7 @@ def _target_with_effective_unit_stats(target, effective_values):
     for target_key, rules_key in (
         ('strength', 'Strength'),
         ('sight', 'Sight'),
+        ('sensor_sight', 'SensorsSight'),
         ('ammo', 'Ammo'),
         ('storage', 'Storage'),
         ('produce_cash_amount', 'ProduceCashAmount'),
